@@ -2,8 +2,30 @@
 
 
 #include "BaseStateFeature.h"
+#include "ECallIInput.h"
 
-void UBaseStateFeature::SetStateCallstack(UStateCallstack* NewCallstack)
+
+void EnterState(){};
+void RunFeature(FStateModuleDataStruct Data){};
+void ExitState(){};
+
+void UBaseStateFeature::Initialize(UStateCallstack* NewCallstack)
 {
 	Callstack = NewCallstack;
+}
+
+void UBaseStateFeature::RunAction(ECallInput CallInput,FStateModuleDataStruct Data)
+{
+	switch (CallInput)
+	{
+		case Enter:
+			EnterState();
+			break;
+		case Run:
+			RunFeature(Data);
+			break;
+		case Exit:
+			ExitState();
+			break;
+	}
 }

@@ -3,13 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ECallIInput.h"
+#include "FStateModuleDataStruct.h"
 #include "BaseStateFeature.generated.h"
 
+class UBaseState;
 class UStateCallstack;
 
-/**
- * 
- */
+
 UCLASS(Abstract, Blueprintable)
 class PROJECT_API UBaseStateFeature : public UObject
 {
@@ -23,13 +24,15 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void EnterState();
-
+	
 	UFUNCTION(BlueprintImplementableEvent)
-	void RunFeature();
+	void RunFeature(FStateModuleDataStruct Data);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void ExitState();
 
-	void SetStateCallstack(UStateCallstack* NewCallstack);
+	void RunAction(ECallInput CallInput,FStateModuleDataStruct Data);
+
+	void Initialize(UStateCallstack* NewCallstack);
 	
 };

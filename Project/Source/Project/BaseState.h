@@ -25,29 +25,31 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite)
 	int Priority = 0;
-	
 
 	UPROPERTY(BlueprintReadWrite)
 	TArray<TSubclassOf<UBaseStateFeature>> OwnedFeatures;
 	
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY()
 	TArray<UBaseStateFeature*> Features;
 
 public:
-	//void EnterState();
-	//void ExitState();
+
+	//Start Up And Utility
+	virtual void PostInitProperties() override;
 	int GetPriority() const;
+
+	
+	//Feature Functons
+	TArray<TSubclassOf<UBaseStateFeature>> GetAllOwnedFeatures();
+
+	bool ContainsThisFeature(UBaseStateFeature* Feature);
 	
 	template<std::derived_from<UBaseStateFeature>FeatureClass>
 	UFUNCTION(BlueprintCallable, BlueprintPure,meta = (DeterminesOutputType = "Feature Class"))
 	bool TryGetFeature(FeatureClass*& Feature);
 	
 	bool TryGetFeatureFast(TSubclassOf<UBaseStateFeature> FeatureClass, UBaseStateFeature*& Feature);
+
+private:
 	void CreateFeatures();
-
-	virtual void PostInitProperties() override;
-		
-    
-
-	
 };

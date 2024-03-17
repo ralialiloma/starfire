@@ -14,7 +14,7 @@ UCharacterStateMachine::UCharacterStateMachine()
 void UCharacterStateMachine::BeginPlay()
 {
 	Super::BeginPlay();
-	StateCallstack = NewObject<UStateCallstack>(this);
+	 //StateCallstack = NewObject<UStateCallstack>(this);
 }
 
 
