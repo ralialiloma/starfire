@@ -4,7 +4,7 @@
 #include "BaseState.h"
 
 
-int UBaseState::GetPriority()
+int UBaseState::GetPriority() const
 {
 	return  Priority;
 }
@@ -12,7 +12,7 @@ int UBaseState::GetPriority()
 template<std::derived_from<UBaseStateFeature>FeatureClass>
 bool UBaseState::TryGetFeature(FeatureClass*& Feature)
 {
-	for(UBaseStateFeature* FeatureToCheck: BaseStateFeatures)
+	for(UBaseStateFeature* FeatureToCheck: Features)
 	{
 		if(FeatureToCheck->IsA(FeatureClass::StaticClass))
 		{
@@ -27,7 +27,7 @@ bool UBaseState::TryGetFeature(FeatureClass*& Feature)
 
 bool UBaseState::TryGetFeatureFast(TSubclassOf<UBaseStateFeature> FeatureClass,UBaseStateFeature*& Feature)
 {
-	for(UBaseStateFeature* FeatureToCheck: BaseStateFeatures)
+	for(UBaseStateFeature* FeatureToCheck: Features)
 	{
 		if(FeatureToCheck->IsA(FeatureClass))
 		{
@@ -39,3 +39,28 @@ bool UBaseState::TryGetFeatureFast(TSubclassOf<UBaseStateFeature> FeatureClass,U
 	Feature = nullptr;
 	return false;
 }
+
+void UBaseState::CreateFeatures()
+{
+	for (TSubclassOf<UBaseStateFeature> FeatureClass:OwnedFeatures)
+	{
+		UBaseStateFeature* ObjectToCreate = NewObject<UBaseStateFeature>(this, *FeatureClass);
+		ObjectToCreate->SetStateCallstack(StateCallstack);
+		Features.Add(ObjectToCreate);
+	}
+}
+
+void UBaseState::PostInitProperties()
+{
+	Super::PostInitProperties();
+	CreateFeatures();
+}
+
+
+
+void AddState(UBaseState* StateToAdd)
+{
+	
+}
+
+

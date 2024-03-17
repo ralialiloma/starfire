@@ -3,8 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
 #include "BaseStateFeature.generated.h"
+
+class UStateCallstack;
 
 /**
  * 
@@ -14,6 +15,10 @@ class PROJECT_API UBaseStateFeature : public UObject
 {
 	GENERATED_BODY()
 
+private:
+	UPROPERTY(Blueprintable)
+	UStateCallstack* Callstack;
+	
 public:
 
 	UFUNCTION(BlueprintImplementableEvent)
@@ -24,5 +29,7 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void ExitState();
+
+	void SetStateCallstack(UStateCallstack* NewCallstack);
 	
 };

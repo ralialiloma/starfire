@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "StateCallstack.h"
 #include "Components/ActorComponent.h"
+#include "StateCallstack.h"
 #include "CharacterStateMachine.generated.h"
 
 
@@ -12,7 +12,7 @@
 /*template <typename T>
 ;*/
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(Blueprintable, ClassGroup=(StateMachine), meta=(BlueprintSpawnableComponent) )
 class PROJECT_API UCharacterStateMachine : public UActorComponent
 {
 	GENERATED_BODY()

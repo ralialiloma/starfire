@@ -3,3 +3,7 @@
 
 #include "BaseStateFeature.h"
 
+void UBaseStateFeature::SetStateCallstack(UStateCallstack* NewCallstack)
+{
+	Callstack = NewCallstack;
+}

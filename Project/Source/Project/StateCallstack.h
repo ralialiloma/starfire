@@ -4,8 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "BaseState.h"
-#include <functional>
-#include "UObject/NoExportTypes.h"
 #include "StateCallstack.generated.h"
 
 UENUM()
@@ -18,7 +16,7 @@ enum ECallInput
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable,ClassGroup=(StateMachine))
 class PROJECT_API UStateCallstack : public UObject
 {
 	GENERATED_BODY()
@@ -29,7 +27,11 @@ private:
 
 public:
 	UFUNCTION(BlueprintCallable)
-	bool TryAddActiveStates(TSubclassOf<UBaseState> BaseStateClass);
+	bool TryAddState(TSubclassOf<UBaseState> BaseStateClass);
+
+	UFUNCTION(BlueprintCallable)
+	bool TryRemoveState(TSubclassOf<UBaseState> BaseStateClass);
+
 	UFUNCTION(BlueprintCallable)
 	void RunCallStack(TSubclassOf<UBaseStateFeature> FeatureClassToRun, ECallInput callInput);
 

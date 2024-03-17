@@ -5,7 +5,7 @@
 
 #include "CharacterStateMachine.h"
 
-bool UStateCallstack::TryAddActiveStates(TSubclassOf<UBaseState> BaseStateClass)
+bool UStateCallstack::TryAddState(TSubclassOf<UBaseState> BaseStateClass)
 {
 	//Check if state already exits
 	for (UBaseState* State: ActiveStatesByPriority)
@@ -16,7 +16,9 @@ bool UStateCallstack::TryAddActiveStates(TSubclassOf<UBaseState> BaseStateClass)
 
 	//Add State
 	TArray<UBaseState*> UnsortedStates = ActiveStatesByPriority;
-	UnsortedStates.Add(NewObject<UBaseState>(this,BaseStateClass));
+	UBaseState* CreatedState = NewObject<UBaseState>(this,BaseStateClass);
+	CreatedState->StateCallstack = this;
+	UnsortedStates.Add(CreatedState);
 	//Sort by priority
 	UnsortedStates.Sort
 	(
@@ -26,6 +28,20 @@ bool UStateCallstack::TryAddActiveStates(TSubclassOf<UBaseState> BaseStateClass)
 		}
 	);
 	return  true;
+}
+
+bool UStateCallstack::TryRemoveState(TSubclassOf<UBaseState> BaseStateClass)
+{
+	for (UBaseState* State: ActiveStatesByPriority)
+	{
+		if (State->IsA(BaseStateClass))
+		{
+			ActiveStatesByPriority.Remove(State);
+			return true;
+		}
+			
+	}
+	return false;
 }
 
 void UStateCallstack::RunCallStack(TSubclassOf<UBaseStateFeature> FeatureClassToRun, ECallInput callInput)

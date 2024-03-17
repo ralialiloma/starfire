@@ -15,19 +15,11 @@ void UCharacterStateMachine::BeginPlay()
 {
 	Super::BeginPlay();
 	StateCallstack = NewObject<UStateCallstack>(this);
-	
-
-
-	/*InterfaceAction JumpAction;
-	JumpAction.BindLambda([](IJumpInterface* Object){Object->JumpAction();});
-	
-	StateCallstack->RunCallStack<IJumpInterface>(JumpAction);*/
 }
 
 
 void UCharacterStateMachine::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	
 }
 
