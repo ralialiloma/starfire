@@ -7,16 +7,24 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4c65b148-647d-4c2c-b3f9-f16089363752" name="Changes" comment="" />
+    <list default="true" id="4c65b148-647d-4c2c-b3f9-f16089363752" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Project.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Project.dir/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/1_PlayerCharacter/3_HSM/BC_CharacterStateMachine.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/1_PlayerCharacter/3_HSM/BC_CharacterStateMachine.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/1_PlayerCharacter/3_HSM/StateDefinitions.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/1_PlayerCharacter/3_HSM/StateDefinitions.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Project/BaseState.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Project/BaseState.h" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "customColor": "",
-  "associatedIndex": 6
-}]]></component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 6
+}</component>
   <component name="ProjectId" id="2dq6wJP1O35sjR8JIGzYSjAjQp9" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -27,6 +35,8 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -114,6 +124,7 @@
       <option name="presentableId" value="Default" />
       <updated>1710723500441</updated>
       <workItem from="1710723502669" duration="808000" />
+      <workItem from="1710767798845" duration="1337000" />
     </task>
     <servers />
   </component>

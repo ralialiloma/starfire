@@ -19,7 +19,7 @@ struct PROJECT_API FStateDefinition: public FTableRowBase
 	GENERATED_BODY()
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TSubclassOf<UBaseState>* State;
+	TSubclassOf<UBaseState> State;
 
 	UPROPERTY(BlueprintReadWrite,EditAnywhere)
 	TArray<TSubclassOf<UBaseStateFeature>> OwnedFeatures;
