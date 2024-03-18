@@ -54,7 +54,7 @@ void UBaseState::CreateFeatures()
 void UBaseState::PostInitProperties()
 {
 	Super::PostInitProperties();
-	CreateFeatures();
+	//CreateFeatures();
 }
 
 TArray<TSubclassOf<UBaseStateFeature>> UBaseState::GetAllOwnedFeatures()

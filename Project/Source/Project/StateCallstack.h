@@ -30,7 +30,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool TryRemoveState(TSubclassOf<UBaseState> BaseStateClass);
-
+	
+	
 	UFUNCTION(BlueprintCallable)
 	void SwitchState(TSubclassOf<UBaseState> StateToAdd, TSubclassOf<UBaseState> StateToRemove,FStateModuleDataStruct Data);
 

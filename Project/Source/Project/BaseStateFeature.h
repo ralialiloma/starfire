@@ -16,8 +16,8 @@ class PROJECT_API UBaseStateFeature : public UObject
 {
 	GENERATED_BODY()
 
-private:
-	UPROPERTY(Blueprintable)
+protected:
+	UPROPERTY(BlueprintReadOnly)
 	UStateCallstack* Callstack;
 	
 public:

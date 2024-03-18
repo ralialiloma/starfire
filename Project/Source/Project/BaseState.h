@@ -12,6 +12,23 @@ class UStateCallstack;
  */
 
 
+//StateData
+USTRUCT(BlueprintType)
+struct PROJECT_API FStateDefinition: public FTableRowBase
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TSubclassOf<UBaseState>* State;
+
+	UPROPERTY(BlueprintReadWrite,EditAnywhere)
+	TArray<TSubclassOf<UBaseStateFeature>> OwnedFeatures;
+
+	UPROPERTY(BlueprintReadWrite,EditAnywhere)
+	int Priority;
+};
+
+
 UCLASS(Blueprintable)
 class PROJECT_API UBaseState : public UObject
 {
@@ -50,6 +67,6 @@ public:
 	
 	bool TryGetFeatureFast(TSubclassOf<UBaseStateFeature> FeatureClass, UBaseStateFeature*& Feature);
 
-private:
 	void CreateFeatures();
+	
 };

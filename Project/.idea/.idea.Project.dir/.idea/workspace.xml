@@ -7,60 +7,26 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b72c364c-f0c4-4971-93ec-402126c79375" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Content/BaseGameMode.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/Project/ECallIInput.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/Project/ECallIInput.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/Project/FStateModuleDataStruct.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/Project/FStateModuleDataStruct.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Project.dir/.idea/indexLayout.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Project.dir/.idea/projectSettingsUpdater.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Project.dir/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Project.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Project.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config/DefaultEngine.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultEngine.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/1_PlayerCharacter/1_Statemachines/LowerBody_old/LowerBodyStateMachine.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/1_PlayerCharacter/1_Statemachines/LowerBody_old/LowerBodyStateMachine.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/1_PlayerCharacter/3_HSM/BC_CharacterStateMachine.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/1_PlayerCharacter/3_HSM/BC_CharacterStateMachine.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/1_PlayerCharacter/3_HSM/IdleState.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/1_PlayerCharacter/3_HSM/IdleState.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/1_PlayerCharacter/3_HSM/SpaceFeature/Children/JumpFeature.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/1_PlayerCharacter/3_HSM/SpaceFeature/Children/JumpFeature.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/1_PlayerCharacter/3_HSM/SpaceFeature/SpaceFeature.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/1_PlayerCharacter/3_HSM/SpaceFeature/SpaceFeature.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/1_PlayerCharacter/MainCharacter.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/1_PlayerCharacter/MainCharacter.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/1_PlayerCharacter/MainPlayerController.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/1_PlayerCharacter/MainPlayerController.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Project/BaseState.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Project/BaseState.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Project/BaseState.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Project/BaseState.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Project/BaseStateFeature.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Project/BaseStateFeature.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Project/BaseStateFeature.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Project/BaseStateFeature.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Project/CharacterStateMachine.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Project/CharacterStateMachine.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Project/StateCallstack.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Project/StateCallstack.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Project/StateCallstack.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Project/StateCallstack.h" afterDir="false" />
-    </list>
+    <list default="true" id="4c65b148-647d-4c2c-b3f9-f16089363752" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
-  </component>
-  <component name="ProjectColorInfo">{
-  &quot;customColor&quot;: &quot;&quot;,
-  &quot;associatedIndex&quot;: 6
-}</component>
-  <component name="ProjectId" id="2dm3tgmdAl7t6pdtcn5ClqkoQKh" />
-  <component name="ProjectLevelVcsManager">
-    <ConfirmationsSetting value="2" id="Add" />
-  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
+  "associatedIndex": 6
+}]]></component>
+  <component name="ProjectId" id="2dq6wJP1O35sjR8JIGzYSjAjQp9" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -142,15 +108,12 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="b72c364c-f0c4-4971-93ec-402126c79375" name="Changes" comment="" />
-      <created>1710599643093</created>
+      <changelist id="4c65b148-647d-4c2c-b3f9-f16089363752" name="Changes" comment="" />
+      <created>1710723500441</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1710599643093</updated>
-      <workItem from="1710599646306" duration="25067000" />
-      <workItem from="1710639584061" duration="364000" />
-      <workItem from="1710640755634" duration="1459000" />
-      <workItem from="1710679779511" duration="14214000" />
+      <updated>1710723500441</updated>
+      <workItem from="1710723502669" duration="808000" />
     </task>
     <servers />
   </component>
@@ -158,7 +121,6 @@
     <option name="version" value="3" />
   </component>
   <component name="VcsManagerConfiguration">
-    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
   </component>
 </project>

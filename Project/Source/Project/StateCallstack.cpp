@@ -24,6 +24,7 @@ bool UStateCallstack::TryAddState(TSubclassOf<UBaseState> BaseStateClass)
 	
 	UBaseState* CreatedState = NewObject<UBaseState>(this,BaseStateClass);
 	CreatedState->StateCallstack = this;
+	CreatedState->CreateFeatures();
 	UnsortedStates.Add(CreatedState);
 	//Sort by priority
 	UnsortedStates.Sort
