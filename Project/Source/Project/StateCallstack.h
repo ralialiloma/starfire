@@ -13,7 +13,7 @@
  * 
  */
 UCLASS(Blueprintable,ClassGroup=(StateMachine))
-class PROJECT_API UStateCallstack : public UObject
+class PROJECT_API UStateCallstack : public UBetterObject
 {
 	GENERATED_BODY()
 
@@ -30,10 +30,10 @@ public:
 	//Manage States
 	
 	UFUNCTION(BlueprintCallable)
-	bool TryAddState(TSubclassOf<UBaseState> BaseStateClass);
+	bool TryAddState(TSubclassOf<UBaseState> BaseStateClass, FStateModuleDataStruct Data);
 
 	UFUNCTION(BlueprintCallable)
-	bool TryRemoveState(TSubclassOf<UBaseState> BaseStateClass);
+	bool TryRemoveState(TSubclassOf<UBaseState> BaseStateClass, FStateModuleDataStruct Data);
 	
 	
 	UFUNCTION(BlueprintCallable)

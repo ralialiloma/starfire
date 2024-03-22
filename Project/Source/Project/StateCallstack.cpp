@@ -4,8 +4,9 @@
 #include "StateCallstack.h"
 
 #include "CharacterStateMachine.h"
+#include "VisualLogger/VisualLoggerTypes.h"
 
-bool UStateCallstack::TryAddState(TSubclassOf<UBaseState> BaseStateClass)
+bool UStateCallstack::TryAddState(TSubclassOf<UBaseState> BaseStateClass, FStateModuleDataStruct Data)
 {
 	//Check if state is valid
 	if (BaseStateClass == nullptr)
@@ -35,11 +36,13 @@ bool UStateCallstack::TryAddState(TSubclassOf<UBaseState> BaseStateClass)
 		}
 	);
 	ActiveStatesByPriority = UnsortedStates;
+	RunActiveStateFeatures(GetStateByClass(BaseStateClass),Enter, Data);
 	return  true;
 }
 
-bool UStateCallstack::TryRemoveState(TSubclassOf<UBaseState> BaseStateClass)
+bool UStateCallstack::TryRemoveState(TSubclassOf<UBaseState> BaseStateClass, FStateModuleDataStruct Data)
 {
+	RunActiveStateFeatures(GetStateByClass(BaseStateClass),Exit, Data);
 	for (UBaseState* State: ActiveStatesByPriority)
 	{
 		if (State->IsA(BaseStateClass))
@@ -47,7 +50,6 @@ bool UStateCallstack::TryRemoveState(TSubclassOf<UBaseState> BaseStateClass)
 			ActiveStatesByPriority.Remove(State);
 			return true;
 		}
-			
 	}
 	return false;
 }
@@ -69,12 +71,11 @@ void UStateCallstack::RunCallStack(TSubclassOf<UBaseStateFeature> FeatureClassTo
 void UStateCallstack::SwitchState(TSubclassOf<UBaseState> StateToAdd, TSubclassOf<UBaseState> StateToRemove, FStateModuleDataStruct Data)
 {
 	//Remove Old State
-	RunActiveStateFeatures(GetStateByClass(StateToRemove),Exit,Data);
-	TryRemoveState(StateToRemove);
+	TryRemoveState(StateToRemove, Data);
 
 	//Add New State
-	TryAddState(StateToAdd);
-	RunActiveStateFeatures(GetStateByClass(StateToAdd),Enter, Data);
+	TryAddState(StateToAdd, Data);
+
 	
 }
 

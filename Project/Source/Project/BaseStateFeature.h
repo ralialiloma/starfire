@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BetterObject.h"
 #include "ECallIInput.h"
 #include "FStateModuleDataStruct.h"
 #include "BaseStateFeature.generated.h"
@@ -12,7 +13,7 @@ class UStateCallstack;
 
 
 UCLASS(Abstract, Blueprintable)
-class PROJECT_API UBaseStateFeature : public UObject
+class PROJECT_API UBaseStateFeature : public UBetterObject
 {
 	GENERATED_BODY()
 

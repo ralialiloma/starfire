@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "BaseStateFeature.h"
+#include "BetterObject.h"
 #include "BaseState.generated.h"
 
 class UStateCallstack;
@@ -30,7 +31,7 @@ struct PROJECT_API FStateDefinition: public FTableRowBase
 
 
 UCLASS(Blueprintable)
-class PROJECT_API UBaseState : public UObject
+class PROJECT_API UBaseState : public UBetterObject
 {
 	GENERATED_BODY()
 
