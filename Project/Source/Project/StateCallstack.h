@@ -22,6 +22,10 @@ private:
 	TArray<UBaseState*> ActiveStatesByPriority;
 
 public:
+	UPROPERTY(BlueprintReadWrite,meta = (ExposeOnSpawn=true))
+	FSoftObjectPath DataTablePath;
+
+public:
 
 	//Manage States
 	
@@ -34,6 +38,9 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void SwitchState(TSubclassOf<UBaseState> StateToAdd, TSubclassOf<UBaseState> StateToRemove,FStateModuleDataStruct Data);
+
+	UFUNCTION(BlueprintCallable)
+	TArray<UBaseState*> GetActiveStates();
 
 
 	//Run Actions

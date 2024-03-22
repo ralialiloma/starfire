@@ -67,6 +67,6 @@ public:
 	
 	bool TryGetFeatureFast(TSubclassOf<UBaseStateFeature> FeatureClass, UBaseStateFeature*& Feature);
 
-	void CreateFeatures();
+	void CreateFeatures(const FSoftObjectPath SoftObjectPath);
 	
 };

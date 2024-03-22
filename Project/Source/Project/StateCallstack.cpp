@@ -24,7 +24,7 @@ bool UStateCallstack::TryAddState(TSubclassOf<UBaseState> BaseStateClass)
 	
 	UBaseState* CreatedState = NewObject<UBaseState>(this,BaseStateClass);
 	CreatedState->StateCallstack = this;
-	CreatedState->CreateFeatures();
+	CreatedState->CreateFeatures(DataTablePath);
 	UnsortedStates.Add(CreatedState);
 	//Sort by priority
 	UnsortedStates.Sort
@@ -78,14 +78,17 @@ void UStateCallstack::SwitchState(TSubclassOf<UBaseState> StateToAdd, TSubclassO
 	
 }
 
+TArray<UBaseState*> UStateCallstack::GetActiveStates()
+{
+	return ActiveStatesByPriority;
+}
+
 UBaseStateFeature* UStateCallstack::GetActiveFeature(TSubclassOf<UBaseStateFeature> FeatureClassToRun)
 {
 	UBaseStateFeature* FoundFeature = nullptr;
 	
 	for (int i = 0; i<ActiveStatesByPriority.Num();i++)
 	{
-
-		
 		if (ActiveStatesByPriority[i]->TryGetFeatureFast(FeatureClassToRun,FoundFeature))
 		{
 			return FoundFeature;

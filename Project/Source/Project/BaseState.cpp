@@ -41,8 +41,31 @@ bool UBaseState::TryGetFeatureFast(TSubclassOf<UBaseStateFeature> FeatureClass,U
 	return false;
 }
 
-void UBaseState::CreateFeatures()
+void UBaseState::CreateFeatures(const FSoftObjectPath SoftObjectPath)
 {
+	//Find Owned Features
+	UDataTable* DataTable = Cast<UDataTable>(SoftObjectPath.ResolveObject());
+	
+	if (!DataTable)
+	{
+		DataTable = Cast<UDataTable>(SoftObjectPath.TryLoad());
+		UE_LOG(LogTemp,Warning,TEXT("Could not find datatable for states"))
+	}
+
+	
+	const TArray<FName> AllRowNames = DataTable->GetRowNames();
+	for (const FName RowName:AllRowNames)
+	{
+		const FStateDefinition* Row = DataTable->FindRow<FStateDefinition>(RowName,"");
+		
+		if (Row->State->IsChildOf(this->GetClass()))
+		{
+			OwnedFeatures = Row->OwnedFeatures;
+		}
+	}
+	
+
+	//Create Features
 	for (TSubclassOf<UBaseStateFeature> FeatureClass:OwnedFeatures)
 	{
 		UBaseStateFeature* ObjectToCreate = NewObject<UBaseStateFeature>(this, FeatureClass);
