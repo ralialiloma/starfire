@@ -19,11 +19,14 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable,BlueprintPure)
 	FVector CalculatePositionDeviation(FVector Position, float Accuracy);
 
-	UFUNCTION(BlueprintCallable)
-	float CalculateDeviationValue(float ValueToDeviateForm, float Accuracy);
+	UFUNCTION(BlueprintCallable,BlueprintPure)
+	FRotator CalucalteRotationDeviation(FRotator Position, float Accuracy);
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	float CalculateDeviationValue(float ValuetoDeviateFrom, float Accuracy);
 
 public:	
 	// Called every frame

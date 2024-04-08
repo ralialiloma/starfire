@@ -20,16 +20,26 @@ void AEnemyAI::BeginPlay()
 
 FVector AEnemyAI::CalculatePositionDeviation(FVector Position, float Accuracy)
 {
-	int X = CalculateDeviationValue(Accuracy, Position.X);
-	int Y = CalculateDeviationValue(Accuracy, Position.X);
-	int Z = CalculateDeviationValue(Accuracy, Position.X);
+	float X = CalculateDeviationValue(Position.X,Accuracy);
+	float Y = CalculateDeviationValue(Position.Y,Accuracy);
+	float Z = CalculateDeviationValue(Position.Z,Accuracy);
 
 	return FVector(X,Y,Z);
 }
 
-float AEnemyAI::CalculateDeviationValue(float ValueToDeviateForm,float Accuracy)
+FRotator AEnemyAI::CalucalteRotationDeviation(FRotator Rotator, float Accuracy)
 {
-	return FMath::RandRange(-1/Accuracy,1/Accuracy);
+	float Pitch = CalculateDeviationValue(Rotator.Pitch, Accuracy);
+	float Yaw = CalculateDeviationValue(Rotator.Yaw,Accuracy);
+	float Roll = CalculateDeviationValue(Rotator.Roll,Accuracy);
+
+	return FRotator(Pitch,Yaw,Roll);
+}
+
+float AEnemyAI::CalculateDeviationValue(float ValueToDeviateFrom,float Accuracy)
+{
+	Accuracy = Accuracy+0.000001f;
+	return ValueToDeviateFrom+FMath::RandRange(-1/Accuracy,1/Accuracy);
 }
 
 // Called every frame
