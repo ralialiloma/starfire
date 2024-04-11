@@ -27,7 +27,7 @@ FVector AEnemyAI::CalculatePositionDeviation(FVector Position, float Accuracy)
 	return FVector(X,Y,Z);
 }
 
-FRotator AEnemyAI::CalucalteRotationDeviation(FRotator Rotator, float Accuracy)
+FRotator AEnemyAI::CalculateRotationDeviation(FRotator Rotator, float Accuracy)
 {
 	float Pitch = CalculateDeviationValue(Rotator.Pitch, Accuracy);
 	float Yaw = CalculateDeviationValue(Rotator.Yaw,Accuracy);

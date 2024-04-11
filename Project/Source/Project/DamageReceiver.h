@@ -6,6 +6,18 @@
 #include "Components/ActorComponent.h"
 #include "DamageReceiver.generated.h"
 
+USTRUCT(BlueprintType)
+struct PROJECT_API FDamageAreaData: public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite)
+	float MaxDistanceToBone;
+
+	UPROPERTY(BlueprintReadWrite)
+	float DamageMultiplier;
+	
+};
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent), Blueprintable)
 class PROJECT_API UDamageReceiver : public UActorComponent
@@ -22,9 +34,12 @@ public:
 	UPROPERTY()
 	float Armor;
 
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
+
+	float CalculateDamageMultiplier(FVector AreaLocation, FVector HitPosition, float DamageMultiplier, float MaxDistanceToBone);
 
 public:	
 	// Called every frame
