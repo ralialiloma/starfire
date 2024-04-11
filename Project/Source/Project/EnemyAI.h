@@ -23,10 +23,11 @@ protected:
 	FVector CalculatePositionDeviation(FVector Position, float Accuracy);
 
 	UFUNCTION(BlueprintCallable,BlueprintPure)
-	FRotator CalucalteRotationDeviation(FRotator Position, float Accuracy);
+	FRotator CalculateRotationDeviation(FRotator Rotation, float Accuracy);
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	float CalculateDeviationValue(float ValuetoDeviateFrom, float Accuracy);
+
 
 public:	
 	// Called every frame

@@ -23,6 +23,18 @@ void UDamageReceiver::BeginPlay()
 	
 }
 
+float UDamageReceiver::CalculateDamageMultiplier(FVector AreaLocation, FVector HitPosition, float DamageMultiplier, float MaxDistanceToBone)
+{
+	float DistanceFromHitLocation = FVector::Distance(HitPosition,AreaLocation);
+
+	if (DistanceFromHitLocation<=MaxDistanceToBone)
+		return DamageMultiplier;
+	else
+		return 1;
+}
+
+
+
 
 // Called every frame
 void UDamageReceiver::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
