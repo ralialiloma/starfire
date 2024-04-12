@@ -72,3 +72,10 @@ Project/Plugins/*/Intermediate/*
 
 # Cache files for the editor to use
 Project/DerivedDataCache/*
+
+#External Actors
+Project/Content/__ExternalActors__
+Project/Content/__ExternalObjects__
+
+#.idea
+Project/.idea/*
