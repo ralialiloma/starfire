@@ -14,8 +14,6 @@ enum EInputSignalType
 {
 	Triggered,
 	Started,
-	Ongoing,
-	Canceled,
 	Completed
 };
 
@@ -24,10 +22,9 @@ class PROJECT_API UFunctionLibrary : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 
-
-	
 	public:
-		UFUNCTION(BlueprintCallable,meta  = (ExpandEnumAsExecs = "SignalType"))
-		static EInputSignalType ConvertToInputSignalType(EInputSignalType SignalType);
+	UFUNCTION(BlueprintCallable,meta  = (ExpandEnumAsExecs = "SignalType"))
+	static EInputSignalType ConvertToInputSignalType(EInputSignalType SignalType);
+
 	
 };
