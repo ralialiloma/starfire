@@ -17,6 +17,13 @@ enum EInputSignalType
 	Completed
 };
 
+UENUM(BlueprintType)
+enum ECoroutineStatus
+{
+	Continue,
+	Finished
+};
+
 UCLASS()
 class PROJECT_API UFunctionLibrary : public UBlueprintFunctionLibrary
 {
@@ -25,6 +32,5 @@ class PROJECT_API UFunctionLibrary : public UBlueprintFunctionLibrary
 	public:
 	UFUNCTION(BlueprintCallable,meta  = (ExpandEnumAsExecs = "SignalType"))
 	static EInputSignalType ConvertToInputSignalType(EInputSignalType SignalType);
-
 	
 };
