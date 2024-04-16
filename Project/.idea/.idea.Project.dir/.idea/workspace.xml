@@ -8,27 +8,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="17271880-aedb-4dfe-bae5-30be964f8142" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Content/1_PlayerCharacter/1_HSM/Features/Melee/Base_Melee.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/1_PlayerCharacter/1_HSM/Features/Melee/Melee_Enabled.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/1_PlayerCharacter/1_HSM/Features/Reload/Base_Reload.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/1_PlayerCharacter/1_HSM/Features/Reload/Reload_Enabled.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/1_PlayerCharacter/2_Input/IA_Melee.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/1_PlayerCharacter/2_Input/IA_Reload.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/1_PlayerCharacter/4_Weapons/BP_Ammo.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/1_PlayerCharacter/4_Weapons/E_FireType.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/3_UserInterface/WeaponStats.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/1_PlayerCharacter/1_HSM/AC_CharacterStateMachine.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/1_PlayerCharacter/1_HSM/AC_CharacterStateMachine.uasset" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Content/1_PlayerCharacter/4_Weapons/BI_FireTransform.uasset" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Content/8_Helpers/BML_ActorComponents.uasset" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Content/__ExternalActors__/5_Level/TestMap/3/EY/957QA9WMQ8O3FF0X5A2AYJ.uasset" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Content/__ExternalActors__/5_Level/TestMap/7/71/LPX4U4XB7NO2NRD7NSLRJM.uasset" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Content/__ExternalActors__/5_Level/TestMap/C/LN/8YWLK7YG6NYCEYH79NQ6N5.uasset" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Content/__ExternalActors__/5_Level/TestMap/E/HR/EV656U19Z7GWO6O0LJ7500.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Project.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Project.dir/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/1_PlayerCharacter/1_HSM/Features/Shoot/Shoot_Enable.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/1_PlayerCharacter/1_HSM/Features/Shoot/Shoot_Enable.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/1_PlayerCharacter/1_HSM/StateDefinitions.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/1_PlayerCharacter/1_HSM/StateDefinitions.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/1_PlayerCharacter/2_Input/IMC_DefaultInGame.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/1_PlayerCharacter/2_Input/IMC_DefaultInGame.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/1_PlayerCharacter/4_Weapons/AC_Equip.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/1_PlayerCharacter/4_Weapons/AC_Equip.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/1_PlayerCharacter/4_Weapons/BP_WeaponBase.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/1_PlayerCharacter/4_Weapons/BP_WeaponBase.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/1_PlayerCharacter/4_Weapons/E_FireBlocks.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/1_PlayerCharacter/4_Weapons/E_FireBlocks.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/1_PlayerCharacter/5_Interact/AC_Interact.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/1_PlayerCharacter/5_Interact/AC_Interact.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/3_UserInterface/Crosshair.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/3_UserInterface/Crosshair.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/5_Level/TestMap/4/NV/CSS80D32PXYNNL35ZXZ20Q.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Project/FunctionLibrary.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Project/FunctionLibrary.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Project/FunctionLibrary.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Project/FunctionLibrary.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/1_PlayerCharacter/BP_MainCharacter.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/1_PlayerCharacter/BP_MainCharacter.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/1_PlayerCharacter/BP_MainPlayerController.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/1_PlayerCharacter/BP_MainPlayerController.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/2_DamageReceiver/BC_DamageReceiver.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/2_DamageReceiver/BC_DamageReceiver.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/5_Level/TestMap/3/K5/1V4FXGYIV7AUDXLVXKBPD8.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/5_Level/TestMap/3/K5/1V4FXGYIV7AUDXLVXKBPD8.uasset" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,26 +40,26 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "WeaponBaseOverhaul",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;rider.external.source.directories&quot;: [
-      &quot;C:\\Users\\toffe\\AppData\\Roaming\\JetBrains\\Rider2023.3\\resharper-host\\DecompilerCache&quot;,
-      &quot;C:\\Users\\toffe\\AppData\\Roaming\\JetBrains\\Rider2023.3\\resharper-host\\SourcesCache&quot;,
-      &quot;C:\\Users\\toffe\\AppData\\Local\\Symbols\\src&quot;
+  "keyToStringList": {
+    "rider.external.source.directories": [
+      "C:\\Users\\toffe\\AppData\\Roaming\\JetBrains\\Rider2023.3\\resharper-host\\DecompilerCache",
+      "C:\\Users\\toffe\\AppData\\Roaming\\JetBrains\\Rider2023.3\\resharper-host\\SourcesCache",
+      "C:\\Users\\toffe\\AppData\\Local\\Symbols\\src"
     ]
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration name="Project" type="Uproject" factoryName="rider.uproject">
       <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Project.uproject" />
@@ -140,7 +133,7 @@
       <updated>1713090821622</updated>
       <workItem from="1713090824626" duration="5737000" />
       <workItem from="1713205948621" duration="2227000" />
-      <workItem from="1713260734910" duration="964000" />
+      <workItem from="1713260734910" duration="2160000" />
     </task>
     <servers />
   </component>
