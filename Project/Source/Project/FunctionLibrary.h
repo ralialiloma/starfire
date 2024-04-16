@@ -6,23 +6,22 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "FunctionLibrary.generated.h"
 
-/**
- * 
- */
-UENUM(BlueprintType)
+#pragma region Enums
+UENUM(BlueprintType, meta=(Bitflags))
 enum EInputSignalType
 {
-	Triggered,
 	Started,
-	Completed
+	Triggered,
+	Completed 
 };
 
 UENUM(BlueprintType)
-enum ECoroutineStatus
+enum ESuccessState
 {
-	Continue,
-	Finished
+	Success,
+	Failed,
 };
+#pragma endregion
 
 UCLASS()
 class PROJECT_API UFunctionLibrary : public UBlueprintFunctionLibrary
@@ -32,5 +31,20 @@ class PROJECT_API UFunctionLibrary : public UBlueprintFunctionLibrary
 	public:
 	UFUNCTION(BlueprintCallable,meta  = (ExpandEnumAsExecs = "SignalType"))
 	static EInputSignalType ConvertToInputSignalType(EInputSignalType SignalType);
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	static  int ConvertEnumToInteger(uint8 Byte);
+	
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Conversion", meta = (DeterminesOutputType = "OutputClass"))
+	static UObject* GetAsType(TSubclassOf<UObject> OutputClass, UObject* ObjectToCovert);
+
+	UFUNCTION(BlueprintCallable, Category = "Conversion", meta = (DeterminesOutputType = "OutputClass", ExpandEnumAsExecs = "Success"))
+	static UObject* Cast(TEnumAsByte<ESuccessState>& Success, TSubclassOf<UObject> OutputClass, UObject* ObjectToCovert);
+	
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Conversion", meta = (DeterminesOutputType = "OutputClass"))
+	static TSubclassOf<UObject> MakeClass(TSubclassOf<UObject> OutputClass)
+	{
+		return OutputClass;
+	}
 	
 };
