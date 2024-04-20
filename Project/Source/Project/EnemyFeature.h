@@ -19,5 +19,14 @@ protected:
 
 public:
 	void Initialize(AEnemyAI* Holder);
+
+	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "AIDeviations")
+	FVector CalculatePositionDeviation(FVector Position, float Accuracy);
+
+	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "AIDeviations")
+	FRotator CalculateRotationDeviation(FRotator Rotation, float Accuracy);
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "AIDeviations")
+	float CalculateDeviationValue(float ValuetoDeviateFrom, float Accuracy);
 	
 };
