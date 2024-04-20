@@ -11,6 +11,35 @@ AEnemyAI::AEnemyAI()
 
 }
 
+UEnemyFeature* AEnemyAI::GetFeatureByClass( const TSoftClassPtr<UEnemyFeature> T)
+{
+	for (auto Element : Features)
+	{
+		if (Element->GetClass() == T)
+		{
+			return Element;
+		}
+	}
+
+	return nullptr;
+}
+
+bool AEnemyAI::TryAddFeature(UEnemyFeature* Feature)
+{
+	for (auto Element : Features)
+	{
+		if (Element->GetClass() == Feature->GetClass())
+		{
+			return false;
+		}
+	}
+
+	Features.Add(Feature);
+	Feature->Initialize(this);
+	
+	return true;
+}
+
 // Called when the game starts or when spawned
 void AEnemyAI::BeginPlay()
 {
