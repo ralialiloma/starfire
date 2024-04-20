@@ -4,6 +4,7 @@
 *.uproject filter=lfs diff=lfs merge=lfs -text
 
 *.uasset binary
+*.umap binary
 
 # 3D Models
 *.fbx filter=lfs diff=lfs merge=lfs -text
