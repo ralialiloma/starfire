@@ -11,11 +11,11 @@ AEnemyAI::AEnemyAI()
 
 }
 
-UEnemyFeature* AEnemyAI::GetFeatureByClass( const TSoftClassPtr<UEnemyFeature> T)
+UEnemyFeature* AEnemyAI::GetFeatureByClass(TSubclassOf<UEnemyFeature> Class)
 {
 	for (auto Element : Features)
 	{
-		if (Element->GetClass() == T)
+		if (Element->GetClass() == Class)
 		{
 			return Element;
 		}

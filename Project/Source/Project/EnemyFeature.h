@@ -13,13 +13,21 @@ class PROJECT_API UEnemyFeature : public UBetterObject
 {
 	GENERATED_BODY()
 
+public:
+	UPROPERTY(Blueprintable, BlueprintReadWrite)
+	bool RunInTick = false;
+
+	UPROPERTY(Blueprintable, BlueprintReadWrite)
+	float UpdateRateInSeconds = 1;
+
 protected:
 	UPROPERTY(Blueprintable, BlueprintReadWrite)
 	AEnemyAI* OwningAIHolder = nullptr;
 
+
 public:
 	void Initialize(AEnemyAI* Holder);
-
+	
 	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "AIDeviations")
 	FVector CalculatePositionDeviation(FVector Position, float Accuracy);
 
