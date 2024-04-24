@@ -20,10 +20,10 @@ public:
 	// Sets default values for this character's properties
 	AEnemyAI();
 
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "EnemyFeatures", meta = (DeterminesOutputType = "T"))
-	UEnemyFeature* GetFeatureByClass(TSoftClassPtr<UEnemyFeature> T);
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "EnemyFeatures", meta = (DeterminesOutputType = "Class"))
+	UEnemyFeature* GetFeatureByClass(TSubclassOf<UEnemyFeature> Class);
 
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "EnemyFeatures")
+	UFUNCTION(BlueprintCallable, Category = "EnemyFeatures")
 	bool TryAddFeature(UEnemyFeature* Feature);
 
 protected:
