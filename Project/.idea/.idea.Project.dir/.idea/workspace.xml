@@ -7,13 +7,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="32fdd277-fa3a-45d2-baeb-ffa96feb4d28" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Project.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Project.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/4_Enemies/BP_PlayerFOV.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/4_Enemies/BP_PlayerFOV.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/4_Enemies/BehaviourTree/DefaultEnemyBehaviour.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/4_Enemies/BehaviourTree/DefaultEnemyBehaviour.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/4_Enemies/BehaviourTree/Tasks/Fire/BTTask_Fire.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/4_Enemies/BehaviourTree/Tasks/Fire/BTTask_Fire.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/4_Enemies/Features/EF_Fire.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/4_Enemies/Features/EF_Fire.uasset" afterDir="false" />
-    </list>
+    <list default="true" id="32fdd277-fa3a-45d2-baeb-ffa96feb4d28" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
