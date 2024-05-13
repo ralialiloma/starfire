@@ -1,4 +1,4 @@
-# Mac .DS_Store
+ # Mac .DS_Store
 .DS_Store
 
 # Visual Studio 2015 user specific files
@@ -10,14 +10,17 @@
 *.o
 *.obj
 
-# Precompiled Headers
-*.gch
-*.pch
-
 # Compiled Dynamic libraries
 *.so
 *.dylib
 *.dll
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Don't ignore .lib folder
+!/Project/Plugins/DLSS/Source/ThirdParty/NGX/Lib/x64
 
 # Fortran module files
 *.mod
@@ -75,3 +78,21 @@ Project/Plugins/*/Intermediate/*
 
 # Cache files for the editor to use
 Project/DerivedDataCache/*
+
+# Default ignored files
+/shelf/
+/workspace.xml
+
+# Rider ignored files
+/modules.xml
+/contentModel.xml
+/.idea.Project.iml
+/projectSettingsUpdater.xml
+
+# Editor-based HTTP Client requests
+/httpRequests/
+
+# Datasource local storage ignored files
+/dataSources/
+/dataSources.local.xml
+**/.idea
