@@ -46,6 +46,13 @@ for /d %%d IN ("%targetDirectory%\.idea") do (
     )
 )
 
+for %%f IN ("%targetDirectory%\.vsconfig") do (
+    if exist "%%f" (
+        echo Deleting file: %%f
+        del /f /q "%%f"
+    )
+)
+
 for %%f IN ("%targetDirectory%\Project.sln") do (
     if exist "%%f" (
         echo Deleting file: %%f
@@ -53,14 +60,15 @@ for %%f IN ("%targetDirectory%\Project.sln") do (
     )
 )
 
+
 echo Done.
 
-::set /p "recompileChoice=Would you like to recompile the Unreal project? (Y/N): "
-::if /i "%recompileChoice%"=="Y" (
-::    echo Recompiling the project...
-::    REM Add your recompilation command here
-::) else (
-::    echo Project not recompiled.
-::)
+ set /p "recompileChoice=Would you like to open the Unreal project? (Y/N): "
+ if /i "%recompileChoice%"=="Y" (
+     echo Opening the project...
+     start Project/Project.uproject
+ ) else (
+     echo Project not opened.
+ )
 
-pause
+exit
