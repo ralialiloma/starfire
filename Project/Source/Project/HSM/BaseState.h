@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "BaseStateFeature.h"
-#include "BetterObject.h"
 #include "BaseState.generated.h"
 
 class UStateCallstack;

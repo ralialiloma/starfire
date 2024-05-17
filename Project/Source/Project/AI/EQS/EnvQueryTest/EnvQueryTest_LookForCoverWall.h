@@ -1,23 +1,22 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "EnvironmentQuery/EnvQueryTest.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "LookForCoverWall.generated.h"
+#include "EnvQueryTest_LookForCoverWall.generated.h"
 
-/**
- * 
- */
+
+
+
 UCLASS()
-class PROJECT_API ULookForCoverWall : public UEnvQueryTest
+class PROJECT_API UEnvQueryTest_LookForCoverWall : public UEnvQueryTest
 {
 	GENERATED_UCLASS_BODY()
 	
 
 public:
-	ULookForCoverWall();
+	UEnvQueryTest_LookForCoverWall();
 	virtual  void RunTest(FEnvQueryInstance& QueryInstance) const override;
 	virtual FText GetDescriptionTitle() const override;
 	virtual FText GetDescriptionDetails() const override;

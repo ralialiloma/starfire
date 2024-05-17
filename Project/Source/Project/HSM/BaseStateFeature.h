@@ -3,9 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BetterObject.h"
-#include "ECallIInput.h"
+#include  "ECallIInput.h"
 #include "FStateModuleDataStruct.h"
+#include "Project/Utility/BetterObject.h"
 #include "BaseStateFeature.generated.h"
 
 class UBaseState;

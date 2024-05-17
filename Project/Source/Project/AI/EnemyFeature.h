@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BetterObject.h"
+#include "Project/Utility/BetterObject.h"
 #include "EnemyFeature.generated.h"
 
 class AEnemyAI;

@@ -4,12 +4,9 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "EnvironmentQuery/EnvQueryTest.h"
-#include "Kismet/KismetSystemLibrary.h"
-#include "UEnvQueryTest__ReservedCoverLocs.generated.h"
+#include "EnvQueryTest_ReservedCoverLocs.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class PROJECT_API UEnvQueryTest__ReservedCoverLocs : public UEnvQueryTest
 {

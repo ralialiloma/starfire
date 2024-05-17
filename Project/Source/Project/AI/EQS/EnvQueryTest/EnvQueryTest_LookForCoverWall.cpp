@@ -1,12 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "LookForCoverWall.h"
+#include "EnvQueryTest_LookForCoverWall.h"
 #include "EnvironmentQuery/Contexts/EnvQueryContext_Querier.h"
 #include "EnvironmentQuery/Items/EnvQueryItemType_VectorBase.h"
 #include "Kismet/KismetSystemLibrary.h"
 
-ULookForCoverWall::ULookForCoverWall(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+UEnvQueryTest_LookForCoverWall::UEnvQueryTest_LookForCoverWall(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	HideFrom = UEnvQueryContext_Querier::StaticClass();
 	Cost = EEnvTestCost::Low;
@@ -14,7 +14,7 @@ ULookForCoverWall::ULookForCoverWall(const FObjectInitializer& ObjectInitializer
 	ScoringEquation = EEnvTestScoreEquation::Constant;
 }
 
-void ULookForCoverWall::RunTest(FEnvQueryInstance& QueryInstance) const
+void UEnvQueryTest_LookForCoverWall::RunTest(FEnvQueryInstance& QueryInstance) const
 {
 	UObject* QueryOwner = QueryInstance.Owner.Get();
 	FloatValueMin.BindData(QueryOwner, QueryInstance.QueryID);
@@ -64,12 +64,12 @@ void ULookForCoverWall::RunTest(FEnvQueryInstance& QueryInstance) const
 	
 }
 
-FText ULookForCoverWall::GetDescriptionTitle() const
+FText UEnvQueryTest_LookForCoverWall::GetDescriptionTitle() const
 {
 	return FText::FromString("Close To Cover Wall");
 }
 
-FText ULookForCoverWall::GetDescriptionDetails() const
+FText UEnvQueryTest_LookForCoverWall::GetDescriptionDetails() const
 {
 	return DescribeFloatTestParams();
 }

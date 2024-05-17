@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "BaseState.h"
 #include "ECallIInput.h"
+#include "Project/Utility/BetterObject.h"
 #include "StateCallstack.generated.h"
 
 
