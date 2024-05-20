@@ -6,7 +6,7 @@
 #include "CharacterStateMachine.h"
 #include "VisualLogger/VisualLoggerTypes.h"
 
-bool UStateCallstack::TryAddState(TSubclassOf<UBaseState> BaseStateClass, FStateModuleDataStruct Data)
+bool UStateCallstack::TryAddState(TSubclassOf<UBaseState> BaseStateClass, const FStateModuleDataStruct& Data)
 {
 	//Check if state is valid
 	if (BaseStateClass == nullptr)
@@ -30,9 +30,9 @@ bool UStateCallstack::TryAddState(TSubclassOf<UBaseState> BaseStateClass, FState
 	//Sort by priority
 	UnsortedStates.Sort
 	(
-		[](UBaseState& StateA, UBaseState& StateB)
+		[](const UBaseState& StateA, const UBaseState& StateB)
 		{
-			return StateA.GetPriority()<StateB.GetPriority();
+			return StateA.GetPriority() > StateB.GetPriority();
 		}
 	);
 	ActiveStatesByPriority = UnsortedStates;
@@ -40,7 +40,7 @@ bool UStateCallstack::TryAddState(TSubclassOf<UBaseState> BaseStateClass, FState
 	return  true;
 }
 
-bool UStateCallstack::TryRemoveState(TSubclassOf<UBaseState> BaseStateClass, FStateModuleDataStruct Data)
+bool UStateCallstack::TryRemoveState(TSubclassOf<UBaseState> BaseStateClass, const FStateModuleDataStruct& Data)
 {
 	RunActiveStateFeatures(GetStateByClass(BaseStateClass),Exit, Data);
 	for (UBaseState* State: ActiveStatesByPriority)
@@ -55,16 +55,12 @@ bool UStateCallstack::TryRemoveState(TSubclassOf<UBaseState> BaseStateClass, FSt
 }
 
 
-void UStateCallstack::RunCallStack(TSubclassOf<UBaseStateFeature> FeatureClassToRun, ECallInput CallInput,FStateModuleDataStruct Data)
+void UStateCallstack::RunCallStack(TSubclassOf<UBaseStateFeature> FeatureClassToRun, ECallInput CallInput, FStateModuleDataStruct Data)
 {
-	UBaseStateFeature* FoundFeature = GetActiveFeature(FeatureClassToRun);
-	
-	
-	if (FoundFeature)
+	if (UBaseStateFeature* FoundFeature = GetActiveFeature(FeatureClassToRun))
 	{
 		FoundFeature->RunAction(CallInput, Data);
 	}
-	
 }
 
 
@@ -99,7 +95,7 @@ UBaseStateFeature* UStateCallstack::GetActiveFeature(TSubclassOf<UBaseStateFeatu
 }
 
 
-void UStateCallstack::RunActiveStateFeatures(UBaseState* StateToRunOn,ECallInput CallInput, FStateModuleDataStruct Data)
+void UStateCallstack::RunActiveStateFeatures(UBaseState* StateToRunOn,ECallInput CallInput, const FStateModuleDataStruct& Data)
 {
 	TArray<TSubclassOf<UBaseStateFeature>> OwnedFeatures = StateToRunOn->GetAllOwnedFeatures();
 	

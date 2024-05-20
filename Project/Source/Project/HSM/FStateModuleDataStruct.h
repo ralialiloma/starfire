@@ -8,9 +8,29 @@ USTRUCT(BlueprintType)
 struct PROJECT_API FStateModuleDataStruct: public FTableRowBase
 {
 	GENERATED_BODY()
-	
+
+	FStateModuleDataStruct():
+	Character(nullptr),
+	ActionValue_1(false),
+	ActionValue_2(0),
+	ElapsedSeconds(0),
+	TriggeredSeconds(0),
+	InputSignal()
+	{
+	}
+
+	FStateModuleDataStruct(ACharacter* InCharacter):
+	Character(InCharacter),
+	ActionValue_1(false),
+	ActionValue_2(0),
+	ElapsedSeconds(0),
+	TriggeredSeconds(0),
+	InputSignal()
+	{
+	}
+
 	UPROPERTY(BlueprintReadWrite)
-	ACharacter* CharacterController;
+	ACharacter* Character;
 	
 	UPROPERTY(BlueprintReadWrite)
 	bool ActionValue_1;

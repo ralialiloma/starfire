@@ -31,10 +31,10 @@ public:
 	//Manage States
 	
 	UFUNCTION(BlueprintCallable)
-	bool TryAddState(TSubclassOf<UBaseState> BaseStateClass, FStateModuleDataStruct Data);
+	bool TryAddState(TSubclassOf<UBaseState> BaseStateClass, const FStateModuleDataStruct& Data);
 
 	UFUNCTION(BlueprintCallable)
-	bool TryRemoveState(TSubclassOf<UBaseState> BaseStateClass, FStateModuleDataStruct Data);
+	bool TryRemoveState(TSubclassOf<UBaseState> BaseStateClass, const FStateModuleDataStruct& Data);
 	
 	
 	UFUNCTION(BlueprintCallable)
@@ -54,7 +54,7 @@ public:
 	
 	UBaseStateFeature* GetActiveFeature(TSubclassOf<UBaseStateFeature> FeatureClassToRun);
 
-	void RunActiveStateFeatures(UBaseState* StateToRunOn,ECallInput CallInput,FStateModuleDataStruct Data);
+	void RunActiveStateFeatures(UBaseState* StateToRunOn,ECallInput CallInput, const FStateModuleDataStruct& Data);
 
 	UBaseState* GetStateByClass(TSubclassOf<UBaseState> ClassToSearchFor);
 

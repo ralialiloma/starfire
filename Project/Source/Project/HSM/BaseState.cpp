@@ -61,6 +61,7 @@ void UBaseState::CreateFeatures(const FSoftObjectPath SoftObjectPath)
 		if (Row->State->IsChildOf(this->GetClass()))
 		{
 			OwnedFeatures = Row->OwnedFeatures;
+			Priority = Row->Priority;
 		}
 	}
 	
@@ -82,7 +83,7 @@ void UBaseState::PostInitProperties()
 
 TArray<TSubclassOf<UBaseStateFeature>> UBaseState::GetAllOwnedFeatures()
 {
-	return  OwnedFeatures;
+	return OwnedFeatures;
 }
 
 bool UBaseState::ContainsThisFeature(UBaseStateFeature* Feature)

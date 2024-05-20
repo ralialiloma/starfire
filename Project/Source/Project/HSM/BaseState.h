@@ -29,7 +29,7 @@ struct PROJECT_API FStateDefinition: public FTableRowBase
 };
 
 
-UCLASS(Blueprintable)
+UCLASS(Blueprintable, Abstract)
 class PROJECT_API UBaseState : public UBetterObject
 {
 	GENERATED_BODY()

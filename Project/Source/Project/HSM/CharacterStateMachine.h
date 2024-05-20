@@ -21,6 +21,12 @@ public:
 	// Sets default values for this component's properties
 	UCharacterStateMachine();
 
+	UFUNCTION(BlueprintCallable)
+	bool TryAddState(TSubclassOf<UBaseState> BaseStateClass);
+	
+	UFUNCTION(BlueprintCallable)
+	bool TryRemoveState(TSubclassOf<UBaseState> BaseStateClass);
+	
 protected:
 	
 	// Called when the game starts

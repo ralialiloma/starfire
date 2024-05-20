@@ -24,15 +24,15 @@ protected:
 public:
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void EnterState();
+	void EnterState(ACharacter* Character);
 	
 	UFUNCTION(BlueprintImplementableEvent)
 	void RunFeature(FStateModuleDataStruct Data);
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void ExitState();
+	void ExitState(ACharacter* Character);
 
-	void RunAction(ECallInput CallInput,FStateModuleDataStruct Data);
+	void RunAction(ECallInput CallInput, const FStateModuleDataStruct& Data);
 
 	void Initialize(UStateCallstack* NewCallstack);
 	

@@ -2,12 +2,23 @@
 
 
 #include "CharacterStateMachine.h"
+#include "GameFramework/Character.h"
 
 
 // Sets default values for this component's properties
 UCharacterStateMachine::UCharacterStateMachine()
 {
 	PrimaryComponentTick.bCanEverTick = false;
+}
+
+bool UCharacterStateMachine::TryAddState(TSubclassOf<UBaseState> BaseStateClass)
+{
+	return StateCallstack->TryAddState(BaseStateClass, FStateModuleDataStruct(Cast<ACharacter>(GetOwner())));
+}
+
+bool UCharacterStateMachine::TryRemoveState(TSubclassOf<UBaseState> BaseStateClass)
+{
+	return StateCallstack->TryRemoveState(BaseStateClass, FStateModuleDataStruct(Cast<ACharacter>(GetOwner())));
 }
 
 
