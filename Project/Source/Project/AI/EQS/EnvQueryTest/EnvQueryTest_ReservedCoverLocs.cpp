@@ -48,18 +48,8 @@ bool UEnvQueryTest_ReservedCoverLocs::InReservedCover(const FVector CoverLocatio
 
 	if (CoverGen==nullptr)
 		return true;
-	
-	auto ReservedCovers = CoverGen->GetAllReservedCovers();
-	
-	for (auto ReservedCover: ReservedCovers)
-	{
-		const float Distance = FVector::Distance(CoverLocation, ReservedCover);
-		if (Distance<=RadiusToCheck)
-		{
-			return false;
-		}
-	}
-	return true;
+
+	return  CoverGen->LocationInReservedCover(CoverLocation,RadiusToCheck);
 }
 
 

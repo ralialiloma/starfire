@@ -22,6 +22,9 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	TArray<FVector> GetAllReservedCovers();
 
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	bool LocationInReservedCover(FVector Location, float RadiusToCheck) const;
+
 	UFUNCTION(BlueprintCallable)
 	void RegisterReservedCover(FVector CoverLocation);
 
