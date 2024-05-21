@@ -12,6 +12,7 @@ void UDebugSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	const UDebugSettings* Settings = GetDefault<UDebugSettings>();
 
 	AllowDebug = Settings->AllowDebug;
+	AllowSound = Settings->AllowSound;
 	AIDebug = Settings->AIDebug;
 	WeaponDebug = Settings->WeaponDebug;
 	HSMDebug = Settings->HSMDebug;
@@ -33,6 +34,13 @@ bool UDebugSubsystem::GetAllowDebug(const UObject* WorldContext)
 {
 	if (UDebugSubsystem* Subsystem = GetDebugSubsystem(WorldContext))
 		return Subsystem->AllowDebug;
+	return true;
+}
+
+bool UDebugSubsystem::GetAllowSound(const UObject* WorldContext)
+{
+	if (UDebugSubsystem* Subsystem = GetDebugSubsystem(WorldContext))
+		return Subsystem->AllowSound;
 	return true;
 }
 

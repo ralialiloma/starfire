@@ -11,7 +11,8 @@ enum EDebugType
 {
 	Print,
 	Log,
-	Visual
+	Visual,
+	Sound
 };
 
 USTRUCT(BlueprintType)
@@ -31,6 +32,9 @@ struct FDebugSettingData
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
 	bool bVisual = true;
 
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	bool bSound = true;
+
 	bool GetDebugType(TEnumAsByte<EDebugType> DebugType) const
 	{
 		switch (DebugType)
@@ -41,6 +45,8 @@ struct FDebugSettingData
 			return bLog && bAllow;
 		case Visual:
 			return bVisual && bAllow;
+		case Sound:
+			return bSound && bAllow;
 		default: ;
 		}
 
@@ -56,6 +62,9 @@ class PROJECT_API UDebugSettings : public UDeveloperSettings
 public:
 	UPROPERTY(Config, EditAnywhere, Meta = (BlueprintBaseOnly), BlueprintReadOnly, Category= "Debug Settings")
 	bool AllowDebug = false;
+
+	UPROPERTY(Config, EditAnywhere, Meta = (BlueprintBaseOnly), BlueprintReadOnly, Category= "Debug Settings")
+	bool AllowSound = false;
 
 	UPROPERTY(Config, EditAnywhere, Meta = (BlueprintBaseOnly), BlueprintReadOnly, Category= "Debug Settings")
 	FDebugSettingData AIDebug;

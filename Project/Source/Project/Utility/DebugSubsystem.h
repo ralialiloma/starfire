@@ -22,6 +22,11 @@ public:
 	bool AllowDebug = false;
 	UFUNCTION(BlueprintCallable, BlueprintPure,	meta = (WorldContext = "WorldContext"))
 	static bool GetAllowDebug(const UObject* WorldContext);
+	
+	UPROPERTY(BlueprintReadOnly)
+	bool AllowSound = false;
+	UFUNCTION(BlueprintCallable, BlueprintPure,	meta = (WorldContext = "WorldContext"))
+	static bool GetAllowSound(const UObject* WorldContext);
 
 	UPROPERTY(BlueprintReadOnly)
 	FDebugSettingData AIDebug;
