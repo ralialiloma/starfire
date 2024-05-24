@@ -8,39 +8,42 @@
 #include "DebugSubsystem.generated.h"
 
 UCLASS()
-class PROJECT_API UDebugSubsystem : public UGameInstanceSubsystem
+class PROJECT_API UDebugSubsystem : public UEngineSubsystem
 {
 	GENERATED_BODY()
 
 public:
 	
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+	virtual void Deinitialize() override;
+
+	UDebugSubsystem* Refresh();
 	
-	static UDebugSubsystem* GetDebugSubsystem(const UObject* WorldContext);
+	static UDebugSubsystem* GetDebugSubsystem();
 	
 	UPROPERTY(BlueprintReadOnly)
 	bool AllowDebug = false;
 	UFUNCTION(BlueprintCallable, BlueprintPure,	meta = (WorldContext = "WorldContext"))
-	static bool GetAllowDebug(const UObject* WorldContext);
+	static bool GetAllowDebug();
 	
 	UPROPERTY(BlueprintReadOnly)
 	bool AllowSound = false;
 	UFUNCTION(BlueprintCallable, BlueprintPure,	meta = (WorldContext = "WorldContext"))
-	static bool GetAllowSound(const UObject* WorldContext);
+	static bool GetAllowSound();
 
 	UPROPERTY(BlueprintReadOnly)
 	FDebugSettingData AIDebug;
 	UFUNCTION(BlueprintCallable, BlueprintPure, meta = (WorldContext = "WorldContext"))
-	static bool GetAIDebug(const UObject* WorldContext, TEnumAsByte<EDebugType> DebugType);
+	static bool GetAIDebug(TEnumAsByte<EDebugType> DebugType);
 
 	UPROPERTY(BlueprintReadOnly)
 	FDebugSettingData WeaponDebug;
 	UFUNCTION(BlueprintCallable, BlueprintPure, meta = (WorldContext = "WorldContext"))
-	static bool GetWeaponDebug(const UObject* WorldContext, TEnumAsByte<EDebugType> DebugType);
+	static bool GetWeaponDebug(TEnumAsByte<EDebugType> DebugType);
 
 	UPROPERTY(BlueprintReadOnly)
 	FDebugSettingData HSMDebug;
 	UFUNCTION(BlueprintCallable, BlueprintPure, meta = (WorldContext = "WorldContext"))
-	static bool GetHSMDebug(const UObject* WorldContext, TEnumAsByte<EDebugType> DebugType);
+	static bool GetHSMDebug(TEnumAsByte<EDebugType> DebugType);
 	
 };

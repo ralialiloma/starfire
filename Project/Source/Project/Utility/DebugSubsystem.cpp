@@ -9,6 +9,18 @@ void UDebugSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 
+	UE_LOG(LogTemp, Warning, TEXT("DEBUGSUBSYSTEM --- INIT"));
+}
+
+void UDebugSubsystem::Deinitialize()
+{
+	UE_LOG(LogTemp, Warning, TEXT("DEBUGSUBSYSTEM --- DESTROY"));
+	
+	Super::Deinitialize();
+}
+
+UDebugSubsystem* UDebugSubsystem::Refresh()
+{
 	const UDebugSettings* Settings = GetDefault<UDebugSettings>();
 
 	AllowDebug = Settings->AllowDebug;
@@ -16,51 +28,46 @@ void UDebugSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	AIDebug = Settings->AIDebug;
 	WeaponDebug = Settings->WeaponDebug;
 	HSMDebug = Settings->HSMDebug;
+
+	return this;
 }
 
-UDebugSubsystem* UDebugSubsystem::GetDebugSubsystem(const UObject* WorldContext)
+UDebugSubsystem* UDebugSubsystem::GetDebugSubsystem()
 {
-	if (auto World = WorldContext->GetWorld())
-	{
-		if (auto GameInstance = World->GetGameInstance())
-		{
-			return GameInstance->GetSubsystem<UDebugSubsystem>();
-		}
-	}
-	return nullptr;
+	return GEngine->GetEngineSubsystem<UDebugSubsystem>()->Refresh();
 }
 
-bool UDebugSubsystem::GetAllowDebug(const UObject* WorldContext)
+bool UDebugSubsystem::GetAllowDebug()
 {
-	if (UDebugSubsystem* Subsystem = GetDebugSubsystem(WorldContext))
+	if (UDebugSubsystem* Subsystem = GetDebugSubsystem())
 		return Subsystem->AllowDebug;
 	return true;
 }
 
-bool UDebugSubsystem::GetAllowSound(const UObject* WorldContext)
+bool UDebugSubsystem::GetAllowSound()
 {
-	if (UDebugSubsystem* Subsystem = GetDebugSubsystem(WorldContext))
+	if (UDebugSubsystem* Subsystem = GetDebugSubsystem())
 		return Subsystem->AllowSound;
 	return true;
 }
 
-bool UDebugSubsystem::GetAIDebug(const UObject* WorldContext, TEnumAsByte<EDebugType> DebugType)
+bool UDebugSubsystem::GetAIDebug(TEnumAsByte<EDebugType> DebugType)
 {
-	if (UDebugSubsystem* Subsystem = GetDebugSubsystem(WorldContext))
+	if (UDebugSubsystem* Subsystem = GetDebugSubsystem())
 		return Subsystem->AIDebug.GetDebugType(DebugType) && Subsystem->AllowDebug;
 	return true;
 }
 
-bool UDebugSubsystem::GetWeaponDebug(const UObject* WorldContext, TEnumAsByte<EDebugType> DebugType)
+bool UDebugSubsystem::GetWeaponDebug(TEnumAsByte<EDebugType> DebugType)
 {
-	if (UDebugSubsystem* Subsystem = GetDebugSubsystem(WorldContext))
+	if (UDebugSubsystem* Subsystem = GetDebugSubsystem())
 		return Subsystem->WeaponDebug.GetDebugType(DebugType) && Subsystem->AllowDebug;
 	return true;
 }
 
-bool UDebugSubsystem::GetHSMDebug(const UObject* WorldContext, TEnumAsByte<EDebugType> DebugType)
+bool UDebugSubsystem::GetHSMDebug(TEnumAsByte<EDebugType> DebugType)
 {
-	if (UDebugSubsystem* Subsystem = GetDebugSubsystem(WorldContext))
+	if (UDebugSubsystem* Subsystem = GetDebugSubsystem())
 		return Subsystem->HSMDebug.GetDebugType(DebugType) && Subsystem->AllowDebug;
 	return true;
 }
