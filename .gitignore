@@ -54,6 +54,7 @@ SourceArt/**/*.tga
 # Binary Files
 Project/Binaries/*
 Project/Plugins/*/Binaries/*
+*.obsidian
 
 # Builds
 Build/*
