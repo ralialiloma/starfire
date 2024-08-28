@@ -20,7 +20,7 @@
 
 [[Artstyle.canvas|Artstyle]]
 [[Color Palette]]
-[[Character Art]]
+[[Player Concept Art.canvas|Player Concept Art]]
 [[L.O.D.]]
 [[Atmosphere and Environment]]
 [[Texture & Surface]]
