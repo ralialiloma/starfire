@@ -1,4 +1,4 @@
-#🖼️2DArt #🧱3DArt 
+#2DArt🖼️ #3DArt🧱 
 
 ### Reference for Game:
 
@@ -18,11 +18,11 @@
 
 ### **Stucture:**
 
-[[Artstyle.canvas|Artstyle]]
+[[Overview.canvas|Artstyle]]
 [[Color Palette]]
 [[Player Concept Art.canvas|Player Concept Art]]
 [[L.O.D.]]
-[[Atmosphere and Environment]]
+[[Atmosphere]]
 [[Texture & Surface]]
-[[User Interface]]
+[[References]]
 [[Camera]]

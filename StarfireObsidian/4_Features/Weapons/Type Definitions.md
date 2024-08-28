@@ -1,0 +1,18 @@
+#GameDesign🎮
+- **Rifle**
+    - Accuracy with aim
+    - Each hit builds momentum (1 per hit)
+    - Rate of fire: 0.1s per shot
+- **Shotgun**
+    - Shoots 10 projectiles
+    - Right click shoots projectile that pulls enemies close on impact
+    - Rate of fire: 1 shot per click
+- **Death Laser / Railgun**
+    - Reduced camera sensitivity when firing
+    - Exposions on impact
+        - Explosions Damage and knock back enemies
+    - Rate of fire: continuous shot while hold
+- **Bombardier**
+    - Exploding projectiles
+    - Rate of fire: 0.2s per shot
+    - Aim to lock on

@@ -1,4 +1,4 @@
-#🖼️2DArt #👾Tech 
+#🖼️2DArt  #👾Tech  
 
 ![[Pasted image 20240828134219.png]]
 

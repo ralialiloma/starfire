@@ -1,0 +1,8 @@
+{
+	"nodes":[
+		{"id":"fa97b849557f24f6","type":"file","file":"4_Features/Artstyle/Shape Language.md","x":-296,"y":-126,"width":400,"height":400},
+		{"id":"0d3afc605f768c13","type":"file","file":"4_Features/Design Pillars.md","x":260,"y":-126,"width":400,"height":400},
+		{"id":"7641e5108f9d5483","type":"text","text":"#2DArt🖼️ #3DArt🧱 ","x":-296,"y":-280,"width":256,"height":60}
+	],
+	"edges":[]
+}
