@@ -35,3 +35,5 @@ Commit your work regularly, especially after making significant progress or at t
 ## 1.3 Git as Primary File Storage
 
 Git will serve as your primary file storage system. You are expected to include all your work-in-progress files, such as .psd or. blend files, in the repository. This practice ensures a seamless transition for team members who may need to continue your work and allows everyone to access essential assets at any time.
+
+Inline:: Hello
