@@ -18,11 +18,11 @@
 
 ### **Stucture:**
 
-[[Artstyle]]
+[[Artstyle.canvas|Artstyle]]
 [[Color Palette]]
 [[Character Art]]
 [[L.O.D.]]
-Athmosphere/ Enviroment
-Texture & Surface
+[[Atmosphere and Environment]]
+[[Texture & Surface]]
 [[User Interface]]
 [[Camera]]
