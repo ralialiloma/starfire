@@ -80,5 +80,5 @@
 34. PlayerCharacter/Weapon/Pickup
 35. PlayerCharacter/Weapon/Drop
 36. PlayerCharacter/Lean
-37. GameLoop/Dialogue/HudTranscript
+37. GameLoop/Dialogue/HudTranscripts
 
