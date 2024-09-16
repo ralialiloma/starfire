@@ -4,6 +4,7 @@
 #include "StateCallstack.h"
 
 #include "CharacterStateMachine.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "VisualLogger/VisualLoggerTypes.h"
 
 bool UStateCallstack::TryAddState(TSubclassOf<UBaseState> BaseStateClass, const FStateModuleDataStruct& Data)
@@ -54,6 +55,7 @@ bool UStateCallstack::TryRemoveState(TSubclassOf<UBaseState> BaseStateClass, con
 	return false;
 }
 
+ACharacter
 
 void UStateCallstack::RunCallStack(TSubclassOf<UBaseStateFeature> FeatureClassToRun, ECallInput CallInput, FStateModuleDataStruct Data)
 {
