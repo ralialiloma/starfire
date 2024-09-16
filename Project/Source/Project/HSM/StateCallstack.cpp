@@ -7,7 +7,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "VisualLogger/VisualLoggerTypes.h"
 
-bool UStateCallstack::TryAddState(TSubclassOf<UBaseState> BaseStateClass, const FStateModuleDataStruct& Data)
+bool UStateCallstack::TryAddState(TSubclassOf<UBaseState> BaseStateClass)
 {
 	//Check if state is valid
 	if (BaseStateClass == nullptr)
@@ -23,7 +23,6 @@ bool UStateCallstack::TryAddState(TSubclassOf<UBaseState> BaseStateClass, const 
 	//Add State
 	TArray<UBaseState*> UnsortedStates = ActiveStatesByPriority;
 	
-	
 	UBaseState* CreatedState = NewObject<UBaseState>(this,BaseStateClass);
 	CreatedState->StateCallstack = this;
 	CreatedState->CreateFeatures(DataTablePath);
@@ -37,12 +36,14 @@ bool UStateCallstack::TryAddState(TSubclassOf<UBaseState> BaseStateClass, const 
 		}
 	);
 	ActiveStatesByPriority = UnsortedStates;
+	FStateModuleDataStruct Data = FStateModuleDataStruct();
 	RunActiveStateFeatures(GetStateByClass(BaseStateClass),Enter, Data);
 	return  true;
 }
 
-bool UStateCallstack::TryRemoveState(TSubclassOf<UBaseState> BaseStateClass, const FStateModuleDataStruct& Data)
+bool UStateCallstack::TryRemoveState(TSubclassOf<UBaseState> BaseStateClass)
 {
+	const FStateModuleDataStruct& Data = FStateModuleDataStruct();
 	RunActiveStateFeatures(GetStateByClass(BaseStateClass),Exit, Data);
 	for (UBaseState* State: ActiveStatesByPriority)
 	{
@@ -55,7 +56,6 @@ bool UStateCallstack::TryRemoveState(TSubclassOf<UBaseState> BaseStateClass, con
 	return false;
 }
 
-ACharacter
 
 void UStateCallstack::RunCallStack(TSubclassOf<UBaseStateFeature> FeatureClassToRun, ECallInput CallInput, FStateModuleDataStruct Data)
 {
@@ -66,15 +66,13 @@ void UStateCallstack::RunCallStack(TSubclassOf<UBaseStateFeature> FeatureClassTo
 }
 
 
-void UStateCallstack::SwitchState(TSubclassOf<UBaseState> StateToAdd, TSubclassOf<UBaseState> StateToRemove, FStateModuleDataStruct Data)
+void UStateCallstack::SwitchState(TSubclassOf<UBaseState> StateToAdd, TSubclassOf<UBaseState> StateToRemove)
 {
 	//Remove Old State
-	TryRemoveState(StateToRemove, Data);
+	TryRemoveState(StateToRemove);
 
 	//Add New State
-	TryAddState(StateToAdd, Data);
-
-	
+	TryAddState(StateToAdd);
 }
 
 TArray<UBaseState*> UStateCallstack::GetActiveStates()
@@ -108,7 +106,7 @@ void UStateCallstack::RunActiveStateFeatures(UBaseState* StateToRunOn,ECallInput
 		ActiveFeature = GetActiveFeature(OwnedFeature);
 		if (StateToRunOn->ContainsThisFeature(ActiveFeature))
 		{
-			ActiveFeature->RunAction(CallInput,Data);
+			ActiveFeature->RunAction(CallInput, Data);
 		}
 	}
 	

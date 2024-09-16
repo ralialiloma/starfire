@@ -15,13 +15,13 @@ void UBaseStateFeature::RunAction(ECallInput CallInput, const FStateModuleDataSt
 	switch (CallInput)
 	{
 		case Enter:
-			EnterState(Data.Character);
+			EnterState();
 			break;
 		case Run:
 			RunFeature(Data);
 			break;
 		case Exit:
-			ExitState(Data.Character);
+			ExitState();
 			break;
 	}
 }

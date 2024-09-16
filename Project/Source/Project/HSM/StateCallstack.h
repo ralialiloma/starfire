@@ -26,17 +26,20 @@ public:
 	UPROPERTY(BlueprintReadWrite,meta = (ExposeOnSpawn=true))
 	FSoftObjectPath DataTablePath;
 
+	UPROPERTY(BlueprintReadWrite,meta = (ExposeOnSpawn=true))
+	ACharacter* Character;
+
 public:
 
 	//Manage States
 	UFUNCTION(BlueprintCallable)
-	bool TryAddState(TSubclassOf<UBaseState> BaseStateClass, const FStateModuleDataStruct& Data);
+	bool TryAddState(TSubclassOf<UBaseState> BaseStateClass);
 
 	UFUNCTION(BlueprintCallable)
-	bool TryRemoveState(TSubclassOf<UBaseState> BaseStateClass, const FStateModuleDataStruct& Data);
+	bool TryRemoveState(TSubclassOf<UBaseState> BaseStateClass);
 	
 	UFUNCTION(BlueprintCallable)
-	void SwitchState(TSubclassOf<UBaseState> StateToAdd, TSubclassOf<UBaseState> StateToRemove,FStateModuleDataStruct Data);
+	void SwitchState(TSubclassOf<UBaseState> StateToAdd, TSubclassOf<UBaseState> StateToRemove);
 
 	UFUNCTION(BlueprintCallable)
 	TArray<UBaseState*> GetActiveStates();
