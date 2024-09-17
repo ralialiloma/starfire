@@ -10,7 +10,6 @@ struct PROJECT_API FStateModuleDataStruct: public FTableRowBase
 	GENERATED_BODY()
 
 	FStateModuleDataStruct():
-	Character(nullptr),
 	ActionValue_1(false),
 	ActionValue_2(0),
 	ElapsedSeconds(0),
@@ -20,7 +19,6 @@ struct PROJECT_API FStateModuleDataStruct: public FTableRowBase
 	}
 
 	FStateModuleDataStruct(ACharacter* InCharacter):
-	Character(InCharacter),
 	ActionValue_1(false),
 	ActionValue_2(0),
 	ElapsedSeconds(0),
@@ -28,9 +26,6 @@ struct PROJECT_API FStateModuleDataStruct: public FTableRowBase
 	InputSignal()
 	{
 	}
-
-	UPROPERTY(BlueprintReadWrite)
-	ACharacter* Character;
 	
 	UPROPERTY(BlueprintReadWrite)
 	bool ActionValue_1;

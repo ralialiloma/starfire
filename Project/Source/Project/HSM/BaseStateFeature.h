@@ -24,13 +24,13 @@ protected:
 public:
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void EnterState(ACharacter* Character);
+	void EnterState();
 	
 	UFUNCTION(BlueprintImplementableEvent)
 	void RunFeature(FStateModuleDataStruct Data);
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void ExitState(ACharacter* Character);
+	void ExitState();
 
 	void RunAction(ECallInput CallInput, const FStateModuleDataStruct& Data);
 
