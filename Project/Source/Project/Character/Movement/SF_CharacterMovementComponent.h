@@ -39,7 +39,7 @@ class PROJECT_API USF_CharacterMovementComponent : public UCharacterMovementComp
 
 		FSavedMove_Sf();
 
-		virtual bool CanCombineWith(const FSavedMovePtr& NEwMove, ACharacter* InCharacter, float MaxDelta) const override;
+		virtual bool CanCombineWith(const FSavedMovePtr& NewMove, ACharacter* InCharacter, float MaxDelta) const override;
 		virtual void Clear() override;
 		virtual uint8 GetCompressedFlags() const override;
 		virtual void SetMoveFor(ACharacter* C, float InDeltaTime, FVector const& NewAccel, FNetworkPredictionData_Client_Character& ClientData) override;

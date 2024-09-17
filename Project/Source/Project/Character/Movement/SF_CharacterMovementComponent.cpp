@@ -6,14 +6,14 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/Character.h"
 
-bool USF_CharacterMovementComponent::FSavedMove_Sf::CanCombineWith(const FSavedMovePtr& NEwMove, ACharacter* InCharacter, float MaxDelta) const
+bool USF_CharacterMovementComponent::FSavedMove_Sf::CanCombineWith(const FSavedMovePtr& NewMove, ACharacter* InCharacter, float MaxDelta) const
 {
-	const FSavedMove_Sf* NewSfMove = static_cast<FSavedMove_Sf*>(NEwMove.Get());
+	const FSavedMove_Sf* NewSfMove = static_cast<FSavedMove_Sf*>(NewMove.Get());
 
 	if (Saved_bWallRunIsRight != NewSfMove->Saved_bWallRunIsRight)
 		return false;
 
-	return FSavedMove_Character::CanCombineWith(NEwMove, InCharacter, MaxDelta);
+	return FSavedMove_Character::CanCombineWith(NewMove, InCharacter, MaxDelta);
 }
 
 void USF_CharacterMovementComponent::FSavedMove_Sf::Clear()
@@ -41,7 +41,6 @@ void USF_CharacterMovementComponent::FSavedMove_Sf::PrepMoveFor(ACharacter* C)
 {
 	FSavedMove_Character::PrepMoveFor(C);
 	USF_CharacterMovementComponent* CharacterMovementComponent = Cast<USF_CharacterMovementComponent>(C->GetCharacterMovement());
-
 	CharacterMovementComponent->Safe_bWallRunIsRight = Saved_bWallRunIsRight;
 }
 
@@ -53,23 +52,30 @@ bool USF_CharacterMovementComponent::CanAttemptJump() const
 
 bool USF_CharacterMovementComponent::DoJump(bool bReplayingMoves)
 {
-	bool bWasWallRunning = IsWallRunning();
-	if (Super::DoJump(bReplayingMoves))
-	{
-		if (bWasWallRunning)
-		{
-			FVector Start = UpdatedComponent->GetComponentLocation();
-			FVector CastDelta = UpdatedComponent->GetRightVector()* CapRadius()*2;
-			FVector End = Safe_bWallRunIsRight?Start+CastDelta:Start-CastDelta;
-			FCollisionQueryParams Params = SfCharacterOwner->GetIgnoreCharacterParams();
-			FHitResult Wallhit;
-			Safe_bWallRunIsRight  = GetWorld()->LineTraceSingleByProfile(Wallhit,Start,End,"BlockAll",Params);
-		}
 
+	if (!CharacterOwner || !CharacterOwner->CanJump())
+		return false;
+
+	bool bWasWallRunning = IsWallRunning();
+	
+	if (!bWasWallRunning)
+	{
+		Super::DoJump(bReplayingMoves);
 		return true;
 	}
+	
+	FVector Start = UpdatedComponent->GetComponentLocation();
+	FVector CastDelta = UpdatedComponent->GetRightVector()* CapRadius()*2;
+	FVector End = Safe_bWallRunIsRight?Start+CastDelta:Start-CastDelta;
+	FCollisionQueryParams Params = SfCharacterOwner->GetIgnoreCharacterParams();
+	FHitResult WallHit;
+	Safe_bWallRunIsRight  = GetWorld()->LineTraceSingleByProfile(WallHit,Start,End,"BlockAll",Params);
+	Super::DoJump(bReplayingMoves);
+	Velocity += WallHit.Normal * WallJumpOffForce;
 
+	
 	return false;
+	
 }
 
 float USF_CharacterMovementComponent::GetMaxSpeed() const
@@ -192,7 +198,6 @@ bool USF_CharacterMovementComponent::TryWallRun()
 	Velocity = ProjectedVelocity;
 	Velocity.Z = FMath::Clamp(Velocity.Z,0,MaxWallRunSpeed);
 	SetMovementMode(MOVE_Custom,CMOVE_WallRun);
-	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, "Starting Wall Run");
 	return true;
 }
 
