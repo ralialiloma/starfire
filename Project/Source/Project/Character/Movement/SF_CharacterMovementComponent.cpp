@@ -52,27 +52,26 @@ bool USF_CharacterMovementComponent::CanAttemptJump() const
 
 bool USF_CharacterMovementComponent::DoJump(bool bReplayingMoves)
 {
+	bool bWasWallRunning = IsWallRunning();
 
 	if (!CharacterOwner || !CharacterOwner->CanJump())
 		return false;
-
-	bool bWasWallRunning = IsWallRunning();
 	
-	if (!bWasWallRunning)
+	if (Super::DoJump(bReplayingMoves))
 	{
-		Super::DoJump(bReplayingMoves);
+		if (bWasWallRunning)
+		{
+			FVector Start = UpdatedComponent->GetComponentLocation();
+			FVector CastDelta = UpdatedComponent->GetRightVector()* CapRadius()*2;
+			FVector End = Safe_bWallRunIsRight?Start+CastDelta:Start-CastDelta;
+			FCollisionQueryParams Params = SfCharacterOwner->GetIgnoreCharacterParams();
+			FHitResult WallHit;
+			Safe_bWallRunIsRight  = GetWorld()->LineTraceSingleByProfile(WallHit,Start,End,"BlockAll",Params);
+			Velocity += WallHit.Normal * WallJumpOffForce;
+		}
+		
 		return true;
 	}
-	
-	FVector Start = UpdatedComponent->GetComponentLocation();
-	FVector CastDelta = UpdatedComponent->GetRightVector()* CapRadius()*2;
-	FVector End = Safe_bWallRunIsRight?Start+CastDelta:Start-CastDelta;
-	FCollisionQueryParams Params = SfCharacterOwner->GetIgnoreCharacterParams();
-	FHitResult WallHit;
-	Safe_bWallRunIsRight  = GetWorld()->LineTraceSingleByProfile(WallHit,Start,End,"BlockAll",Params);
-	Super::DoJump(bReplayingMoves);
-	Velocity += WallHit.Normal * WallJumpOffForce;
-
 	
 	return false;
 	

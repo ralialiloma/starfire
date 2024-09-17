@@ -10,7 +10,7 @@
 UENUM(BlueprintType)
 enum ECustomMovementMode
 {
-	CMOVE_None UMETA(Hidden),
+	CMOVE_None  UMETA(Hidden),
 	CMOVE_WallRun UMETA(DisplayName = "Wall Run"),
 };
 

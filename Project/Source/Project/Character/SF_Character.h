@@ -16,9 +16,14 @@ protected:
 	class USF_CharacterMovementComponent* SFCharacterMovementComponent;
 
 public:
-	explicit ASf_Character(const FObjectInitializer& ObjectInitializer);
+	ASf_Character(const FObjectInitializer& ObjectInitializer);
+
+	virtual void PostInitializeComponents() override;
 	
 	FCollisionQueryParams GetIgnoreCharacterParams();
+
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE USF_CharacterMovementComponent* GetSfCharacterMovementComponent() const{return SFCharacterMovementComponent;};
 
 protected:
 	virtual void BeginPlay() override;

@@ -8,9 +8,15 @@
 
 ASf_Character::ASf_Character(const FObjectInitializer& ObjectInitializer)
 	: Super(
-		ObjectInitializer.SetDefaultSubobjectClass<USF_CharacterMovementComponent>(
-			ACharacter::CharacterMovementComponentName))
+		  ObjectInitializer.SetDefaultSubobjectClass<USF_CharacterMovementComponent>(
+			  ACharacter::CharacterMovementComponentName))
 {
+	SFCharacterMovementComponent  = Cast<USF_CharacterMovementComponent>(GetCharacterMovement());;
+}
+
+void ASf_Character::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
 	SFCharacterMovementComponent = Cast<USF_CharacterMovementComponent>(GetCharacterMovement());
 }
 
