@@ -18,17 +18,19 @@ class PROJECT_API ASF_PlayerCameraManager : public APlayerCameraManager
 
 //Wall Run Cam
 public:
-	UPROPERTY(EditDefaultsOnly) float WallRunBlendDuration = 2.f;
-	UPROPERTY(EditDefaultsOnly) float WallRunCameraRollAngle = 11.25f;
+	UPROPERTY(EditDefaultsOnly) float WallRunBlendDuration = .2f;
+	UPROPERTY(EditDefaultsOnly) float WallRunCameraRollAngle = 11.5f;
 private:
 	float WallRunBlendTime = 0.f;
+	float WallRunBlendSmoothing = 10.f;
+	float SmoothedTargetRoll = 0.f;
 	
 public:
 	virtual void UpdateViewTarget(FTViewTarget& OutVT, float DeltaTime) override;
 	virtual void ProcessViewRotation(float DeltaTime, FRotator& OutViewRotation, FRotator& OutDeltaRot) override;
 
 private:
-	float ProcessWallRunRollOffset(USF_CharacterMovementComponent* SfCharacterMovementComponent,
+	float ProcessWallRunRollOverwrite(USF_CharacterMovementComponent* SfCharacterMovementComponent,
 	                               ASf_Character* SfCharacter, float DeltaTime);
 
 };

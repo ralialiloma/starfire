@@ -16,8 +16,8 @@ void ASF_PlayerCameraManager::UpdateViewTarget(FTViewTarget& OutVT, float DeltaT
 		
 		if (SfCharacterMovementComponent!=nullptr)
 		{
-			float RollOffset =ProcessWallRunRollOffset(SfCharacterMovementComponent,SfCharacter,DeltaTime);
-			ViewTarget.POV.Rotation = FRotator(ViewTarget.POV.Rotation.Pitch,ViewTarget.POV.Rotation.Yaw,RollOffset);
+			float RollOverwrite =ProcessWallRunRollOverwrite(SfCharacterMovementComponent,SfCharacter,DeltaTime);
+			ViewTarget.POV.Rotation = FRotator(ViewTarget.POV.Rotation.Pitch,ViewTarget.POV.Rotation.Yaw,RollOverwrite);
 		}
 			
 	}
@@ -28,26 +28,30 @@ void ASF_PlayerCameraManager::ProcessViewRotation(float DeltaTime, FRotator& Out
 	Super::ProcessViewRotation(DeltaTime, OutViewRotation, OutDeltaRot);
 }
 
-float ASF_PlayerCameraManager::ProcessWallRunRollOffset(USF_CharacterMovementComponent* SfCharacterMovementComponent,
+float ASF_PlayerCameraManager::ProcessWallRunRollOverwrite(USF_CharacterMovementComponent* SfCharacterMovementComponent,
                                                         ASf_Character* SfCharacter, float DeltaTime)
 {
-	float RollOffset = 0;
 	const bool bIsWallRunning = SfCharacterMovementComponent->IsWallRunning();
 	
+	//Find TargetOffset
+	float TargetRoll = 0;
 	if (bIsWallRunning)
 	{
 		const bool bWallRunningR =  SfCharacterMovementComponent->WallRunningIsRight();
-		RollOffset = WallRunCameraRollAngle* (bWallRunningR?-1:1);
+		TargetRoll = WallRunCameraRollAngle* (bWallRunningR?-1:1);
 	}
-	
-	const float TargetRoll = RollOffset;
-	const float BlendAlpha = FMath::Clamp(WallRunBlendTime/WallRunBlendDuration,0.f,1.f);
-	float RotationOffset = FMath::Lerp(0,TargetRoll,BlendAlpha);
-		
+
+	//Update WallRunBlendTime
 	if (bIsWallRunning)
 		WallRunBlendTime = FMath::Clamp(WallRunBlendTime+DeltaTime,0.f,WallRunBlendDuration);
 	else
 		WallRunBlendTime = FMath::Clamp(WallRunBlendTime-DeltaTime,0.f,WallRunBlendDuration);
 
-	return  RotationOffset;
+	const float BlendAlpha = FMath::Clamp(WallRunBlendTime/WallRunBlendDuration,0.f,1.f);
+
+	float CurrentRoll = ViewTarget.POV.Rotation.Roll;
+	SmoothedTargetRoll = FMath::FInterpTo(SmoothedTargetRoll, TargetRoll, DeltaTime, WallRunBlendSmoothing);
+	float RollOverwrite = FMath::Lerp (CurrentRoll, SmoothedTargetRoll, BlendAlpha);
+
+	return  RollOverwrite;
 }
