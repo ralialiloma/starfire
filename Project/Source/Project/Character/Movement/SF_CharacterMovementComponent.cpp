@@ -6,11 +6,18 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/Character.h"
 
+USF_CharacterMovementComponent::FSavedMove_Sf::FSavedMove_Sf(): Saved_bWantsToSprint(0), Saved_bWallRunIsRight(0)
+{
+}
+
 bool USF_CharacterMovementComponent::FSavedMove_Sf::CanCombineWith(const FSavedMovePtr& NewMove, ACharacter* InCharacter, float MaxDelta) const
 {
 	const FSavedMove_Sf* NewSfMove = static_cast<FSavedMove_Sf*>(NewMove.Get());
 
 	if (Saved_bWallRunIsRight != NewSfMove->Saved_bWallRunIsRight)
+		return false;
+
+	if (Saved_bWantsToSprint!= NewSfMove->Saved_bWantsToSprint)
 		return false;
 
 	return FSavedMove_Character::CanCombineWith(NewMove, InCharacter, MaxDelta);
@@ -21,27 +28,46 @@ void USF_CharacterMovementComponent::FSavedMove_Sf::Clear()
 	FSavedMove_Character::Clear();
 
 	Saved_bWallRunIsRight = 0;
+	Saved_bWantsToSprint = 0;
 }
 
 uint8 USF_CharacterMovementComponent::FSavedMove_Sf::GetCompressedFlags() const
 {
-	const uint8 Result = FSavedMove_Character::GetCompressedFlags();
+	uint8 Result = FSavedMove_Character::GetCompressedFlags();
+	
+	if (Saved_bWantsToSprint) Result = Flag_Sprint;
+	
 	return Result;
 }
 
 void USF_CharacterMovementComponent::FSavedMove_Sf::SetMoveFor(ACharacter* C, float InDeltaTime, FVector const& NewAccel, FNetworkPredictionData_Client_Character& ClientData)
 {
 	FSavedMove_Character::SetMoveFor(C, InDeltaTime, NewAccel, ClientData);
-	const USF_CharacterMovementComponent* CharacterMovementComponent = Cast<USF_CharacterMovementComponent>(C->GetCharacterMovement());
+	const USF_CharacterMovementComponent* CharacterMovementComponent =
+		Cast<USF_CharacterMovementComponent>(C->GetCharacterMovement());
 
 	Saved_bWallRunIsRight = CharacterMovementComponent->Safe_bWallRunIsRight;
+	Saved_bWantsToSprint = CharacterMovementComponent->Safe_bWantsToSprint;
 }
 
 void USF_CharacterMovementComponent::FSavedMove_Sf::PrepMoveFor(ACharacter* C)
 {
 	FSavedMove_Character::PrepMoveFor(C);
-	USF_CharacterMovementComponent* CharacterMovementComponent = Cast<USF_CharacterMovementComponent>(C->GetCharacterMovement());
+	USF_CharacterMovementComponent* CharacterMovementComponent =
+		Cast<USF_CharacterMovementComponent>(C->GetCharacterMovement());
+
 	CharacterMovementComponent->Safe_bWallRunIsRight = Saved_bWallRunIsRight;
+	CharacterMovementComponent->Safe_bWantsToSprint =  Saved_bWantsToSprint;
+}
+
+USF_CharacterMovementComponent::FNetworkPredictionData_Client_Sf::FNetworkPredictionData_Client_Sf(
+	const UCharacterMovementComponent& ClientMovement): Super(ClientMovement)
+{
+}
+
+FSavedMovePtr USF_CharacterMovementComponent::FNetworkPredictionData_Client_Sf::AllocateNewMove()
+{
+	return MakeShared<FSavedMove_Sf>();
 }
 
 
@@ -114,6 +140,23 @@ void USF_CharacterMovementComponent::UpdateCharacterStateBeforeMovement(float De
 	Super::UpdateCharacterStateBeforeMovement(DeltaSeconds);
 }
 
+void USF_CharacterMovementComponent::OnMovementUpdated(float DeltaSeconds, const FVector& OldLocation,const FVector& OldVelocity)
+{
+	Super::OnMovementUpdated(DeltaSeconds, OldLocation, OldVelocity);
+
+	if (MovementMode == MOVE_Walking)
+	{
+		if (Safe_bWantsToSprint)
+		{
+			MaxWalkSpeed = Sprint_MaxWalkspeed;
+		}
+		else
+		{
+			MaxWalkSpeed = Walk_MaxWalkSpeed;
+		}
+	}
+}
+
 void USF_CharacterMovementComponent::PhysCustom(const float DeltaTime, const int32 Iterations)
 {
 	Super::PhysCustom(DeltaTime, Iterations);
@@ -142,6 +185,38 @@ void USF_CharacterMovementComponent::InitializeComponent()
 {
 	Super::InitializeComponent();
 	SfCharacterOwner = Cast<ASf_Character>(CharacterOwner);
+}
+
+FNetworkPredictionData_Client* USF_CharacterMovementComponent::GetPredictionData_Client() const
+{
+	check (PawnOwner!=nullptr)
+
+	if (ClientPredictionData == nullptr)
+	{
+		USF_CharacterMovementComponent* MutableThis = const_cast<USF_CharacterMovementComponent*>(this);
+
+		MutableThis->ClientPredictionData = new FNetworkPredictionData_Client_Sf(*this);
+		MutableThis->ClientPredictionData->MaxSmoothNetUpdateDist = 92.f;
+		MutableThis->ClientPredictionData->NoSmoothNetUpdateDist = 140.f;
+	}
+	
+	return ClientPredictionData;
+}
+
+void USF_CharacterMovementComponent::UpdateFromCompressedFlags(uint8 Flags)
+{
+	Safe_bWantsToSprint = (Flags & FSavedMove_Sf::Flag_Sprint)!=0;
+	Super::UpdateFromCompressedFlags(Flags);
+}
+
+void USF_CharacterMovementComponent::SprintPressed()
+{
+	Safe_bWantsToSprint = true;
+}
+
+void USF_CharacterMovementComponent::SprintReleased()
+{
+	Safe_bWantsToSprint = false;
 }
 
 float USF_CharacterMovementComponent::CapRadius() const

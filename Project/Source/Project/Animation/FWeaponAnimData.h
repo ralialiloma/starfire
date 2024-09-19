@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "WeaponAnimationAssetType.h"
 #include "WeaponAnimationMontageType.h"
+#include "WeaponBlendSpaceType.h"
+#include "Project/Utility/FunctionLibrary.h"
 #include "FWeaponAnimData.generated.h"
 
 USTRUCT(Blueprintable)
@@ -12,11 +14,59 @@ struct PROJECT_API FWeaponAnimData:public FTableRowBase
 
 	void UpdateEntries();
 
-	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ReadOnlyKeys))
+	template<typename EnumType, typename AssetType>
+	void UpdateEntry(TMap<TEnumAsByte<EnumType>, AssetType>& AssetMap);
+
+	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ReadOnlyKeys,ForceInlineRow))
 	TMap<TEnumAsByte<EWeaponAnimationAssetType> ,UAnimSequenceBase*> AnimationAssets;
 
-	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ReadOnlyKeys))
+	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ReadOnlyKeys,ForceInlineRow))
 	TMap<TEnumAsByte<EWeaponAnimationMontageType>,UAnimMontage*> AnimationMontages;
+
+	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ReadOnlyKeys,ForceInlineRow))
+	TMap<TEnumAsByte<EWeaponBlendSpaceType>,UBlendSpace*> Blendspaces;
+};
+
+template <typename EnumType, typename AssetType>
+void FWeaponAnimData::UpdateEntry(TMap<TEnumAsByte<EnumType>, AssetType>& AssetMap)
+{
+	static_assert(TIsEnum<EnumType>::Value, "UpdateEntry can only be used with enum types!");
+
+	TArray<EnumType> AssetTypes =
+		UFunctionLibrary::GetAllEnumValues<EnumType>(true);
+
+	//Import New Enums
+	for (EnumType Type: AssetTypes)
+	{
+		if (!AssetMap.Contains(Type))
+			AssetMap.Add(Type,nullptr);
+	}
+
+	//Remove Empty Enum Entries (None)
+	AssetMap.Remove(TEnumAsByte<EnumType> (0));
+
+	//Clear Invalid Enums
+	const UEnum* EnumInfo = StaticEnum<EnumType>();
+	for (auto Kvp: AssetMap)
+	{
+		if (!EnumInfo->IsValidEnumValue(Kvp.Key))
+			AssetMap.Remove(Kvp.Key);
+	}
+}
+
+UCLASS(Blueprintable)
+class PROJECT_API UWeaponAnimationAsset:public UDataAsset
+{
+	GENERATED_BODY()
+
+public:
+	UWeaponAnimationAsset();
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FWeaponAnimData WeaponAnimData;
+
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+	
 };
 
 UCLASS()
@@ -24,10 +74,13 @@ class PROJECT_API UWeaponAnimDataFunctions : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 
-	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "WeaponAnimation")
+	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "WeaponAnimation",meta = (BlueprintThreadSafe))
 	static UAnimSequenceBase* GetAnimationAsset(FWeaponAnimData AnimData,EWeaponAnimationAssetType AssetType);
 
-	UFUNCTION(BlueprintCallable,BlueprintPure,Category = "WeaponAnimation")
+	UFUNCTION(BlueprintCallable,BlueprintPure,Category = "WeaponAnimation",meta = (BlueprintThreadSafe))
 	static UAnimMontage* GetAnimationMontage(FWeaponAnimData AnimData, EWeaponAnimationMontageType AssetType);
+
+	UFUNCTION(BlueprintCallable,BlueprintPure,Category = "WeaponAnimation", meta = (BlueprintThreadSafe))
+	static UBlendSpace* GetBlendspace(FWeaponAnimData AnimData, EWeaponBlendSpaceType AssetType);
 };
 
