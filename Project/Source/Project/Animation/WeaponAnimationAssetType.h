@@ -9,5 +9,6 @@ enum EWeaponAnimationAssetType: uint8
 	AnimationAsset_JumpStart= 3 ,
 	AnimationAsset_JumpEnd= 4,
 	AnimationAsset_JumpLoop= 5,
+	AnimationAsset_Walk = 6,
 };
 

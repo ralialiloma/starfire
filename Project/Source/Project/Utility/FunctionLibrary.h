@@ -34,7 +34,7 @@ class PROJECT_API UFunctionLibrary : public UBlueprintFunctionLibrary
 	static EInputSignalType ConvertToInputSignalType(EInputSignalType SignalType);
 
 	template<typename EnumType>
-	static TArray<EnumType> GetAllEnumValues();
+	static TArray<EnumType> GetAllEnumValues(bool ExcludeZero = false);
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	static  int ConvertEnumToInteger(uint8 Byte);
@@ -61,7 +61,7 @@ class PROJECT_API UFunctionLibrary : public UBlueprintFunctionLibrary
 };
 
 template <typename EnumType>
-TArray<EnumType> UFunctionLibrary::GetAllEnumValues()
+TArray<EnumType> UFunctionLibrary::GetAllEnumValues(bool ExcludeZero)
 {
 	static_assert(TIsEnum<EnumType>::Value, "GetAllEnumValues can only be used with enum types!");
 	
@@ -79,6 +79,9 @@ TArray<EnumType> UFunctionLibrary::GetAllEnumValues()
 	
 	for (int32 i = 0; i < MaxEnumValue; i++)
 	{
+		if (i==0 && ExcludeZero)
+			continue;
+
 		EnumValues.Add(static_cast<EnumType>(i));
 	}
 
