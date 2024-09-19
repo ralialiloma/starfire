@@ -33,6 +33,9 @@ class PROJECT_API UFunctionLibrary : public UBlueprintFunctionLibrary
 	UFUNCTION(BlueprintCallable,meta  = (ExpandEnumAsExecs = "SignalType"))
 	static EInputSignalType ConvertToInputSignalType(EInputSignalType SignalType);
 
+	template<typename EnumType>
+	static TArray<EnumType> GetAllEnumValues(bool ExcludeZero = false);
+
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	static  int ConvertEnumToInteger(uint8 Byte);
 	
@@ -56,3 +59,31 @@ class PROJECT_API UFunctionLibrary : public UBlueprintFunctionLibrary
 	static bool BetterBoxOverlapComponents(const UObject* WorldContextObject, const FVector BoxPos, const FRotator BoxRot, FVector Extent, const TArray<TEnumAsByte<EObjectTypeQuery> > & ObjectTypes, UClass* ComponentClassFilter, const TArray<AActor*>& ActorsToIgnore, TArray<class UPrimitiveComponent*>& OutComponents);
 
 };
+
+template <typename EnumType>
+TArray<EnumType> UFunctionLibrary::GetAllEnumValues(bool ExcludeZero)
+{
+	static_assert(TIsEnum<EnumType>::Value, "GetAllEnumValues can only be used with enum types!");
+	
+	const UEnum* EnumInfo = StaticEnum<EnumType>();
+	if (!EnumInfo)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Invalid enum type!"));
+		return {};
+	}
+	
+	int32 MaxEnumValue = EnumInfo->GetMaxEnumValue();
+	
+	TArray<EnumType> EnumValues;
+	EnumValues.Reserve(MaxEnumValue);
+	
+	for (int32 i = 0; i < MaxEnumValue; i++)
+	{
+		if (i==0 && ExcludeZero)
+			continue;
+
+		EnumValues.Add(static_cast<EnumType>(i));
+	}
+
+	return EnumValues;
+}

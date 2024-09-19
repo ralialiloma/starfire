@@ -13,12 +13,12 @@ UCharacterStateMachine::UCharacterStateMachine()
 
 bool UCharacterStateMachine::TryAddState(TSubclassOf<UBaseState> BaseStateClass)
 {
-	return StateCallstack->TryAddState(BaseStateClass, FStateModuleDataStruct(Cast<ACharacter>(GetOwner())));
+	return StateCallstack->TryAddState(BaseStateClass);
 }
 
 bool UCharacterStateMachine::TryRemoveState(TSubclassOf<UBaseState> BaseStateClass)
 {
-	return StateCallstack->TryRemoveState(BaseStateClass, FStateModuleDataStruct(Cast<ACharacter>(GetOwner())));
+	return StateCallstack->TryRemoveState(BaseStateClass);
 }
 
 
