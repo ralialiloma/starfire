@@ -28,11 +28,12 @@ class PROJECT_API USF_CharacterMovementComponent : public UCharacterMovementComp
 			enum CompressedFlags
 			{
 				Flag_WallRun = 0x10,
+				Flag_Sprint = 0x20,
 			};
 
 
 		//Flags
-		//uint8 Saved
+		uint8 Saved_bWantsToSprint:1;
 
 		//Other Variables
 		uint8 Saved_bWallRunIsRight:1;
@@ -51,36 +52,44 @@ class PROJECT_API USF_CharacterMovementComponent : public UCharacterMovementComp
 	{
 	public:
 		FNetworkPredictionData_Client_Sf(const UCharacterMovementComponent& ClientMovement);
-
 		typedef FNetworkPredictionData_Client_Character Super;
-
 		virtual FSavedMovePtr AllocateNewMove() override;
 	};
 
 	//Parameters
-	UPROPERTY(EditDefaultsOnly) float MinWallRunSpeed = 200.0f;
-	UPROPERTY(EditDefaultsOnly) float MaxWallRunSpeed = 800.0f;
-	UPROPERTY(EditDefaultsOnly) float MaxVerticalWallRunSpeed = 200.0f;
-	UPROPERTY(EditDefaultsOnly) float WallRunPullAwayAngle =75;
-	UPROPERTY(EditDefaultsOnly) float WallAttractionForce = 200.0f;
-	UPROPERTY(EditDefaultsOnly) float MinWallRunHeight = 50.f;
-	UPROPERTY(EditDefaultsOnly) UCurveFloat* WallRunGravityScaleCurve;
-	UPROPERTY(EditDefaultsOnly) float WallJumpOffForce = 300.f;;
+
+		//Sprint
+	UPROPERTY(EditDefaultsOnly, Category="Character Movement: Walking") float Sprint_MaxWalkspeed = 400.0f;
+	UPROPERTY(EditDefaultsOnly, Category="Character Movement: Walking") float Walk_MaxWalkSpeed = 200.0f;
+	
+		//WallRun
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun") float MinWallRunSpeed = 200.0f;
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun") float MaxWallRunSpeed = 800.0f;
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun") float MaxVerticalWallRunSpeed = 200.0f;
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun") float WallRunPullAwayAngle =75;
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun") float WallAttractionForce = 200.0f;
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun") float MinWallRunHeight = 50.f;
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun") UCurveFloat* WallRunGravityScaleCurve;
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun") float WallJumpOffForce = 300.f;;
 	
 	
 	//Transient
 	UPROPERTY(Transient) ASf_Character* SfCharacterOwner;
 	
 	bool Safe_bWallRunIsRight;
+	bool Safe_bWantsToSprint;
 
 	//Character Movement Component
 public:
 	virtual void InitializeComponent() override;
+	virtual FNetworkPredictionData_Client* GetPredictionData_Client() const override;
+	virtual void UpdateFromCompressedFlags(uint8 Flags) override;
 	virtual bool CanAttemptJump() const override;
 	virtual bool DoJump(bool bReplayingMoves) override;
 	virtual float GetMaxSpeed() const override;
 	virtual float GetMaxBrakingDeceleration() const override;
 	virtual void UpdateCharacterStateBeforeMovement(float DeltaSeconds) override;
+	virtual void OnMovementUpdated(float DeltaSeconds, const FVector& OldLocation, const FVector& OldVelocity) override;
 	virtual void PhysCustom(float DeltaTime, int32 Iterations) override;
 
 	//Interface
@@ -94,6 +103,12 @@ public:
 	bool IsWallRunning() const {return  IsCustomMovementMode (CMOVE_WallRun);};
 	UFUNCTION(BlueprintPure)
 	bool WallRunningIsRight() const {return  Safe_bWallRunIsRight;};
+
+	UFUNCTION(BlueprintCallable)
+	void SprintPressed();
+
+	UFUNCTION(BlueprintCallable)
+	void SprintReleased();
 
 private:
 	float CapRadius() const;

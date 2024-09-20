@@ -9,29 +9,24 @@ FWeaponAnimData::FWeaponAnimData()
 
 void FWeaponAnimData::UpdateEntries()
 {
-	
-	//Set up Weapon Animation Types
-	TArray<EWeaponAnimationAssetType> WeaponAnimationAssetTypes =
-		UFunctionLibrary::GetAllEnumValues<EWeaponAnimationAssetType>(true);
-	for (EWeaponAnimationAssetType Type: WeaponAnimationAssetTypes)
-	{
-		if (!AnimationAssets.Contains(Type))
-			AnimationAssets.Add(Type,nullptr);
-	}
-	
-	//Set up Weapon Animation Types
-	TArray<EWeaponAnimationMontageType> WeaponAnimationMontageTypes =
-		UFunctionLibrary::GetAllEnumValues<EWeaponAnimationMontageType>(true);
-	for (EWeaponAnimationMontageType Type: WeaponAnimationMontageTypes)
-	{
-		if (!AnimationMontages.Contains(Type))
-			AnimationMontages.Add(Type,nullptr);
-	}
-		
+	UpdateEntry<EWeaponAnimationAssetType,UAnimSequenceBase*>(AnimationAssets);
+	UpdateEntry<EWeaponAnimationMontageType,UAnimMontage*>(AnimationMontages);
+	UpdateEntry<EWeaponBlendSpaceType,UBlendSpace*>(Blendspaces);
+}
+
+UWeaponAnimationAsset::UWeaponAnimationAsset()
+{
+	WeaponAnimData.UpdateEntries();
+}
+
+void UWeaponAnimationAsset::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	Super::PostEditChangeProperty(PropertyChangedEvent);
+	WeaponAnimData.UpdateEntries();
 }
 
 UAnimSequenceBase* UWeaponAnimDataFunctions::GetAnimationAsset(FWeaponAnimData AnimData,
-	EWeaponAnimationAssetType AssetType)
+                                                               EWeaponAnimationAssetType AssetType)
 {
 	UAnimSequenceBase* FoundSequence = nullptr;
 	UAnimSequenceBase** FoundSequencePtr = AnimData.AnimationAssets.Find(AssetType);
@@ -48,5 +43,14 @@ UAnimMontage* UWeaponAnimDataFunctions::GetAnimationMontage(FWeaponAnimData Anim
 	if (FoundSequencePtr!=nullptr)
 		FoundMontage = *FoundSequencePtr;
 	return FoundMontage;
+}
+
+UBlendSpace* UWeaponAnimDataFunctions::GetBlendspace(FWeaponAnimData AnimData, EWeaponBlendSpaceType AssetType)
+{
+	UBlendSpace* FoundBlendspace = nullptr;
+	UBlendSpace** FoundBlendSpacePointer = AnimData.Blendspaces.Find(AssetType);
+	if (FoundBlendSpacePointer!=nullptr)
+		FoundBlendspace = *FoundBlendSpacePointer;
+	return FoundBlendspace;
 }
 
