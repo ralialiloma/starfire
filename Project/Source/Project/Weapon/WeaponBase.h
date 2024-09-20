@@ -22,7 +22,7 @@ public:
 	USkeletalMeshComponent* SkeletalMesh;
 
 	UPROPERTY(BlueprintReadWrite)
-	FWeaponConfig* Config;
+	FWeaponConfig Config;
 
 protected:
 	virtual void BeginPlay() override;
