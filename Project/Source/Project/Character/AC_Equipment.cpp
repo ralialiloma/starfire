@@ -3,6 +3,9 @@
 
 #include "AC_Equipment.h"
 
+#include "Project/Weapon/FireBlocks.h"
+#include "Project/Weapon/WeaponOwner.h"
+
 
 // Sets default values for this component's properties
 UAC_Equipment::UAC_Equipment()
@@ -20,8 +23,12 @@ void UAC_Equipment::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
-	
+	WeaponOwner = GetOwner();
+	if (!WeaponOwner->Implements<UWeaponOwner>())
+		UE_LOG(LogTemp,
+		Error,
+		TEXT("Actor requires interface %s "),
+		*UWeaponOwner::StaticClass()->GetName())
 }
 
 bool UAC_Equipment::GetIsEquipped() const
@@ -53,9 +60,25 @@ void UAC_Equipment::AddWeapon(AWeaponBase* WeaponToAdd, bool Equip, int &Index)
 	WeaponToAdd->AttachToComponent(this, AttachRules, "None");
 	WeaponToAdd->SetOwner(this->GetOwner());
 
+	if (Equip)
+		EquippedWeapon = WeaponToAdd;
+
 	//todo SetWeaponActive
 	//todo call pickup event
 	
+}
+
+bool UAC_Equipment::Fire(EInputSignalType InputSignal, EFireType FireType, FHitResult& OutHitResult, TEnumAsByte<EFireBlock>& OutFireBlock)
+{
+	if (!IsValid(EquippedWeapon))
+	{
+		OutFireBlock = EFireBlock::NoWeapon;
+		return false;
+	}
+
+	FTransform FireTransform = IWeaponOwner::Execute_GetFireTransform(WeaponOwner);
+	
+	return EquippedWeapon->Fire(InputSignal,FireType,OutHitResult,OutFireBlock);
 }
 
 

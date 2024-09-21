@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "FireBlocks.h"
+#include "FireType.h"
 #include "WeaponConfig.h"
 #include "GameFramework/Actor.h"
 #include "Project/Animation/FWeaponAnimData.h"
@@ -45,9 +47,10 @@ private:
 	UPROPERTY()
 	FWeaponAnimData CurrentWeaponAnimData;
 
+	UPROPERTY()
+	AActor* WeaponHolder;
+
 	//Events
-
-
 
 	//Actor
 protected:
@@ -56,28 +59,56 @@ protected:
 
 	//Interface
 public:
-	void Fire (
-	FTransform InFireTransform,
-	AActor* InActorFiring,
-	FHitResult& OutHitResult,
-	UAnimMontage* &OutMontageToPlay,
-	float&OutRecoil);
 
-	void Reload(UAnimMontage*& OutMontageToPlay);
+	bool Fire(
+		const EInputSignalType InputSignal,
+		EFireType FireType,
+		FHitResult& OutHitResult,
+		TEnumAsByte<EFireBlock>& OutFireBlock);
 
-	void OnEquip(UAnimMontage*& OutMontageToPlay, AActor* NewOwner);
-	
-	
+	UFUNCTION(BlueprintCallable,Category="WeaponBase")
+	float Reload();
 
-	//Internal
-private:
+	UFUNCTION(BlueprintCallable,Category="WeaponBase")
+	float Melee();
 
-	//Fire
-	void FireTraces(FTransform FireTransform, AActor* FiringActor, FHitResult& OutHitResult);
-	void GetTracePoints(FTransform InFireTransform, FVector& OutStart, FVector& OutEnd);
+	UFUNCTION(BlueprintCallable,Category="WeaponBase")
+	int GetAmmoCount();
 
-	//Cooldown
+	UFUNCTION(BlueprintCallable,Category="WeaponBase")
+	void SetWeapon(bool Active);
+
+	UFUNCTION(BlueprintCallable,Category="WeaponBase")
+	void OnEquip(AActor* NewHolder);
+
+	UFUNCTION(BlueprintCallable,Category="WeaponBase")
+	bool CanFire(EInputSignalType InputSignal, EFireType FireType, TEnumAsByte<EFireBlock>& OutBlock);
+
+	UFUNCTION(BlueprintCallable,Category="WeaponBase")
 	bool IsInCooldown();
+
+
+//Internal
+	//Fire
+private:
+	void GetTracePoints(FTransform InFireTransform, FVector& OutStart, FVector& OutEnd);
+	bool CheckInputSignalType(EInputSignalType InputSignalType);
 	void ResetFireCooldown();
+protected:
+	void DoFire (
+		FHitResult& OutHitResult);
+	void FireTraces(FHitResult& OutHitResult);
+
+	//Animation
+private:
+	float PlayMontage(UAnimMontage* MontageToPlay);
+	float PlayMontage (EWeaponAnimationMontageType MontageType);
+
+	//Melee
+private:
+	void DoMelee();
+
+
+
 
 };

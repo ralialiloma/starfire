@@ -2,6 +2,10 @@
 
 
 #include "WeaponBase.h"
+
+#include "FireBlocks.h"
+#include "FireType.h"
+#include "WeaponOwner.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Project/DamageReceiver.h"
 #include "Project/Utility/DebugSettings.h"
@@ -18,7 +22,6 @@ AWeaponBase::AWeaponBase()
 void AWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 void AWeaponBase::Tick(float DeltaTime)
@@ -26,8 +29,22 @@ void AWeaponBase::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void AWeaponBase::FireTraces(FTransform FireTransform, AActor* FiringActor, FHitResult& OutHitResult)
+bool AWeaponBase::Fire(const EInputSignalType InputSignal,
+						EFireType FireType,
+						FHitResult& OutHitResult,
+						TEnumAsByte<EFireBlock>& OutFireBlock) 
 {
+	if (!CanFire(InputSignal,FireType,OutFireBlock))
+		return false;
+	
+	DoFire(OutHitResult);
+	return true;
+}
+
+void AWeaponBase::FireTraces(FHitResult& OutHitResult)
+{
+
+	FTransform FireTransform = IWeaponOwner::Execute_GetFireTransform(WeaponHolder); 
 	for (int i= 0; i< Config.BulletsPerShot;i++)
 	{
 		//Trace Points
@@ -40,7 +57,7 @@ void AWeaponBase::FireTraces(FTransform FireTransform, AActor* FiringActor, FHit
 		FColor TraceColor = UFunctionLibrary::BoolToColor(bIsAiming);
 
 		//Ignore
-		TArray<AActor*> ActorsToIgnore = TArray<AActor*>{FiringActor};
+		TArray<AActor*> ActorsToIgnore = TArray<AActor*>{WeaponHolder};
 		
 
 		//Line Trace
@@ -78,6 +95,55 @@ void AWeaponBase::FireTraces(FTransform FireTransform, AActor* FiringActor, FHit
 	}
 }
 
+float AWeaponBase::PlayMontage(EWeaponAnimationMontageType MontageType)
+{
+	UAnimMontage* MontageToPlay =
+		UWeaponAnimDataFunctions::GetAnimationMontage(
+			CurrentWeaponAnimData,
+			MontageType);
+	return  PlayMontage(MontageToPlay);
+}
+
+void AWeaponBase::DoMelee()
+{
+	
+}
+
+
+float AWeaponBase::PlayMontage(UAnimMontage* MontageToPlay)
+{
+	if (WeaponHolder==nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Missing Weapon Owner to play montage on"))
+		return 0;
+	}
+	
+	if (MontageToPlay==nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Missing Montage to play"))
+		return 0;
+	}
+
+	if (!WeaponHolder->Implements<UWeaponOwner>())
+	{
+		UE_LOG(LogTemp,
+				Warning,
+				TEXT("Actor Requires %s interface to play shoot montage"),
+			   *UWeaponOwner::StaticClass()->GetName())
+		return 0;
+	}
+
+	UAnimInstance* AnimInstance =  IWeaponOwner::Execute_GetCharacterAnimInstance(WeaponHolder);
+	
+	return AnimInstance->Montage_Play(
+		MontageToPlay,
+		1
+		,EMontagePlayReturnType::MontageLength,
+		0,
+		true);
+}
+
+
 void AWeaponBase::GetTracePoints(FTransform InFireTransform, FVector& OutStart, FVector& OutEnd)
 {
 	//Calculate Shot Angle
@@ -95,6 +161,13 @@ void AWeaponBase::GetTracePoints(FTransform InFireTransform, FVector& OutStart, 
 	OutEnd = OutStart+RandomShotAngleVector;
 }
 
+
+bool AWeaponBase::CheckInputSignalType(EInputSignalType InputSignalType)
+{
+	uint8 InputSignalValue = static_cast<uint8>(InputSignalType);
+	return (Config.AllowedInputSignals & InputSignalValue) == InputSignalValue;
+}
+
 bool AWeaponBase::IsInCooldown()
 {
 	return GetWorld()->GetTimerManager().IsTimerActive(FireCooldown);
@@ -106,13 +179,9 @@ void AWeaponBase::ResetFireCooldown()
 }
 
 
-void AWeaponBase::Fire(
-	FTransform InFireTransform,
-	AActor* InActorFiring,
-	FHitResult& OutHitResult,
-	UAnimMontage*& OutMontageToPlay,
-	float&OutRecoil)
+void AWeaponBase::DoFire(FHitResult& OutHitResult)
 {
+	//Start Fire Delay
 	float CurrentFireDelay = Config.FireDelay;
 	if (CurrentFireDelay>0)
 	{
@@ -124,35 +193,72 @@ void AWeaponBase::Fire(
 
 	//Reduce Clip
 	CurrentClip -= Config.bInfiniteAmmo?0:1;
-	
-	FireTraces(InFireTransform,InActorFiring, OutHitResult);
+
+	//Shoot Traces
+	FireTraces(OutHitResult);
 
 	//todo callshoot event
 
-	//Find PrimaryFire Montage
-	OutMontageToPlay =
-		UWeaponAnimDataFunctions::GetAnimationMontage(
-			CurrentWeaponAnimData,
-			EWeaponAnimationMontageType::AnimationMontage_PrimaryFire);
-
-	OutRecoil = Config.Recoil;	
-}
-
-void AWeaponBase::Reload(UAnimMontage*& OutMontageToPlay)
-{
-	CurrentClip = Config.MaxClipSize;
-	OutMontageToPlay =
-		UWeaponAnimDataFunctions::GetAnimationMontage(
-			CurrentWeaponAnimData,
-			EWeaponAnimationMontageType::AnimationMontage_Reload);
+	//Play Shoot Montage
+	PlayMontage(EWeaponAnimationMontageType::AnimationMontage_PrimaryFire);
 	
 }
 
-void AWeaponBase::OnEquip(UAnimMontage*& OutMontageToPlay, AActor* NewOwner)
+float AWeaponBase::Reload()
 {
-	/*OutMontageToPlay =
-		UWeaponAnimDataFunctions::GetAnimationMontage(
-			CurrentWeaponAnimData,
-			EWeaponAnimationMontageType::AnimationMontage_Equip);*/
+	CurrentClip = Config.MaxClipSize;
+	return PlayMontage(EWeaponAnimationMontageType::AnimationMontage_Reload);
+}
+
+float AWeaponBase::Melee()
+{
+	DoMelee();
+	return 0;
+}
+
+int AWeaponBase::GetAmmoCount()
+{
+	return CurrentClip;
+}
+
+void AWeaponBase::OnEquip(AActor* NewHolder)
+{
+	SetWeapon(true);
+	WeaponHolder = NewHolder;
+
+	PlayMontage(EWeaponAnimationMontageType::AnimationMontage_Equip);
+}
+
+bool AWeaponBase::CanFire(EInputSignalType InputSignal, EFireType FireType,TEnumAsByte<EFireBlock>& OutBlock)
+{
+	//Input Signal
+	if (CheckInputSignalType(InputSignal))
+	{
+		OutBlock = EFireBlock::TriggerType;
+		return false;
+	}
+
+	//Clip
+	if (CurrentClip<=Config.AmmoCost && !Config.bInfiniteAmmo)
+	{
+		OutBlock = CurrentClip==0?EFireBlock::EmptyClip:EFireBlock::NotEnoughAmmo;
+		return false;
+	}
+
+	//Cooldown
+	if (IsInCooldown())
+	{
+		OutBlock = EFireBlock::FireCooldown;
+		return false;
+	}
+
+	OutBlock = EFireBlock::None;
+	return true;
+}
+
+void AWeaponBase::SetWeapon(bool Active)
+{
+	SetActorEnableCollision(Active);
+	SetActorHiddenInGame(!Active);
 }
 

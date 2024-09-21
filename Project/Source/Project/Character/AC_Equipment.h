@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Project/Weapon/FireBlocks.h"
+#include "Project/Weapon/FireType.h"
 #include "Project/Weapon/WeaponBase.h"
 #include "AC_Equipment.generated.h"
 
@@ -23,6 +25,9 @@ private:
 	UPROPERTY()
 	AWeaponBase* EquippedWeapon;
 
+	UPROPERTY()
+	AActor* WeaponOwner;
+
 protected:
 
 	//Actor
@@ -37,6 +42,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void AddWeapon(AWeaponBase* WeaponToAdd, bool Equip, int& Index);
+
+	UFUNCTION(BlueprintCallable)
+	bool Fire(EInputSignalType InputSignal, EFireType FireType, FHitResult& OutHitResult, TEnumAsByte<EFireBlock>& OutFireBlock);
 
 	//Internal
 private:

@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "Project/Utility/FunctionLibrary.h"
 #include "WeaponConfig.generated.h"
 
 USTRUCT(Blueprintable)
