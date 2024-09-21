@@ -75,12 +75,12 @@ struct PROJECT_API FWeaponConfig
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Other")
 	bool bInfiniteAmmo = false;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Other")
 	TEnumAsByte<ETraceTypeQuery>  TraceTypeQuery = TraceTypeQuery2;
 
 	//Animation
-	UPROPERTY()
-	FWeaponAnimData WeaponAnimData = FWeaponAnimData();
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Animation")
+	UWeaponAnimationAsset* WeaponAnimationAsset = nullptr;
 
 public:
 	FWeaponConfig();
@@ -90,6 +90,7 @@ public:
 	float GetAccuracy(bool bIsAiming) const;
 	float GetSpread(bool bIsAiming) const;
 	float GetAimSpread() const;
+	FWeaponAnimData GetAnimData() const;
 	
 };
 

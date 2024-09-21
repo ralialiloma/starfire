@@ -52,7 +52,7 @@ FWeaponAnimData UAC_Equipment::GetAnimationData() const
 	if (!IsEquipped())
 		return FWeaponAnimData();
 
-	return EquippedWeapon->GetActiveConfig().WeaponAnimData;
+	return EquippedWeapon->GetActiveConfig().GetAnimData();
 }
 
 void UAC_Equipment::AddWeapon(AWeaponBase* WeaponToAdd, const bool Equip, int &Index)

@@ -1,6 +1,9 @@
 ﻿#include "WeaponConfig.h"
 
 #include "Kismet/KismetMathLibrary.h"
+#include "Project/Utility/DebugSettings.h"
+
+DEFINE_LOG_CATEGORY_STATIC(WeaponConfig, Display, Display);
 
 FWeaponConfig::FWeaponConfig()
 {
@@ -34,4 +37,14 @@ float FWeaponConfig::GetSpread(bool bIsAiming) const
 float FWeaponConfig::GetAimSpread() const
 {
 	return (bUseMultipliers?Spread*SpreadMultiplier:AimSpread)*SpreadMultiplier;
+}
+
+FWeaponAnimData FWeaponConfig::GetAnimData() const
+{
+	if (!IsValid(WeaponAnimationAsset))
+	{
+		UE_LOG(WeaponConfig, Log, TEXT("Missing Animation Asset"))
+		return FWeaponAnimData();
+	}
+	return WeaponAnimationAsset->WeaponAnimData;
 }

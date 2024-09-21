@@ -26,7 +26,7 @@ public:
 	USkeletalMeshComponent* SkeletalMesh;
 
 	//Config
-	UPROPERTY()
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "Config")
 	FWeaponConfig InitialConfig;
 
 	//Transient

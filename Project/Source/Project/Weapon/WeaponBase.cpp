@@ -135,7 +135,7 @@ float AWeaponBase::PlayMontage(EWeaponAnimationMontageType MontageType)
 {
 	UAnimMontage* MontageToPlay =
 		UWeaponAnimDataFunctions::GetAnimationMontage(
-			ActiveConfig.WeaponAnimData,
+			ActiveConfig.GetAnimData(),
 			MontageType);
 	return  PlayMontage(MontageToPlay);
 }
@@ -148,21 +148,21 @@ void AWeaponBase::DoMelee()
 
 float AWeaponBase::PlayMontage(UAnimMontage* MontageToPlay)
 {
-	if (WeaponHolder==nullptr)
+	if (!IsValid(WeaponHolder))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Missing Weapon Owner to play montage on"))
+		UE_LOG(Weapon, Warning, TEXT("Missing Weapon Owner to play montage on"))
 		return 0;
 	}
 	
-	if (MontageToPlay==nullptr)
+	if (!IsValid(MontageToPlay))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Missing Montage to play"))
+		UE_LOG(Weapon, Warning, TEXT("Missing Montage to play"))
 		return 0;
 	}
 
 	if (!WeaponHolder->Implements<UWeaponOwner>())
 	{
-		UE_LOG(LogTemp,
+		UE_LOG(Weapon,
 				Warning,
 				TEXT("Actor Requires %s interface to play shoot montage"),
 			   *UWeaponOwner::StaticClass()->GetName())
@@ -170,6 +170,12 @@ float AWeaponBase::PlayMontage(UAnimMontage* MontageToPlay)
 	}
 
 	UAnimInstance* AnimInstance =  IWeaponOwner::Execute_GetCharacterAnimInstance(WeaponHolder);
+
+	if (!IsValid(AnimInstance))
+	{
+		UE_LOG(Weapon, Warning, TEXT("Invalid AnimInstance"))
+		return 0;
+	}
 	
 	return AnimInstance->Montage_Play(
 		MontageToPlay,
