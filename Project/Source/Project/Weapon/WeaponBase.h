@@ -10,7 +10,7 @@
 #include "Project/Animation/FWeaponAnimData.h"
 #include "WeaponBase.generated.h"
 
-UCLASS()
+UCLASS(BlueprintType)
 class PROJECT_API AWeaponBase : public AActor
 {
 	GENERATED_BODY()
@@ -33,22 +33,22 @@ public:
 	//Transient
 private:
 	UPROPERTY()
-	bool bIsAiming;
+	bool bIsAiming =false;
 
 	UPROPERTY()
-	bool bActiveFireCooldown;
+	bool bActiveFireCooldown = false;
 
 	UPROPERTY()
-	int CurrentClip;
+	int CurrentClip = 0;
 
 	UPROPERTY()
-	FTimerHandle FireCooldown;
+	FTimerHandle FireCooldown = FTimerHandle();
 
 	UPROPERTY()
-	FWeaponAnimData CurrentWeaponAnimData;
+	FWeaponAnimData CurrentWeaponAnimData = FWeaponAnimData();
 
 	UPROPERTY()
-	AActor* WeaponHolder;
+	AActor* WeaponHolder = nullptr;
 
 	//Events
 
@@ -60,6 +60,7 @@ protected:
 	//Interface
 public:
 
+	UFUNCTION(BlueprintCallable,Category="WeaponBase")
 	bool Fire(
 		const EInputSignalType InputSignal,
 		EFireType FireType,

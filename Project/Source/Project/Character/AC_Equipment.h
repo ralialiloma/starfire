@@ -44,7 +44,8 @@ public:
 	void AddWeapon(AWeaponBase* WeaponToAdd, bool Equip, int& Index);
 
 	UFUNCTION(BlueprintCallable)
-	bool Fire(EInputSignalType InputSignal, EFireType FireType, FHitResult& OutHitResult, TEnumAsByte<EFireBlock>& OutFireBlock);
+	bool Fire(EInputSignalType InputSignal, EFireType FireType, FHitResult& OutHitResult,
+	          TEnumAsByte<EFireBlock>& OutFireBlock);
 
 	//Internal
 private:
