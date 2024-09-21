@@ -2,18 +2,15 @@
 
 
 #include "AC_Equipment.h"
-
 #include "Project/Weapon/FireBlocks.h"
 #include "Project/Weapon/WeaponOwner.h"
 
+DEFINE_LOG_CATEGORY_STATIC(EquipmentComponent, Display, Display);
 
 // Sets default values for this component's properties
 UAC_Equipment::UAC_Equipment()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
 	// ...
 }
 
@@ -25,7 +22,7 @@ void UAC_Equipment::BeginPlay()
 
 	WeaponOwner = GetOwner();
 	if (!WeaponOwner->Implements<UWeaponOwner>())
-		UE_LOG(LogTemp,
+		UE_LOG(EquipmentComponent,
 		Error,
 		TEXT("Actor requires interface %s "),
 		*UWeaponOwner::StaticClass()->GetName())
@@ -42,7 +39,7 @@ void UAC_Equipment::AddWeapon(AWeaponBase* WeaponToAdd, bool Equip, int &Index)
 	int FoundWeaponIndex = -1;
 	if (GetSlot(WeaponToAdd,FoundWeaponIndex))
 	{
-		UE_LOG(LogTemp, Log, TEXT("Weapon Already Equipped"))
+		UE_LOG(EquipmentComponent, Log, TEXT("Weapon Already Equipped"))
 		Index = FoundWeaponIndex;
 		return;
 	}
@@ -58,7 +55,7 @@ void UAC_Equipment::AddWeapon(AWeaponBase* WeaponToAdd, bool Equip, int &Index)
 		EAttachmentRule::KeepWorld,
 		true);
 	WeaponToAdd->AttachToComponent(this, AttachRules, "None");
-	WeaponToAdd->SetOwner(this->GetOwner());
+	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, "Attached Weapon");
 
 	if (Equip)
 		EquippedWeapon = WeaponToAdd;

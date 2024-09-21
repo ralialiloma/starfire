@@ -16,18 +16,18 @@ class PROJECT_API AWeaponBase : public AActor
 	GENERATED_BODY()
 
 public:
-	AWeaponBase();
+	AWeaponBase(const FObjectInitializer& ObjectInitializer);
 
 	//Components
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	USceneComponent* DefaultSceneRoot;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	USkeletalMeshComponent* SkeletalMesh;
 
 	//Config
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY()
 	FWeaponConfig Config;
 
 	//Transient

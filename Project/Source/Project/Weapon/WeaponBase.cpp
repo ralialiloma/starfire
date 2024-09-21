@@ -12,11 +12,28 @@
 #include "Project/Utility/DebugSubsystem.h"
 
 
-AWeaponBase::AWeaponBase()
+AWeaponBase::AWeaponBase(const FObjectInitializer& ObjectInitializer)
 {
+	// Allow the actor to tick every frame
 	PrimaryActorTick.bCanEverTick = true;
-	DefaultSceneRoot =  CreateDefaultSubobject<USceneComponent>("DefaultSceneRoot");
-	SkeletalMesh =  CreateDefaultSubobject<USkeletalMeshComponent>("SkeletalMesh");
+
+	// Create and set DefaultSceneRoot
+	DefaultSceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("DefaultSceneRoot"));
+	RootComponent = DefaultSceneRoot;
+
+	// Create and attach SkeletalMesh component
+	SkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMesh"));
+	SkeletalMesh->SetupAttachment(DefaultSceneRoot);
+	// Set the relative transform of the SkeletalMesh so it can be modified in the blueprint
+	SkeletalMesh->SetRelativeLocation(FVector::ZeroVector);
+	SkeletalMesh->SetRelativeRotation(FRotator::ZeroRotator);
+	SkeletalMesh->SetRelativeScale3D(FVector(1.0f));
+
+	// Ensure the SkeletalMesh uses relative transforms so offsets can be set in the blueprint
+	SkeletalMesh->SetUsingAbsoluteLocation(false);
+	SkeletalMesh->SetUsingAbsoluteRotation(false);
+	SkeletalMesh->SetUsingAbsoluteScale(false);
+	
 }
 
 void AWeaponBase::BeginPlay()
