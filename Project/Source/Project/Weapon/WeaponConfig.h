@@ -45,7 +45,7 @@ struct PROJECT_API FWeaponConfig
 	float AccuracyMultiplier;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Accuracy")
-	int BulletPerShot;
+	int BulletsPerShot;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Accuracy")
 	float SpreadMultiplier;
@@ -73,6 +73,16 @@ struct PROJECT_API FWeaponConfig
 	//Other
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Other")
 	bool bInfiniteAmmo;
+
+	UPROPERTY()
+	TEnumAsByte<ETraceTypeQuery>  TraceTypeQuery;
+
+public:
+	float GetShotAngle(bool bIsAiming);
+	float GetAimAccuracy() const;
+	float GetAccuracy(bool bIsAiming) const;
+	float GetSpread(bool bIsAiming) const;
+	float GetAimSpread() const;
 	
 };
 

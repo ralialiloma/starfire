@@ -39,6 +39,8 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
+	void ApplyDamage();
+
 	float CalculateDamageMultiplier(FVector AreaLocation, FVector HitPosition, float DamageMultiplier, float MaxDistanceToBone);
 
 public:	

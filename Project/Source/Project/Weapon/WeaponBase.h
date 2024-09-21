@@ -15,14 +15,24 @@ class PROJECT_API AWeaponBase : public AActor
 public:
 	AWeaponBase();
 
+	//Components
+
 	UPROPERTY(BlueprintReadOnly)
 	USceneComponent* DefaultSceneRoot;
 
 	UPROPERTY(BlueprintReadOnly)
 	USkeletalMeshComponent* SkeletalMesh;
 
+	//Config
 	UPROPERTY(BlueprintReadWrite)
 	FWeaponConfig Config;
+
+	//Transient
+private:
+	UPROPERTY()
+	bool bIsAiming;
+
+	//Events
 
 protected:
 	virtual void BeginPlay() override;
@@ -32,5 +42,6 @@ public:
 
 	//Fire
 private:
-	void FireTraces();
+	void FireTraces(FTransform FireTransform, AActor* FiringActor);
+	void GetTracePoints(FTransform InFireTransform, FVector& OutStart, FVector& OutEnd);
 };

@@ -23,6 +23,11 @@ void UDamageReceiver::BeginPlay()
 	
 }
 
+void UDamageReceiver::ApplyDamage()
+{
+	
+}
+
 float UDamageReceiver::CalculateDamageMultiplier(FVector AreaLocation, FVector HitPosition, float DamageMultiplier, float MaxDistanceToBone)
 {
 	float DistanceFromHitLocation = FVector::Distance(HitPosition,AreaLocation);
