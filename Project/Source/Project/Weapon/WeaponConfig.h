@@ -1,5 +1,7 @@
 ﻿#pragma once
+#include "Project/Animation/FWeaponAnimData.h"
 #include "WeaponConfig.generated.h"
+
 
 USTRUCT(Blueprintable)
 struct PROJECT_API FWeaponConfig
@@ -9,74 +11,80 @@ struct PROJECT_API FWeaponConfig
 	//Common
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Common")
-	float Damage;
+	float Damage = 50;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Bitmask, BitmaskEnum = "EInputSignalType"),Category = "Common")
-	int32 AllowedInputSignals;
+	int32 AllowedInputSignals = 1;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Common")
-	int AmmoCost;
+	int AmmoCost = 1;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Common")
-	int MaxClipSize;
+	int MaxClipSize = 12;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Common")
-	float FireDelay;
+	float FireDelay  =1;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Common")
-	float ReloadTime;
+	float ReloadTime = 2;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Common")
-	float Recoil;
+	float Recoil = 1;
 
 	//Accuracy
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Accuracy")
-	int Range;
+	int Range = 10;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Accuracy")
-	float Spread;
+	float Spread = 5;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Accuracy")
-	float Accuracy;
+	float Accuracy = 1;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Accuracy")
-	float AccuracyMultiplier;
+	float AccuracyMultiplier = 2;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Accuracy")
-	int BulletsPerShot;
+	int BulletsPerShot = 1;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Accuracy")
-	float SpreadMultiplier;
+	float SpreadMultiplier = 1;
 
 	//Aim
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Aim")
-	float AimFOV;
+	float AimFOV = 2;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Aim")
-	float AimAccuracy;
+	float AimAccuracy = 1;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Aim")
-	float AimSpread;
+	float AimSpread = 1;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Aim")
-	bool bUseMultipliers;
+	bool bUseMultipliers = false;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Aim",  meta=(EditCondition="bUseMultipliers", EditConditionHides))
-	float AimAccuracyMultiplier;
+	float AimAccuracyMultiplier = 1;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Aim",meta=(EditCondition="bUseMultipliers", EditConditionHides))
-	float AimSpreadMultiplier;
+	float AimSpreadMultiplier = 1;
 
 	//Other
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Other")
-	bool bInfiniteAmmo;
+	bool bInfiniteAmmo = false;
 
 	UPROPERTY()
-	TEnumAsByte<ETraceTypeQuery>  TraceTypeQuery;
+	TEnumAsByte<ETraceTypeQuery>  TraceTypeQuery = TraceTypeQuery2;
+
+	//Animation
+	UPROPERTY()
+	FWeaponAnimData WeaponAnimData = FWeaponAnimData();
 
 public:
+	FWeaponConfig();
+	
 	float GetShotAngle(bool bIsAiming);
 	float GetAimAccuracy() const;
 	float GetAccuracy(bool bIsAiming) const;

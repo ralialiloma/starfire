@@ -2,6 +2,10 @@
 
 #include "Kismet/KismetMathLibrary.h"
 
+FWeaponConfig::FWeaponConfig()
+{
+}
+
 float FWeaponConfig::GetShotAngle(bool bIsAiming)
 {
 	float CurrentAccuracy = GetAccuracy(bIsAiming);

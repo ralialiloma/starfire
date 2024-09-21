@@ -11,6 +11,7 @@
 #include "Project/Utility/DebugSettings.h"
 #include "Project/Utility/DebugSubsystem.h"
 
+DEFINE_LOG_CATEGORY_STATIC(Weapon, Display, Display);
 
 AWeaponBase::AWeaponBase(const FObjectInitializer& ObjectInitializer)
 {
@@ -20,10 +21,12 @@ AWeaponBase::AWeaponBase(const FObjectInitializer& ObjectInitializer)
 	// Create and set DefaultSceneRoot
 	DefaultSceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("DefaultSceneRoot"));
 	RootComponent = DefaultSceneRoot;
+	RootComponent->Mobility = EComponentMobility::Type::Movable;
 
 	// Create and attach SkeletalMesh component
 	SkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMesh"));
 	SkeletalMesh->SetupAttachment(DefaultSceneRoot);
+
 	// Set the relative transform of the SkeletalMesh so it can be modified in the blueprint
 	SkeletalMesh->SetRelativeLocation(FVector::ZeroVector);
 	SkeletalMesh->SetRelativeRotation(FRotator::ZeroRotator);
@@ -39,6 +42,16 @@ AWeaponBase::AWeaponBase(const FObjectInitializer& ObjectInitializer)
 void AWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
+	ActiveConfig = InitialConfig;
+	CurrentClip = ActiveConfig.MaxClipSize; 
+}
+
+void AWeaponBase::PostInitProperties()
+{
+	Super::PostInitProperties();
+
+	ActiveConfig = InitialConfig;
+	CurrentClip = ActiveConfig.MaxClipSize; 
 }
 
 void AWeaponBase::Tick(float DeltaTime)
@@ -60,9 +73,15 @@ bool AWeaponBase::Fire(const EInputSignalType InputSignal,
 
 void AWeaponBase::FireTraces(FHitResult& OutHitResult)
 {
+	int BulletsPerShot = ActiveConfig.BulletsPerShot;
+	if (BulletsPerShot <= 0)
+	{
+		UE_LOG(Weapon, Warning, TEXT("Invalid BulletsPerShot value: %d"), ActiveConfig.BulletsPerShot);
+		return;
+	}
 
-	FTransform FireTransform = IWeaponOwner::Execute_GetFireTransform(WeaponHolder); 
-	for (int i= 0; i< Config.BulletsPerShot;i++)
+	const FTransform FireTransform = IWeaponOwner::Execute_GetFireTransform(WeaponHolder); 
+	for (int i= 0; i<BulletsPerShot;i++)
 	{
 		//Trace Points
 		FVector Start,End;
@@ -82,7 +101,7 @@ void AWeaponBase::FireTraces(FHitResult& OutHitResult)
 			this,
 			Start,
 			End,
-			Config.TraceTypeQuery,
+			ActiveConfig.TraceTypeQuery,
 			false,
 			ActorsToIgnore,
 			DebugType,
@@ -103,7 +122,7 @@ void AWeaponBase::FireTraces(FHitResult& OutHitResult)
 			continue;
 
 		DamageReceiver->ApplyDamage(
-			Config.Damage,
+			ActiveConfig.Damage,
 			OutHitResult.Location,
 			OutHitResult.Normal,
 			OutHitResult.Component.Get());
@@ -116,7 +135,7 @@ float AWeaponBase::PlayMontage(EWeaponAnimationMontageType MontageType)
 {
 	UAnimMontage* MontageToPlay =
 		UWeaponAnimDataFunctions::GetAnimationMontage(
-			CurrentWeaponAnimData,
+			ActiveConfig.WeaponAnimData,
 			MontageType);
 	return  PlayMontage(MontageToPlay);
 }
@@ -164,12 +183,12 @@ float AWeaponBase::PlayMontage(UAnimMontage* MontageToPlay)
 void AWeaponBase::GetTracePoints(FTransform InFireTransform, FVector& OutStart, FVector& OutEnd)
 {
 	//Calculate Shot Angle
-	float ShotAngle = Config.GetShotAngle(bIsAiming);
+	float ShotAngle = ActiveConfig.GetShotAngle(bIsAiming);
 	OutStart = InFireTransform.GetLocation();
 
 	//Calculate Start And End Points
 	UE::Math::TQuat<double> Rotation = InFireTransform.GetRotation();
-	FVector ForwardVector =  Rotation.GetForwardVector()*Config.Range;
+	FVector ForwardVector =  Rotation.GetForwardVector()*ActiveConfig.Range;
 	FVector UpVector = Rotation.GetUpVector();
 	FVector ShotAngleVector = UKismetMathLibrary::RotateAngleAxis(ForwardVector,ShotAngle,UpVector);
 	float RandomAngle = UKismetMathLibrary::RandomFloatInRange(0,360);
@@ -182,12 +201,17 @@ void AWeaponBase::GetTracePoints(FTransform InFireTransform, FVector& OutStart, 
 bool AWeaponBase::CheckInputSignalType(EInputSignalType InputSignalType)
 {
 	uint8 InputSignalValue = static_cast<uint8>(InputSignalType);
-	return (Config.AllowedInputSignals & InputSignalValue) == InputSignalValue;
+	return (ActiveConfig.AllowedInputSignals & InputSignalValue) == InputSignalValue;
 }
 
 bool AWeaponBase::IsInCooldown()
 {
 	return GetWorld()->GetTimerManager().IsTimerActive(FireCooldown);
+}
+
+bool AWeaponBase::IsAiming()
+{
+	return bIsAiming;
 }
 
 void AWeaponBase::ResetFireCooldown()
@@ -199,7 +223,7 @@ void AWeaponBase::ResetFireCooldown()
 void AWeaponBase::DoFire(FHitResult& OutHitResult)
 {
 	//Start Fire Delay
-	float CurrentFireDelay = Config.FireDelay;
+	float CurrentFireDelay = ActiveConfig.FireDelay;
 	if (CurrentFireDelay>0)
 	{
 		//Start Cooldown
@@ -209,7 +233,7 @@ void AWeaponBase::DoFire(FHitResult& OutHitResult)
 	}
 
 	//Reduce Clip
-	CurrentClip -= Config.bInfiniteAmmo?0:1;
+	CurrentClip -= ActiveConfig.bInfiniteAmmo?0:1;
 
 	//Shoot Traces
 	FireTraces(OutHitResult);
@@ -223,7 +247,7 @@ void AWeaponBase::DoFire(FHitResult& OutHitResult)
 
 float AWeaponBase::Reload()
 {
-	CurrentClip = Config.MaxClipSize;
+	CurrentClip = ActiveConfig.MaxClipSize;
 	return PlayMontage(EWeaponAnimationMontageType::AnimationMontage_Reload);
 }
 
@@ -242,12 +266,20 @@ void AWeaponBase::OnEquip(AActor* NewHolder)
 {
 	SetWeapon(true);
 	WeaponHolder = NewHolder;
-
 	PlayMontage(EWeaponAnimationMontageType::AnimationMontage_Equip);
+	UE_LOG(Weapon, Log, TEXT("Equipped %s"),*GetClass()->GetName())
 }
 
 bool AWeaponBase::CanFire(EInputSignalType InputSignal, EFireType FireType,TEnumAsByte<EFireBlock>& OutBlock)
 {
+	//Cooldown
+	if (!IsValid(WeaponHolder))
+	{
+		OutBlock = EFireBlock::Error;
+		UE_LOG(Weapon, Error, TEXT("Invalid Weapon Holder"))
+		return false;
+	}
+	
 	//Input Signal
 	if (CheckInputSignalType(InputSignal))
 	{
@@ -256,7 +288,7 @@ bool AWeaponBase::CanFire(EInputSignalType InputSignal, EFireType FireType,TEnum
 	}
 
 	//Clip
-	if (CurrentClip<=Config.AmmoCost && !Config.bInfiniteAmmo)
+	if (CurrentClip<=ActiveConfig.AmmoCost && !ActiveConfig.bInfiniteAmmo)
 	{
 		OutBlock = CurrentClip==0?EFireBlock::EmptyClip:EFireBlock::NotEnoughAmmo;
 		return false;
@@ -271,6 +303,11 @@ bool AWeaponBase::CanFire(EInputSignalType InputSignal, EFireType FireType,TEnum
 
 	OutBlock = EFireBlock::None;
 	return true;
+}
+
+FWeaponConfig AWeaponBase::GetActiveConfig()
+{
+	return  ActiveConfig;
 }
 
 void AWeaponBase::SetWeapon(bool Active)

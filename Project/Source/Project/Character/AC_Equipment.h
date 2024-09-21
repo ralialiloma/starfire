@@ -30,15 +30,23 @@ private:
 
 protected:
 
-	//Actor
+	//Component
 	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
 						   FActorComponentTickFunction* ThisTickFunction) override;
 
+	virtual void InitializeComponent() override;
+
 	//Interface
 public:
 	UFUNCTION(BlueprintCallable)
-	bool GetIsEquipped() const;
+	bool IsEquipped() const;
+
+	UFUNCTION(BlueprintCallable)
+	bool IsAiming() const;
+
+	UFUNCTION(BlueprintCallable)
+	FWeaponAnimData GetAnimationData() const;
 
 	UFUNCTION(BlueprintCallable)
 	void AddWeapon(AWeaponBase* WeaponToAdd, bool Equip, int& Index);

@@ -19,7 +19,6 @@ public:
 	AWeaponBase(const FObjectInitializer& ObjectInitializer);
 
 	//Components
-
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	USceneComponent* DefaultSceneRoot;
 
@@ -28,10 +27,13 @@ public:
 
 	//Config
 	UPROPERTY()
-	FWeaponConfig Config;
+	FWeaponConfig InitialConfig;
 
 	//Transient
 private:
+	UPROPERTY()
+	FWeaponConfig ActiveConfig;
+	
 	UPROPERTY()
 	bool bIsAiming =false;
 
@@ -45,9 +47,6 @@ private:
 	FTimerHandle FireCooldown = FTimerHandle();
 
 	UPROPERTY()
-	FWeaponAnimData CurrentWeaponAnimData = FWeaponAnimData();
-
-	UPROPERTY()
 	AActor* WeaponHolder = nullptr;
 
 	//Events
@@ -55,6 +54,7 @@ private:
 	//Actor
 protected:
 	virtual void BeginPlay() override;
+	virtual void PostInitProperties() override;
 	virtual void Tick(float DeltaTime) override;
 
 	//Interface
@@ -77,6 +77,9 @@ public:
 	int GetAmmoCount();
 
 	UFUNCTION(BlueprintCallable,Category="WeaponBase")
+	FWeaponConfig GetActiveConfig();
+
+	UFUNCTION(BlueprintCallable,Category="WeaponBase")
 	void SetWeapon(bool Active);
 
 	UFUNCTION(BlueprintCallable,Category="WeaponBase")
@@ -87,6 +90,9 @@ public:
 
 	UFUNCTION(BlueprintCallable,Category="WeaponBase")
 	bool IsInCooldown();
+
+	UFUNCTION(BlueprintCallable, Category="WeaponBase")
+	bool IsAiming();
 
 
 //Internal

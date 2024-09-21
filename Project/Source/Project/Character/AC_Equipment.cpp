@@ -8,17 +8,15 @@
 DEFINE_LOG_CATEGORY_STATIC(EquipmentComponent, Display, Display);
 
 // Sets default values for this component's properties
-UAC_Equipment::UAC_Equipment()
+UAC_Equipment::UAC_Equipment(): EquippedWeapon(nullptr), WeaponOwner(nullptr)
 {
 	PrimaryComponentTick.bCanEverTick = true;
-	// ...
+	Mobility = EComponentMobility::Type::Movable;
 }
 
-
-// Called when the game starts
-void UAC_Equipment::BeginPlay()
+void UAC_Equipment::InitializeComponent()
 {
-	Super::BeginPlay();
+	Super::InitializeComponent();
 
 	WeaponOwner = GetOwner();
 	if (!WeaponOwner->Implements<UWeaponOwner>())
@@ -26,21 +24,53 @@ void UAC_Equipment::BeginPlay()
 		Error,
 		TEXT("Actor requires interface %s "),
 		*UWeaponOwner::StaticClass()->GetName())
+
+	EquippedWeapon = nullptr;
 }
 
-bool UAC_Equipment::GetIsEquipped() const
+// Called when the game starts
+void UAC_Equipment::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
+bool UAC_Equipment::IsEquipped() const
 {
 	return IsValid(EquippedWeapon);
 }
 
-void UAC_Equipment::AddWeapon(AWeaponBase* WeaponToAdd, bool Equip, int &Index)
+bool UAC_Equipment::IsAiming() const
 {
+	if (!IsEquipped())
+		return false;
+	
+	return EquippedWeapon->IsAiming();
+}
+
+FWeaponAnimData UAC_Equipment::GetAnimationData() const
+{
+	if (!IsEquipped())
+		return FWeaponAnimData();
+
+	return EquippedWeapon->GetActiveConfig().WeaponAnimData;
+}
+
+void UAC_Equipment::AddWeapon(AWeaponBase* WeaponToAdd, const bool Equip, int &Index)
+{
+	UE_LOG(EquipmentComponent, Log, TEXT("Trying to equip weapon"));
+
 	//If Weapon Is Already Equipped
 	int FoundWeaponIndex = -1;
 	if (GetSlot(WeaponToAdd,FoundWeaponIndex))
 	{
-		UE_LOG(EquipmentComponent, Log, TEXT("Weapon Already Equipped"))
+		UE_LOG(EquipmentComponent, Log, TEXT("Weapon Already Equipped"));
 		Index = FoundWeaponIndex;
+		return;
+	}
+
+	if (!IsValid(WeaponToAdd))
+	{
+		UE_LOG(EquipmentComponent, Error, TEXT("The Weapon you're trying to equip is invalid"));
 		return;
 	}
 
@@ -55,10 +85,15 @@ void UAC_Equipment::AddWeapon(AWeaponBase* WeaponToAdd, bool Equip, int &Index)
 		EAttachmentRule::KeepWorld,
 		true);
 	WeaponToAdd->AttachToComponent(this, AttachRules, "None");
-	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, "Attached Weapon");
+
+	UE_LOG(EquipmentComponent, Log, TEXT("Equipped Weapons"));
+	
 
 	if (Equip)
+	{
 		EquippedWeapon = WeaponToAdd;
+		EquippedWeapon->OnEquip(GetOwner());
+	}
 
 	//todo SetWeaponActive
 	//todo call pickup event
@@ -67,13 +102,11 @@ void UAC_Equipment::AddWeapon(AWeaponBase* WeaponToAdd, bool Equip, int &Index)
 
 bool UAC_Equipment::Fire(EInputSignalType InputSignal, EFireType FireType, FHitResult& OutHitResult, TEnumAsByte<EFireBlock>& OutFireBlock)
 {
-	if (!IsValid(EquippedWeapon))
+	if (!IsEquipped())
 	{
 		OutFireBlock = EFireBlock::NoWeapon;
 		return false;
 	}
-
-	FTransform FireTransform = IWeaponOwner::Execute_GetFireTransform(WeaponOwner);
 	
 	return EquippedWeapon->Fire(InputSignal,FireType,OutHitResult,OutFireBlock);
 }
@@ -83,9 +116,10 @@ bool UAC_Equipment::Fire(EInputSignalType InputSignal, EFireType FireType, FHitR
 void UAC_Equipment::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
 }
+
+
+
 
 bool UAC_Equipment::GetSlot(AWeaponBase* WeaponBase, int& OutIndex) const
 {

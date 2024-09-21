@@ -25,9 +25,7 @@ void UDamageReceiver::BeginPlay()
 
 void UDamageReceiver::ApplyDamage(float Damage,FVector HitLocation, FVector HitNormal,UPrimitiveComponent* HitComponent)
 {
-#if UE_BUILD_DEBUG
-	ensureMsgf(false, TEXT("Not implemented yet"));
-#endif
+	UE_LOG(LogTemp, Error, TEXT("This function has not bee implemented yet"));
 }
 
 float UDamageReceiver::CalculateDamageMultiplier(FVector AreaLocation, FVector HitPosition, float DamageMultiplier, float MaxDistanceToBone)
