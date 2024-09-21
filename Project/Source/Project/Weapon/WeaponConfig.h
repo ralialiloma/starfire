@@ -19,7 +19,7 @@ struct PROJECT_API FWeaponConfig
 	int AmmoCost;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Common")
-	int MaxClipCost;
+	int MaxClipSize;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Common")
 	float FireDelay;

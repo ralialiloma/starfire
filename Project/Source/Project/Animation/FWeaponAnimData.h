@@ -74,6 +74,7 @@ class PROJECT_API UWeaponAnimDataFunctions : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 
+public:
 	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "WeaponAnimation",meta = (BlueprintThreadSafe))
 	static UAnimSequenceBase* GetAnimationAsset(FWeaponAnimData AnimData,EWeaponAnimationAssetType AssetType);
 

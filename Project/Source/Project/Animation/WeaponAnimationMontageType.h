@@ -8,5 +8,6 @@ enum EWeaponAnimationMontageType: uint8
 	AnimationMontage_SecondaryFire = 2,
 	AnimationMontage_Melee = 3,
 	AnimationMontage_Reload = 4,
+	AnimationMontage_Equip = 5,
 };
 

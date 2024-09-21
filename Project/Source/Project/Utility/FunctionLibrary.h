@@ -50,6 +50,9 @@ class PROJECT_API UFunctionLibrary : public UBlueprintFunctionLibrary
 	{
 		return OutputClass;
 	}
+	
+	UFUNCTION(BlueprintCallable,BlueprintPure, Category="Debug")
+	static FColor BoolToColor(bool bValue);
 
 	UFUNCTION(BlueprintCallable, Category="Collision", meta=(WorldContext="WorldContextObject", AutoCreateRefTerm="ActorsToIgnore", DisplayName="Box Overlap Actors"))
 	static bool BetterBoxOverlapActors(const UObject* WorldContextObject, const FVector BoxPos, const FRotator BoxRot, FVector BoxExtent, const TArray<TEnumAsByte<EObjectTypeQuery> > & ObjectTypes, UClass* ActorClassFilter, const TArray<AActor*>& ActorsToIgnore, TArray<class AActor*>& OutActors);

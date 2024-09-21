@@ -2,8 +2,6 @@
 
 
 #include "WeaponBase.h"
-
-#include "SkeletalDebugRendering.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Project/DamageReceiver.h"
 #include "Project/Utility/DebugSettings.h"
@@ -28,7 +26,7 @@ void AWeaponBase::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void AWeaponBase::FireTraces(FTransform FireTransform, AActor* FiringActor)
+void AWeaponBase::FireTraces(FTransform FireTransform, AActor* FiringActor, FHitResult& OutHitResult)
 {
 	for (int i= 0; i< Config.BulletsPerShot;i++)
 	{
@@ -39,13 +37,11 @@ void AWeaponBase::FireTraces(FTransform FireTransform, AActor* FiringActor)
 		//Debug
 		EDrawDebugTrace::Type DebugType =
 			UDebugSubsystem::GetWeaponDebug(Visual) ? EDrawDebugTrace::ForDuration : EDrawDebugTrace::None;
-		FColor TraceColor = UBlueprintFunctionLibrary::BoolToColor(bIsAiming);
+		FColor TraceColor = UFunctionLibrary::BoolToColor(bIsAiming);
 
 		//Ignore
 		TArray<AActor*> ActorsToIgnore = TArray<AActor*>{FiringActor};
-
-		//HitResult
-		FHitResult HitResult;
+		
 
 		//Line Trace
 		UKismetSystemLibrary::LineTraceSingle(
@@ -56,22 +52,29 @@ void AWeaponBase::FireTraces(FTransform FireTransform, AActor* FiringActor)
 			false,
 			ActorsToIgnore,
 			DebugType,
-			HitResult,
+			OutHitResult,
 			true,
 			TraceColor,
 			FColor::Yellow,
 			3.f);
 
-		if (!HitResult.bBlockingHit)
+		if (!OutHitResult.bBlockingHit)
 			continue;
-
-		//todo callHitVent
-
-		UDamageReceiver* DamageReceiver = HitResult.GetActor()->GetComponentByClass<UDamageReceiver>();
+		
+		UDamageReceiver* DamageReceiver = OutHitResult.GetActor()->GetComponentByClass<UDamageReceiver>();
 		if (DamageReceiver==nullptr)
 			continue;
 
-		DamageReceiver->Apply
+		if (!OutHitResult.Component.IsValid())
+			continue;
+
+		DamageReceiver->ApplyDamage(
+			Config.Damage,
+			OutHitResult.Location,
+			OutHitResult.Normal,
+			OutHitResult.Component.Get());
+
+		//todo callHitEvent
 	}
 }
 
@@ -90,5 +93,66 @@ void AWeaponBase::GetTracePoints(FTransform InFireTransform, FVector& OutStart, 
 	FVector RandomShotAngleVector =
 		UKismetMathLibrary::RotateAngleAxis(ShotAngleVector,RandomAngle,ForwardVector);
 	OutEnd = OutStart+RandomShotAngleVector;
+}
+
+bool AWeaponBase::IsInCooldown()
+{
+	return GetWorld()->GetTimerManager().IsTimerActive(FireCooldown);
+}
+
+void AWeaponBase::ResetFireCooldown()
+{
+	bActiveFireCooldown = false;
+}
+
+
+void AWeaponBase::Fire(
+	FTransform InFireTransform,
+	AActor* InActorFiring,
+	FHitResult& OutHitResult,
+	UAnimMontage*& OutMontageToPlay,
+	float&OutRecoil)
+{
+	float CurrentFireDelay = Config.FireDelay;
+	if (CurrentFireDelay>0)
+	{
+		//Start Cooldown
+		FTimerDelegate TimerDel;
+		TimerDel.BindLambda([this]() -> void { ResetFireCooldown(); });
+		GetWorld()->GetTimerManager().SetTimer(FireCooldown, TimerDel,0.01f,false);
+	}
+
+	//Reduce Clip
+	CurrentClip -= Config.bInfiniteAmmo?0:1;
+	
+	FireTraces(InFireTransform,InActorFiring, OutHitResult);
+
+	//todo callshoot event
+
+	//Find PrimaryFire Montage
+	OutMontageToPlay =
+		UWeaponAnimDataFunctions::GetAnimationMontage(
+			CurrentWeaponAnimData,
+			EWeaponAnimationMontageType::AnimationMontage_PrimaryFire);
+
+	OutRecoil = Config.Recoil;	
+}
+
+void AWeaponBase::Reload(UAnimMontage*& OutMontageToPlay)
+{
+	CurrentClip = Config.MaxClipSize;
+	OutMontageToPlay =
+		UWeaponAnimDataFunctions::GetAnimationMontage(
+			CurrentWeaponAnimData,
+			EWeaponAnimationMontageType::AnimationMontage_Reload);
+	
+}
+
+void AWeaponBase::OnEquip(UAnimMontage*& OutMontageToPlay, AActor* NewOwner)
+{
+	/*OutMontageToPlay =
+		UWeaponAnimDataFunctions::GetAnimationMontage(
+			CurrentWeaponAnimData,
+			EWeaponAnimationMontageType::AnimationMontage_Equip);*/
 }
 

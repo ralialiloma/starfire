@@ -34,12 +34,12 @@ public:
 	UPROPERTY()
 	float Armor;
 
+public:
+	void ApplyDamage(float Damage, FVector HitLocation, FVector HitNormal, UPrimitiveComponent* HitComponent);
 
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
-
-	void ApplyDamage();
 
 	float CalculateDamageMultiplier(FVector AreaLocation, FVector HitPosition, float DamageMultiplier, float MaxDistanceToBone);
 

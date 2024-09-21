@@ -4,11 +4,11 @@
 
 float FWeaponConfig::GetShotAngle(bool bIsAiming)
 {
-	float Accuracy = GetAccuracy(bIsAiming);
-	float Randfloat = UKismetMathLibrary::RandomFloatInRange(0,1);
-	float RandomAccuracy = UKismetMathLibrary:: MultiplyMultiply_FloatFloat(Randfloat,Accuracy);
-	float Spread = GetSpread(bIsAiming);
-	float ShotAngle = Spread*RandomAccuracy;
+	float CurrentAccuracy = GetAccuracy(bIsAiming);
+	float Randfloat = UKismetMathLibrary::RandomFloat();
+	float RandomAccuracy = UKismetMathLibrary:: MultiplyMultiply_FloatFloat(Randfloat,CurrentAccuracy);
+	float CurrentSpread = GetSpread(bIsAiming);
+	float ShotAngle = CurrentSpread*RandomAccuracy;
 	return ShotAngle;
 }
 
