@@ -8,6 +8,7 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Movement/SF_CharacterMovementComponent.h"
+#include "Project/Interact/InteractBase.h"
 
 DEFINE_LOG_CATEGORY_STATIC(SF_Character, Display, Display);
 
@@ -47,7 +48,9 @@ ASf_Character::ASf_Character(const FObjectInitializer& ObjectInitializer)
 	SFEquipmentComponent->SetUsingAbsoluteRotation(false);
 	SFEquipmentComponent->SetUsingAbsoluteScale(false);
 	SFEquipmentComponent->SetupAttachment(FirstPersonMesh);
-	
+
+	//Interact
+	InteractComponent = CreateDefaultSubobject<UInteractBase>(TEXT("Interact"));
 }
 
 void ASf_Character::PostInitializeComponents()

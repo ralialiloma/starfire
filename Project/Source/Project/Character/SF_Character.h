@@ -28,6 +28,9 @@ protected:
 	UPROPERTY(Category="Character", EditDefaultsOnly, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
 	USkeletalMeshComponent* FirstPersonMesh;
 
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Camera")
+	class UInteractBase* InteractComponent;
+
 public:
 	ASf_Character(const FObjectInitializer& ObjectInitializer);
 
@@ -46,6 +49,9 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE USF_Equipment* GetSFEquipmentComponent() const{return SFEquipmentComponent;};
+
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE UInteractBase* GetInteractComponent() const{return InteractComponent;};
 
 protected:
 	virtual void BeginPlay() override;
