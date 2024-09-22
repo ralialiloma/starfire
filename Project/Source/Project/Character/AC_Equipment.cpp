@@ -6,7 +6,7 @@
 #include "Project/Weapon/WeaponOwner.h"
 #include "Project/Utility/InputSignalType.h"
 
-DEFINE_LOG_CATEGORY_STATIC(EquipmentComponent, Display, Display);
+DEFINE_LOG_CATEGORY_STATIC(EquipmentComponent, Log, All);
 
 // Sets default values for this component's properties
 UAC_Equipment::UAC_Equipment(): EquippedWeapon(nullptr), WeaponOwner(nullptr)
@@ -85,14 +85,13 @@ void UAC_Equipment::AddWeapon(AWeaponBase* WeaponToAdd, const bool Equip, int &I
 		true);
 	WeaponToAdd->AttachToComponent(this, AttachRules, "None");
 
-	//UE_LOG(EquipmentComponent, Log, TEXT("Equipped Weapon: ",Sta));
-	
-
 	if (Equip)
 	{
 		EquippedWeapon = WeaponToAdd;
 		EquippedWeapon->OnEquip(GetOwner());
 	}
+
+	UE_LOG(EquipmentComponent, Log, TEXT("Equipped Weapon: %s"),*EquippedWeapon->GetName());
 
 	//todo SetWeaponActive
 	//todo call pickup event
@@ -101,8 +100,6 @@ void UAC_Equipment::AddWeapon(AWeaponBase* WeaponToAdd, const bool Equip, int &I
 
 bool UAC_Equipment::Fire(EInputSignalType InputSignal, EFireType FireType, FHitResult& OutHitResult, TEnumAsByte<EFireBlock>& OutFireBlock)
 {
-	UE_LOG(EquipmentComponent, Log, TEXT("Playing Primary Fire"))
-	
 	if (!IsEquipped())
 	{
 		OutFireBlock = EFireBlock::NoWeapon;
