@@ -104,6 +104,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category="WeaponBase")
 	bool IsAiming();
 
+	UFUNCTION(BlueprintCallable, Category="WeaponBase")
+	bool AimDownSight();
+
 
 //Internal
 	//Fire
@@ -120,6 +123,7 @@ protected:
 private:
 	float PlayMontage(UAnimMontage* MontageToPlay);
 	float PlayMontage (EWeaponAnimationMontageType MontageType);
+	void AimDownSight(float Alpha);
 
 	//Melee
 private:

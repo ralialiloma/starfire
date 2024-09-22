@@ -3,15 +3,51 @@
 
 #include "SF_Character.h"
 
+#include "AC_Equipment.h"
+#include "Camera/CameraComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "Movement/SF_CharacterMovementComponent.h"
 
+DEFINE_LOG_CATEGORY_STATIC(SF_Character, Display, Display);
 
 ASf_Character::ASf_Character(const FObjectInitializer& ObjectInitializer)
 	: Super(
-		  ObjectInitializer.SetDefaultSubobjectClass<USF_CharacterMovementComponent>(
-			  ACharacter::CharacterMovementComponentName))
+		  ObjectInitializer.SetDefaultSubobjectClass<USF_CharacterMovementComponent>(ACharacter::CharacterMovementComponentName)
+		  .DoNotCreateDefaultSubobject(ACharacter::MeshComponentName))
 {
+
+	//CharacterMovement
 	SFCharacterMovementComponent  = Cast<USF_CharacterMovementComponent>(GetCharacterMovement());;
+
+	//SprintArmComponent
+	SprintArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
+	SprintArmComponent->SetUsingAbsoluteLocation(false);
+	SprintArmComponent->SetUsingAbsoluteRotation(false);
+	SprintArmComponent->SetUsingAbsoluteScale(false);
+	SprintArmComponent->SetupAttachment(GetCapsuleComponent());
+
+	//FirstPersonCamera
+	FirstPersonCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FPCam"));
+	FirstPersonCamera->SetUsingAbsoluteLocation(false);
+	FirstPersonCamera->SetUsingAbsoluteRotation(false);
+	FirstPersonCamera->SetUsingAbsoluteScale(false);
+	FirstPersonCamera->SetupAttachment(SprintArmComponent);
+
+	//First Person Person Character Mesh
+	FirstPersonMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("FPMesh"));
+	FirstPersonMesh->SetUsingAbsoluteLocation(false);
+	FirstPersonMesh->SetUsingAbsoluteRotation(false);
+	FirstPersonMesh->SetUsingAbsoluteScale(false);
+	FirstPersonMesh->SetupAttachment(FirstPersonCamera);
+	
+	//Equipment
+	SFEquipmentComponent = CreateDefaultSubobject<USF_Equipment>(TEXT("SFEquip"));
+	SFEquipmentComponent->SetUsingAbsoluteLocation(false);
+	SFEquipmentComponent->SetUsingAbsoluteRotation(false);
+	SFEquipmentComponent->SetUsingAbsoluteScale(false);
+	SFEquipmentComponent->SetupAttachment(FirstPersonMesh);
+	
 }
 
 void ASf_Character::PostInitializeComponents()
@@ -49,5 +85,26 @@ void ASf_Character::Tick(float DeltaTime)
 void ASf_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+}
+
+UAnimInstance* ASf_Character::GetCharacterAnimInstance_Implementation() const
+{
+	return FirstPersonMesh->GetAnimInstance();
+}
+
+UCameraComponent* ASf_Character::GetCamera_Implementation() const
+{
+	return FirstPersonCamera;
+}
+
+FTransform ASf_Character::GetFireTransform_Implementation() const
+{
+	return FirstPersonCamera->GetComponentTransform();
+}
+
+FMeleeInfo ASf_Character::GetMeleeInfo_Implementation() const
+{
+	UE_LOG(SF_Character, Error, TEXT("GetMeleeInfo_Implementation() Has Not Been Implemented Yet"))
+	return FMeleeInfo();
 }
 

@@ -11,7 +11,7 @@
 #include "Project/Utility/DebugSettings.h"
 #include "Project/Utility/DebugSubsystem.h"
 
-DEFINE_LOG_CATEGORY_STATIC(Weapon, Display, Display);
+DEFINE_LOG_CATEGORY_STATIC(SF_Weapon, Display, Display);
 
 AWeaponBase::AWeaponBase(const FObjectInitializer& ObjectInitializer)
 {
@@ -80,7 +80,7 @@ void AWeaponBase::FireTraces(FHitResult& OutHitResult)
 	int BulletsPerShot = ActiveConfig.BulletsPerShot;
 	if (BulletsPerShot <= 0)
 	{
-		UE_LOG(Weapon, Warning, TEXT("Invalid BulletsPerShot value: %d"), ActiveConfig.BulletsPerShot);
+		UE_LOG(SF_Weapon, Warning, TEXT("Invalid BulletsPerShot value: %d"), ActiveConfig.BulletsPerShot);
 		return;
 	}
 
@@ -145,7 +145,7 @@ float AWeaponBase::PlayMontage(EWeaponAnimationMontageType MontageType)
 	if (!IsValid(MontageToPlay))
 	{
 		UE_LOG(
-			Weapon,
+			SF_Weapon,
 			Warning,
 			TEXT("Missing Weapon Montage For %s"),
 			*UEnum::GetValueAsString(MontageType));
@@ -153,6 +153,37 @@ float AWeaponBase::PlayMontage(EWeaponAnimationMontageType MontageType)
 	}
 	
 	return PlayMontage(MontageToPlay);
+}
+
+void AWeaponBase::AimDownSight(float Alpha)
+{
+	bIsAiming = true;
+	UCameraComponent* Camera = IWeaponOwner::Execute_GetCamera(WeaponHolder);
+	if (!IsValid(Camera))
+	{
+		UE_LOG(
+			SF_Weapon,
+			Warning,
+			TEXT("Missing Camera Component on %s"),
+			*GetClass()->GetName());
+		return;
+	}
+
+	//todo Do these camera settings in cameraplayermanager
+	float DefaultFOV = 90;
+	float FOV = UKismetMathLibrary::Lerp(DefaultFOV,GetActiveConfig().AimFOV,Alpha) ;
+	Camera->SetFieldOfView(FOV);
+
+	//todo Set Vignette Intensity (Lerp)
+
+	FTransform InitialTransform =
+		FTransform (FRotator::ZeroRotator,FVector::Zero(),FVector::OneVector);
+
+	FTransform LerpedTransform =  UKismetMathLibrary::TLerp(InitialTransform,GetActiveConfig().AimOffset,Alpha);
+
+	//Set Relative Transform
+//	SetActorRelativeTransform()
+	
 }
 
 void AWeaponBase::DoMelee()
@@ -164,19 +195,19 @@ void AWeaponBase::StopMontage(UAnimMontage* MontageToStop)
 {
 	if (!IsValid(WeaponHolder))
 	{
-		UE_LOG(Weapon, Warning, TEXT("Invalid Weapon Owner to stop montage on"))
+		UE_LOG(SF_Weapon, Warning, TEXT("Invalid Weapon Owner to stop montage on"))
 		return;
 	}
 	
 	if (!IsValid(MontageToStop))
 	{
-		UE_LOG(Weapon, Warning, TEXT("Invalid Montage to stop"))
+		UE_LOG(SF_Weapon, Warning, TEXT("Invalid Montage to stop"))
 		return;
 	}
 
 	if (!WeaponHolder->Implements<UWeaponOwner>())
 	{
-		UE_LOG(Weapon,
+		UE_LOG(SF_Weapon,
 				Warning,
 				TEXT("Actor Requires %s interface to stop montage on "),
 			   *UWeaponOwner::StaticClass()->GetName())
@@ -187,7 +218,7 @@ void AWeaponBase::StopMontage(UAnimMontage* MontageToStop)
 
 	if (!IsValid(AnimInstance))
 	{
-		UE_LOG(Weapon, Warning, TEXT("Invalid AnimInstance To Stop Montage"))
+		UE_LOG(SF_Weapon, Warning, TEXT("Invalid AnimInstance To Stop Montage"))
 		return;
 	}
 
@@ -198,7 +229,7 @@ void AWeaponBase::StopMontage(UAnimMontage* MontageToStop)
 	AnimInstance->Montage_Stop(GetActiveConfig().ReloatBlendOutTime,MontageToStop);
 	
 	UE_LOG(
-		Weapon,
+		SF_Weapon,
 		Log,
 		TEXT("Stoping Montage %s on %s "),
 		*MontageToStop->GetName(),
@@ -210,19 +241,19 @@ float AWeaponBase::PlayMontage(UAnimMontage* MontageToPlay)
 {
 	if (!IsValid(WeaponHolder))
 	{
-		UE_LOG(Weapon, Warning, TEXT("Invalid Weapon Owner to play montage on"))
+		UE_LOG(SF_Weapon, Warning, TEXT("Invalid Weapon Owner to play montage on"))
 		return 0;
 	}
 	
 	if (!IsValid(MontageToPlay))
 	{
-		UE_LOG(Weapon, Warning, TEXT("Invalid Montage to play"))
+		UE_LOG(SF_Weapon, Warning, TEXT("Invalid Montage to play"))
 		return 0;
 	}
 
 	if (!WeaponHolder->Implements<UWeaponOwner>())
 	{
-		UE_LOG(Weapon,
+		UE_LOG(SF_Weapon,
 				Warning,
 				TEXT("Actor Requires %s interface to play shoot montage"),
 			   *UWeaponOwner::StaticClass()->GetName())
@@ -233,12 +264,12 @@ float AWeaponBase::PlayMontage(UAnimMontage* MontageToPlay)
 
 	if (!IsValid(AnimInstance))
 	{
-		UE_LOG(Weapon, Warning, TEXT("Invalid AnimInstance"))
+		UE_LOG(SF_Weapon, Warning, TEXT("Invalid AnimInstance"))
 		return 0;
 	}
 
 	UE_LOG(
-		Weapon,
+		SF_Weapon,
 		Log,
 		TEXT("Playing Montage %s on %s "),
 		*MontageToPlay->GetName(),
@@ -285,6 +316,11 @@ bool AWeaponBase::IsInCooldown()
 bool AWeaponBase::IsAiming()
 {
 	return bIsAiming;
+}
+
+bool AWeaponBase::AimDownSight()
+{
+	return false;
 }
 
 void AWeaponBase::ResetFireCooldown()
@@ -363,7 +399,7 @@ void AWeaponBase::OnEquip(AActor* NewHolder)
 	SetWeapon(true);
 	WeaponHolder = NewHolder;
 	PlayMontage(EWeaponAnimationMontageType::AnimationMontage_Equip);
-	UE_LOG(Weapon, Log, TEXT("Equipped %s"),*GetClass()->GetName())
+	UE_LOG(SF_Weapon, Log, TEXT("Equipped %s"),*GetClass()->GetName())
 }
 
 bool AWeaponBase::CanFire(EInputSignalType InputSignal, EFireType FireType,TEnumAsByte<EFireBlock>& OutBlock)
@@ -372,7 +408,7 @@ bool AWeaponBase::CanFire(EInputSignalType InputSignal, EFireType FireType,TEnum
 	if (!IsValid(WeaponHolder))
 	{
 		OutBlock = EFireBlock::Error;
-		UE_LOG(Weapon, Error, TEXT("Invalid Weapon Holder"))
+		UE_LOG(SF_Weapon, Error, TEXT("Invalid Weapon Holder"))
 		return false;
 	}
 	
@@ -411,4 +447,5 @@ void AWeaponBase::SetWeapon(bool Active)
 	SetActorEnableCollision(Active);
 	SetActorHiddenInGame(!Active);
 }
+
 

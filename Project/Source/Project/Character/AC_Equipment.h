@@ -12,12 +12,12 @@
 
 
 UCLASS(ClassGroup=(Character), meta=(BlueprintSpawnableComponent))
-class PROJECT_API UAC_Equipment : public USceneComponent
+class PROJECT_API USF_Equipment : public USceneComponent
 {
 	GENERATED_BODY()
 
 public:
-	UAC_Equipment();
+	USF_Equipment();
 
 private:
 	//Transient
@@ -51,6 +51,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void AddWeapon(AWeaponBase* WeaponToAdd, bool Equip, int& Index);
+
+	UFUNCTION(BlueprintCallable)
+	void AddWeaponByClass(TSubclassOf<AWeaponBase> ActorClass, bool Equip, int& Index);
 
 	UFUNCTION(BlueprintCallable)
 	bool Fire(EInputSignalType InputSignal, EFireType FireType, FHitResult& OutHitResult,

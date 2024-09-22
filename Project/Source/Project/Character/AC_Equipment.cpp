@@ -9,13 +9,13 @@
 DEFINE_LOG_CATEGORY_STATIC(EquipmentComponent, Log, All);
 
 // Sets default values for this component's properties
-UAC_Equipment::UAC_Equipment(): EquippedWeapon(nullptr), WeaponOwner(nullptr)
+USF_Equipment::USF_Equipment(): EquippedWeapon(nullptr), WeaponOwner(nullptr)
 {
 	PrimaryComponentTick.bCanEverTick = true;
 	Mobility = EComponentMobility::Type::Movable;
 }
 
-void UAC_Equipment::InitializeComponent()
+void USF_Equipment::InitializeComponent()
 {
 	Super::InitializeComponent();
 
@@ -30,17 +30,17 @@ void UAC_Equipment::InitializeComponent()
 }
 
 // Called when the game starts
-void UAC_Equipment::BeginPlay()
+void USF_Equipment::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
-bool UAC_Equipment::IsEquipped() const
+bool USF_Equipment::IsEquipped() const
 {
 	return IsValid(EquippedWeapon);
 }
 
-bool UAC_Equipment::IsAiming() const
+bool USF_Equipment::IsAiming() const
 {
 	if (!IsEquipped())
 		return false;
@@ -48,7 +48,7 @@ bool UAC_Equipment::IsAiming() const
 	return EquippedWeapon->IsAiming();
 }
 
-FWeaponAnimData UAC_Equipment::GetAnimationData() const
+FWeaponAnimData USF_Equipment::GetAnimationData() const
 {
 	if (!IsEquipped())
 		return FWeaponAnimData();
@@ -56,7 +56,7 @@ FWeaponAnimData UAC_Equipment::GetAnimationData() const
 	return EquippedWeapon->GetActiveConfig().GetAnimData();
 }
 
-void UAC_Equipment::AddWeapon(AWeaponBase* WeaponToAdd, const bool Equip, int &Index)
+void USF_Equipment::AddWeapon(AWeaponBase* WeaponToAdd, const bool Equip, int &Index)
 {
 	//If Weapon Is Already Equipped
 	int FoundWeaponIndex = -1;
@@ -98,7 +98,14 @@ void UAC_Equipment::AddWeapon(AWeaponBase* WeaponToAdd, const bool Equip, int &I
 	
 }
 
-bool UAC_Equipment::Fire(EInputSignalType InputSignal, EFireType FireType, FHitResult& OutHitResult, TEnumAsByte<EFireBlock>& OutFireBlock)
+void USF_Equipment::AddWeaponByClass(TSubclassOf<AWeaponBase> ActorClass, bool Equip, int& Index)
+{
+	AActor* SpawnedActor =  GetWorld()->SpawnActor(ActorClass);
+	AWeaponBase* WeaponBase = Cast<AWeaponBase>(SpawnedActor);
+	AddWeapon(WeaponBase,Equip,Index);
+}
+
+bool USF_Equipment::Fire(EInputSignalType InputSignal, EFireType FireType, FHitResult& OutHitResult, TEnumAsByte<EFireBlock>& OutFireBlock)
 {
 	if (!IsEquipped())
 	{
@@ -111,7 +118,7 @@ bool UAC_Equipment::Fire(EInputSignalType InputSignal, EFireType FireType, FHitR
 
 
 
-bool UAC_Equipment::CanReload() const
+bool USF_Equipment::CanReload() const
 {
 	if (!IsEquipped())
 	{
@@ -120,7 +127,7 @@ bool UAC_Equipment::CanReload() const
 	return true;
 }
 
-bool UAC_Equipment::Reload()
+bool USF_Equipment::Reload()
 {
 	if (!CanReload())
 	{
@@ -130,7 +137,7 @@ bool UAC_Equipment::Reload()
 	return EquippedWeapon->Reload();
 }
 
-void UAC_Equipment::StopReloading()
+void USF_Equipment::StopReloading()
 {
 	if (!IsEquipped())
 		return;
@@ -140,7 +147,7 @@ void UAC_Equipment::StopReloading()
 
 
 // Called every frame
-void UAC_Equipment::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void USF_Equipment::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
@@ -148,7 +155,7 @@ void UAC_Equipment::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 
 
 
-bool UAC_Equipment::GetSlot(AWeaponBase* WeaponBase, int& OutIndex) const
+bool USF_Equipment::GetSlot(AWeaponBase* WeaponBase, int& OutIndex) const
 {
 	OutIndex = -1;
 	if (!IsValid(WeaponBase))

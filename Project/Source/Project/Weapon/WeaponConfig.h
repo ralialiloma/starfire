@@ -84,6 +84,9 @@ struct PROJECT_API FWeaponConfig
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Animation")
 	UWeaponAnimationAsset* WeaponAnimationAsset = nullptr;
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Animation")
+	FTransform AimOffset = FTransform();
+
 public:
 	FWeaponConfig();
 	

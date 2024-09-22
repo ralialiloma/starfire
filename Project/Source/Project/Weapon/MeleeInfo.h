@@ -19,4 +19,9 @@ struct PROJECT_API FMeleeInfo
 	FVector Direction;
 
 	FMeleeInfo();
+
+	FMeleeInfo(FVector InLocation, FVector InExtent, FRotator InRotation, FVector InDirection)
+	   : Location(InLocation), Extent(InExtent), Rotation(InRotation), Direction(InDirection)
+	{
+	}
 };
