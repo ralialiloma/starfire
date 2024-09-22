@@ -40,10 +40,10 @@ protected:
 
 	//Interface
 public:
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable,BlueprintPure)
 	bool IsEquipped() const;
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable,BlueprintPure)
 	bool IsAiming() const;
 
 	UFUNCTION(BlueprintCallable)
@@ -55,6 +55,15 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool Fire(EInputSignalType InputSignal, EFireType FireType, FHitResult& OutHitResult,
 	          TEnumAsByte<EFireBlock>& OutFireBlock);
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	bool CanReload() const;
+	
+	UFUNCTION(BlueprintCallable)
+	bool Reload();
+
+	UFUNCTION(BlueprintCallable)
+	void StopReloading();
 
 	//Internal
 private:

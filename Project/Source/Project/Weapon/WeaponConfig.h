@@ -27,9 +27,6 @@ struct PROJECT_API FWeaponConfig
 	float FireDelay  =1;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Common")
-	float ReloadTime = 2;
-
-	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Common")
 	float Recoil = 1;
 
 	//Accuracy
@@ -71,6 +68,10 @@ struct PROJECT_API FWeaponConfig
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Aim",meta=(EditCondition="bUseMultipliers", EditConditionHides))
 	float AimSpreadMultiplier = 1;
+
+	//Reloading
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Reloading")
+	float ReloatBlendOutTime =0.3f; 
 
 	//Other
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Other")

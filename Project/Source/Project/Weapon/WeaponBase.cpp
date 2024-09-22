@@ -64,6 +64,8 @@ bool AWeaponBase::Fire(const EInputSignalType InputSignal,
 						FHitResult& OutHitResult,
 						TEnumAsByte<EFireBlock>& OutFireBlock) 
 {
+
+	StopReloading();
 	
 	if (!CanFire(InputSignal,FireType,OutFireBlock))
 		return false;
@@ -156,6 +158,51 @@ float AWeaponBase::PlayMontage(EWeaponAnimationMontageType MontageType)
 void AWeaponBase::DoMelee()
 {
 	
+}
+
+void AWeaponBase::StopMontage(UAnimMontage* MontageToStop)
+{
+	if (!IsValid(WeaponHolder))
+	{
+		UE_LOG(Weapon, Warning, TEXT("Invalid Weapon Owner to stop montage on"))
+		return;
+	}
+	
+	if (!IsValid(MontageToStop))
+	{
+		UE_LOG(Weapon, Warning, TEXT("Invalid Montage to stop"))
+		return;
+	}
+
+	if (!WeaponHolder->Implements<UWeaponOwner>())
+	{
+		UE_LOG(Weapon,
+				Warning,
+				TEXT("Actor Requires %s interface to stop montage on "),
+			   *UWeaponOwner::StaticClass()->GetName())
+		return;
+	}
+
+	UAnimInstance* AnimInstance =  IWeaponOwner::Execute_GetCharacterAnimInstance(WeaponHolder);
+
+	if (!IsValid(AnimInstance))
+	{
+		UE_LOG(Weapon, Warning, TEXT("Invalid AnimInstance To Stop Montage"))
+		return;
+	}
+
+	
+	if (!AnimInstance->Montage_IsActive(MontageToStop))
+		return;
+
+	AnimInstance->Montage_Stop(GetActiveConfig().ReloatBlendOutTime,MontageToStop);
+	
+	UE_LOG(
+		Weapon,
+		Log,
+		TEXT("Stoping Montage %s on %s "),
+		*MontageToStop->GetName(),
+		*WeaponHolder->GetName());
 }
 
 
@@ -255,7 +302,7 @@ void AWeaponBase::DoFire(FHitResult& OutHitResult)
 		//Start Cooldown
 		FTimerDelegate TimerDel;
 		TimerDel.BindLambda([this]() -> void { ResetFireCooldown(); });
-		GetWorld()->GetTimerManager().SetTimer(FireCooldown, TimerDel,0.01f,false);
+		GetWorld()->GetTimerManager().SetTimer(FireCooldown, TimerDel,CurrentFireDelay,false);
 	}
 
 	//Reduce Clip
@@ -271,10 +318,33 @@ void AWeaponBase::DoFire(FHitResult& OutHitResult)
 	
 }
 
-float AWeaponBase::Reload()
+bool AWeaponBase::Reload()
 {
-	CurrentClip = ActiveConfig.MaxClipSize;
-	return PlayMontage(EWeaponAnimationMontageType::AnimationMontage_Reload);
+	if (IsReloading())
+		return false;
+	
+	float MontageTime = PlayMontage(EWeaponAnimationMontageType::AnimationMontage_Reload);
+
+	FTimerDelegate TimerDel;
+	TimerDel.BindLambda([this]() -> void {CurrentClip = ActiveConfig.MaxClipSize;});
+	GetWorld()->GetTimerManager().SetTimer(ReloadTimer,TimerDel,MontageTime,false);
+
+	return true;
+}
+
+float AWeaponBase::IsReloading()
+{
+	return GetWorld()->GetTimerManager().IsTimerActive(ReloadTimer);
+}
+
+void AWeaponBase::StopReloading()
+{
+	GetWorld()->GetTimerManager().ClearTimer(ReloadTimer);
+	ReloadTimer.Invalidate();
+	UAnimMontage* ReloadMontage =  UWeaponAnimDataFunctions::GetAnimationMontage(
+		GetActiveConfig().GetAnimData(),
+		EWeaponAnimationMontageType::AnimationMontage_Reload);
+	StopMontage(ReloadMontage);
 }
 
 float AWeaponBase::Melee()
@@ -307,7 +377,7 @@ bool AWeaponBase::CanFire(EInputSignalType InputSignal, EFireType FireType,TEnum
 	}
 	
 	//Input Signal
-	if (CheckInputSignalType(InputSignal))
+	if (!CheckInputSignalType(InputSignal))
 	{
 		OutBlock = EFireBlock::TriggerType;
 		return false;

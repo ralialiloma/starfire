@@ -110,6 +110,35 @@ bool UAC_Equipment::Fire(EInputSignalType InputSignal, EFireType FireType, FHitR
 }
 
 
+
+bool UAC_Equipment::CanReload() const
+{
+	if (!IsEquipped())
+	{
+		return false;
+	}
+	return true;
+}
+
+bool UAC_Equipment::Reload()
+{
+	if (!CanReload())
+	{
+		UE_LOG(EquipmentComponent, Log, TEXT("Cannot run Reload"))
+	}
+
+	return EquippedWeapon->Reload();
+}
+
+void UAC_Equipment::StopReloading()
+{
+	if (!IsEquipped())
+		return;
+
+	return EquippedWeapon->StopReloading();
+}
+
+
 // Called every frame
 void UAC_Equipment::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {

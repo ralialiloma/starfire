@@ -48,6 +48,9 @@ private:
 	FTimerHandle FireCooldown = FTimerHandle();
 
 	UPROPERTY()
+	FTimerHandle ReloadTimer = FTimerHandle();
+
+	UPROPERTY()
 	AActor* WeaponHolder = nullptr;
 
 	//Events
@@ -69,7 +72,13 @@ public:
 		TEnumAsByte<EFireBlock>& OutFireBlock);
 
 	UFUNCTION(BlueprintCallable,Category="WeaponBase")
-	float Reload();
+	bool Reload();
+
+	UFUNCTION(BlueprintCallable,Category="WeaponBase")
+	float IsReloading();
+
+	UFUNCTION(BlueprintCallable,Category="WeaponBase")
+	void StopReloading();
 
 	UFUNCTION(BlueprintCallable,Category="WeaponBase")
 	float Melee();
@@ -115,8 +124,5 @@ private:
 	//Melee
 private:
 	void DoMelee();
-
-
-
-
+	void StopMontage(UAnimMontage* MontageToStop);
 };
