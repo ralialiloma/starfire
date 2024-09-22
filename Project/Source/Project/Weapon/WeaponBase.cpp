@@ -64,10 +64,12 @@ bool AWeaponBase::Fire(const EInputSignalType InputSignal,
 						FHitResult& OutHitResult,
 						TEnumAsByte<EFireBlock>& OutFireBlock) 
 {
+	
 	if (!CanFire(InputSignal,FireType,OutFireBlock))
 		return false;
 	
 	DoFire(OutHitResult);
+
 	return true;
 }
 
@@ -137,7 +139,18 @@ float AWeaponBase::PlayMontage(EWeaponAnimationMontageType MontageType)
 		UWeaponAnimDataFunctions::GetAnimationMontage(
 			ActiveConfig.GetAnimData(),
 			MontageType);
-	return  PlayMontage(MontageToPlay);
+
+	if (!IsValid(MontageToPlay))
+	{
+		UE_LOG(
+			Weapon,
+			Warning,
+			TEXT("Missing Weapon Montage For %s"),
+			*UEnum::GetValueAsString(MontageType));
+		return 0;
+	}
+	
+	return PlayMontage(MontageToPlay);
 }
 
 void AWeaponBase::DoMelee()
@@ -150,13 +163,13 @@ float AWeaponBase::PlayMontage(UAnimMontage* MontageToPlay)
 {
 	if (!IsValid(WeaponHolder))
 	{
-		UE_LOG(Weapon, Warning, TEXT("Missing Weapon Owner to play montage on"))
+		UE_LOG(Weapon, Warning, TEXT("Invalid Weapon Owner to play montage on"))
 		return 0;
 	}
 	
 	if (!IsValid(MontageToPlay))
 	{
-		UE_LOG(Weapon, Warning, TEXT("Missing Montage to play"))
+		UE_LOG(Weapon, Warning, TEXT("Invalid Montage to play"))
 		return 0;
 	}
 
@@ -176,6 +189,13 @@ float AWeaponBase::PlayMontage(UAnimMontage* MontageToPlay)
 		UE_LOG(Weapon, Warning, TEXT("Invalid AnimInstance"))
 		return 0;
 	}
+
+	UE_LOG(
+		Weapon,
+		Log,
+		TEXT("Playing Montage %s on %s "),
+		*MontageToPlay->GetName(),
+		*WeaponHolder->GetName());
 	
 	return AnimInstance->Montage_Play(
 		MontageToPlay,

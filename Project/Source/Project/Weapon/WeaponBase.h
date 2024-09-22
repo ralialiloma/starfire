@@ -7,6 +7,7 @@
 #include "FireType.h"
 #include "WeaponConfig.h"
 #include "GameFramework/Actor.h"
+#include "Project/Utility/InputSignalType.h"
 #include "Project/Animation/FWeaponAnimData.h"
 #include "WeaponBase.generated.h"
 

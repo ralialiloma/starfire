@@ -3,22 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "InputSignalType.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "FunctionLibrary.generated.h"
 
 #pragma region Enums
-UENUM(BlueprintType, meta=(Bitflags))
-enum EInputSignalType
-{
-	InputSignal_None = 0 UMETA(Hidden),
-	InputSignal_Started = 1 UMETA(DisplayName="Started"),
-	InputSignal_Triggered = 2 UMETA(DisplayName="Triggered"),
-	InputSignal_Completed  = 3 UMETA(DisplayName="Completed") 
-};
 
 UENUM(BlueprintType)
-enum ESuccessState
+enum  ESuccessState
 {
 	Success,
 	Failed,

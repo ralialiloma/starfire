@@ -4,6 +4,7 @@
 #include "AC_Equipment.h"
 #include "Project/Weapon/FireBlocks.h"
 #include "Project/Weapon/WeaponOwner.h"
+#include "Project/Utility/InputSignalType.h"
 
 DEFINE_LOG_CATEGORY_STATIC(EquipmentComponent, Display, Display);
 
@@ -57,8 +58,6 @@ FWeaponAnimData UAC_Equipment::GetAnimationData() const
 
 void UAC_Equipment::AddWeapon(AWeaponBase* WeaponToAdd, const bool Equip, int &Index)
 {
-	UE_LOG(EquipmentComponent, Log, TEXT("Trying to equip weapon"));
-
 	//If Weapon Is Already Equipped
 	int FoundWeaponIndex = -1;
 	if (GetSlot(WeaponToAdd,FoundWeaponIndex))
@@ -86,7 +85,7 @@ void UAC_Equipment::AddWeapon(AWeaponBase* WeaponToAdd, const bool Equip, int &I
 		true);
 	WeaponToAdd->AttachToComponent(this, AttachRules, "None");
 
-	UE_LOG(EquipmentComponent, Log, TEXT("Equipped Weapons"));
+	//UE_LOG(EquipmentComponent, Log, TEXT("Equipped Weapon: ",Sta));
 	
 
 	if (Equip)
@@ -102,6 +101,8 @@ void UAC_Equipment::AddWeapon(AWeaponBase* WeaponToAdd, const bool Equip, int &I
 
 bool UAC_Equipment::Fire(EInputSignalType InputSignal, EFireType FireType, FHitResult& OutHitResult, TEnumAsByte<EFireBlock>& OutFireBlock)
 {
+	UE_LOG(EquipmentComponent, Log, TEXT("Playing Primary Fire"))
+	
 	if (!IsEquipped())
 	{
 		OutFireBlock = EFireBlock::NoWeapon;

@@ -32,25 +32,34 @@ void FWeaponAnimData::UpdateEntry(TMap<TEnumAsByte<EnumType>, AssetType>& AssetM
 {
 	static_assert(TIsEnum<EnumType>::Value, "UpdateEntry can only be used with enum types!");
 
-	TArray<EnumType> AssetTypes =
-		UFunctionLibrary::GetAllEnumValues<EnumType>(true);
+	TArray<EnumType> AssetTypes = UFunctionLibrary::GetAllEnumValues<EnumType>(true);
 
-	//Import New Enums
-	for (EnumType Type: AssetTypes)
+	// Import New Enums
+	for (EnumType Type : AssetTypes)
 	{
 		if (!AssetMap.Contains(Type))
-			AssetMap.Add(Type,nullptr);
+			AssetMap.Add(Type, nullptr);
 	}
 
-	//Remove Empty Enum Entries (None)
-	AssetMap.Remove(TEnumAsByte<EnumType> (0));
+	// Remove Empty Enum Entries (None)
+	AssetMap.Remove(TEnumAsByte<EnumType>(0));
 
-	//Clear Invalid Enums
+	// Collect Invalid Enum Keys for Removal
 	const UEnum* EnumInfo = StaticEnum<EnumType>();
-	for (auto Kvp: AssetMap)
+	TArray<TEnumAsByte<EnumType>> KeysToRemove;
+
+	for (const auto& Kvp : AssetMap)
 	{
 		if (!EnumInfo->IsValidEnumValue(Kvp.Key))
-			AssetMap.Remove(Kvp.Key);
+		{
+			KeysToRemove.Add(Kvp.Key);
+		}
+	}
+
+	// Remove invalid keys outside of the iteration
+	for (const auto& Key : KeysToRemove)
+	{
+		AssetMap.Remove(Key);
 	}
 }
 

@@ -7,6 +7,7 @@
 #include "Project/Weapon/FireBlocks.h"
 #include "Project/Weapon/FireType.h"
 #include "Project/Weapon/WeaponBase.h"
+#include "Project/Utility/InputSignalType.h"
 #include "AC_Equipment.generated.h"
 
 
