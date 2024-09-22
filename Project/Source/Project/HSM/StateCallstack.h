@@ -23,11 +23,11 @@ private:
 	TArray<UBaseState*> ActiveStatesByPriority;
 
 public:
-	UPROPERTY(BlueprintReadWrite,meta = (ExposeOnSpawn=true))
-	FSoftObjectPath DataTablePath;
+	UPROPERTY(BlueprintReadWrite,meta = (ExposeOnSpawn=true),Category = "StateMachine")
+	FSoftObjectPath StateDefintions;
 
-	UPROPERTY(BlueprintReadWrite,meta = (ExposeOnSpawn=true))
-	ACharacter* Character;
+	UPROPERTY(BlueprintReadWrite,meta = (ExposeOnSpawn=true),Category = "StateMachine")
+	ACharacter* OwningCharacter;
 
 public:
 

@@ -1,13 +1,14 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "SF_Character.h"
+#include "Sf_Character.h"
 
-#include "AC_Equipment.h"
+#include "Sf_Equipment.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Movement/SF_CharacterMovementComponent.h"
+#include "Project/HSM/SF_CharacterStateMachine.h"
 #include "Project/Interact/InteractBase.h"
 
 DEFINE_LOG_CATEGORY_STATIC(SF_Character, Display, Display);
@@ -51,6 +52,10 @@ ASf_Character::ASf_Character(const FObjectInitializer& ObjectInitializer)
 
 	//Interact
 	InteractComponent = CreateDefaultSubobject<UInteractBase>(TEXT("Interact"));
+
+	//Character State Machine
+	SFCharacterStateMachine =
+		CreateDefaultSubobject<USf_CharacterStateMachine>(TEXT("StateMachine"));
 }
 
 void ASf_Character::PostInitializeComponents()

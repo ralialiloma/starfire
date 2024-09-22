@@ -4,8 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Project/HSM/SF_CharacterStateMachine.h"
 #include "Project/Weapon/WeaponOwner.h"
-#include "SF_Character.generated.h"
+#include "Sf_Character.generated.h"
 
 UCLASS(Config = Game)
 class PROJECT_API ASf_Character : public ACharacter, public IWeaponOwner
@@ -31,6 +32,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Camera")
 	class UInteractBase* InteractComponent;
 
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "StateMachine")
+	USf_CharacterStateMachine* SFCharacterStateMachine;
+
 public:
 	ASf_Character(const FObjectInitializer& ObjectInitializer);
 
@@ -38,20 +42,23 @@ public:
 	
 	FCollisionQueryParams GetIgnoreCharacterParams();
 
-	UFUNCTION(BlueprintPure)
+	UFUNCTION(BlueprintPure,Category = "Character")
 	FORCEINLINE USF_CharacterMovementComponent* GetSfCharacterMovementComponent() const{return SFCharacterMovementComponent;};
 
-	UFUNCTION(BlueprintPure)
+	UFUNCTION(BlueprintPure,Category = "Character")
 	FORCEINLINE UCameraComponent* GetFirstPersonCamera() const{return FirstPersonCamera;};
 
-	UFUNCTION(BlueprintPure)
+	UFUNCTION(BlueprintPure,Category = "Character")
 	FORCEINLINE USkeletalMeshComponent* GetFirstPersonMesh() const{return FirstPersonMesh;};
 
-	UFUNCTION(BlueprintPure)
+	UFUNCTION(BlueprintPure,Category = "Character")
 	FORCEINLINE USF_Equipment* GetSFEquipmentComponent() const{return SFEquipmentComponent;};
 
-	UFUNCTION(BlueprintPure)
+	UFUNCTION(BlueprintPure,Category = "Character")
 	FORCEINLINE UInteractBase* GetInteractComponent() const{return InteractComponent;};
+
+	UFUNCTION(BlueprintPure,Category = "Character")
+	FORCEINLINE USf_CharacterStateMachine* GetCharaterStateMachine() const{return SFCharacterStateMachine;};
 
 protected:
 	virtual void BeginPlay() override;

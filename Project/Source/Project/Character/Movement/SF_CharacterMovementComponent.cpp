@@ -6,6 +6,8 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/Character.h"
 
+DEFINE_LOG_CATEGORY_STATIC(SF_CharacterMovement, Display, Display);
+
 USF_CharacterMovementComponent::FSavedMove_Sf::FSavedMove_Sf(): Saved_bWantsToSprint(0), Saved_bWallRunIsRight(0)
 {
 }
@@ -294,6 +296,15 @@ void USF_CharacterMovementComponent::PhysWallRun(float deltaTime, int32 Iteratio
 		return;
 	}
 
+	if (!IsValid(WallRunGravityScaleCurve))
+	{
+		UE_LOG(SF_CharacterMovement, Error, TEXT("Missing WallRunGravityScaleCurve"))
+		Acceleration = FVector::ZeroVector;
+		Velocity = FVector::ZeroVector;
+		return;
+	}
+
+
 	bJustTeleported = false;
 	float RemainingTime = deltaTime;
 
@@ -334,6 +345,7 @@ void USF_CharacterMovementComponent::PhysWallRun(float deltaTime, int32 Iteratio
 		Velocity = FVector::VectorPlaneProject(Velocity,Wallhit.Normal);
 		float TangentAccel = Acceleration.GetSafeNormal()| Velocity.GetSafeNormal2D();
 		bool bVelUp = Velocity.Z>0.f;
+
 		Velocity.Z +=GetGravityZ()*WallRunGravityScaleCurve->GetFloatValue(bVelUp?0.f:TangentAccel)*timeTick;
 
 		if (Velocity.SizeSquared2D() < pow (MinWallRunSpeed,2)||Velocity.Z<-MaxVerticalWallRunSpeed)

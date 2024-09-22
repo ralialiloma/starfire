@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Project/Character/SF_Character.h"
+#include "Project/Character/Sf_Character.h"
 #include "SF_CharacterMovementComponent.generated.h"
 
 UENUM(BlueprintType)
@@ -69,7 +69,7 @@ class PROJECT_API USF_CharacterMovementComponent : public UCharacterMovementComp
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun") float WallRunPullAwayAngle =75;
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun") float WallAttractionForce = 200.0f;
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun") float MinWallRunHeight = 50.f;
-	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun") UCurveFloat* WallRunGravityScaleCurve;
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun") UCurveFloat* WallRunGravityScaleCurve = nullptr;
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun") float WallJumpOffForce = 300.f;;
 	
 	
