@@ -20,10 +20,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Weapon")
 	class USF_Equipment* SFEquipmentComponent;
 
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Camera")
+	UPROPERTY(BlueprintReadOnly,Category = "Camera")
 	class UCameraComponent* FirstPersonCamera;
 
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Camera")
+	UPROPERTY(BlueprintReadOnly,Category = "Camera")
 	class USpringArmComponent* SprintArmComponent;
 	
 	UPROPERTY(Category="Character", EditDefaultsOnly, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
