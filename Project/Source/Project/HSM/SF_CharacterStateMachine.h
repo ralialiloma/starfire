@@ -5,21 +5,17 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "StateCallstack.h"
-#include "CharacterStateMachine.generated.h"
+#include "SF_CharacterStateMachine.generated.h"
 
-
-//Define Delegate
-/*template <typename T>
-;*/
 
 UCLASS(Blueprintable, ClassGroup=(StateMachine), meta=(BlueprintSpawnableComponent) )
-class PROJECT_API UCharacterStateMachine : public UActorComponent
+class PROJECT_API USf_CharacterStateMachine : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
 	// Sets default values for this component's properties
-	UCharacterStateMachine();
+	USf_CharacterStateMachine(const FObjectInitializer& ObjectInitializer);
 
 	UFUNCTION(BlueprintCallable)
 	bool TryAddState(TSubclassOf<UBaseState> BaseStateClass);
@@ -28,16 +24,18 @@ public:
 	bool TryRemoveState(TSubclassOf<UBaseState> BaseStateClass);
 	
 protected:
-	
-	// Called when the game starts
+
+	virtual void InitializeComponent() override;
 	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
+	
 protected:
-	UPROPERTY(BlueprintReadWrite,EditAnywhere)
+	UPROPERTY(BlueprintReadOnly, Category = "SF_CharacterStateMachine")
 	UStateCallstack* StateCallstack;
-		
+	
+	UPROPERTY(BlueprintReadOnly,EditAnywhere,Category = "SF_CharacterStateMachine",Meta=(RequiredAssetDataTags = "RowStructure=/Script/Project.StateDefinition"))
+	UDataTable* StateDefinitions;
+
+	UPROPERTY(BlueprintReadOnly)
+	ACharacter* OwningCharacter;
 };

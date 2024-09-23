@@ -1,26 +1,46 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Sf_PlayerCameraManager.h"
+DEFINE_LOG_CATEGORY_STATIC(SF_PlayerCameraManager, Display, Display);
 
-#include "SF_Character.h"
+#include "Sf_PlayerCameraManager.h"
+#include "Sf_Character.h"
+#include "Sf_Equipment.h"
 #include "Movement/SF_CharacterMovementComponent.h"
 
 void ASF_PlayerCameraManager::UpdateViewTarget(FTViewTarget& OutVT, float DeltaTime)
 {
 	Super::UpdateViewTarget(OutVT, DeltaTime);
 
-	if (ASf_Character* SfCharacter = Cast<ASf_Character>(GetOwningPlayerController()->GetPawn()))
+	ASf_Character* SfCharacter = Cast<ASf_Character>(GetOwningPlayerController()->GetPawn());
+	if (!IsValid(SfCharacter))
 	{
-		USF_CharacterMovementComponent* SfCharacterMovementComponent = SfCharacter->GetSfCharacterMovementComponent();
-		
-		if (SfCharacterMovementComponent!=nullptr)
-		{
-			float RollOverwrite =ProcessWallRunRollOverwrite(SfCharacterMovementComponent,SfCharacter,DeltaTime);
-			ViewTarget.POV.Rotation = FRotator(ViewTarget.POV.Rotation.Pitch,ViewTarget.POV.Rotation.Yaw,RollOverwrite);
-		}
-			
+		UE_LOG(SF_PlayerCameraManager, Warning, TEXT("Invalid SF_Character"))
+		return;
 	}
+
+	USF_CharacterMovementComponent* SfCharacterMovementComponent = SfCharacter->GetSfCharacterMovementComponent();
+	if (!IsValid(SfCharacterMovementComponent))
+	{
+		UE_LOG(SF_PlayerCameraManager, Warning, TEXT("Invalid SF_CharactermovementComponent"))
+		return;
+	}
+
+	//USF_Equipment* SFEquipmentComp = SfCharacter->GetSfCharacterMovementComponent();
+	//if (!IsValid(SfCharacterMovementComponent))
+	//{
+	//	UE_LOG(SF_PlayerCameraManager, Warning, TEXT("Invalid SF_CharactermovementComponent"))
+	//	return;
+	//}
+	
+
+	//Update View Target Rotation
+	float RollOverwrite =ProcessWallRunRollOverwrite(SfCharacterMovementComponent,SfCharacter,DeltaTime);
+	ViewTarget.POV.Rotation = FRotator(ViewTarget.POV.Rotation.Pitch,ViewTarget.POV.Rotation.Yaw,RollOverwrite);
+
+	//Update Aim
+	
+	
 }
 
 void ASF_PlayerCameraManager::ProcessViewRotation(float DeltaTime, FRotator& OutViewRotation, FRotator& OutDeltaRot)

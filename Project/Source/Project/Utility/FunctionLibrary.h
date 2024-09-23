@@ -3,21 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "InputSignalType.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "FunctionLibrary.generated.h"
 
 #pragma region Enums
-UENUM(BlueprintType, meta=(Bitflags))
-enum EInputSignalType
-{
-	Started,
-	Triggered,
-	Completed 
-};
 
 UENUM(BlueprintType)
-enum ESuccessState
+enum  ESuccessState
 {
 	Success,
 	Failed,
@@ -50,6 +44,9 @@ class PROJECT_API UFunctionLibrary : public UBlueprintFunctionLibrary
 	{
 		return OutputClass;
 	}
+	
+	UFUNCTION(BlueprintCallable,BlueprintPure, Category="Debug")
+	static FColor BoolToColor(bool bValue);
 
 	UFUNCTION(BlueprintCallable, Category="Collision", meta=(WorldContext="WorldContextObject", AutoCreateRefTerm="ActorsToIgnore", DisplayName="Box Overlap Actors"))
 	static bool BetterBoxOverlapActors(const UObject* WorldContextObject, const FVector BoxPos, const FRotator BoxRot, FVector BoxExtent, const TArray<TEnumAsByte<EObjectTypeQuery> > & ObjectTypes, UClass* ActorClassFilter, const TArray<AActor*>& ActorsToIgnore, TArray<class AActor*>& OutActors);

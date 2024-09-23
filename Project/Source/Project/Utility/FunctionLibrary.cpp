@@ -47,14 +47,19 @@ UObject* UFunctionLibrary::Cast(TEnumAsByte<ESuccessState>& Success, TSubclassOf
 	}
 }
 
+FColor UFunctionLibrary::BoolToColor(bool bValue)
+{
+	return bValue?FColor::Green:FColor::Red;
+}
+
 bool UFunctionLibrary::BetterBoxOverlapActors(const UObject* WorldContextObject, const FVector BoxPos, const FRotator BoxRot,
-	FVector BoxExtent, const TArray<TEnumAsByte<EObjectTypeQuery>>& ObjectTypes, UClass* ActorClassFilter,
-	const TArray<AActor*>& ActorsToIgnore, TArray<AActor*>& OutActors)
+                                              FVector BoxExtent, const TArray<TEnumAsByte<EObjectTypeQuery>>& ObjectTypes, UClass* ActorClassFilter,
+                                              const TArray<AActor*>& ActorsToIgnore, TArray<AActor*>& OutActors)
 {
 	OutActors.Empty();
 
 	TArray<UPrimitiveComponent*> OverlapComponents;
-	bool bOverlapped = BetterBoxOverlapComponents(WorldContextObject, BoxPos, BoxRot, BoxExtent, ObjectTypes, NULL, ActorsToIgnore, OverlapComponents);
+	const bool bOverlapped = BetterBoxOverlapComponents(WorldContextObject, BoxPos, BoxRot, BoxExtent, ObjectTypes, NULL, ActorsToIgnore, OverlapComponents);
 	if (bOverlapped)
 	{
 		UKismetSystemLibrary::GetActorListFromComponentList(OverlapComponents, ActorClassFilter, OutActors);

@@ -34,6 +34,8 @@ public:
 	UPROPERTY()
 	float Armor;
 
+public:
+	void ApplyDamage(float Damage, FVector HitLocation, FVector HitNormal, UPrimitiveComponent* HitComponent);
 
 protected:
 	// Called when the game starts

@@ -23,6 +23,11 @@ void UDamageReceiver::BeginPlay()
 	
 }
 
+void UDamageReceiver::ApplyDamage(float Damage,FVector HitLocation, FVector HitNormal,UPrimitiveComponent* HitComponent)
+{
+	UE_LOG(LogTemp, Error, TEXT("This function has not bee implemented yet"));
+}
+
 float UDamageReceiver::CalculateDamageMultiplier(FVector AreaLocation, FVector HitPosition, float DamageMultiplier, float MaxDistanceToBone)
 {
 	float DistanceFromHitLocation = FVector::Distance(HitPosition,AreaLocation);

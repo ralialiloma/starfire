@@ -3,15 +3,21 @@
 
 #include "StateCallstack.h"
 
-#include "CharacterStateMachine.h"
+#include "SF_CharacterStateMachine.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "VisualLogger/VisualLoggerTypes.h"
+
+DEFINE_LOG_CATEGORY_STATIC(SF_StateCallStack, Display, Display);
 
 bool UStateCallstack::TryAddState(TSubclassOf<UBaseState> BaseStateClass)
 {
 	//Check if state is valid
 	if (BaseStateClass == nullptr)
+	{
+		UE_LOG(SF_StateCallStack, Error, TEXT("Invalid BaseStateClass"))
 		return  false;
+	}
+		
 	
 	//Check if state already exits
 	for (UBaseState* State: ActiveStatesByPriority)
@@ -25,7 +31,7 @@ bool UStateCallstack::TryAddState(TSubclassOf<UBaseState> BaseStateClass)
 	
 	UBaseState* CreatedState = NewObject<UBaseState>(this,BaseStateClass);
 	CreatedState->StateCallstack = this;
-	CreatedState->CreateFeatures(DataTablePath);
+	CreatedState->CreateFeatures(StateDefintions);
 	UnsortedStates.Add(CreatedState);
 	//Sort by priority
 	UnsortedStates.Sort

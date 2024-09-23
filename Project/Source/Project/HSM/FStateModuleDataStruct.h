@@ -1,7 +1,7 @@
 
 #pragma once
 #include "CoreMinimal.h"
-#include "../Utility/FunctionLibrary.h"
+#include "Project/Utility/InputSignalType.h"
 #include "FStateModuleDataStruct.generated.h"
 
 USTRUCT(BlueprintType)
