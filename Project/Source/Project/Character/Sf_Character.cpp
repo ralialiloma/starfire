@@ -10,9 +10,15 @@
 #include "Movement/SF_CharacterMovementComponent.h"
 #include "Project/HSM/SF_CharacterStateMachine.h"
 #include "Project/Interact/InteractBase.h"
+#include "Project/Utility/ConfigLoader.h"
 #include "UObject/UnrealTypePrivate.h"
 
 DEFINE_LOG_CATEGORY_STATIC(SF_Character, Display, Display);
+
+void ASf_Character::SaveToConfig()
+{
+	FConfigLoader::SaveCustomConfig<ASf_Character>(this,"SF_CharacterDefault");
+}
 
 ASf_Character::ASf_Character(const FObjectInitializer& ObjectInitializer)
 	: Super(
@@ -58,12 +64,13 @@ ASf_Character::ASf_Character(const FObjectInitializer& ObjectInitializer)
 	//Character State Machine
 	SFCharacterStateMachine =
 		CreateDefaultSubobject<USf_CharacterStateMachine>(TEXT("StateMachine"));
+
+	FConfigLoader::LoadConfigFile<ASf_Character>(this,"SF_CharacterDefault");
 }
 
 void ASf_Character::PostInitProperties()
 {
 	Super::PostInitProperties();
-	UFunctionLibrary::LoadConfigFile<ASf_Character>(this,ASf_Character::StaticClass()->GetName());
 }
 
 void ASf_Character::PostInitializeComponents()
@@ -75,7 +82,6 @@ void ASf_Character::PostInitializeComponents()
 void ASf_Character::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
-	UFunctionLibrary::SaveCustomConfig<ASf_Character>(this,ASf_Character::StaticClass()->GetName());
 }
 
 FCollisionQueryParams ASf_Character::GetIgnoreCharacterParams()

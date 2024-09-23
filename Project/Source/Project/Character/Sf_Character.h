@@ -39,6 +39,9 @@ public:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "StateMachine", meta = (CustomConfig))
 	float TestValue;
 
+	UFUNCTION(CallInEditor, BlueprintCallable, Category = "StateMachine")
+	void SaveToConfig();
+
 public:
 	ASf_Character(const FObjectInitializer& ObjectInitializer);
 

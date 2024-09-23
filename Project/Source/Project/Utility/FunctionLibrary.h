@@ -31,12 +31,6 @@ class PROJECT_API UFunctionLibrary : public UBlueprintFunctionLibrary
 	template<typename EnumType>
 	static TArray<EnumType> GetAllEnumValues(bool ExcludeZero = false);
 
-	template <class T>
-	static void LoadConfigFile(T* ObjectToLoad, FString Name);
-
-	template <class T>
-	static void SaveCustomConfig(T* ObjectToSave, FString checkName);
-
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	static  int ConvertEnumToInteger(uint8 Byte);
 	
@@ -92,85 +86,4 @@ TArray<EnumType> UFunctionLibrary::GetAllEnumValues(bool ExcludeZero)
 	return EnumValues;
 }
 
-template <typename T>
-void UFunctionLibrary::LoadConfigFile(T* ObjectToLoad, FString Name)
-{
-	FString CustomConfigFilePath = FPaths::ProjectConfigDir() + Name + TEXT(".ini");
 
-	if (!ObjectToLoad || GConfig == nullptr)
-		return;
-	
-	for (TFieldIterator<UProperty> PropIt(ObjectToLoad->GetClass()); PropIt; ++PropIt)
-	{
-		UProperty* Property = *PropIt;
-		
-		if (Property->HasMetaData(TEXT("CustomConfig")))
-		{
-			FString PropertyName = Property->GetName();
-			FString SectionName = TEXT("/Script/YourProject.") + Name;
-			const UFloatProperty* FloatProperty = static_cast<UFloatProperty*>(Property); 
-			if (IsValid(FloatProperty))
-			{
-				float Value;
-				if (GConfig->GetFloat(*SectionName, *PropertyName, Value, CustomConfigFilePath))
-				{
-					float* ValuePtr = FloatProperty->ContainerPtrToValuePtr<float>(ObjectToLoad);
-					*ValuePtr = Value;
-				}
-			}
-		}
-	}
-	
-	UE_LOG(LogTemp, Warning, TEXT("Loaded custom config from %s"), *CustomConfigFilePath);
-	
-}
-
-template <typename T>
-void UFunctionLibrary::SaveCustomConfig(T* ObjectToSave,FString Name)
-{
-	if (!ObjectToSave || GConfig == nullptr)
-		return;
-
-	FString CustomConfigFilePath = FPaths::ProjectConfigDir() +Name +TEXT(".ini");
-
-	int ProppsWithMetaTag = 0;
-	for (TFieldIterator<FProperty> PropIt(ObjectToSave-> GetClass()); PropIt; ++PropIt)
-	{
-		FProperty* Property = *PropIt;
-
-		UE_LOG(LogTemp, Log, TEXT("test"))
-
-		if (!Property->HasMetaData(TEXT("CustomConfig")))
-			continue;
-
-		FString PropertyName = Property->GetName();
-		FString SectionName = TEXT("/Script/YourProject.") + Name;
-
-		FFloatProperty* FloatProperty = static_cast<FFloatProperty*>(Property);
-		
-		if (FloatProperty)
-		{
-			float Value = *FloatProperty->ContainerPtrToValuePtr<float>(ObjectToSave);
-			GConfig->SetFloat(*SectionName, *PropertyName, Value, CustomConfigFilePath);
-			UE_LOG(LogTemp, Log, TEXT("Found FloatProp"))
-			ProppsWithMetaTag++;
-			continue;
-		}
-		FIntProperty* IntProperty = static_cast<FIntProperty*>(Property);
-		if (IntProperty)
-		{
-			int32 Value = *IntProperty->ContainerPtrToValuePtr<int32>(ObjectToSave);
-			GConfig->SetInt(*SectionName, *PropertyName, Value, CustomConfigFilePath);
-			ProppsWithMetaTag++;
-			continue;
-		}
-	}
-
-	if (ProppsWithMetaTag<=0)
-	{
-		return;
-	}
-	
-	GConfig->Flush(false, CustomConfigFilePath);
-	UE_LOG(LogTemp, Warning, TEXT("Saved custom config to %s"), *CustomConfigFilePath);
-}
