@@ -36,9 +36,15 @@ protected:
 	USf_CharacterStateMachine* SFCharacterStateMachine;
 
 public:
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "StateMachine", meta = (CustomConfig))
+	float TestValue;
+
+public:
 	ASf_Character(const FObjectInitializer& ObjectInitializer);
 
+	virtual void PostInitProperties() override;
 	virtual void PostInitializeComponents() override;
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 	
 	FCollisionQueryParams GetIgnoreCharacterParams();
 

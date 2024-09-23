@@ -10,6 +10,7 @@
 #include "Movement/SF_CharacterMovementComponent.h"
 #include "Project/HSM/SF_CharacterStateMachine.h"
 #include "Project/Interact/InteractBase.h"
+#include "UObject/UnrealTypePrivate.h"
 
 DEFINE_LOG_CATEGORY_STATIC(SF_Character, Display, Display);
 
@@ -59,10 +60,22 @@ ASf_Character::ASf_Character(const FObjectInitializer& ObjectInitializer)
 		CreateDefaultSubobject<USf_CharacterStateMachine>(TEXT("StateMachine"));
 }
 
+void ASf_Character::PostInitProperties()
+{
+	Super::PostInitProperties();
+	UFunctionLibrary::LoadConfigFile<ASf_Character>(this,ASf_Character::StaticClass()->GetName());
+}
+
 void ASf_Character::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 	SFCharacterMovementComponent = Cast<USF_CharacterMovementComponent>(GetCharacterMovement());
+}
+
+void ASf_Character::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	Super::PostEditChangeProperty(PropertyChangedEvent);
+	UFunctionLibrary::SaveCustomConfig<ASf_Character>(this,ASf_Character::StaticClass()->GetName());
 }
 
 FCollisionQueryParams ASf_Character::GetIgnoreCharacterParams()

@@ -3,6 +3,8 @@
 
 #include "FunctionLibrary.h"
 
+#include "Kismet/KismetSystemLibrary.h"
+
 EInputSignalType UFunctionLibrary::ConvertToInputSignalType(EInputSignalType SignalType)
 {
 	return  SignalType;
