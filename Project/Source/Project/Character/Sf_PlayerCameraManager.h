@@ -18,12 +18,20 @@ class PROJECT_API ASF_PlayerCameraManager : public APlayerCameraManager
 
 //Wall Run Cam
 public:
-	UPROPERTY(EditDefaultsOnly) float WallRunBlendDuration = .2f;
-	UPROPERTY(EditDefaultsOnly) float WallRunCameraRollAngle = 11.5f;
+	UPROPERTY(EditDefaultsOnly, Category = "WallRun") float WallRunBlendDuration = .2f;
+	UPROPERTY(EditDefaultsOnly, Category = "WallRun") float WallRunCameraRollAngle = 11.5f;
+
 private:
 	float WallRunBlendTime = 0.f;
 	float WallRunBlendSmoothing = 10.f;
 	float SmoothedTargetRoll = 0.f;
+
+//AimDownSight
+	UPROPERTY(EditDefaultsOnly, Category = "AimDownSight") float DefaultFieldOfView = 90.f; 
+	UPROPERTY(EditDefaultsOnly, Category = "AimDownSight") float ADSFieldOfView = 40.f; 
+	UPROPERTY(EditDefaultsOnly, Category = "AimDownSight") float DefaultVignetteIntensity = .5f ;
+	UPROPERTY(EditDefaultsOnly, Category = "AimDownSight") float ADSVignette = 1;
+	UPROPERTY(EditDefaultsOnly, Category = "AimDownSight") float ADSBlendDuration = .2f;
 	
 public:
 	virtual void UpdateViewTarget(FTViewTarget& OutVT, float DeltaTime) override;

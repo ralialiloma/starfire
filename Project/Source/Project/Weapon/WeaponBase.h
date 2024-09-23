@@ -105,7 +105,10 @@ public:
 	bool IsAiming();
 
 	UFUNCTION(BlueprintCallable, Category="WeaponBase")
-	bool AimDownSight();
+	void AimDownSight();
+
+	UFUNCTION(BlueprintCallable, Category="WeaponBase")
+	void StopAiming();
 
 
 //Internal

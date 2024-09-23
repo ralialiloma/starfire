@@ -69,6 +69,12 @@ struct PROJECT_API FWeaponConfig
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Aim",meta=(EditCondition="bUseMultipliers", EditConditionHides))
 	float AimSpreadMultiplier = 1;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Aim")
+	FTransform DefaultWeaponOffset;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Aim")
+	FTransform AimWeaponOffset;
+
 	//Reloading
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Reloading")
 	float ReloatBlendOutTime =0.3f; 

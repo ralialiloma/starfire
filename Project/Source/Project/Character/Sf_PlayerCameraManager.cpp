@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
+#include "Sf_Equipment.h"
 DEFINE_LOG_CATEGORY_STATIC(SF_PlayerCameraManager, Display, Display);
 
 #include "Sf_PlayerCameraManager.h"
@@ -25,12 +26,12 @@ void ASF_PlayerCameraManager::UpdateViewTarget(FTViewTarget& OutVT, float DeltaT
 		return;
 	}
 
-	//USF_Equipment* SFEquipmentComp = SfCharacter->GetSfCharacterMovementComponent();
-	//if (!IsValid(SfCharacterMovementComponent))
-	//{
-	//	UE_LOG(SF_PlayerCameraManager, Warning, TEXT("Invalid SF_CharactermovementComponent"))
-	//	return;
-	//}
+	USF_Equipment* SFEquipmentComp = SfCharacter->GetSFEquipmentComponent();
+	if (!IsValid(SfCharacterMovementComponent))
+	{
+		UE_LOG(SF_PlayerCameraManager, Warning, TEXT("Invalid SF_CharactermovementComponent"))
+		return;
+	}
 	
 
 	//Update View Target Rotation
@@ -38,6 +39,17 @@ void ASF_PlayerCameraManager::UpdateViewTarget(FTViewTarget& OutVT, float DeltaT
 	ViewTarget.POV.Rotation = FRotator(ViewTarget.POV.Rotation.Pitch,ViewTarget.POV.Rotation.Yaw,RollOverwrite);
 
 	//Update Aim
+
+	//FOV
+	float CurrentFOV = GetFOVAngle();
+	float TargetFOV = SFEquipmentComp->IsAiming()?ADSFieldOfView:DefaultFieldOfView;
+	float NewFOV = FMath::FInterpTo(CurrentFOV,TargetFOV,DeltaTime,1.0f/ADSBlendDuration);
+	SetFOV(NewFOV);
+
+	//Vignette
+	//float CurrentVignette = GetFOVAngle();
+	//float TargetVignette = SFEquipmentComp->IsAiming()?DefaultVignetteIntensity:ADSVignette;
+	//float NewVignette = FMath::FInterpTo(CurrentFOV,TargetFOV,DeltaTime,1.0f/ADSBlendDuration);
 	
 	
 }

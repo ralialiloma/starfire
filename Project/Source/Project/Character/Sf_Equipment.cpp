@@ -162,6 +162,20 @@ void USF_Equipment::StopReloading()
 	return EquippedWeapon->StopReloading();
 }
 
+bool USF_Equipment::Aim()
+{
+	if (!IsEquipped())
+		return false;
+
+	EquippedWeapon->AimDownSight();
+	return true;
+}
+
+void USF_Equipment::StopAiming()
+{
+	EquippedWeapon->StopAiming();
+}
+
 
 // Called every frame
 void USF_Equipment::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

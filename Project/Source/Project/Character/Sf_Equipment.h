@@ -77,6 +77,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void StopReloading();
 
+	UFUNCTION(BlueprintCallable)
+	bool Aim();
+
+	UFUNCTION(BlueprintCallable)
+	void StopAiming();
+
 	//Internal
 private:
 	bool GetSlot(AWeaponBase* WeaponBase,int& OutIndex) const;

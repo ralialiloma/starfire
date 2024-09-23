@@ -156,35 +156,15 @@ float AWeaponBase::PlayMontage(EWeaponAnimationMontageType MontageType)
 	return PlayMontage(MontageToPlay);
 }
 
-void AWeaponBase::AimDownSight(float Alpha)
+void AWeaponBase::AimDownSight()
 {
 	bIsAiming = true;
-	UCameraComponent* Camera = IWeaponOwner::Execute_GetCamera(WeaponHolder);
-	if (!IsValid(Camera))
-	{
-		UE_LOG(
-			SF_Weapon,
-			Warning,
-			TEXT("Missing Camera Component on %s"),
-			*GetClass()->GetName());
-		return;
-	}
+}
 
-	//todo Do these camera settings in cameraplayermanager
-	float DefaultFOV = 90;
-	float FOV = UKismetMathLibrary::Lerp(DefaultFOV,GetActiveConfig().AimFOV,Alpha) ;
-	Camera->SetFieldOfView(FOV);
 
-	//todo Set Vignette Intensity (Lerp)
-
-	FTransform InitialTransform =
-		FTransform (FRotator::ZeroRotator,FVector::Zero(),FVector::OneVector);
-
-	FTransform LerpedTransform =  UKismetMathLibrary::TLerp(InitialTransform,GetActiveConfig().AimOffset,Alpha);
-
-	//Set Relative Transform
-//	SetActorRelativeTransform()
-	
+void AWeaponBase::StopAiming()
+{
+	bIsAiming = false;
 }
 
 void AWeaponBase::DoMelee()
@@ -317,11 +297,6 @@ bool AWeaponBase::IsInCooldown()
 bool AWeaponBase::IsAiming()
 {
 	return bIsAiming;
-}
-
-bool AWeaponBase::AimDownSight()
-{
-	return false;
 }
 
 void AWeaponBase::ResetFireCooldown()
