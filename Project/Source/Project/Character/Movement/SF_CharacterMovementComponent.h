@@ -59,18 +59,28 @@ class PROJECT_API USF_CharacterMovementComponent : public UCharacterMovementComp
 	//Parameters
 
 		//Sprint
-	UPROPERTY(EditDefaultsOnly, Category="Character Movement: Walking") float Sprint_MaxWalkspeed = 400.0f;
-	UPROPERTY(EditDefaultsOnly, Category="Character Movement: Walking") float Walk_MaxWalkSpeed = 200.0f;
+	UPROPERTY(EditDefaultsOnly, Category="Character Movement: Walking", meta =(CustomConfig))
+	float Sprint_MaxWalkspeed = 400.0f;
+	UPROPERTY(EditDefaultsOnly, Category="Character Movement: Walking", meta =(CustomConfig))
+	float Walk_MaxWalkSpeed = 200.0f;
 	
 		//WallRun
-	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun") float MinWallRunSpeed = 200.0f;
-	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun") float MaxWallRunSpeed = 800.0f;
-	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun") float MaxVerticalWallRunSpeed = 200.0f;
-	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun") float WallRunPullAwayAngle =75;
-	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun") float WallAttractionForce = 200.0f;
-	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun") float MinWallRunHeight = 50.f;
-	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun") UCurveFloat* WallRunGravityScaleCurve = nullptr;
-	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun") float WallJumpOffForce = 300.f;;
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun", meta =(CustomConfig))
+	float MinWallRunSpeed = 200.0f;
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun", meta =(CustomConfig))
+	float MaxWallRunSpeed = 800.0f;
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun", meta =(CustomConfig))
+	float MaxVerticalWallRunSpeed = 200.0f;
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun", meta =(CustomConfig))
+	float WallRunPullAwayAngle =75;
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun", meta =(CustomConfig))
+	float WallAttractionForce = 200.0f;
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun", meta =(CustomConfig))
+	float MinWallRunHeight = 50.f;
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun", meta =(CustomConfig))
+	UCurveFloat* WallRunGravityScaleCurve = nullptr;
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun", meta =(CustomConfig))
+	float WallJumpOffForce = 300.f;;
 	
 	
 	//Transient

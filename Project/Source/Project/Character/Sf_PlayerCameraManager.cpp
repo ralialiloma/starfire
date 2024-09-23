@@ -5,7 +5,6 @@ DEFINE_LOG_CATEGORY_STATIC(SF_PlayerCameraManager, Display, Display);
 
 #include "Sf_PlayerCameraManager.h"
 #include "Sf_Character.h"
-#include "Sf_Equipment.h"
 #include "Movement/SF_CharacterMovementComponent.h"
 
 void ASF_PlayerCameraManager::UpdateViewTarget(FTViewTarget& OutVT, float DeltaTime)

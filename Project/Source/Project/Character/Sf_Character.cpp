@@ -18,11 +18,13 @@ DEFINE_LOG_CATEGORY_STATIC(SF_Character, Display, Display);
 void ASf_Character::SaveToConfig()
 {
 	FConfigLoader::SaveCustomConfig<ASf_Character>(this,"SF_CharacterDefault");
+	FConfigLoader::SaveCustomConfig<USF_CharacterMovementComponent>(SFCharacterMovementComponent,"SF_CharacterDefault");
 }
 
 void ASf_Character::LoadConfig()
 {
 	FConfigLoader::LoadConfigFile<ASf_Character>(this,"SF_CharacterDefault");
+	FConfigLoader::LoadConfigFile<USF_CharacterMovementComponent>(SFCharacterMovementComponent,"SF_CharacterDefault");
 }
 
 ASf_Character::ASf_Character(const FObjectInitializer& ObjectInitializer)
