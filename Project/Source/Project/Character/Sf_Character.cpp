@@ -42,13 +42,14 @@ ASf_Character::ASf_Character(const FObjectInitializer& ObjectInitializer)
 	FirstPersonMesh->SetUsingAbsoluteRotation(false);
 	FirstPersonMesh->SetUsingAbsoluteScale(false);
 	FirstPersonMesh->SetupAttachment(FirstPersonCamera);
+	FirstPersonMesh->SetRelativeLocation(FVector(25,0,150));
 	
 	//Equipment
 	SFEquipmentComponent = CreateDefaultSubobject<USF_Equipment>(TEXT("SFEquip"));
 	SFEquipmentComponent->SetUsingAbsoluteLocation(false);
 	SFEquipmentComponent->SetUsingAbsoluteRotation(false);
 	SFEquipmentComponent->SetUsingAbsoluteScale(false);
-	SFEquipmentComponent->SetupAttachment(FirstPersonMesh);
+	SFEquipmentComponent->SetupAttachment(FirstPersonMesh,TEXT("GripPoint"));
 
 	//Interact
 	InteractComponent = CreateDefaultSubobject<UInteractBase>(TEXT("Interact"));
@@ -114,5 +115,11 @@ FMeleeInfo ASf_Character::GetMeleeInfo_Implementation() const
 {
 	UE_LOG(SF_Character, Error, TEXT("GetMeleeInfo_Implementation() Has Not Been Implemented Yet"))
 	return FMeleeInfo();
+}
+
+void ASf_Character::GetWeaponAttachmentData_Implementation(FName& SocketName,
+	USkeletalMeshComponent* SkeletalMeshComponent) const
+{
+	//SocketName "= "
 }
 

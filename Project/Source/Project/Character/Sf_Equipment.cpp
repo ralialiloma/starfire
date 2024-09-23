@@ -2,6 +2,8 @@
 
 
 #include "Sf_Equipment.h"
+
+#include "Engine/SkeletalMeshSocket.h"
 #include "Project/Weapon/FireBlocks.h"
 #include "Project/Weapon/WeaponOwner.h"
 #include "Project/Utility/InputSignalType.h"
@@ -27,6 +29,20 @@ void USF_Equipment::InitializeComponent()
 		*UWeaponOwner::StaticClass()->GetName())
 
 	EquippedWeapon = nullptr;
+}
+
+void USF_Equipment::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	Super::PostEditChangeProperty(PropertyChangedEvent);
+
+	if (PropertyChangedEvent.Property == nullptr)
+		return;
+
+	//Attach With New Socket
+	FName PropertyName = PropertyChangedEvent.Property->GetFName();
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(USF_Equipment, WeaponAttachmentSocket))
+		AttachToParentMesh();
+
 }
 
 // Called when the game starts
@@ -163,5 +179,39 @@ bool USF_Equipment::GetSlot(AWeaponBase* WeaponBase, int& OutIndex) const
 
 	OutIndex=  OwnedWeapons.Find(WeaponBase);
 	return OwnedWeapons.Contains(WeaponBase);
+}
+
+void USF_Equipment::AttachToParentMesh()
+{
+	USceneComponent* Parent =  GetAttachParent();
+	FAttachmentTransformRules AttachRules = FAttachmentTransformRules (
+		EAttachmentRule::SnapToTarget,
+		EAttachmentRule::SnapToTarget,
+		EAttachmentRule::KeepWorld,
+		true);
+	AttachToComponent(Parent,AttachRules,WeaponAttachmentSocket);
+}
+
+TArray<FName> USF_Equipment::GetWeaponAttachmentSocketOptions()
+{
+	USceneComponent* Parent =  GetAttachParent();
+	USkeletalMeshComponent* SkeletalMeshComponent = Cast<USkeletalMeshComponent>(Parent);
+	if (!IsValid(SkeletalMeshComponent))
+		return TArray<FName>{"None"};
+
+	USkeletalMesh* MeshAsset =  SkeletalMeshComponent->GetSkeletalMeshAsset();
+	if (!IsValid(MeshAsset))
+		return TArray<FName>{"None"};
+	
+	TArray<FName> AllSocketNames{};
+	const TArray<USkeletalMeshSocket*> AllSockets=
+		SkeletalMeshComponent->GetSkeletalMeshAsset()->GetActiveSocketList();
+
+	for (int32 SocketIdx = 0; SocketIdx < AllSockets.Num(); ++SocketIdx)
+	{
+		AllSocketNames.Add(AllSockets[SocketIdx]->SocketName);
+	}
+	
+	return AllSocketNames;
 }
 

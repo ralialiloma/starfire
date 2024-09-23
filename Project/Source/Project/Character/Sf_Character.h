@@ -20,10 +20,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Weapon")
 	class USF_Equipment* SFEquipmentComponent;
 
-	UPROPERTY(BlueprintReadOnly,Category = "Camera")
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Camera")
 	class UCameraComponent* FirstPersonCamera;
 
-	UPROPERTY(BlueprintReadOnly,Category = "Camera")
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Camera")
 	class USpringArmComponent* SprintArmComponent;
 	
 	UPROPERTY(Category="Character", EditDefaultsOnly, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
@@ -58,7 +58,7 @@ public:
 	FORCEINLINE UInteractBase* GetInteractComponent() const{return InteractComponent;};
 
 	UFUNCTION(BlueprintPure,Category = "Character")
-	FORCEINLINE USf_CharacterStateMachine* GetCharaterStateMachine() const{return SFCharacterStateMachine;};
+	FORCEINLINE USf_CharacterStateMachine* GetCharacterStateMachine() const{return SFCharacterStateMachine;};
 
 protected:
 	virtual void BeginPlay() override;
@@ -77,6 +77,6 @@ public:
 	virtual FTransform GetFireTransform_Implementation() const override;
 	
 	virtual FMeleeInfo GetMeleeInfo_Implementation() const override;
-	//UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "WeaponOwner")
-	//virtual FMeleeInfo GetMeleeInfo() const;
+
+	virtual void GetWeaponAttachmentData_Implementation(FName& SocketName, USkeletalMeshComponent* SkeletalMeshComponent) const override;
 };

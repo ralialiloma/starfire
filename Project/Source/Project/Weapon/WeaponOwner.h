@@ -32,4 +32,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "WeaponOwner")
 	FMeleeInfo GetMeleeInfo() const;
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "WeaponOwner")
+	void GetWeaponAttachmentData(FName& SocketName, USkeletalMeshComponent* SkeletalMeshComponent) const;
 };

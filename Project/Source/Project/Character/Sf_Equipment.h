@@ -19,10 +19,17 @@ class PROJECT_API USF_Equipment : public USceneComponent
 public:
 	USF_Equipment();
 
+protected:
+	//Config
+	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly , Category = "Sockets",meta=(GetOptions="GetWeaponAttachmentSocketOptions"))
+	FName WeaponAttachmentSocket;
+
 private:
 	//Transient
+
 	UPROPERTY()
 	TArray<AWeaponBase*> OwnedWeapons;
+
 	UPROPERTY()
 	AWeaponBase* EquippedWeapon;
 
@@ -37,6 +44,8 @@ protected:
 						   FActorComponentTickFunction* ThisTickFunction) override;
 
 	virtual void InitializeComponent() override;
+
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 
 	//Interface
 public:
@@ -71,4 +80,8 @@ public:
 	//Internal
 private:
 	bool GetSlot(AWeaponBase* WeaponBase,int& OutIndex) const;
+	void AttachToParentMesh();
+
+	UFUNCTION()
+	TArray<FName> GetWeaponAttachmentSocketOptions();
 };
