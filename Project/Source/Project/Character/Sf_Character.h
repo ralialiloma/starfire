@@ -36,11 +36,6 @@ protected:
 	USf_CharacterStateMachine* SFCharacterStateMachine;
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config", meta = (CustomConfig))
-	float TestValue;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config", meta = (CustomConfig))
-	UAnimationAsset* TestAsset;
 
 	UFUNCTION(CallInEditor, BlueprintCallable, Category = "Config")
 	void SaveToConfig();

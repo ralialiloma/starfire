@@ -105,9 +105,10 @@ void USF_Equipment::AddWeapon(AWeaponBase* WeaponToAdd, const bool Equip, int &I
 	{
 		EquippedWeapon = WeaponToAdd;
 		EquippedWeapon->OnEquip(GetOwner());
+		UE_LOG(EquipmentComponent, Log, TEXT("Equipped Weapon: %s"),*EquippedWeapon->GetName());
 	}
 
-	UE_LOG(EquipmentComponent, Log, TEXT("Equipped Weapon: %s"),*EquippedWeapon->GetName());
+
 
 	//todo SetWeaponActive
 	//todo call pickup event

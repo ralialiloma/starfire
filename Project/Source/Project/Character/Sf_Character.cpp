@@ -106,7 +106,7 @@ FCollisionQueryParams ASf_Character::GetIgnoreCharacterParams()
 void ASf_Character::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	//LoadConfig();
 }
 
 // Called every frame
