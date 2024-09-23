@@ -20,6 +20,11 @@ void ASf_Character::SaveToConfig()
 	FConfigLoader::SaveCustomConfig<ASf_Character>(this,"SF_CharacterDefault");
 }
 
+void ASf_Character::LoadConfig()
+{
+	FConfigLoader::LoadConfigFile<ASf_Character>(this,"SF_CharacterDefault");
+}
+
 ASf_Character::ASf_Character(const FObjectInitializer& ObjectInitializer)
 	: Super(
 		  ObjectInitializer.SetDefaultSubobjectClass<USF_CharacterMovementComponent>(ACharacter::CharacterMovementComponentName)
@@ -65,7 +70,7 @@ ASf_Character::ASf_Character(const FObjectInitializer& ObjectInitializer)
 	SFCharacterStateMachine =
 		CreateDefaultSubobject<USf_CharacterStateMachine>(TEXT("StateMachine"));
 
-	FConfigLoader::LoadConfigFile<ASf_Character>(this,"SF_CharacterDefault");
+	//FConfigLoader::LoadConfigFile<ASf_Character>(this,"SF_CharacterDefault");
 }
 
 void ASf_Character::PostInitProperties()
@@ -77,6 +82,7 @@ void ASf_Character::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 	SFCharacterMovementComponent = Cast<USF_CharacterMovementComponent>(GetCharacterMovement());
+	//FConfigLoader::LoadConfigFile<ASf_Character>(this,"SF_CharacterDefault");
 }
 
 void ASf_Character::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)

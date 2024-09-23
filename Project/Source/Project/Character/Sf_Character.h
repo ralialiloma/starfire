@@ -36,11 +36,17 @@ protected:
 	USf_CharacterStateMachine* SFCharacterStateMachine;
 
 public:
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "StateMachine", meta = (CustomConfig))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config", meta = (CustomConfig))
 	float TestValue;
 
-	UFUNCTION(CallInEditor, BlueprintCallable, Category = "StateMachine")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Config", meta = (CustomConfig))
+	UAnimationAsset* TestAsset;
+
+	UFUNCTION(CallInEditor, BlueprintCallable, Category = "Config")
 	void SaveToConfig();
+
+	UFUNCTION(CallInEditor, BlueprintCallable, Category = "Config")
+	void LoadConfig();
 
 public:
 	ASf_Character(const FObjectInitializer& ObjectInitializer);

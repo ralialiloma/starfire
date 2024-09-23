@@ -7,6 +7,7 @@
 #include "FireType.h"
 #include "WeaponOwner.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "Project/DamageReceiver.h"
 #include "Project/Utility/DebugSettings.h"
 #include "Project/Utility/DebugSubsystem.h"
