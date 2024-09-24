@@ -1,6 +1,6 @@
 @echo off
 
-set "targetDirectory=Project"
+set "targetDirectory=Starfire"
 
 echo Deleting folders named Intermediate and Binary in %targetDirectory%.
 
