@@ -8,6 +8,13 @@
 #include "Project/Weapon/WeaponOwner.h"
 #include "Sf_Character.generated.h"
 
+class UInteractComponent;
+class USpringArmComponent;
+class UCameraComponent;
+class USF_Equipment;
+class USF_CharacterMovementComponent;
+class UBoxComponent;
+
 UCLASS(Config = Game)
 class PROJECT_API ASf_Character : public ACharacter, public IWeaponOwner
 {
@@ -15,28 +22,28 @@ class PROJECT_API ASf_Character : public ACharacter, public IWeaponOwner
 
 protected:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Movement")
-	class USF_CharacterMovementComponent* SFCharacterMovementComponent;
+	USF_CharacterMovementComponent* SFCharacterMovementComponent;
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Weapon")
-	class USF_Equipment* SFEquipmentComponent;
+	USF_Equipment* SFEquipmentComponent;
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Camera")
-	class UCameraComponent* FirstPersonCamera;
+	UCameraComponent* FirstPersonCamera;
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Camera")
-	class USpringArmComponent* SprintArmComponent;
+	USpringArmComponent* SprintArmComponent;
 	
 	UPROPERTY(Category="Character", EditDefaultsOnly, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
 	USkeletalMeshComponent* FirstPersonMesh;
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Camera")
-	class UInteractBase* InteractComponent;
+	UInteractComponent* InteractComponent;
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "StateMachine")
 	USf_CharacterStateMachine* SFCharacterStateMachine;
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Weapon")
-	class UBoxComponent* MeleeTransform;
+	UBoxComponent* MeleeTransform;
 
 public:
 
@@ -68,7 +75,7 @@ public:
 	FORCEINLINE USF_Equipment* GetSFEquipmentComponent() const{return SFEquipmentComponent;};
 
 	UFUNCTION(BlueprintPure,Category = "Character")
-	FORCEINLINE UInteractBase* GetInteractComponent() const{return InteractComponent;};
+	FORCEINLINE UInteractComponent* GetInteractComponent() const{return InteractComponent;};
 
 	UFUNCTION(BlueprintPure,Category = "Character")
 	FORCEINLINE USf_CharacterStateMachine* GetCharacterStateMachine() const{return SFCharacterStateMachine;};

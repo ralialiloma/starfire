@@ -10,7 +10,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Movement/SF_CharacterMovementComponent.h"
 #include "Project/HSM/SF_CharacterStateMachine.h"
-#include "Project/Interact/InteractBase.h"
+#include "Project/Interact/InteractComponent.h"
 #include "Project/Utility/ConfigLoader.h"
 #include "UObject/UnrealTypePrivate.h"
 
@@ -82,7 +82,7 @@ ASf_Character::ASf_Character(const FObjectInitializer& ObjectInitializer)
 	//MeleeTransform->SetUsingAbsoluteScale(false);
 
 	//Interact
-	InteractComponent = CreateDefaultSubobject<UInteractBase>(TEXT("Interact"));
+	InteractComponent = CreateDefaultSubobject<UInteractComponent>(TEXT("Interact"));
 
 	//Character State Machine
 	SFCharacterStateMachine =

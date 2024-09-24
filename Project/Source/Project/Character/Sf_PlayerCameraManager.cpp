@@ -1,12 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
-#include "Sf_Equipment.h"
-DEFINE_LOG_CATEGORY_STATIC(SF_PlayerCameraManager, Display, Display);
-
 #include "Sf_PlayerCameraManager.h"
 #include "Sf_Character.h"
 #include "Movement/SF_CharacterMovementComponent.h"
+#include "Sf_Equipment.h"
+DEFINE_LOG_CATEGORY_STATIC(SF_PlayerCameraManager, Display, Display);
 
 void ASF_PlayerCameraManager::UpdateViewTarget(FTViewTarget& OutVT, float DeltaTime)
 {
