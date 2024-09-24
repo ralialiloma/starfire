@@ -66,7 +66,7 @@ echo Done.
  set /p "recompileChoice=Would you like to open the Unreal project? (Y/N): "
  if /i "%recompileChoice%"=="Y" (
      echo Opening the project...
-     start Project/Project.uproject
+     start Starfire/Starfire.uproject
  ) else (
      echo Project not opened.
  )
