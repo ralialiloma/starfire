@@ -81,7 +81,10 @@ public:
 	void StopReloading();
 
 	UFUNCTION(BlueprintCallable,Category="WeaponBase")
-	float Melee();
+	bool Melee();
+	
+	UFUNCTION(BlueprintCallable,BlueprintPure,Category="WeaponBase")
+	bool CanMelee();
 
 	UFUNCTION(BlueprintCallable,Category="WeaponBase")
 	int GetAmmoCount();
@@ -95,11 +98,11 @@ public:
 	UFUNCTION(BlueprintCallable,Category="WeaponBase")
 	void OnEquip(AActor* NewHolder);
 
-	UFUNCTION(BlueprintCallable,Category="WeaponBase")
+	UFUNCTION(BlueprintCallable,BlueprintPure,Category="WeaponBase")
 	bool CanFire(EInputSignalType InputSignal, EFireType FireType, TEnumAsByte<EFireBlock>& OutBlock);
 
 	UFUNCTION(BlueprintCallable,Category="WeaponBase")
-	bool IsInCooldown();
+	bool IsInFireCooldown();
 
 	UFUNCTION(BlueprintCallable, Category="WeaponBase")
 	bool IsAiming();
@@ -127,9 +130,13 @@ private:
 	float PlayMontage(UAnimMontage* MontageToPlay);
 	float PlayMontage (EWeaponAnimationMontageType MontageType);
 	void AimDownSight(float Alpha);
+	void StopMontage(UAnimMontage* MontageToStop);
 
 	//Melee
 private:
 	void DoMelee();
-	void StopMontage(UAnimMontage* MontageToStop);
+protected:
+	void MeleeTraces();
+	void ApplyMelee(AActor* ActorToApplyOn, FVector Start, FVector End, FVector Direction);
+	
 };

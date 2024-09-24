@@ -5,9 +5,11 @@
 
 #include "FireBlocks.h"
 #include "FireType.h"
+#include "KnockbackReceiver.h"
 #include "WeaponOwner.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Misc/ConfigUtilities.h"
 #include "Project/DamageReceiver.h"
 #include "Project/Utility/DebugSettings.h"
 #include "Project/Utility/DebugSubsystem.h"
@@ -169,14 +171,102 @@ void AWeaponBase::StopAiming()
 
 void AWeaponBase::DoMelee()
 {
+	PlayMontage(EWeaponAnimationMontageType::AnimationMontage_Melee);
+	MeleeTraces();
+}
+
+void AWeaponBase::MeleeTraces()
+{
+	if (!IsValid(WeaponHolder))
+	{
+		UE_LOG(SF_Weapon, Warning, TEXT("Invalid Weapon Holder to stop get melee info from"))
+		return;
+	}
+
+	//Get Melee Info
+	FMeleeInfo MeleeInfo =  IWeaponOwner::Execute_GetMeleeInfo(WeaponHolder);
 	
+	
+	//Draw Debug
+	if(UDebugSubsystem::GetWeaponDebug(EDebugType::Visual))
+	{
+		DrawDebugBox(
+			GetWorld(),
+			MeleeInfo.Location,
+			MeleeInfo.Extent,
+			MeleeInfo.Rotation.Quaternion(),
+			FColor::Red,
+			false,
+			5.0f,
+			0,           
+			1.0f       
+		);
+	}
+
+	TArray<AActor*> FoundActors{};
+	TArray<AActor*> IgnoredActors{this,WeaponHolder};
+	UFunctionLibrary::BetterBoxOverlapActors(
+		this,
+		MeleeInfo.Location,
+		MeleeInfo.Rotation,
+		MeleeInfo.Extent,
+		 TArray<TEnumAsByte<EObjectTypeQuery>>{},
+		AActor::StaticClass(),
+		IgnoredActors,
+		FoundActors);
+
+	for (AActor* FoundActor: FoundActors)
+	{
+		FVector Start = MeleeInfo.Location;
+		FVector Origin;
+		FVector BoxExtent;
+		FoundActor->GetActorBounds(false,Origin,BoxExtent,true);
+		FVector End = MeleeInfo.Location*MeleeInfo.Direction*MeleeInfo.Extent*BoxExtent;
+		ApplyMelee(FoundActor,MeleeInfo.Location,End, MeleeInfo.Direction);
+	}
+	
+}
+
+void AWeaponBase::ApplyMelee(AActor* ActorToApplyOn, FVector Start, FVector End, FVector Direction)
+{
+
+	//Apply Knockback
+	if (ActorToApplyOn->Implements<UKnockbackReceiver>())
+		IKnockbackReceiver:: Execute_ReceiveKnockback(ActorToApplyOn,Direction);
+
+	//Get Damage Receiver
+	UDamageReceiver* DamageReceiver =  ActorToApplyOn->GetComponentByClass<UDamageReceiver>();
+	if (!IsValid(DamageReceiver))
+		return;
+
+	//Line Trace
+	FHitResult HitResult;
+	UKismetSystemLibrary::LineTraceSingle(
+		this,
+		Start,
+		End,
+		ActiveConfig.TraceTypeQuery,
+		false,
+		TArray<AActor*>{this,WeaponHolder},
+		UDebugSubsystem::GetWeaponDebug(EDebugType::Visual)?EDrawDebugTrace::Persistent:EDrawDebugTrace::None,
+		HitResult,
+		true,
+		FLinearColor::Blue,
+		FLinearColor::Red);
+
+	//Apply Damage
+	DamageReceiver->ApplyDamage(
+		GetActiveConfig().MeleeDamage,
+		HitResult.Location,
+		HitResult.Normal,
+		HitResult.Component.Get());
 }
 
 void AWeaponBase::StopMontage(UAnimMontage* MontageToStop)
 {
 	if (!IsValid(WeaponHolder))
 	{
-		UE_LOG(SF_Weapon, Warning, TEXT("Invalid Weapon Owner to stop montage on"))
+		UE_LOG(SF_Weapon, Warning, TEXT("Invalid Weapon Holder to stop montage on"))
 		return;
 	}
 	
@@ -289,7 +379,7 @@ bool AWeaponBase::CheckInputSignalType(EInputSignalType InputSignalType)
 	return (ActiveConfig.AllowedInputSignals & InputSignalValue) == InputSignalValue;
 }
 
-bool AWeaponBase::IsInCooldown()
+bool AWeaponBase::IsInFireCooldown()
 {
 	return GetWorld()->GetTimerManager().IsTimerActive(FireCooldown);
 }
@@ -359,10 +449,21 @@ void AWeaponBase::StopReloading()
 	StopMontage(ReloadMontage);
 }
 
-float AWeaponBase::Melee()
+bool AWeaponBase::Melee()
 {
+	if (!CanMelee())
+		return false;
+	
 	DoMelee();
-	return 0;
+	return true;
+}
+
+bool AWeaponBase::CanMelee()
+{
+	if(IsAiming())
+		return false;
+
+	return true;
 }
 
 int AWeaponBase::GetAmmoCount()
@@ -403,7 +504,7 @@ bool AWeaponBase::CanFire(EInputSignalType InputSignal, EFireType FireType,TEnum
 	}
 
 	//Cooldown
-	if (IsInCooldown())
+	if (IsInFireCooldown())
 	{
 		OutBlock = EFireBlock::FireCooldown;
 		return false;

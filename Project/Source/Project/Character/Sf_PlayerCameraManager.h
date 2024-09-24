@@ -28,10 +28,10 @@ private:
 
 //AimDownSight
 	UPROPERTY(EditDefaultsOnly, Category = "AimDownSight") float DefaultFieldOfView = 90.f; 
-	UPROPERTY(EditDefaultsOnly, Category = "AimDownSight") float ADSFieldOfView = 40.f; 
+	UPROPERTY(EditDefaultsOnly, Category = "AimDownSight") float ADSFieldOfView = 70.f; 
 	UPROPERTY(EditDefaultsOnly, Category = "AimDownSight") float DefaultVignetteIntensity = .5f ;
 	UPROPERTY(EditDefaultsOnly, Category = "AimDownSight") float ADSVignette = 1;
-	UPROPERTY(EditDefaultsOnly, Category = "AimDownSight") float ADSBlendDuration = .2f;
+	UPROPERTY(EditDefaultsOnly, Category = "AimDownSight") float ADSBlendDuration = .1f;
 	
 public:
 	virtual void UpdateViewTarget(FTViewTarget& OutVT, float DeltaTime) override;

@@ -77,7 +77,12 @@ struct PROJECT_API FWeaponConfig
 
 	//Reloading
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Reloading")
-	float ReloatBlendOutTime =0.3f; 
+	float ReloatBlendOutTime =0.3f;
+
+	//Melee
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Melee")
+	float MeleeDamage = 50.f;
+	
 
 	//Other
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Other")

@@ -5,6 +5,7 @@
 
 #include "Sf_Equipment.h"
 #include "Camera/CameraComponent.h"
+#include "Components/BoxComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Movement/SF_CharacterMovementComponent.h"
@@ -64,6 +65,21 @@ ASf_Character::ASf_Character(const FObjectInitializer& ObjectInitializer)
 	SFEquipmentComponent->SetUsingAbsoluteRotation(false);
 	SFEquipmentComponent->SetUsingAbsoluteScale(false);
 	SFEquipmentComponent->SetupAttachment(FirstPersonMesh,TEXT("GripPoint"));
+
+
+	//Weapon Transform
+	MeleeTransform = CreateDefaultSubobject<UBoxComponent>(TEXT("Melee Transform"));
+	MeleeTransform->SetUsingAbsoluteLocation(false);
+	MeleeTransform->SetUsingAbsoluteRotation(false);
+	MeleeTransform->SetUsingAbsoluteScale(false);
+	MeleeTransform->SetupAttachment(FirstPersonCamera);
+	MeleeTransform->SetRelativeLocation(FVector(30,0,0));
+	MeleeTransform->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
+	MeleeTransform->ShapeColor = FColor::Purple;
+	MeleeTransform->SetLineThickness(1.0f);
+
+	////MeleeTransform->SetUsingAbsoluteRotation(false);
+	//MeleeTransform->SetUsingAbsoluteScale(false);
 
 	//Interact
 	InteractComponent = CreateDefaultSubobject<UInteractBase>(TEXT("Interact"));
@@ -140,13 +156,12 @@ FTransform ASf_Character::GetFireTransform_Implementation() const
 
 FMeleeInfo ASf_Character::GetMeleeInfo_Implementation() const
 {
-	UE_LOG(SF_Character, Error, TEXT("GetMeleeInfo_Implementation() Has Not Been Implemented Yet"))
-	return FMeleeInfo();
+	const FVector Location = MeleeTransform->GetComponentLocation();
+	const FVector Extent = MeleeTransform->GetScaledBoxExtent();
+	const FRotator Rotation = MeleeTransform->GetComponentRotation();
+	const FVector Direction = GetActorLocation()-Location;
+	const FMeleeInfo MeleeInfo = FMeleeInfo(Location,Extent,Rotation,Direction);
+	return MeleeInfo;
 }
 
-void ASf_Character::GetWeaponAttachmentData_Implementation(FName& SocketName,
-	USkeletalMeshComponent* SkeletalMeshComponent) const
-{
-	//SocketName "= "
-}
 

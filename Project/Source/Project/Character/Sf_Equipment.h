@@ -83,6 +83,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void StopAiming();
 
+	UFUNCTION(BlueprintCallable)
+	bool Melee();
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	bool CanMelee();
+
 	//Internal
 private:
 	bool GetSlot(AWeaponBase* WeaponBase,int& OutIndex) const;

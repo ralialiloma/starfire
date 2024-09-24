@@ -35,6 +35,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "StateMachine")
 	USf_CharacterStateMachine* SFCharacterStateMachine;
 
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Weapon")
+	class UBoxComponent* MeleeTransform;
+
 public:
 
 	UFUNCTION(CallInEditor, BlueprintCallable, Category = "Config")
@@ -87,6 +90,4 @@ public:
 	virtual FTransform GetFireTransform_Implementation() const override;
 	
 	virtual FMeleeInfo GetMeleeInfo_Implementation() const override;
-
-	virtual void GetWeaponAttachmentData_Implementation(FName& SocketName, USkeletalMeshComponent* SkeletalMeshComponent) const override;
 };

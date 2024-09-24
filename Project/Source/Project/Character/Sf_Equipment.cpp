@@ -176,6 +176,14 @@ void USF_Equipment::StopAiming()
 	EquippedWeapon->StopAiming();
 }
 
+bool USF_Equipment::Melee()
+{
+	if (!IsEquipped())
+		return false;
+
+	return EquippedWeapon->Melee();
+}
+
 
 // Called every frame
 void USF_Equipment::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -184,7 +192,13 @@ void USF_Equipment::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 }
 
 
+bool USF_Equipment::CanMelee()
+{
+	if (!IsEquipped())
+		return false;
 
+	return EquippedWeapon->CanMelee();
+}
 
 bool USF_Equipment::GetSlot(AWeaponBase* WeaponBase, int& OutIndex) const
 {
