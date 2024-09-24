@@ -82,6 +82,9 @@ struct STARFIRE_API FWeaponConfig
 	//Melee
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Melee")
 	float MeleeDamage = 50.f;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Melee")
+	float MeleeDelay = .5f;
 	
 
 	//Other

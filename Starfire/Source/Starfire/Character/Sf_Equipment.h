@@ -10,6 +10,19 @@
 #include "Starfire/Utility/InputSignalType.h"
 #include "Sf_Equipment.generated.h"
 
+UENUM(meta=(UseEnumValuesAsMaskValuesInEditor=true))
+enum EEquipmentFlags
+{
+	EquipmentState_NoFlags = 0 UMETA(Hidden),
+	EquipmentState_Equipped = 1 << 0,  
+	EquipmentState_Aiming = 1 << 1,
+	EquipmentState_FireCooldown = 1 << 2,  
+	EquipmentState_Reloading = 1 << 3,   
+	EquipmentState_MeleeCooldown = 1 << 4    
+};
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnEquipmentStateChange, int32, PreviousState, int32, UpdatedState);
+
 
 UCLASS(ClassGroup=(Character), meta=(BlueprintSpawnableComponent))
 class STARFIRE_API USF_Equipment : public USceneComponent
@@ -26,7 +39,6 @@ protected:
 
 private:
 	//Transient
-
 	UPROPERTY()
 	TArray<AWeaponBase*> OwnedWeapons;
 
@@ -36,19 +48,21 @@ private:
 	UPROPERTY()
 	AActor* WeaponOwner;
 
-protected:
+	UPROPERTY()
+	int CurrentState;
 
+protected:
 	//Component
 	virtual void BeginPlay() override;
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
-						   FActorComponentTickFunction* ThisTickFunction) override;
-
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType,FActorComponentTickFunction* ThisTickFunction) override;
 	virtual void InitializeComponent() override;
-
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 
 	//Interface
 public:
+	UPROPERTY(BlueprintAssignable, Category = "State")
+	FOnEquipmentStateChange OnEquipmentStateChange;
+	
 	UFUNCTION(BlueprintCallable,BlueprintPure)
 	bool IsEquipped() const;
 
@@ -67,9 +81,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool Fire(EInputSignalType InputSignal, EFireType FireType, FHitResult& OutHitResult,
 	          TEnumAsByte<EFireBlock>& OutFireBlock);
-
-	UFUNCTION(BlueprintCallable, BlueprintPure)
-	bool CanReload() const;
 	
 	UFUNCTION(BlueprintCallable)
 	bool Reload();
@@ -78,16 +89,32 @@ public:
 	void StopReloading();
 
 	UFUNCTION(BlueprintCallable)
+	bool IsReloading();
+
+	UFUNCTION(BlueprintCallable)
+	bool IsInMeleeCooldown();
+
+	UFUNCTION(BlueprintCallable)
 	bool Aim();
 
 	UFUNCTION(BlueprintCallable)
 	void StopAiming();
 
 	UFUNCTION(BlueprintCallable)
+	bool IsInFireCooldown();
+
+	UFUNCTION(BlueprintCallable)
 	bool Melee();
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool CanMelee();
+
+	//Flags
+	UFUNCTION(BlueprintCallable)
+	int GetCompressedFlags();
+
+	UFUNCTION(BlueprintCallable)
+	bool CheckFlag(EEquipmentFlags EquipmentFlag);
 
 	//Internal
 private:

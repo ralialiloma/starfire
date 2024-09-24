@@ -11,6 +11,7 @@ enum EFireBlock: uint8
 	FireCooldown = 5 UMETA(ToolTip="The weapon can fire but is still delaying due to its fire rate."),
 	TriggerType = 6 UMETA(ToolTip="The weapon cant fire at the given trigger type."),
 	Error = 7 UMETA(ToolTip="Error Case For Unhandled Cases"),
-	NoWeapon = 8 UMETA(ToolTip="Mising Weapon")
+	NoWeapon = 8 UMETA(ToolTip="Mising Weapon"),
+	MeleeCooldown = 9 UMETA(ToolTip="The weapon can fire but is still delaying due to its melee cooldown."),
 };
 

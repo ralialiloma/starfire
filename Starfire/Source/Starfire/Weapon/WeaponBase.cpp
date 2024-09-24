@@ -2,7 +2,6 @@
 
 
 #include "WeaponBase.h"
-
 #include "FireBlocks.h"
 #include "FireType.h"
 #include "KnockbackReceiver.h"
@@ -14,7 +13,6 @@
 #include "Starfire/Utility/DebugSettings.h"
 #include "Starfire/Utility/DebugSubsystem.h"
 
-DEFINE_LOG_CATEGORY_STATIC(SF_Weapon, Display, Display);
 
 AWeaponBase::AWeaponBase(const FObjectInitializer& ObjectInitializer)
 {
@@ -163,7 +161,6 @@ void AWeaponBase::AimDownSight()
 	bIsAiming = true;
 }
 
-
 void AWeaponBase::StopAiming()
 {
 	bIsAiming = false;
@@ -172,6 +169,16 @@ void AWeaponBase::StopAiming()
 void AWeaponBase::DoMelee()
 {
 	PlayMontage(EWeaponAnimationMontageType::AnimationMontage_Melee);
+
+	float CurrentMeleeDelay = ActiveConfig.MeleeDelay;
+	if (CurrentMeleeDelay>0)
+	{
+		//Start Cooldown
+		bActiveMeleeCountdown = true;
+		FTimerDelegate TimerDel;
+		TimerDel.BindLambda([this]() -> void { bActiveMeleeCountdown = false; });
+		GetWorld()->GetTimerManager().SetTimer(MeleeCooldown, TimerDel,CurrentMeleeDelay,false);
+	}
 	MeleeTraces();
 }
 
@@ -185,7 +192,6 @@ void AWeaponBase::MeleeTraces()
 
 	//Get Melee Info
 	FMeleeInfo MeleeInfo =  IWeaponOwner::Execute_GetMeleeInfo(WeaponHolder);
-	
 	
 	//Draw Debug
 	if(UDebugSubsystem::GetWeaponDebug(EDebugType::Visual))
@@ -384,14 +390,14 @@ bool AWeaponBase::IsInFireCooldown()
 	return GetWorld()->GetTimerManager().IsTimerActive(FireCooldown);
 }
 
+bool AWeaponBase::IsInMeleeCooldown()
+{
+	return GetWorld()->GetTimerManager().IsTimerActive(MeleeCooldown);
+}
+
 bool AWeaponBase::IsAiming()
 {
 	return bIsAiming;
-}
-
-void AWeaponBase::ResetFireCooldown()
-{
-	bActiveFireCooldown = false;
 }
 
 
@@ -403,7 +409,7 @@ void AWeaponBase::DoFire(FHitResult& OutHitResult)
 	{
 		//Start Cooldown
 		FTimerDelegate TimerDel;
-		TimerDel.BindLambda([this]() -> void { ResetFireCooldown(); });
+		TimerDel.BindLambda([this]() -> void { bActiveFireCooldown = false;});
 		GetWorld()->GetTimerManager().SetTimer(FireCooldown, TimerDel,CurrentFireDelay,false);
 	}
 
@@ -434,7 +440,7 @@ bool AWeaponBase::Reload()
 	return true;
 }
 
-float AWeaponBase::IsReloading()
+bool AWeaponBase::IsReloading()
 {
 	return GetWorld()->GetTimerManager().IsTimerActive(ReloadTimer);
 }
@@ -460,7 +466,13 @@ bool AWeaponBase::Melee()
 
 bool AWeaponBase::CanMelee()
 {
+	if (!IsValid(WeaponHolder))
+		return false;
 	if(IsAiming())
+		return false;
+	if (bActiveMeleeCountdown)
+		return false;
+	if (bActiveFireCooldown)
 		return false;
 
 	return true;
@@ -481,7 +493,7 @@ void AWeaponBase::OnEquip(AActor* NewHolder)
 
 bool AWeaponBase::CanFire(EInputSignalType InputSignal, EFireType FireType,TEnumAsByte<EFireBlock>& OutBlock)
 {
-	//Cooldown
+	//WeaponHolder
 	if (!IsValid(WeaponHolder))
 	{
 		OutBlock = EFireBlock::Error;
@@ -507,6 +519,12 @@ bool AWeaponBase::CanFire(EInputSignalType InputSignal, EFireType FireType,TEnum
 	if (IsInFireCooldown())
 	{
 		OutBlock = EFireBlock::FireCooldown;
+		return false;
+	}
+
+	if (IsInMeleeCooldown())
+	{
+		OutBlock = EFireBlock::MeleeCooldown;
 		return false;
 	}
 

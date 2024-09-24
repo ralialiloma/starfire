@@ -15,6 +15,19 @@ int UFunctionLibrary::ConvertEnumToInteger(uint8 Byte)
 	return FMath::Pow(2,static_cast<float>(Byte));
 }
 
+void UFunctionLibrary::SetBit(bool bSet, int32& BitField, int32 BitPosition)
+{
+	if (bSet)
+		BitField |= (1 << BitPosition);
+	else
+		BitField &= ~(1 << BitPosition);
+}
+
+bool UFunctionLibrary::CheckBitFlag(int32 BitField, int32 BitPosition)
+{
+	return (BitField & (1 << BitPosition)) != 0;
+}
+
 UObject* UFunctionLibrary::GetAsType(TSubclassOf<UObject> OutputClass, UObject* ObjectToCovert)
 {
 	{

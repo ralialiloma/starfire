@@ -11,6 +11,8 @@
 #include "Starfire/Animation/FWeaponAnimData.h"
 #include "WeaponBase.generated.h"
 
+DEFINE_LOG_CATEGORY_STATIC(SF_Weapon, Display, Display);
+
 UCLASS(BlueprintType)
 class STARFIRE_API AWeaponBase : public AActor
 {
@@ -40,12 +42,19 @@ private:
 
 	UPROPERTY()
 	bool bActiveFireCooldown = false;
+	
+	UPROPERTY()
+	bool bActiveMeleeCountdown = false;
+	
 
 	UPROPERTY()
 	int CurrentClip = 0;
 
 	UPROPERTY()
 	FTimerHandle FireCooldown = FTimerHandle();
+
+	UPROPERTY()
+	FTimerHandle MeleeCooldown = FTimerHandle();
 
 	UPROPERTY()
 	FTimerHandle ReloadTimer = FTimerHandle();
@@ -75,7 +84,7 @@ public:
 	bool Reload();
 
 	UFUNCTION(BlueprintCallable,Category="WeaponBase")
-	float IsReloading();
+	bool IsReloading();
 
 	UFUNCTION(BlueprintCallable,Category="WeaponBase")
 	void StopReloading();
@@ -104,6 +113,9 @@ public:
 	UFUNCTION(BlueprintCallable,Category="WeaponBase")
 	bool IsInFireCooldown();
 
+	UFUNCTION(BlueprintCallable,Category="WeaponBase")
+	bool IsInMeleeCooldown();
+
 	UFUNCTION(BlueprintCallable, Category="WeaponBase")
 	bool IsAiming();
 
@@ -119,7 +131,6 @@ public:
 private:
 	void GetTracePoints(FTransform InFireTransform, FVector& OutStart, FVector& OutEnd);
 	bool CheckInputSignalType(EInputSignalType InputSignalType);
-	void ResetFireCooldown();
 protected:
 	void DoFire (
 		FHitResult& OutHitResult);

@@ -33,6 +33,12 @@ class STARFIRE_API UFunctionLibrary : public UBlueprintFunctionLibrary
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	static  int ConvertEnumToInteger(uint8 Byte);
+
+	UFUNCTION(BlueprintCallable, Category = "Bitwise Operation")
+	static void SetBit(bool bSet, int32& BitField, int32 BitPosition);
+
+	UFUNCTION(BlueprintCallable, Category = "Bitwise Operation")
+	static bool CheckBitFlag(int32 BitField, int32 BitPosition);
 	
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Conversion", meta = (DeterminesOutputType = "OutputClass"))
 	static UObject* GetAsType(TSubclassOf<UObject> OutputClass, UObject* ObjectToCovert);
