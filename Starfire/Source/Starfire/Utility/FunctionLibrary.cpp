@@ -10,6 +10,8 @@ EInputSignalType UFunctionLibrary::ConvertToInputSignalType(EInputSignalType Sig
 	return  SignalType;
 }
 
+
+
 int UFunctionLibrary::ConvertEnumToInteger(uint8 Byte)
 {
 	return FMath::Pow(2,static_cast<float>(Byte));

@@ -37,12 +37,18 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool TryRemoveState(TSubclassOf<UBaseState> BaseStateClass);
+
+	UFUNCTION(BlueprintCallable)
+	bool ToggleStateByBool(TSubclassOf<UBaseState> BaseStateClass, bool bValue);
 	
 	UFUNCTION(BlueprintCallable)
 	void SwitchState(TSubclassOf<UBaseState> StateToAdd, TSubclassOf<UBaseState> StateToRemove);
 
 	UFUNCTION(BlueprintCallable)
-	TArray<UBaseState*> GetActiveStates();
+	TArray<UBaseState*> GetAllActiveStates() const;
+
+	UFUNCTION(BlueprintCallable)
+	TArray<TSubclassOf<UBaseStateFeature>> GetAllFeatures();
 	
 	//Run Actions
 	UFUNCTION(BlueprintCallable)

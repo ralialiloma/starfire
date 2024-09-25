@@ -10,7 +10,7 @@
 #include "Starfire/Utility/InputSignalType.h"
 #include "Sf_Equipment.generated.h"
 
-UENUM(meta=(UseEnumValuesAsMaskValuesInEditor=true))
+UENUM(BlueprintType,meta = (Bitflags))
 enum EEquipmentFlags
 {
 	EquipmentState_NoFlags = 0 UMETA(Hidden),
@@ -20,8 +20,9 @@ enum EEquipmentFlags
 	EquipmentState_Reloading = 1 << 3,   
 	EquipmentState_MeleeCooldown = 1 << 4    
 };
+ENUM_CLASS_FLAGS(EEquipmentFlags)
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnEquipmentStateChange, int32, PreviousState, int32, UpdatedState);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnEquipmentStateChange, int, PreviousState, int, UpdatedState);
 
 
 UCLASS(ClassGroup=(Character), meta=(BlueprintSpawnableComponent))
@@ -89,10 +90,10 @@ public:
 	void StopReloading();
 
 	UFUNCTION(BlueprintCallable)
-	bool IsReloading();
+	bool IsReloading() const;
 
 	UFUNCTION(BlueprintCallable)
-	bool IsInMeleeCooldown();
+	bool IsInMeleeCooldown() const;
 
 	UFUNCTION(BlueprintCallable)
 	bool Aim();
@@ -101,20 +102,23 @@ public:
 	void StopAiming();
 
 	UFUNCTION(BlueprintCallable)
-	bool IsInFireCooldown();
+	bool IsInFireCooldown() const;
 
 	UFUNCTION(BlueprintCallable)
 	bool Melee();
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	bool CanMelee();
+	bool CanMelee() const;
 
 	//Flags
 	UFUNCTION(BlueprintCallable)
-	int GetCompressedFlags();
+	int GetCompressedFlags() const;
 
-	UFUNCTION(BlueprintCallable)
-	bool CheckFlag(EEquipmentFlags EquipmentFlag);
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	bool CheckFlag(EEquipmentFlags EquipmentFlag) const;
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	bool CheckFlagForState(EEquipmentFlags EquipmentFlag,int StateToCheck) const;
 
 	//Internal
 private:

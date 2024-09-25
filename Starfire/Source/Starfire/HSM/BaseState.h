@@ -11,6 +11,7 @@ class UStateCallstack;
  * 
  */
 
+DEFINE_LOG_CATEGORY_STATIC(SF_BaseState, Log, All);
 
 //StateData
 USTRUCT(BlueprintType)
@@ -22,10 +23,12 @@ struct STARFIRE_API FStateDefinition: public FTableRowBase
 	TSubclassOf<UBaseState> State;
 
 	UPROPERTY(BlueprintReadWrite,EditAnywhere)
-	TArray<TSubclassOf<UBaseStateFeature>> OwnedFeatures;
+	TSet<TSubclassOf<UBaseStateFeature>> OwnedFeatures;
 
 	UPROPERTY(BlueprintReadWrite,EditAnywhere)
 	int Priority;
+	
+	
 };
 
 

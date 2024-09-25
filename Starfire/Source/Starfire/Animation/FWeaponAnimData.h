@@ -14,9 +14,6 @@ struct STARFIRE_API FWeaponAnimData:public FTableRowBase
 
 	void UpdateEntries();
 
-	template<typename EnumType, typename AssetType>
-	void UpdateEntry(TMap<TEnumAsByte<EnumType>, AssetType>& AssetMap);
-
 	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ReadOnlyKeys,ForceInlineRow))
 	TMap<TEnumAsByte<EWeaponAnimationAssetType> ,UAnimSequenceBase*> AnimationAssets;
 
@@ -27,41 +24,6 @@ struct STARFIRE_API FWeaponAnimData:public FTableRowBase
 	TMap<TEnumAsByte<EWeaponBlendSpaceType>,UBlendSpace*> Blendspaces;
 };
 
-template <typename EnumType, typename AssetType>
-void FWeaponAnimData::UpdateEntry(TMap<TEnumAsByte<EnumType>, AssetType>& AssetMap)
-{
-	static_assert(TIsEnum<EnumType>::Value, "UpdateEntry can only be used with enum types!");
-
-	TArray<EnumType> AssetTypes = UFunctionLibrary::GetAllEnumValues<EnumType>(true);
-
-	// Import New Enums
-	for (EnumType Type : AssetTypes)
-	{
-		if (!AssetMap.Contains(Type))
-			AssetMap.Add(Type, nullptr);
-	}
-
-	// Remove Empty Enum Entries (None)
-	AssetMap.Remove(TEnumAsByte<EnumType>(0));
-
-	// Collect Invalid Enum Keys for Removal
-	const UEnum* EnumInfo = StaticEnum<EnumType>();
-	TArray<TEnumAsByte<EnumType>> KeysToRemove;
-
-	for (const auto& Kvp : AssetMap)
-	{
-		if (!EnumInfo->IsValidEnumValue(Kvp.Key))
-		{
-			KeysToRemove.Add(Kvp.Key);
-		}
-	}
-
-	// Remove invalid keys outside of the iteration
-	for (const auto& Key : KeysToRemove)
-	{
-		AssetMap.Remove(Key);
-	}
-}
 
 UCLASS(Blueprintable)
 class STARFIRE_API UWeaponAnimationAsset:public UDataAsset

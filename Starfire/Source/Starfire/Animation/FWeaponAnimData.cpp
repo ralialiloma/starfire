@@ -9,9 +9,9 @@ FWeaponAnimData::FWeaponAnimData()
 
 void FWeaponAnimData::UpdateEntries()
 {
-	UpdateEntry<EWeaponAnimationAssetType,UAnimSequenceBase*>(AnimationAssets);
-	UpdateEntry<EWeaponAnimationMontageType,UAnimMontage*>(AnimationMontages);
-	UpdateEntry<EWeaponBlendSpaceType,UBlendSpace*>(Blendspaces);
+	UFunctionLibrary::ValidateAndUpdateEnumMap<EWeaponAnimationAssetType,UAnimSequenceBase*>(AnimationAssets);
+	UFunctionLibrary::ValidateAndUpdateEnumMap<EWeaponAnimationMontageType,UAnimMontage*>(AnimationMontages);
+	UFunctionLibrary::ValidateAndUpdateEnumMap<EWeaponBlendSpaceType,UBlendSpace*>(Blendspaces);
 }
 
 UWeaponAnimationAsset::UWeaponAnimationAsset()

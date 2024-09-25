@@ -14,7 +14,7 @@ struct STARFIRE_API FWeaponConfig
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Common")
 	float Damage = 50;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Bitmask, BitmaskEnum = "/Script/Project.EInputSignalType"),Category = "Common")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Bitmask, BitmaskEnum = "/Script/Starfire.EInputSignalType"),Category = "Common")
 	int32 AllowedInputSignals = 1;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Common")

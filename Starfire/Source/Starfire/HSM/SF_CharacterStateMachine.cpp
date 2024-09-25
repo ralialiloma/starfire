@@ -3,6 +3,7 @@
 
 #include "SF_CharacterStateMachine.h"
 #include "GameFramework/Character.h"
+#include "Starfire/Character/Sf_Character.h"
 
 DEFINE_LOG_CATEGORY_STATIC(SF_CharacterStateMachine, Display, Display);
 
@@ -27,12 +28,12 @@ bool USf_CharacterStateMachine::TryRemoveState(TSubclassOf<UBaseState> BaseState
 void USf_CharacterStateMachine::InitializeComponent()
 {
 	Super::InitializeComponent();
-	OwningCharacter = Cast<ACharacter>(GetOwner()) ;
+	OwningCharacter = Cast<ASf_Character>(GetOwner()) ;
 	StateCallstack = nullptr;
 
 	if (!IsValid(OwningCharacter))
 	{
-		UE_LOG(SF_CharacterStateMachine, Error, TEXT("This component only works with characters"));
+		UE_LOG(SF_CharacterStateMachine, Error, TEXT("This component only works with the %s"),*ASf_Character::StaticClass()->GetName());
 		return;
 	}
 

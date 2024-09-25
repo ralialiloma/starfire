@@ -7,6 +7,7 @@
 #include "StateCallstack.h"
 #include "SF_CharacterStateMachine.generated.h"
 
+class ASf_Character;
 
 UCLASS(Blueprintable, ClassGroup=(StateMachine), meta=(BlueprintSpawnableComponent) )
 class STARFIRE_API USf_CharacterStateMachine : public UActorComponent
@@ -33,9 +34,9 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "SF_CharacterStateMachine")
 	UStateCallstack* StateCallstack;
 	
-	UPROPERTY(BlueprintReadOnly,EditAnywhere,Category = "SF_CharacterStateMachine",Meta=(RequiredAssetDataTags = "RowStructure=/Script/Project.StateDefinition"))
+	UPROPERTY(BlueprintReadOnly,EditAnywhere,Category = "SF_CharacterStateMachine",Meta=(RequiredAssetDataTags = "RowStructure=/Script/Starfire.StateDefinition"))
 	UDataTable* StateDefinitions;
 
 	UPROPERTY(BlueprintReadOnly)
-	ACharacter* OwningCharacter;
+	ASf_Character* OwningCharacter;
 };

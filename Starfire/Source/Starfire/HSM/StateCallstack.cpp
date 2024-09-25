@@ -5,19 +5,20 @@
 
 #include "SF_CharacterStateMachine.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Starfire/Utility/DebugSubsystem.h"
 #include "VisualLogger/VisualLoggerTypes.h"
 
-DEFINE_LOG_CATEGORY_STATIC(SF_StateCallStack, Display, Display);
+
+DEFINE_LOG_CATEGORY_STATIC(SF_StateCallStack, Log, All);
 
 bool UStateCallstack::TryAddState(TSubclassOf<UBaseState> BaseStateClass)
 {
 	//Check if state is valid
-	if (BaseStateClass == nullptr)
+	if (!IsValid(BaseStateClass)||!IsValid(BaseStateClass->GetClass()))
 	{
 		UE_LOG(SF_StateCallStack, Error, TEXT("Invalid BaseStateClass"))
 		return  false;
 	}
-		
 	
 	//Check if state already exits
 	for (UBaseState* State: ActiveStatesByPriority)
@@ -44,7 +45,10 @@ bool UStateCallstack::TryAddState(TSubclassOf<UBaseState> BaseStateClass)
 	ActiveStatesByPriority = UnsortedStates;
 	FStateModuleDataStruct Data = FStateModuleDataStruct();
 	RunActiveStateFeatures(GetStateByClass(BaseStateClass),Enter, Data);
-	return  true;
+	
+	UE_LOG(SF_StateCallStack, Log, TEXT("Added New State %s"),*BaseStateClass->GetName())
+
+	return true;
 }
 
 bool UStateCallstack::TryRemoveState(TSubclassOf<UBaseState> BaseStateClass)
@@ -56,10 +60,23 @@ bool UStateCallstack::TryRemoveState(TSubclassOf<UBaseState> BaseStateClass)
 		if (State->IsA(BaseStateClass))
 		{
 			ActiveStatesByPriority.Remove(State);
+			UE_LOG(SF_StateCallStack, Log, TEXT("Removed State %s"),*BaseStateClass->GetName())
 			return true;
 		}
 	}
 	return false;
+}
+
+bool UStateCallstack::ToggleStateByBool(TSubclassOf<UBaseState> BaseStateClass, bool bValue)
+{
+	if (bValue)
+	{
+		return  TryAddState(BaseStateClass);
+	}
+	else
+	{
+		return  TryRemoveState(BaseStateClass);
+	}
 }
 
 
@@ -67,8 +84,40 @@ void UStateCallstack::RunCallStack(TSubclassOf<UBaseStateFeature> FeatureClassTo
 {
 	if (UBaseStateFeature* FoundFeature = GetActiveFeature(FeatureClassToRun))
 	{
+		if (!IsValid(FoundFeature))
+		{
+			UE_LOG(
+				SF_StateCallStack,
+				Warning ,
+				TEXT("Found Features is invalid"))
+		}
+		
 		FoundFeature->RunAction(CallInput, Data);
+		return;
 	}
+
+	if (IsValid(FeatureClassToRun))
+	{
+		UE_LOG(
+			SF_StateCallStack,
+			Warning ,
+			TEXT("Cannot RunCallStack, Feature: %s not found"),
+			*FeatureClassToRun.Get()->GetName())
+	}
+	else
+	{
+		UE_LOG(
+			SF_StateCallStack,
+			Warning ,
+			TEXT("Cannot RunCallStack, Feature: Invalid Feature not found"))
+	}
+
+	/*for (auto Feature: GetAllFeatures())
+	{
+		UE_LOG(SF_StateCallStack, Log, TEXT("Active Feature from All: %s" ),*Feature->GetName());
+	}*/
+	
+
 }
 
 
@@ -81,9 +130,19 @@ void UStateCallstack::SwitchState(TSubclassOf<UBaseState> StateToAdd, TSubclassO
 	TryAddState(StateToAdd);
 }
 
-TArray<UBaseState*> UStateCallstack::GetActiveStates()
+TArray<UBaseState*> UStateCallstack::GetAllActiveStates() const
 {
 	return ActiveStatesByPriority;
+}
+
+TArray<TSubclassOf<UBaseStateFeature>> UStateCallstack::GetAllFeatures()
+{
+	TArray<TSubclassOf<UBaseStateFeature>> BaseStateFeatures{};
+	for (UBaseState* State: ActiveStatesByPriority)
+	{
+		BaseStateFeatures.Append(State->GetAllOwnedFeatures());	
+	}
+	return BaseStateFeatures ;
 }
 
 UBaseStateFeature* UStateCallstack::GetActiveFeature(TSubclassOf<UBaseStateFeature> FeatureClassToRun)
@@ -97,7 +156,7 @@ UBaseStateFeature* UStateCallstack::GetActiveFeature(TSubclassOf<UBaseStateFeatu
 			return FoundFeature;
 		}
 	}
-	return  nullptr;
+	return nullptr;
 }
 
 
@@ -106,10 +165,9 @@ void UStateCallstack::RunActiveStateFeatures(UBaseState* StateToRunOn,ECallInput
 	TArray<TSubclassOf<UBaseStateFeature>> OwnedFeatures = StateToRunOn->GetAllOwnedFeatures();
 	
 	//Run Callstack for specific class
-	UBaseStateFeature* ActiveFeature;
 	for (TSubclassOf<UBaseStateFeature> OwnedFeature:OwnedFeatures)
 	{
-		ActiveFeature = GetActiveFeature(OwnedFeature);
+		UBaseStateFeature* ActiveFeature = GetActiveFeature(OwnedFeature);
 		if (StateToRunOn->ContainsThisFeature(ActiveFeature))
 		{
 			ActiveFeature->RunAction(CallInput, Data);

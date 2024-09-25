@@ -150,7 +150,7 @@ void USF_Equipment::StopReloading()
 	return EquippedWeapon->StopReloading();
 }
 
-bool USF_Equipment::IsReloading()
+bool USF_Equipment::IsReloading() const
 {
 	if (!IsEquipped())
 		return false;
@@ -158,7 +158,7 @@ bool USF_Equipment::IsReloading()
 	return  EquippedWeapon->IsReloading();
 }
 
-bool USF_Equipment::IsInMeleeCooldown()
+bool USF_Equipment::IsInMeleeCooldown() const
 {
 	if (!IsEquipped())
 		return false;
@@ -180,7 +180,7 @@ void USF_Equipment::StopAiming()
 	EquippedWeapon->StopAiming();
 }
 
-bool USF_Equipment::IsInFireCooldown()
+bool USF_Equipment::IsInFireCooldown() const
 {
 	if (!IsEquipped())
 		return false;
@@ -209,7 +209,7 @@ void USF_Equipment::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 }
 
 
-bool USF_Equipment::CanMelee()
+bool USF_Equipment::CanMelee() const
 {
 	if (!IsEquipped())
 		return false;
@@ -218,7 +218,7 @@ bool USF_Equipment::CanMelee()
 }
 
 
-int USF_Equipment::GetCompressedFlags()
+int USF_Equipment::GetCompressedFlags() const
 {
 	int EquipmentFlags = 0;
 
@@ -231,9 +231,14 @@ int USF_Equipment::GetCompressedFlags()
 	return EquipmentFlags;
 }
 
-bool USF_Equipment::CheckFlag(EEquipmentFlags EquipmentFlag)
+bool USF_Equipment::CheckFlag(EEquipmentFlags EquipmentFlag) const
 {
 	return  UFunctionLibrary::CheckBitFlag(GetCompressedFlags(),EquipmentFlag);
+}
+
+bool USF_Equipment::CheckFlagForState(EEquipmentFlags EquipmentFlag, int StateToCheck) const
+{
+	return UFunctionLibrary::CheckBitFlag(GetCompressedFlags(),StateToCheck);
 }
 
 bool USF_Equipment::GetSlot(AWeaponBase* WeaponBase, int& OutIndex) const
