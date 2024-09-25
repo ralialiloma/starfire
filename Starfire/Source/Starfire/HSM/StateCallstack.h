@@ -6,6 +6,7 @@
 #include "BaseState.h"
 #include "ECallIInput.h"
 #include "Starfire/Utility/BetterObject.h"
+#include "InputAction.h"
 #include "StateCallstack.generated.h"
 
 
@@ -28,7 +29,10 @@ private:
 
 public:
 	UPROPERTY(BlueprintReadWrite,meta = (ExposeOnSpawn=true),Category = "StateMachine")
-	FSoftObjectPath StateDefintions;
+	FSoftObjectPath StateDefintionDT;
+
+	UPROPERTY(BlueprintReadWrite,meta = (ExposeOnSpawn=true),Category = "StateMachine")
+	FSoftObjectPath StateFeatureDefinitionDT;
 
 	UPROPERTY(BlueprintReadWrite,meta = (ExposeOnSpawn=true),Category = "StateMachine")
 	ACharacter* OwningCharacter;
@@ -55,15 +59,17 @@ public:
 	TArray<UBaseState*> GetAllActiveStates() const;
 
 	UFUNCTION(BlueprintCallable)
-	TArray<TSubclassOf<UBaseStateFeature>> GetAllFeatures();
+	TArray<TSubclassOf<UBaseStateFeature>> GetAllCurrentFeatureTypes();
 
 	UFUNCTION(BlueprintCallable)
 	TArray<UBaseStateFeature*> GetAllActiveFeatures();
 	
 	//Run Actions
 	UFUNCTION(BlueprintCallable)
-	void RunCallStack(TSubclassOf<UBaseStateFeature> FeatureClassToRun, ECallInput CallInput,FStateModuleDataStruct Data);
+	void RunCallStackByFeature(TSubclassOf<UBaseStateFeature> FeatureClassToRun, ECallInput CallInput,FStateModuleDataStruct Data);
 
+	UFUNCTION(BlueprintCallable)
+	void RunCallStackByInputAction(UInputAction* InputAction, ECallInput CallInput,FStateModuleDataStruct Data);
 
 	//CPP Utility Functions
 	UBaseStateFeature* GetActiveFeature(TSubclassOf<UBaseStateFeature> FeatureClassToRun);

@@ -2,7 +2,7 @@
 
 
 #include "BaseState.h"
-
+#include "Starfire/Utility/FunctionLibrary.h"
 #include "StateCallstack.h"
 
 
@@ -41,81 +41,10 @@ bool UBaseState::TryGetFeatureFast(TSubclassOf<UBaseStateFeature> FeatureClass,U
 	return false;
 }
 
-void UBaseState::CreateFeatures(const FSoftObjectPath SoftObjectPath)
+void UBaseState::CreateFeatures(const FSoftObjectPath& StateDefintionDT, const FSoftObjectPath& BaseStateFeatureDefinitionDT)
 {
-	//Find Owned Features
-	UDataTable* DataTable = Cast<UDataTable>(SoftObjectPath.ResolveObject());
+	ImportStateDefinition(StateDefintionDT);
 	
-	if (!DataTable)
-	{
-		DataTable = Cast<UDataTable>(SoftObjectPath.TryLoad());
-		UE_LOG(SF_BaseState,Warning,TEXT("Could not find DT for states"))
-		return;
-	}
-
-	TObjectPtr<UScriptStruct> RowStruct = DataTable->RowStruct;
-
-	if (!IsValid(RowStruct))
-	{
-		UE_LOG(SF_BaseState,Warning,TEXT("Invalid Row Struct in DT"))
-		return;
-	}
-	
-	if (RowStruct != FStateDefinition::StaticStruct())
-	{
-		UE_LOG(
-			SF_BaseState,
-			Warning,
-			TEXT("Wrong DT Row Struct. Row Struct needs to be of type %s but is of type %s instead "),
-			*FStateDefinition::StaticStruct()->GetName(),*DataTable->RowStruct.GetClass()->GetName());
-		return;
-	}
-	
-	const TArray<FName> AllRowNames = DataTable->GetRowNames();
-	for (const FName RowName:AllRowNames)
-	{
-		const FStateDefinition* Row = DataTable->FindRow<FStateDefinition>(RowName,"");
-
-		if (Row==nullptr)
-		{
-			UE_LOG(
-			SF_BaseState,
-			Warning,
-			TEXT("Found Invalid Row"));
-			continue;
-		}
-
-		TSubclassOf<UBaseState> RowState = Row->State;
-		if (!IsValid(RowState)||!IsValid( RowState.Get()))
-		{
-			UE_LOG(SF_BaseState,Warning,TEXT("Invalid State for %s"),*RowName.ToString())
-			continue;
-		}
-
-		if (!RowState->IsChildOf(GetClass()))
-			continue;
-
-		TArray<TSubclassOf<UBaseStateFeature>> FeaturesFromDT = Row->OwnedFeatures.Array();
-		TArray<TSubclassOf<UBaseStateFeature>> FeaturesToImport{};
-		for (TSubclassOf<UBaseStateFeature> Feature: FeaturesFromDT)
-		{
-			if (!IsValid(Feature)||!IsValid(Feature.Get()))
-			{
-				UE_LOG(
-					SF_BaseState
-					,Warning,
-					TEXT("Found Invalid Feature Class for %s"),*RowName.ToString());
-				continue;
-			}
-
-			FeaturesToImport.Add(Feature);
-		}
-		
-		OwnedFeatures = FeaturesToImport;
-		Priority = Row->Priority;
-		break;
-	}
-
 	//Create Features
 	for (TSubclassOf<UBaseStateFeature> FeatureClass:OwnedFeatures)
 	{
@@ -126,8 +55,42 @@ void UBaseState::CreateFeatures(const FSoftObjectPath SoftObjectPath)
 		}
 		
 		UBaseStateFeature* ObjectToCreate = NewObject<UBaseStateFeature>(this, FeatureClass);
-		ObjectToCreate->Initialize(StateCallstack);
+		ObjectToCreate->Initialize(StateCallstack,BaseStateFeatureDefinitionDT);
 		Features.Add(ObjectToCreate);;
+	}
+}
+
+void UBaseState::ImportStateDefinition(const FSoftObjectPath& StateDefintionDT)
+{
+	TArray<FStateDefinition> StateDefinitions =
+		UFunctionLibrary::GetRowDataFromDT<FStateDefinition>(StateDefintionDT);
+	
+	for (const FStateDefinition Definition:StateDefinitions)
+	{
+		TSubclassOf<UBaseState> RowState = Definition.State;
+
+		if (!RowState->IsChildOf(GetClass()))
+			continue;
+
+		TArray<TSubclassOf<UBaseStateFeature>> FeaturesFromDT = Definition.OwnedFeatures.Array();
+		TArray<TSubclassOf<UBaseStateFeature>> FeaturesToImport{};
+		for (TSubclassOf<UBaseStateFeature> Feature: FeaturesFromDT)
+		{
+			if (!IsValid(Feature)||!IsValid(Feature.Get()))
+			{
+				UE_LOG(
+					SF_BaseState
+					,Warning,
+					TEXT("Found Invalid Feature Class for"));
+				continue;
+			}
+
+			FeaturesToImport.Add(Feature);
+		}
+		
+		OwnedFeatures = FeaturesToImport;
+		Priority = Definition.Priority;
+		break;
 	}
 }
 

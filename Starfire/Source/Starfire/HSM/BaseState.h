@@ -28,7 +28,6 @@ struct STARFIRE_API FStateDefinition: public FTableRowBase
 	UPROPERTY(BlueprintReadWrite,EditAnywhere)
 	int Priority;
 	
-	
 };
 
 
@@ -70,6 +69,9 @@ public:
 	
 	bool TryGetFeatureFast(TSubclassOf<UBaseStateFeature> FeatureClass, UBaseStateFeature*& Feature);
 
-	void CreateFeatures(const FSoftObjectPath SoftObjectPath);
+	void CreateFeatures(const FSoftObjectPath& StateDefintionDT, const FSoftObjectPath& BaseStateFeatureDefinitionDT);
+
+private:
+	void ImportStateDefinition(const FSoftObjectPath& StateDefintionDT);
 	
 };
