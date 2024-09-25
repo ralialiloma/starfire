@@ -5,6 +5,7 @@
 
 #include "SF_CharacterStateMachine.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "Starfire/Utility/DebugSubsystem.h"
 #include "VisualLogger/VisualLoggerTypes.h"
 
@@ -14,10 +15,10 @@ DEFINE_LOG_CATEGORY_STATIC(SF_StateCallStack, Log, All);
 bool UStateCallstack::TryAddState(TSubclassOf<UBaseState> BaseStateClass)
 {
 	//Check if state is valid
-	if (!IsValid(BaseStateClass)||!IsValid(BaseStateClass->GetClass()))
+	if (!IsValid(BaseStateClass)||!UKismetSystemLibrary::IsValidClass(BaseStateClass))
 	{
 		UE_LOG(SF_StateCallStack, Error, TEXT("Invalid BaseStateClass"))
-		return  false;
+		return false;
 	}
 	
 	//Check if state already exits
@@ -33,6 +34,7 @@ bool UStateCallstack::TryAddState(TSubclassOf<UBaseState> BaseStateClass)
 	UBaseState* CreatedState = NewObject<UBaseState>(this,BaseStateClass);
 	CreatedState->StateCallstack = this;
 	CreatedState->CreateFeatures(StateDefintions);
+	UE_LOG(SF_StateCallStack, Error, TEXT("Message %i"),CreatedState->GetPriority());
 	UnsortedStates.Add(CreatedState);
 	//Sort by priority
 	UnsortedStates.Sort
@@ -44,7 +46,14 @@ bool UStateCallstack::TryAddState(TSubclassOf<UBaseState> BaseStateClass)
 	);
 	ActiveStatesByPriority = UnsortedStates;
 	FStateModuleDataStruct Data = FStateModuleDataStruct();
-	RunActiveStateFeatures(GetStateByClass(BaseStateClass),Enter, Data);
+
+	if (!IsValid(CreatedState))
+	{
+		UE_LOG(SF_StateCallStack, Error, TEXT("Created state is invalid"))
+		return false;
+	}
+	
+	RunActiveStateFeatures(CreatedState,Enter, Data);
 	
 	UE_LOG(SF_StateCallStack, Log, TEXT("Added New State %s"),*BaseStateClass->GetName())
 
@@ -54,7 +63,21 @@ bool UStateCallstack::TryAddState(TSubclassOf<UBaseState> BaseStateClass)
 bool UStateCallstack::TryRemoveState(TSubclassOf<UBaseState> BaseStateClass)
 {
 	const FStateModuleDataStruct& Data = FStateModuleDataStruct();
-	RunActiveStateFeatures(GetStateByClass(BaseStateClass),Exit, Data);
+
+	if (!IsValid(BaseStateClass))
+    {
+    	UE_LOG(SF_StateCallStack, Error, TEXT("StateClass To delete is invalid"));
+    	return false;
+    }
+
+	UBaseState* FoundState = GetStateByClass(BaseStateClass);
+
+	if (!IsValid(FoundState))
+	{
+		return false;
+	}
+	
+	RunActiveStateFeatures(FoundState,Exit, Data);
 	for (UBaseState* State: ActiveStatesByPriority)
 	{
 		if (State->IsA(BaseStateClass))
@@ -67,8 +90,18 @@ bool UStateCallstack::TryRemoveState(TSubclassOf<UBaseState> BaseStateClass)
 	return false;
 }
 
-bool UStateCallstack::ToggleStateByBool(TSubclassOf<UBaseState> BaseStateClass, bool bValue)
+bool UStateCallstack::ToggleStateByBool(const TSubclassOf<UBaseState> BaseStateClass, const bool bValue)
 {
+
+	if (!IsValid(BaseStateClass))
+	{
+		UE_LOG(
+			SF_StateCallStack,
+			Error ,
+			TEXT("Invalid Base State Class To Toggle State By Bool"))
+		return false;
+	}
+	
 	if (bValue)
 	{
 		return  TryAddState(BaseStateClass);
@@ -111,13 +144,6 @@ void UStateCallstack::RunCallStack(TSubclassOf<UBaseStateFeature> FeatureClassTo
 			Warning ,
 			TEXT("Cannot RunCallStack, Feature: Invalid Feature not found"))
 	}
-
-	/*for (auto Feature: GetAllFeatures())
-	{
-		UE_LOG(SF_StateCallStack, Log, TEXT("Active Feature from All: %s" ),*Feature->GetName());
-	}*/
-	
-
 }
 
 
@@ -162,6 +188,15 @@ UBaseStateFeature* UStateCallstack::GetActiveFeature(TSubclassOf<UBaseStateFeatu
 
 void UStateCallstack::RunActiveStateFeatures(UBaseState* StateToRunOn,ECallInput CallInput, const FStateModuleDataStruct& Data)
 {
+	if (!IsValid(StateToRunOn))
+	{
+		UE_LOG(
+			SF_StateCallStack,
+			Error ,
+			TEXT("State To Run Active Feature On Is Invalid"));
+		return;
+	}
+	
 	TArray<TSubclassOf<UBaseStateFeature>> OwnedFeatures = StateToRunOn->GetAllOwnedFeatures();
 	
 	//Run Callstack for specific class

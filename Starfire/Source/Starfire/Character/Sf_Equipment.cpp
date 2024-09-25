@@ -238,7 +238,7 @@ bool USF_Equipment::CheckFlag(EEquipmentFlags EquipmentFlag) const
 
 bool USF_Equipment::CheckFlagForState(EEquipmentFlags EquipmentFlag, int StateToCheck) const
 {
-	return UFunctionLibrary::CheckBitFlag(GetCompressedFlags(),StateToCheck);
+	return UFunctionLibrary::CheckBitFlag(StateToCheck,EquipmentFlag);
 }
 
 bool USF_Equipment::GetSlot(AWeaponBase* WeaponBase, int& OutIndex) const

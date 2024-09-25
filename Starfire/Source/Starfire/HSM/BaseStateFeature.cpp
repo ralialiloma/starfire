@@ -45,7 +45,10 @@ void UBaseStateFeature::RunAction(ECallInput CallInput, const FStateModuleDataSt
 		return;
 	}
 
-	FString CallInputString = EnumPtr->GetNameStringByValue(static_cast<int32>(CallInput));
-	UE_LOG(SF_BaseStateFeature, Log, TEXT("%s Feature: %s"), *CallInputString, *GetClass()->GetName());
+	if (UDebugSubsystem::GetHSMDebug(EDebugType::Log))
+	{
+		FString CallInputString = EnumPtr->GetNameStringByValue(static_cast<int32>(CallInput));
+		UE_LOG(SF_BaseStateFeature, Log, TEXT("%s Feature: %s"), *CallInputString, *GetClass()->GetName());
+	}
 	
 }
