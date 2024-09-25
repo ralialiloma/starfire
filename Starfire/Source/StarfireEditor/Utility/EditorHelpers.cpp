@@ -1,6 +1,4 @@
-﻿#if WITH_EDITOR
-
-#include "EditorHelpers.h"
+﻿#include "EditorHelpers.h"
 #include "DetailLayoutBuilder.h"
 #include "DetailWidgetRow.h"
 #include "IDetailChildrenBuilder.h"
@@ -87,5 +85,3 @@ void EditorHelpers::DisplayDefaultChildren(const TSharedRef<IPropertyHandle>& Pr
 		ChildBuilder.AddProperty(ChildProperty.ToSharedRef());
 	}
 }
-
-#endif

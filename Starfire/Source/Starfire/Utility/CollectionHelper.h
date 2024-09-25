@@ -432,4 +432,29 @@ struct FCollectionHelper
 		return ReturnArray;
 	}
 
+	template<typename KeyType, typename ValueType>
+	static TPair<KeyType, ValueType> GetKeyValueAtIndex(const TMap<KeyType, ValueType>& Map, int32 Index)
+	{
+		TPair<KeyType,ValueType> OutPair = TPair<KeyType, ValueType>();
+
+		if (Index < 0 || Index >= Map.Num())
+			return TPair<KeyType, ValueType>();
+
+		int32 CurrentIndex = 0;
+		
+		for (auto It = Map.CreateConstIterator(); It; ++It)
+		{
+			if (CurrentIndex == Index)
+			{
+				OutPair.Key = It.Key();
+				OutPair.Value = It.Value();
+				return OutPair;
+			}
+
+			++CurrentIndex;
+		}
+
+		return TPair<KeyType, ValueType>();
+	}
+
 };

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include  "ECallIInput.h"
-#include "FStateModuleDataStruct.h"
+#include "StateModuleDataStruct.h"
 #include "Starfire/Utility/BetterObject.h"
 #include "BaseStateFeature.generated.h"
 

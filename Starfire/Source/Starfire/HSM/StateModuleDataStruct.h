@@ -2,7 +2,7 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "Starfire/Utility/InputSignalType.h"
-#include "FStateModuleDataStruct.generated.h"
+#include "StateModuleDataStruct.generated.h"
 
 USTRUCT(BlueprintType)
 struct STARFIRE_API FStateModuleDataStruct: public FTableRowBase

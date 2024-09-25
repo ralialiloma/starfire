@@ -1,6 +1,4 @@
-﻿#if WITH_EDITOR
-
-#pragma once
+﻿#pragma once
 
 struct EditorHelpers
 {
@@ -32,5 +30,3 @@ bool EditorHelpers::GetRawData(const TSharedPtr<IPropertyHandle>& PropertyHandle
 	}
 	return false;
 }
-
-#endif

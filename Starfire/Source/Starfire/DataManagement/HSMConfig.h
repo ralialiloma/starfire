@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "Starfire/Character/Sf_Equipment.h"
 #include "Starfire/HSM/BaseState.h"
-#include "MapDataAsset.generated.h"
+#include "HSMConfig.generated.h"
 
 
 USTRUCT(BlueprintType)
@@ -10,6 +10,9 @@ struct FHSMConfig
 	GENERATED_BODY()
 
 public:
+
+	FHSMConfig();
+	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	TMap<TEnumAsByte<EEquipmentFlags>,TSubclassOf<UBaseState>> EquipmentFlagMap;
 };
@@ -22,7 +25,7 @@ class UHSMConfiguration: public UDataAsset
 
 public:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	TMap<TEnumAsByte<EEquipmentFlags>,TSubclassOf<UBaseState>> EquipmentFlagMap;
+	FHSMConfig EquipmentFlagStruct;
 
 public:
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
