@@ -3,7 +3,7 @@
 #include "WeaponAnimationMontageType.h"
 #include "WeaponBlendSpaceType.h"
 #include "Starfire/Utility/FunctionLibrary.h"
-#include "FWeaponAnimData.generated.h"
+#include "WeaponAnimData.generated.h"
 
 USTRUCT(Blueprintable)
 struct STARFIRE_API FWeaponAnimData:public FTableRowBase
@@ -15,13 +15,13 @@ struct STARFIRE_API FWeaponAnimData:public FTableRowBase
 	void UpdateEntries();
 
 	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ReadOnlyKeys,ForceInlineRow))
-	TMap<TEnumAsByte<EWeaponAnimationAssetType> ,UAnimSequenceBase*> AnimationAssets;
+	TMap<EWeaponAnimationAssetType ,UAnimSequenceBase*> AnimationAssets;
 
 	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ReadOnlyKeys,ForceInlineRow))
-	TMap<TEnumAsByte<EWeaponAnimationMontageType>,UAnimMontage*> AnimationMontages;
+	TMap<EWeaponAnimationMontageType, UAnimMontage*> AnimationMontages;
 
 	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ReadOnlyKeys,ForceInlineRow))
-	TMap<TEnumAsByte<EWeaponBlendSpaceType>,UBlendSpace*> Blendspaces;
+	TMap<EWeaponBlendSpaceType, UBlendSpace*> Blendspaces;
 };
 
 

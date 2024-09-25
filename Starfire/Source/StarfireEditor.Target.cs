@@ -11,5 +11,6 @@ public class StarfireEditorTarget : TargetRules
 		DefaultBuildSettings = BuildSettingsVersion.V4;
 
 		ExtraModuleNames.AddRange( new string[] { "Starfire" } );
+		ExtraModuleNames.AddRange(new string[] { "StarfireEditor" });
 	}
 }

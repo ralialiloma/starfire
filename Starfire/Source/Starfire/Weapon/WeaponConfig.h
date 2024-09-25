@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Starfire/Animation/FWeaponAnimData.h"
+#include "Starfire/Animation/WeaponAnimData.h"
 #include "Starfire/Utility/InputSignalType.h"
 #include "WeaponConfig.generated.h"
 

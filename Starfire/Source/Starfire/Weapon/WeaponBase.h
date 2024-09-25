@@ -8,7 +8,7 @@
 #include "WeaponConfig.h"
 #include "GameFramework/Actor.h"
 #include "Starfire/Utility/InputSignalType.h"
-#include "Starfire/Animation/FWeaponAnimData.h"
+#include "Starfire/Animation/WeaponAnimData.h"
 #include "WeaponBase.generated.h"
 
 DEFINE_LOG_CATEGORY_STATIC(SF_Weapon, Display, Display);

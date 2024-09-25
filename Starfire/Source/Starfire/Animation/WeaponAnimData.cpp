@@ -1,4 +1,4 @@
-﻿#include "FWeaponAnimData.h"
+﻿#include "WeaponAnimData.h"
 
 #include "Starfire/Utility/FunctionLibrary.h"
 

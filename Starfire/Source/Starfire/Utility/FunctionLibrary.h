@@ -53,6 +53,8 @@ class STARFIRE_API UFunctionLibrary : public UBlueprintFunctionLibrary
 	}
 
 	template <typename EnumType, typename AssetType>
+	static void ValidateAndUpdateEnumMap(TMap<EnumType, AssetType>& AssetMap);
+	template <typename EnumType, typename AssetType>
 	static void ValidateAndUpdateEnumMap(TMap<TEnumAsByte<EnumType>, AssetType>& AssetMap);
 	
 	UFUNCTION(BlueprintCallable,BlueprintPure, Category="Debug")
@@ -93,6 +95,42 @@ TArray<EnumType> UFunctionLibrary::GetAllEnumValues(bool ExcludeZero)
 	}
 
 	return EnumValues;
+}
+
+template <typename EnumType, typename AssetType>
+void UFunctionLibrary::ValidateAndUpdateEnumMap(TMap<EnumType, AssetType>& AssetMap)
+{
+	static_assert(TIsEnum<EnumType>::Value, "ValidateAndUpdateEnumMap can only be used with enum types!");
+
+	TArray<EnumType> AssetTypes = UFunctionLibrary::GetAllEnumValues<EnumType>(true);
+
+	// Import New Enums
+	for (EnumType Type : AssetTypes)
+	{
+		if (!AssetMap.Contains(Type))
+			AssetMap.Add(Type, nullptr);
+	}
+
+	// Remove Empty Enum Entries (None)
+	AssetMap.Remove(EnumType(0));
+
+	// Collect Invalid Enum Keys for Removal
+	const UEnum* EnumInfo = StaticEnum<EnumType>();
+	TArray<EnumType> KeysToRemove;
+
+	for (const auto& Kvp : AssetMap)
+	{
+		if (!EnumInfo->IsValidEnumValue(static_cast<int64>(Kvp.Key)))
+		{
+			KeysToRemove.Add(Kvp.Key);
+		}
+	}
+
+	// Remove invalid keys outside of the iteration
+	for (const auto& Key : KeysToRemove)
+	{
+		AssetMap.Remove(Key);
+	}
 }
 
 template <typename EnumType, typename AssetType>

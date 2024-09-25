@@ -168,7 +168,7 @@ void AWeaponBase::StopAiming()
 
 void AWeaponBase::DoMelee()
 {
-	PlayMontage(EWeaponAnimationMontageType::AnimationMontage_Melee);
+	PlayMontage(EWeaponAnimationMontageType::Melee);
 
 	float CurrentMeleeDelay = ActiveConfig.MeleeDelay;
 	if (CurrentMeleeDelay>0)
@@ -422,7 +422,7 @@ void AWeaponBase::DoFire(FHitResult& OutHitResult)
 	//todo callshoot event
 
 	//Play Shoot Montage
-	PlayMontage(EWeaponAnimationMontageType::AnimationMontage_PrimaryFire);
+	PlayMontage(EWeaponAnimationMontageType::PrimaryFire);
 	
 }
 
@@ -431,7 +431,7 @@ bool AWeaponBase::Reload()
 	if (IsReloading())
 		return false;
 	
-	float MontageTime = PlayMontage(EWeaponAnimationMontageType::AnimationMontage_Reload);
+	float MontageTime = PlayMontage(EWeaponAnimationMontageType::Reload);
 
 	FTimerDelegate TimerDel;
 	TimerDel.BindLambda([this]() -> void {CurrentClip = ActiveConfig.MaxClipSize;});
@@ -451,7 +451,7 @@ void AWeaponBase::StopReloading()
 	ReloadTimer.Invalidate();
 	UAnimMontage* ReloadMontage =  UWeaponAnimDataFunctions::GetAnimationMontage(
 		GetActiveConfig().GetAnimData(),
-		EWeaponAnimationMontageType::AnimationMontage_Reload);
+		EWeaponAnimationMontageType::Reload);
 	StopMontage(ReloadMontage);
 }
 
@@ -487,7 +487,7 @@ void AWeaponBase::OnEquip(AActor* NewHolder)
 {
 	SetWeapon(true);
 	WeaponHolder = NewHolder;
-	PlayMontage(EWeaponAnimationMontageType::AnimationMontage_Equip);
+	PlayMontage(EWeaponAnimationMontageType::Equip);
 	UE_LOG(SF_Weapon, Log, TEXT("Equipped %s"),*GetClass()->GetName())
 }
 
