@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include  "ECallIInput.h"
 #include "FStateModuleDataStruct.h"
+#include "InputAction.h"
 #include "Starfire/Utility/BetterObject.h"
 #include "BaseStateFeature.generated.h"
 
@@ -20,10 +21,13 @@ class STARFIRE_API UBaseStateFeature : public UBetterObject
 protected:
 	UPROPERTY(BlueprintReadOnly)
 	UStateCallstack* Callstack;
+
+	UPROPERTY(BlueprintReadOnly)
+	TArray<UInputAction*> SupportedInputActions;
 	
 public:
 
-	void Initialize(UStateCallstack* NewCallstack);
+	void Initialize(UStateCallstack* NewCallstack, FSoftObjectPath BaseStateFeatureDefinition);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void EnterState();
@@ -41,6 +45,11 @@ public:
 	void OnDeactivate();
 
 	void RunAction(ECallInput CallInput, const FStateModuleDataStruct& Data);
+
+	TArray<UInputAction*> GetSupportedInputActions();
+
+private:
+	void ImportFeatureDefinition(FSoftObjectPath BaseStateFeatureDefDT);
 
 
 	

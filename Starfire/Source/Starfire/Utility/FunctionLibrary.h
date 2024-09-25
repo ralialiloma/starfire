@@ -6,7 +6,9 @@
 #include "InputSignalType.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "UObject/UnrealType.h"
-#include "UObject/UnrealTypePrivate.h"
+#include "Engine/DataTable.h"
+#include "UObject/SoftObjectPath.h"
+#include "Engine/EngineTypes.h" 
 #include "FunctionLibrary.generated.h"
 
 #pragma region Enums
@@ -19,6 +21,7 @@ enum  ESuccessState
 };
 #pragma endregion
 
+
 UCLASS()
 class STARFIRE_API UFunctionLibrary : public UBlueprintFunctionLibrary
 {
@@ -30,6 +33,9 @@ class STARFIRE_API UFunctionLibrary : public UBlueprintFunctionLibrary
 
 	template<typename EnumType>
 	static TArray<EnumType> GetAllEnumValues(bool ExcludeZero = false);
+
+	template<typename RowType>
+	static TArray<RowType> GetRowDataFromDT(const FSoftObjectPath& DTPath);
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	static  int ConvertEnumToInteger(uint8 Byte);
@@ -93,6 +99,56 @@ TArray<EnumType> UFunctionLibrary::GetAllEnumValues(bool ExcludeZero)
 	}
 
 	return EnumValues;
+}
+
+template <typename RowType>
+TArray<RowType> UFunctionLibrary::GetRowDataFromDT(const FSoftObjectPath& DTPath)
+{
+	UObject* ResolvedUObject = DTPath.ResolveObject();
+	UDataTable* DataTable = static_cast<UDataTable*>(ResolvedUObject);
+
+	if (!DataTable)
+	{
+		UE_LOG(LogTemp,Warning,TEXT("Could not find DT for %s"),*RowType::StaticStruct()->GetName());
+		return TArray<RowType>{};
+	}
+
+	TObjectPtr<UScriptStruct> RowStruct = DataTable->RowStruct;
+
+	if (!IsValid(RowStruct))
+	{
+		UE_LOG(LogTemp,Warning,TEXT("Invalid Row Struct in DT"))
+		return TArray<RowType>{};
+	}
+
+	if (RowStruct != RowType::StaticStruct())
+	{
+		UE_LOG(
+			LogTemp,
+			Warning,
+			TEXT("Wrong DT Row Struct. Row Struct needs to be of type %s but is of type %s instead "),
+			*RowType::StaticStruct()->GetName(),*DataTable->RowStruct.GetClass()->GetName());
+		return TArray<RowType>{};
+	}
+
+	TArray<RowType> RowDatas{};
+	const TArray<FName> AllRowNames = DataTable->GetRowNames();
+	for (const FName RowName:AllRowNames)
+	{
+		const RowType* Row = DataTable->FindRow<RowType>(RowName,"");
+
+		if (Row==nullptr)
+		{
+			UE_LOG(
+			LogTemp,
+			Warning,
+			TEXT("Found Invalid Row"));
+			continue;
+		}
+
+		RowDatas.Add(*Row);
+	}
+	return RowDatas;
 }
 
 template <typename EnumType, typename AssetType>

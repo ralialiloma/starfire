@@ -3,15 +3,17 @@
 
 #include "BaseStateFeature.h"
 
+#include "BaseStateFeatureDefinition.h"
 #include "ECallIInput.h"
-#include "Kismet/KismetStringLibrary.h"
 #include "Starfire/Utility/DebugSubsystem.h"
+#include "Starfire/Utility/FunctionLibrary.h"
 
 DEFINE_LOG_CATEGORY_STATIC(SF_BaseStateFeature, Log, All);
 
-void UBaseStateFeature::Initialize(UStateCallstack* NewCallstack)
+void UBaseStateFeature::Initialize(UStateCallstack* NewCallstack,FSoftObjectPath BaseStateFeatureDTPath)
 {
 	Callstack = NewCallstack;
+	ImportFeatureDefinition(BaseStateFeatureDTPath);
 }
 
 void UBaseStateFeature::RunAction(ECallInput CallInput, const FStateModuleDataStruct& Data)
@@ -51,4 +53,23 @@ void UBaseStateFeature::RunAction(ECallInput CallInput, const FStateModuleDataSt
 		UE_LOG(SF_BaseStateFeature, Log, TEXT("%s Feature: %s"), *CallInputString, *GetClass()->GetName());
 	}
 	
+}
+
+TArray<UInputAction*> UBaseStateFeature::GetSupportedInputActions()
+{
+	return SupportedInputActions;
+}
+
+void UBaseStateFeature::ImportFeatureDefinition(FSoftObjectPath BaseStateFeatureDefDT)
+{
+	TArray<FBaseStateFeatureDefintion> FeatureDefintions = 
+		UFunctionLibrary::GetRowDataFromDT<FBaseStateFeatureDefintion>(BaseStateFeatureDefDT);
+
+	for (FBaseStateFeatureDefintion Defintion: FeatureDefintions)
+	{
+		if (Defintion.FeatureType != GetClass())
+			continue;
+
+		SupportedInputActions =  Defintion.SupportedInputActions;
+	}
 }

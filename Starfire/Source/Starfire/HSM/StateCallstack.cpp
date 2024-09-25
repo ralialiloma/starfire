@@ -34,7 +34,7 @@ bool UStateCallstack::TryAddState(TSubclassOf<UBaseState> BaseStateClass)
 	
 	UBaseState* CreatedState = NewObject<UBaseState>(this,BaseStateClass);
 	CreatedState->StateCallstack = this;
-	CreatedState->CreateFeatures(StateDefintions);
+	CreatedState->CreateFeatures(StateDefintionDT, StateFeatureDefinitionDT);
 	UnsortedStates.Add(CreatedState);
 	
 
@@ -168,7 +168,7 @@ bool UStateCallstack::ToggleStateByBool(const TSubclassOf<UBaseState> BaseStateC
 }
 
 
-void UStateCallstack::RunCallStack(TSubclassOf<UBaseStateFeature> FeatureClassToRun, ECallInput CallInput, FStateModuleDataStruct Data)
+void UStateCallstack::RunCallStackByFeature(TSubclassOf<UBaseStateFeature> FeatureClassToRun, ECallInput CallInput, FStateModuleDataStruct Data)
 {
 	if (UBaseStateFeature* FoundFeature = GetActiveFeature(FeatureClassToRun))
 	{
@@ -189,7 +189,7 @@ void UStateCallstack::RunCallStack(TSubclassOf<UBaseStateFeature> FeatureClassTo
 		UE_LOG(
 			SF_StateCallStack,
 			Warning ,
-			TEXT("Cannot RunCallStack, Feature: %s not found"),
+			TEXT("Cannot RunCallStackByFeature, Feature: %s not found"),
 			*FeatureClassToRun.Get()->GetName())
 	}
 	else
@@ -197,7 +197,21 @@ void UStateCallstack::RunCallStack(TSubclassOf<UBaseStateFeature> FeatureClassTo
 		UE_LOG(
 			SF_StateCallStack,
 			Warning ,
-			TEXT("Cannot RunCallStack, Feature: Invalid Feature not found"))
+			TEXT("Cannot RunCallStackByFeature, Feature: Invalid Feature not found"))
+	}
+}
+
+void UStateCallstack::RunCallStackByInputAction(UInputAction* InputAction, ECallInput CallInput,
+	FStateModuleDataStruct Data)
+{
+	TArray<UBaseStateFeature*> AllActiveFeatures =  GetAllActiveFeatures();
+	for (UBaseStateFeature* Feature: AllActiveFeatures)
+	{
+		if (Feature->GetSupportedInputActions().Contains(InputAction))
+		{
+			UClass* SuperClass =  Feature->GetClass()->GetSuperClass();
+			RunCallStackByFeature(SuperClass,CallInput,Data);
+		}
 	}
 }
 
@@ -216,7 +230,7 @@ TArray<UBaseState*> UStateCallstack::GetAllActiveStates() const
 	return ActiveStatesByPriority;
 }
 
-TArray<TSubclassOf<UBaseStateFeature>> UStateCallstack::GetAllFeatures()
+TArray<TSubclassOf<UBaseStateFeature>> UStateCallstack::GetAllCurrentFeatureTypes()
 {
 	TArray<TSubclassOf<UBaseStateFeature>> BaseStateFeatures{};
 	for (UBaseState* State: ActiveStatesByPriority)
@@ -228,7 +242,7 @@ TArray<TSubclassOf<UBaseStateFeature>> UStateCallstack::GetAllFeatures()
 
 TArray<UBaseStateFeature*> UStateCallstack::GetAllActiveFeatures()
 {
-	TArray<TSubclassOf<UBaseStateFeature>> AllFeatureClasses = GetAllFeatures();
+	TArray<TSubclassOf<UBaseStateFeature>> AllFeatureClasses = GetAllCurrentFeatureTypes();
 
 	//Find Current Super Classes
 	TSet<UClass*> FeatureSuperClasses{};

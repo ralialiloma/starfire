@@ -8,7 +8,7 @@
 DEFINE_LOG_CATEGORY_STATIC(SF_CharacterStateMachine, Display, Display);
 
 USf_CharacterStateMachine::USf_CharacterStateMachine(const FObjectInitializer& ObjectInitializer): StateCallstack(nullptr),
-														StateDefinitions(nullptr),
+														StateDefinitionDT(nullptr),
                                                         OwningCharacter(nullptr)
 {
 	PrimaryComponentTick.bCanEverTick = false;
@@ -37,7 +37,7 @@ void USf_CharacterStateMachine::InitializeComponent()
 		return;
 	}
 
-	if (!IsValid(StateDefinitions))
+	if (!IsValid(StateDefinitionDT))
 	{
 		UE_LOG(
 			SF_CharacterStateMachine,
@@ -48,7 +48,7 @@ void USf_CharacterStateMachine::InitializeComponent()
 
 	StateCallstack = NewObject<UStateCallstack>(this);
 	StateCallstack->OwningCharacter = OwningCharacter;
-	StateCallstack->StateDefintions = StateDefinitions;
+	StateCallstack->StateDefintionDT = StateDefinitionDT;
 }
 
 
