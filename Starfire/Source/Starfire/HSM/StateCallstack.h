@@ -20,7 +20,11 @@ class STARFIRE_API UStateCallstack : public UBetterObject
 
 private:
 	UPROPERTY()
-	TArray<UBaseState*> ActiveStatesByPriority;
+	TArray<UBaseState*> ActiveStatesByPriority = TArray<UBaseState*>{};
+	
+	UPROPERTY()
+	TArray<UBaseStateFeature*> CurrentActiveFeatures  = TArray<UBaseStateFeature*>{};
+
 
 public:
 	UPROPERTY(BlueprintReadWrite,meta = (ExposeOnSpawn=true),Category = "StateMachine")
@@ -36,6 +40,9 @@ public:
 	bool TryAddState(TSubclassOf<UBaseState> BaseStateClass);
 
 	UFUNCTION(BlueprintCallable)
+	void UpdateFeatures();
+
+	UFUNCTION(BlueprintCallable)
 	bool TryRemoveState(TSubclassOf<UBaseState> BaseStateClass);
 
 	UFUNCTION(BlueprintCallable)
@@ -49,6 +56,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	TArray<TSubclassOf<UBaseStateFeature>> GetAllFeatures();
+
+	UFUNCTION(BlueprintCallable)
+	TArray<UBaseStateFeature*> GetAllActiveFeatures();
 	
 	//Run Actions
 	UFUNCTION(BlueprintCallable)

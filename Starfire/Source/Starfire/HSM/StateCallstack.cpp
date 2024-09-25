@@ -34,8 +34,9 @@ bool UStateCallstack::TryAddState(TSubclassOf<UBaseState> BaseStateClass)
 	UBaseState* CreatedState = NewObject<UBaseState>(this,BaseStateClass);
 	CreatedState->StateCallstack = this;
 	CreatedState->CreateFeatures(StateDefintions);
-	UE_LOG(SF_StateCallStack, Error, TEXT("Message %i"),CreatedState->GetPriority());
 	UnsortedStates.Add(CreatedState);
+	
+
 	//Sort by priority
 	UnsortedStates.Sort
 	(
@@ -45,6 +46,7 @@ bool UStateCallstack::TryAddState(TSubclassOf<UBaseState> BaseStateClass)
 		}
 	);
 	ActiveStatesByPriority = UnsortedStates;
+	
 	FStateModuleDataStruct Data = FStateModuleDataStruct();
 
 	if (!IsValid(CreatedState))
@@ -52,12 +54,48 @@ bool UStateCallstack::TryAddState(TSubclassOf<UBaseState> BaseStateClass)
 		UE_LOG(SF_StateCallStack, Error, TEXT("Created state is invalid"))
 		return false;
 	}
+
+	UpdateFeatures();
 	
 	RunActiveStateFeatures(CreatedState,Enter, Data);
 	
 	UE_LOG(SF_StateCallStack, Log, TEXT("Added New State %s"),*BaseStateClass->GetName())
 
 	return true;
+}
+
+void UStateCallstack::UpdateFeatures()
+{
+	//Notify Features
+	TArray<UBaseStateFeature*> NewActiveFeatures =  GetAllActiveFeatures();
+	for (UBaseStateFeature* NewFeature: NewActiveFeatures)
+	{
+		for (UBaseStateFeature* OldFeature: CurrentActiveFeatures)
+		{
+			if (!IsValid(NewFeature))
+			{
+				UE_LOG(SF_StateCallStack, Error, TEXT("New added feature is invalid"))
+				continue;
+			}
+
+			if (!IsValid(OldFeature))
+			{
+				UE_LOG(SF_StateCallStack, Error, TEXT("Old feature is invalid"))
+				continue;
+			}
+			
+			if (OldFeature->GetClass()->GetSuperClass() != NewFeature->GetClass()->GetSuperClass())
+				continue;
+
+			if (NewFeature == OldFeature)
+				continue;
+			
+			OldFeature->OnDeactivate();
+		}
+		NewFeature->OnActivate();
+	}
+	CurrentActiveFeatures = NewActiveFeatures;
+	return ;
 }
 
 bool UStateCallstack::TryRemoveState(TSubclassOf<UBaseState> BaseStateClass)
@@ -169,6 +207,34 @@ TArray<TSubclassOf<UBaseStateFeature>> UStateCallstack::GetAllFeatures()
 		BaseStateFeatures.Append(State->GetAllOwnedFeatures());	
 	}
 	return BaseStateFeatures ;
+}
+
+TArray<UBaseStateFeature*> UStateCallstack::GetAllActiveFeatures()
+{
+	TArray<TSubclassOf<UBaseStateFeature>> AllFeatureClasses = GetAllFeatures();
+
+	//Find Current Super Classes
+	TSet<UClass*> FeatureSuperClasses{};
+	for (TSubclassOf<UBaseStateFeature> FeatureClass: AllFeatureClasses)
+	{
+		UClass* SuperClass = FeatureClass->GetSuperClass();
+		if (!IsValid(SuperClass))
+			continue;
+		FeatureSuperClasses.Add(SuperClass);
+	}
+
+	//Figure out active features
+	TArray<UBaseStateFeature*> ActiveFeatures{};
+	for (UClass* SuperClass: FeatureSuperClasses)
+	{
+		UBaseStateFeature* ActiveFeature =  GetActiveFeature(SuperClass);
+		ActiveFeatures.Add(ActiveFeature);
+
+		if (!IsValid(ActiveFeature))
+			continue;
+	}
+	
+	return ActiveFeatures;
 }
 
 UBaseStateFeature* UStateCallstack::GetActiveFeature(TSubclassOf<UBaseStateFeature> FeatureClassToRun)

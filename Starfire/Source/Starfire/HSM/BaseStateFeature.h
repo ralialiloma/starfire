@@ -23,8 +23,13 @@ protected:
 	
 public:
 
+	void Initialize(UStateCallstack* NewCallstack);
+
 	UFUNCTION(BlueprintImplementableEvent)
 	void EnterState();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnActivate();
 	
 	UFUNCTION(BlueprintImplementableEvent)
 	void RunFeature(FStateModuleDataStruct Data);
@@ -32,8 +37,11 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void ExitState();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnDeactivate();
+
 	void RunAction(ECallInput CallInput, const FStateModuleDataStruct& Data);
 
-	void Initialize(UStateCallstack* NewCallstack);
+
 	
 };
