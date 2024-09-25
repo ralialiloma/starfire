@@ -122,6 +122,7 @@ bool UStateCallstack::TryRemoveState(TSubclassOf<UBaseState> BaseStateClass)
 		{
 			ActiveStatesByPriority.Remove(State);
 			UE_LOG(SF_StateCallStack, Log, TEXT("Removed State %s"),*BaseStateClass->GetName())
+			CurrentActiveFeatures = GetAllActiveFeatures();
 			return true;
 		}
 	}
