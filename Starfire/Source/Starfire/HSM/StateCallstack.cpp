@@ -6,6 +6,7 @@
 #include "SF_CharacterStateMachine.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Starfire/Utility/CollectionHelper.h"
 #include "Starfire/Utility/DebugSubsystem.h"
 #include "VisualLogger/VisualLoggerTypes.h"
 
@@ -55,7 +56,7 @@ bool UStateCallstack::TryAddState(TSubclassOf<UBaseState> BaseStateClass)
 		return false;
 	}
 
-	UpdateFeatures();
+	NotifyFeatures();
 	
 	RunActiveStateFeatures(CreatedState,Enter, Data);
 	
@@ -64,7 +65,7 @@ bool UStateCallstack::TryAddState(TSubclassOf<UBaseState> BaseStateClass)
 	return true;
 }
 
-void UStateCallstack::UpdateFeatures()
+void UStateCallstack::NotifyFeatures()
 {
 	//Notify Features
 	TArray<UBaseStateFeature*> NewActiveFeatures =  GetAllActiveFeatures();
@@ -92,10 +93,24 @@ void UStateCallstack::UpdateFeatures()
 			
 			OldFeature->OnDeactivate();
 		}
-		NewFeature->OnActivate();
 	}
+
+	for (UBaseStateFeature* NewFeature : NewActiveFeatures)
+	{
+		if (!IsValid(NewFeature))
+		{
+			UE_LOG(SF_StateCallStack, Error, TEXT("New added feature is invalid"));
+			continue;
+		}
+
+		// If the new feature is not already activated, activate it
+		if (!CurrentActiveFeatures.Contains(NewFeature))
+		{
+			NewFeature->OnActivate();
+		}
+	}
+
 	CurrentActiveFeatures = NewActiveFeatures;
-	return ;
 }
 
 bool UStateCallstack::TryRemoveState(TSubclassOf<UBaseState> BaseStateClass)
@@ -122,7 +137,8 @@ bool UStateCallstack::TryRemoveState(TSubclassOf<UBaseState> BaseStateClass)
 		{
 			ActiveStatesByPriority.Remove(State);
 			UE_LOG(SF_StateCallStack, Log, TEXT("Removed State %s"),*BaseStateClass->GetName())
-			CurrentActiveFeatures = GetAllActiveFeatures();
+			//CurrentActiveFeatures = GetAllActiveFeatures();
+			NotifyFeatures();
 			return true;
 		}
 	}

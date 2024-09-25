@@ -40,7 +40,7 @@ public:
 	bool TryAddState(TSubclassOf<UBaseState> BaseStateClass);
 
 	UFUNCTION(BlueprintCallable)
-	void UpdateFeatures();
+	void NotifyFeatures();
 
 	UFUNCTION(BlueprintCallable)
 	bool TryRemoveState(TSubclassOf<UBaseState> BaseStateClass);
