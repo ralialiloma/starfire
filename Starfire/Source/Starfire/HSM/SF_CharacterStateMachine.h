@@ -36,10 +36,7 @@ protected:
 	
 	UPROPERTY(BlueprintReadOnly,EditAnywhere,Category = "SF_CharacterStateMachine",Meta=(RequiredAssetDataTags = "RowStructure=/Script/Starfire.StateDefinition"))
 	UDataTable* StateDefinitionDT;
-
-	UPROPERTY(BlueprintReadOnly,EditAnywhere,Category = "SF_CharacterStateMachine",Meta=(RequiredAssetDataTags = "RowStructure=/Script/Starfire.BaseStateFeatureDefinition"))
-	UDataTable* StateFeatureDefinitionDT;
-
+	
 	UPROPERTY(BlueprintReadOnly)
 	ASf_Character* OwningCharacter;
 };

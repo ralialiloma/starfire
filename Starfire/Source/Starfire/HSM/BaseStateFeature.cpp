@@ -55,9 +55,9 @@ void UBaseStateFeature::RunAction(ECallInput CallInput, const FStateModuleDataSt
 	
 }
 
-TArray<UInputAction*> UBaseStateFeature::GetSupportedInputActions()
+void UBaseStateFeature::GetSupportedInputActions(TArray<UInputAction*> &OutSupportedInputActions)
 {
-	return SupportedInputActions;
+	OutSupportedInputActions.Append(SupportedInputActions);
 }
 
 void UBaseStateFeature::ImportFeatureDefinition(FSoftObjectPath BaseStateFeatureDefDT)

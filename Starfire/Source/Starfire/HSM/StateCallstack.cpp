@@ -207,10 +207,14 @@ void UStateCallstack::RunCallStackByInputAction(UInputAction* InputAction, ECall
 	TArray<UBaseStateFeature*> AllActiveFeatures =  GetAllActiveFeatures();
 	for (UBaseStateFeature* Feature: AllActiveFeatures)
 	{
-		if (Feature->GetSupportedInputActions().Contains(InputAction))
+		TArray<UInputAction*> SupportedInputActions{};
+		Feature->GetSupportedInputActions(SupportedInputActions);
+		
+		if (SupportedInputActions.Contains(InputAction))
 		{
 			UClass* SuperClass =  Feature->GetClass()->GetSuperClass();
 			RunCallStackByFeature(SuperClass,CallInput,Data);
+			UE_LOG(SF_StateCallStack,Log , TEXT("Run Feature %s"),*SuperClass->GetName())
 		}
 	}
 }

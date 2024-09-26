@@ -22,7 +22,7 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 	UStateCallstack* Callstack;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	TArray<UInputAction*> SupportedInputActions;
 	
 public:
@@ -45,8 +45,8 @@ public:
 	void OnDeactivate();
 
 	void RunAction(ECallInput CallInput, const FStateModuleDataStruct& Data);
-
-	TArray<UInputAction*> GetSupportedInputActions();
+	
+	virtual void GetSupportedInputActions(TArray<UInputAction*> &OutSupportedInputActions);
 
 private:
 	void ImportFeatureDefinition(FSoftObjectPath BaseStateFeatureDefDT);
