@@ -9,6 +9,8 @@
 
 class ASf_Character;
 
+DECLARE_DELEGATE_OneParam(FRunCallStackByInputAction, const UInputAction);
+
 UCLASS(Blueprintable, ClassGroup=(StateMachine), meta=(BlueprintSpawnableComponent) )
 class STARFIRE_API USf_CharacterStateMachine : public UActorComponent
 {
@@ -23,6 +25,16 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	bool TryRemoveState(TSubclassOf<UBaseState> BaseStateClass);
+
+	UFUNCTION(BlueprintCallable)
+	void SubscribeToInputActions(TArray<UInputAction*> InputActions);
+
+	template<EInputSignalType InputSignalType>
+	void RunPressedAction(const FInputActionValue& InputActionValue);
+
+private:
+	void RunCallStackByInputAction(UInputAction InputAction);
+
 	
 protected:
 
@@ -37,9 +49,10 @@ protected:
 	UPROPERTY(BlueprintReadOnly,EditAnywhere,Category = "SF_CharacterStateMachine",Meta=(RequiredAssetDataTags = "RowStructure=/Script/Starfire.StateDefinition"))
 	UDataTable* StateDefinitionDT;
 
-	UPROPERTY(BlueprintReadOnly,EditAnywhere,Category = "SF_CharacterStateMachine",Meta=(RequiredAssetDataTags = "RowStructure=/Script/Starfire.BaseStateFeatureDefinition"))
+	UPROPERTY(BlueprintReadOnly,EditAnywhere,Category = "SF_CharacterStateMachine",Meta=(RequiredAssetDataTags = "RowStructure=/Script/Starfire.HSMFeatureDefinition"))
 	UDataTable* StateFeatureDefinitionDT;
 
 	UPROPERTY(BlueprintReadOnly)
 	ASf_Character* OwningCharacter;
 };
+

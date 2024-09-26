@@ -1,10 +1,10 @@
 #pragma once
 #include "BaseStateFeature.h"
 #include "InputAction.h"
-#include "BaseStateFeatureDefinition.generated.h"
+#include "HSMFeatureDefinition.generated.h"
 
-USTRUCT()
-struct FBaseStateFeatureDefintion: public FTableRowBase 
+USTRUCT(BlueprintType)
+struct FHSMFeatureDefinition: public FTableRowBase 
 {
 	GENERATED_BODY()
 	
@@ -15,5 +15,5 @@ public:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	TArray<UInputAction*> SupportedInputActions = TArray<UInputAction*>{};
 
-	FBaseStateFeatureDefintion();
+	FHSMFeatureDefinition();
 };

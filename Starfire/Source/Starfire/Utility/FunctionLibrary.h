@@ -3,12 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "EnhancedInputComponent.h"
 #include "InputSignalType.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "UObject/UnrealType.h"
 #include "Engine/DataTable.h"
 #include "UObject/SoftObjectPath.h"
 #include "Engine/EngineTypes.h" 
+#include "Components/InputComponent.h"
+#include "EnhancedInputComponent.h"
 #include "FunctionLibrary.generated.h"
 
 #pragma region Enums
@@ -22,6 +25,8 @@ enum  ESuccessState
 #pragma endregion
 
 
+DEFINE_LOG_CATEGORY_STATIC(SF_FunctionLibrary, Display, Display);
+
 UCLASS()
 class STARFIRE_API UFunctionLibrary : public UBlueprintFunctionLibrary
 {
@@ -33,6 +38,16 @@ class STARFIRE_API UFunctionLibrary : public UBlueprintFunctionLibrary
 
 	template<typename EnumType>
 	static TArray<EnumType> GetAllEnumValues(bool ExcludeZero = false);
+
+	template< class DelegateType, class UserClass, typename... VarTypes >
+	static  bool BindInputAction(
+		UInputAction* InputAction,
+		UObject* WorldContextObject,
+		const FName ActionName,
+		const EInputEvent KeyEvent,
+		UserClass* Object,
+		typename DelegateType::template TMethodPtr< UserClass > Func,
+		VarTypes... Vars);
 
 	template<typename RowType>
 	static TArray<RowType> GetRowDataFromDT(const FSoftObjectPath& DTPath);
@@ -68,10 +83,12 @@ class STARFIRE_API UFunctionLibrary : public UBlueprintFunctionLibrary
 
 	UFUNCTION(BlueprintCallable, Category="Collision", meta=(WorldContext="WorldContextObject", AutoCreateRefTerm="ActorsToIgnore", DisplayName="Box Overlap Actors"))
 	static bool BetterBoxOverlapActors(const UObject* WorldContextObject, const FVector BoxPos, const FRotator BoxRot, FVector BoxExtent, const TArray<TEnumAsByte<EObjectTypeQuery> > & ObjectTypes, UClass* ActorClassFilter, const TArray<AActor*>& ActorsToIgnore, TArray<class AActor*>& OutActors);
-
-
+	
 	UFUNCTION(BlueprintCallable, Category="Collision", meta=(WorldContext="WorldContextObject", AutoCreateRefTerm="ActorsToIgnore", DisplayName="Box Overlap Components"))
 	static bool BetterBoxOverlapComponents(const UObject* WorldContextObject, const FVector BoxPos, const FRotator BoxRot, FVector Extent, const TArray<TEnumAsByte<EObjectTypeQuery> > & ObjectTypes, UClass* ComponentClassFilter, const TArray<AActor*>& ActorsToIgnore, TArray<class UPrimitiveComponent*>& OutComponents);
+
+private:
+	static UInputComponent* GetInputComponent(UObject* WordContextObject);
 
 };
 
@@ -103,15 +120,67 @@ TArray<EnumType> UFunctionLibrary::GetAllEnumValues(bool ExcludeZero)
 	return EnumValues;
 }
 
+template< class DelegateType, class UserClass, typename... VarTypes >
+ bool UFunctionLibrary::BindInputAction(
+	UInputAction* InputAction,
+	UObject* WorldContextObject,
+	const FName ActionName,
+	const EInputEvent KeyEvent,
+	UserClass* Object,
+	typename DelegateType::template TMethodPtr< UserClass > Func,
+	VarTypes... Vars)
+{
+	UEnhancedInputComponent* InputComponent = nullptr; /* GetInputComponent(WorldContextObject);*/
+	
+	if (!IsValid(WorldContextObject))
+	{
+		UE_LOG(SF_FunctionLibrary, Error, TEXT("Invalid WorldContextObject for input binding"));
+		return false;
+	}
+	
+	if (!IsValid(InputComponent))
+	{
+		UE_LOG(SF_FunctionLibrary, Error, TEXT("Invalid input component for input binding"));
+		return false;
+	}
+
+	if (!IsValid(InputAction))
+	{
+		UE_LOG(SF_FunctionLibrary, Error, TEXT("Invalid input action component for input binding"));
+		return false;
+	}
+	
+	//template< class DelegateType, class UserClass, typename... VarTypes >
+	//FInputActionBinding& BindAction(const FName ActionName, const EInputEvent KeyEvent, UserClass* Object, typename DelegateType::template TMethodPtr< UserClass > Func, VarTypes... Vars) = delete;
+
+	InputComponent->BindAction<DelegateType,UserClass,VarTypes...>(ActionName,KeyEvent,Object,Func,Vars...);
+	
+	UE_LOG(SF_FunctionLibrary, Log, TEXT("Action %s bound successfully"), *InputAction->GetName());
+	return true;
+}
+
 template <typename RowType>
 TArray<RowType> UFunctionLibrary::GetRowDataFromDT(const FSoftObjectPath& DTPath)
 {
 	UObject* ResolvedUObject = DTPath.ResolveObject();
+
+	if (!ResolvedUObject)
+	{
+		UE_LOG(SF_FunctionLibrary,
+			Warning,
+			TEXT("Could not load DT for %s"),
+			*RowType::StaticStruct()->GetName());
+		return TArray<RowType>{};
+	}
+	
 	UDataTable* DataTable = static_cast<UDataTable*>(ResolvedUObject);
 
 	if (!DataTable)
 	{
-		UE_LOG(LogTemp,Warning,TEXT("Could not find DT for %s"),*RowType::StaticStruct()->GetName());
+		UE_LOG(SF_FunctionLibrary,
+			Warning,
+			TEXT("Could not find DT for %s"),
+			*RowType::StaticStruct()->GetName());
 		return TArray<RowType>{};
 	}
 
@@ -126,7 +195,7 @@ TArray<RowType> UFunctionLibrary::GetRowDataFromDT(const FSoftObjectPath& DTPath
 	if (RowStruct != RowType::StaticStruct())
 	{
 		UE_LOG(
-			LogTemp,
+			SF_FunctionLibrary,
 			Warning,
 			TEXT("Wrong DT Row Struct. Row Struct needs to be of type %s but is of type %s instead "),
 			*RowType::StaticStruct()->GetName(),*DataTable->RowStruct.GetClass()->GetName());

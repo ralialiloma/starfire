@@ -12,7 +12,8 @@
 #include "Starfire/HSM/SF_CharacterStateMachine.h"
 #include "Starfire/Interact/InteractComponent.h"
 #include "Starfire/Utility/ConfigLoader.h"
-#include "UObject/UnrealTypePrivate.h"
+#include "Components/InputComponent.h"
+#include "EnhancedInputComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(SF_Character, Display, Display);
 
@@ -78,9 +79,6 @@ ASf_Character::ASf_Character(const FObjectInitializer& ObjectInitializer)
 	MeleeTransform->ShapeColor = FColor::Purple;
 	MeleeTransform->SetLineThickness(1.0f);
 
-	////MeleeTransform->SetUsingAbsoluteRotation(false);
-	//MeleeTransform->SetUsingAbsoluteScale(false);
-
 	//Interact
 	InteractComponent = CreateDefaultSubobject<UInteractComponent>(TEXT("Interact"));
 	InteractComponent->SetupAttachment(RootComponent);
@@ -88,18 +86,21 @@ ASf_Character::ASf_Character(const FObjectInitializer& ObjectInitializer)
 	//Character State Machine
 	SFCharacterStateMachine =
 		CreateDefaultSubobject<USf_CharacterStateMachine>(TEXT("StateMachine"));
-
+	
+	//EnhancedInputComponent = CastChecked<UEnhancedInputComponent,UInputComponent>(InputComponent);
 	//FConfigLoader::LoadConfigFile<ASf_Character>(this,"SF_CharacterDefault");
 }
 
 void ASf_Character::PostInitProperties()
 {
 	Super::PostInitProperties();
+
 }
 
 void ASf_Character::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+	
 	SFCharacterMovementComponent = Cast<USF_CharacterMovementComponent>(GetCharacterMovement());
 	//FConfigLoader::LoadConfigFile<ASf_Character>(this,"SF_CharacterDefault");
 }
@@ -134,10 +135,17 @@ void ASf_Character::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-// Called to bind functionality to input
 void ASf_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	//Input Component
+
+	EnhancedInputComponent = Cast<UEnhancedInputComponent,UInputComponent>(PlayerInputComponent);
+	if (!EnhancedInputComponent)
+	{
+		UE_LOG(SF_Character, Error, TEXT("EnhancedInputComponent not found!"));
+	}
 }
 
 UAnimInstance* ASf_Character::GetCharacterAnimInstance_Implementation() const

@@ -8,25 +8,17 @@ USTRUCT(BlueprintType)
 struct STARFIRE_API FStateModuleDataStruct: public FTableRowBase
 {
 	GENERATED_BODY()
-
-	FStateModuleDataStruct():
-	ActionValue_1(false),
-	ActionValue_2(0),
-	ElapsedSeconds(0),
-	TriggeredSeconds(0),
-	InputSignal()
-	{
-	}
-
-	FStateModuleDataStruct(ACharacter* InCharacter):
-	ActionValue_1(false),
-	ActionValue_2(0),
-	ElapsedSeconds(0),
-	TriggeredSeconds(0),
-	InputSignal()
-	{
-	}
 	
+
+	FStateModuleDataStruct();
+	FStateModuleDataStruct(
+		bool InActionValue1,
+		int32 InActionValue2,
+		FVector2d ActionValue3,
+		float InElapsedSeconds,
+		float InTriggeredSeconds,
+		EInputSignalType InInputSignal);
+
 	UPROPERTY(BlueprintReadWrite)
 	bool ActionValue_1;
 

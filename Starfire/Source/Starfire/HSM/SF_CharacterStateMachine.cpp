@@ -4,6 +4,7 @@
 #include "SF_CharacterStateMachine.h"
 #include "GameFramework/Character.h"
 #include "Starfire/Character/Sf_Character.h"
+#include "Starfire/Utility/FunctionLibrary.h"
 
 DEFINE_LOG_CATEGORY_STATIC(SF_CharacterStateMachine, Display, Display);
 
@@ -23,6 +24,22 @@ bool USf_CharacterStateMachine::TryAddState(TSubclassOf<UBaseState> BaseStateCla
 bool USf_CharacterStateMachine::TryRemoveState(TSubclassOf<UBaseState> BaseStateClass)
 {
 	return StateCallstack->TryRemoveState(BaseStateClass);
+}
+
+void USf_CharacterStateMachine::SubscribeToInputActions(TArray<UInputAction*> InputActions)
+{
+	for (UInputAction* InputAction: InputActions)
+	{
+		UFunctionLibrary::BindInputAction<FRunCallStackByInputAction>(
+			InputAction,
+			this,
+			"ActionName",
+			IE_Pressed,
+			this,
+			&USf_CharacterStateMachine::RunCallStackByInputAction,
+			InputAction
+			);
+	}
 }
 
 void USf_CharacterStateMachine::InitializeComponent()
@@ -46,9 +63,19 @@ void USf_CharacterStateMachine::InitializeComponent()
 		return;
 	}
 
+	if (!IsValid(StateFeatureDefinitionDT))
+	{
+		UE_LOG(
+			SF_CharacterStateMachine,
+			Error,
+			TEXT("This component requires a valid state feature defintion in order to work"));
+		return;
+	}
+
 	StateCallstack = NewObject<UStateCallstack>(this);
 	StateCallstack->OwningCharacter = OwningCharacter;
 	StateCallstack->StateDefintionDT = StateDefinitionDT;
+	StateCallstack->StateFeatureDefinitionDT = StateFeatureDefinitionDT;
 }
 
 

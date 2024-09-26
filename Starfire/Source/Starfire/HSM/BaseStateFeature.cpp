@@ -3,7 +3,7 @@
 
 #include "BaseStateFeature.h"
 
-#include "BaseStateFeatureDefinition.h"
+#include "HSMFeatureDefinition.h"
 #include "ECallIInput.h"
 #include "Starfire/Utility/DebugSubsystem.h"
 #include "Starfire/Utility/FunctionLibrary.h"
@@ -14,6 +14,8 @@ void UBaseStateFeature::Initialize(UStateCallstack* NewCallstack,FSoftObjectPath
 {
 	Callstack = NewCallstack;
 	ImportFeatureDefinition(BaseStateFeatureDTPath);
+	
+	//SupportedInputActions[0]->
 }
 
 void UBaseStateFeature::RunAction(ECallInput CallInput, const FStateModuleDataStruct& Data)
@@ -62,10 +64,10 @@ TArray<UInputAction*> UBaseStateFeature::GetSupportedInputActions()
 
 void UBaseStateFeature::ImportFeatureDefinition(FSoftObjectPath BaseStateFeatureDefDT)
 {
-	TArray<FBaseStateFeatureDefintion> FeatureDefintions = 
-		UFunctionLibrary::GetRowDataFromDT<FBaseStateFeatureDefintion>(BaseStateFeatureDefDT);
+	TArray<FHSMFeatureDefinition> FeatureDefintions = 
+		UFunctionLibrary::GetRowDataFromDT<FHSMFeatureDefinition>(BaseStateFeatureDefDT);
 
-	for (FBaseStateFeatureDefintion Defintion: FeatureDefintions)
+	for (FHSMFeatureDefinition Defintion: FeatureDefintions)
 	{
 		if (Defintion.FeatureType != GetClass())
 			continue;

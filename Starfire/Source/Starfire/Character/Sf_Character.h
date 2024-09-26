@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "Starfire/HSM/SF_CharacterStateMachine.h"
 #include "Starfire/Weapon/WeaponOwner.h"
+#include "Components/InputComponent.h"
 #include "Sf_Character.generated.h"
 
 class UInteractComponent;
@@ -44,6 +45,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Weapon")
 	UBoxComponent* MeleeTransform;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Weapon")
+	UEnhancedInputComponent* EnhancedInputComponent;
 
 public:
 

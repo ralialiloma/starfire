@@ -2,7 +2,10 @@
 
 
 #include "FunctionLibrary.h"
-
+#include "GameFramework/PlayerController.h"
+#include "EnhancedInputComponent.h"
+#include "Components/InputComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 EInputSignalType UFunctionLibrary::ConvertToInputSignalType(EInputSignalType SignalType)
@@ -122,4 +125,16 @@ bool UFunctionLibrary::BetterBoxOverlapComponents(const UObject* WorldContextObj
 	}
 
 	return (OutComponents.Num() > 0);
+}
+
+UInputComponent* UFunctionLibrary::GetInputComponent(UObject* WordContextObject)
+{
+	APlayerController* PlayerController =UGameplayStatics::GetPlayerController(WordContextObject,0);
+	
+	if (!PlayerController)
+	{
+		UE_LOG(LogTemp, Error, TEXT("PlayerController not found"));
+	}
+	
+	return  PlayerController->InputComponent;
 }
