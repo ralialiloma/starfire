@@ -211,6 +211,11 @@ void USF_CharacterMovementComponent::UpdateFromCompressedFlags(uint8 Flags)
 	Super::UpdateFromCompressedFlags(Flags);
 }
 
+bool USF_CharacterMovementComponent::IsSprinting()
+{
+	return Safe_bWantsToSprint;
+}
+
 void USF_CharacterMovementComponent::SprintPressed()
 {
 	Safe_bWantsToSprint = true;

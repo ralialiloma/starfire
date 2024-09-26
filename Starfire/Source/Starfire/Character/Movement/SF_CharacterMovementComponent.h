@@ -114,6 +114,9 @@ public:
 	UFUNCTION(BlueprintPure)
 	bool WallRunningIsRight() const {return  Safe_bWallRunIsRight;};
 
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	bool IsSprinting();
+	
 	UFUNCTION(BlueprintCallable)
 	void SprintPressed();
 
