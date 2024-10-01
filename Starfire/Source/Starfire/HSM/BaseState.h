@@ -69,7 +69,7 @@ public:
 	
 	bool TryGetFeatureFast(TSubclassOf<UBaseStateFeature> FeatureClass, UBaseStateFeature*& Feature);
 
-	void CreateFeatures(const FSoftObjectPath& StateDefintionDT, const FSoftObjectPath& BaseStateFeatureDefinitionDT);
+	void CreateFeatures(const FSoftObjectPath& StateDefintionDT);
 
 private:
 	void ImportStateDefinition(const FSoftObjectPath& StateDefintionDT);

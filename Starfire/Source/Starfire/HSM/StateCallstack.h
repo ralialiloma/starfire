@@ -32,9 +32,6 @@ public:
 	FSoftObjectPath StateDefintionDT;
 
 	UPROPERTY(BlueprintReadWrite,meta = (ExposeOnSpawn=true),Category = "StateMachine")
-	FSoftObjectPath StateFeatureDefinitionDT;
-
-	UPROPERTY(BlueprintReadWrite,meta = (ExposeOnSpawn=true),Category = "StateMachine")
 	ACharacter* OwningCharacter;
 
 public:

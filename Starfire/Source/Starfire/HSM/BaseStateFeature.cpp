@@ -10,10 +10,9 @@
 
 DEFINE_LOG_CATEGORY_STATIC(SF_BaseStateFeature, Log, All);
 
-void UBaseStateFeature::Initialize(UStateCallstack* NewCallstack,FSoftObjectPath BaseStateFeatureDTPath)
+void UBaseStateFeature::Initialize(UStateCallstack* NewCallstack)
 {
 	Callstack = NewCallstack;
-	ImportFeatureDefinition(BaseStateFeatureDTPath);
 }
 
 void UBaseStateFeature::RunAction(ECallInput CallInput, const FStateModuleDataStruct& Data)

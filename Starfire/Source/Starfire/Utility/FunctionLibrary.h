@@ -61,7 +61,7 @@ class STARFIRE_API UFunctionLibrary : public UBlueprintFunctionLibrary
 	template <typename EnumType, typename AssetType>
 	static void ValidateAndUpdateEnumMap(TMap<EnumType, AssetType>& AssetMap);
 	template <typename EnumType, typename AssetType>
-	static void ValidateAndUpdateEnumMap(TMap<TEnumAsByte<EnumType>, AssetType>& AssetMap);
+	static void ValidateAndUpdateEnumMap(TMap<TEnumAsByte<EnumType>, AssetType>& AssetMap,const TArray<TEnumAsByte<EnumType>>& ExcludedValues =TArray<TEnumAsByte<EnumType>>{});
 	
 	UFUNCTION(BlueprintCallable,BlueprintPure, Category="Debug")
 	static FColor BoolToColor(bool bValue);
@@ -190,29 +190,35 @@ void UFunctionLibrary::ValidateAndUpdateEnumMap(TMap<EnumType, AssetType>& Asset
 }
 
 template <typename EnumType, typename AssetType>
-void UFunctionLibrary::ValidateAndUpdateEnumMap(TMap<TEnumAsByte<EnumType>, AssetType>& AssetMap)
+void UFunctionLibrary::ValidateAndUpdateEnumMap(
+	TMap<TEnumAsByte<EnumType>, AssetType>& AssetMap,
+	const TArray<TEnumAsByte<EnumType>>& ExcludedValues)
 {
 	static_assert(TIsEnum<EnumType>::Value, "ValidateAndUpdateEnumMap can only be used with enum types!");
 
+	// Get all enum values
 	TArray<EnumType> AssetTypes = UFunctionLibrary::GetAllEnumValues<EnumType>(true);
+	const UEnum* EnumInfo = StaticEnum<EnumType>();
 
-	// Import New Enums
+	// Import New Enums, excluding specified values
 	for (EnumType Type : AssetTypes)
 	{
-		if (!AssetMap.Contains(Type))
-			AssetMap.Add(Type, nullptr);
+		TEnumAsByte<EnumType> EnumValue = TEnumAsByte<EnumType>(Type);
+		if (!ExcludedValues.Contains(EnumValue) && !AssetMap.Contains(EnumValue))
+		{
+			AssetMap.Add(EnumValue, nullptr);
+		}
 	}
 
 	// Remove Empty Enum Entries (None)
 	AssetMap.Remove(TEnumAsByte<EnumType>(0));
 
 	// Collect Invalid Enum Keys for Removal
-	const UEnum* EnumInfo = StaticEnum<EnumType>();
 	TArray<TEnumAsByte<EnumType>> KeysToRemove;
 
 	for (const auto& Kvp : AssetMap)
 	{
-		if (!EnumInfo->IsValidEnumValue(Kvp.Key))
+		if (!EnumInfo->IsValidEnumValue(Kvp.Key) || ExcludedValues.Contains(Kvp.Key))
 		{
 			KeysToRemove.Add(Kvp.Key);
 		}

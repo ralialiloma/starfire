@@ -34,7 +34,7 @@ bool UStateCallstack::TryAddState(TSubclassOf<UBaseState> BaseStateClass)
 	
 	UBaseState* CreatedState = NewObject<UBaseState>(this,BaseStateClass);
 	CreatedState->StateCallstack = this;
-	CreatedState->CreateFeatures(StateDefintionDT, StateFeatureDefinitionDT);
+	CreatedState->CreateFeatures(StateDefintionDT);
 	UnsortedStates.Add(CreatedState);
 	
 

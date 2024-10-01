@@ -16,4 +16,6 @@ public:
 	TArray<UInputAction*> SupportedInputActions = TArray<UInputAction*>{};
 
 	FBaseStateFeatureDefintion();
+
+	virtual void OnDataTableChanged(const UDataTable* InDataTable, const FName InRowName) override;
 };

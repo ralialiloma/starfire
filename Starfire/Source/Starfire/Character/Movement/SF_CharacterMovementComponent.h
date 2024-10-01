@@ -14,9 +14,11 @@ enum ECustomMovementMode
 	CMOVE_WallRun UMETA(DisplayName = "Wall Run"),
 };
 
-/**
- * 
- */
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnMovementModeChanged, EMovementMode, PreviousMovementMode, EMovementMode, NewMovementMode);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSprintChange,bool, Pressed);
+
+
 UCLASS()
 class STARFIRE_API USF_CharacterMovementComponent : public UCharacterMovementComponent
 {
@@ -101,11 +103,13 @@ public:
 	virtual void UpdateCharacterStateBeforeMovement(float DeltaSeconds) override;
 	virtual void OnMovementUpdated(float DeltaSeconds, const FVector& OldLocation, const FVector& OldVelocity) override;
 	virtual void PhysCustom(float DeltaTime, int32 Iterations) override;
+	virtual void SetMovementMode(EMovementMode NewMovementMode, uint8 NewCustomMode=0) override;
 
 	//Interface
 public:
 	UFUNCTION(BlueprintPure)
 	bool IsCustomMovementMode(ECustomMovementMode InCustomMovementMode) const;
+
 	UFUNCTION(BlueprintPure)
 	bool IsMovementMode(EMovementMode InMovementMode) const;
 	
@@ -123,12 +127,16 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SprintReleased();
 
+	UPROPERTY(BlueprintAssignable)
+	FOnMovementModeChanged OnMovementModeChanged;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnSprintChange OnSprintChange;
+
 private:
 	float CapRadius() const;
-
 	float CapHalfHeight() const;
-
-
+	
 
 	//Vault
 private:

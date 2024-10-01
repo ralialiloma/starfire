@@ -27,7 +27,7 @@ protected:
 	
 public:
 
-	void Initialize(UStateCallstack* NewCallstack, FSoftObjectPath BaseStateFeatureDefinition);
+	void Initialize(UStateCallstack* NewCallstack);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void EnterState();

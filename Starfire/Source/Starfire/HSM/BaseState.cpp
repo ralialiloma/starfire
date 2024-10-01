@@ -4,6 +4,7 @@
 #include "BaseState.h"
 #include "Starfire/Utility/FunctionLibrary.h"
 #include "StateCallstack.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 
 int UBaseState::GetPriority() const
@@ -41,7 +42,7 @@ bool UBaseState::TryGetFeatureFast(TSubclassOf<UBaseStateFeature> FeatureClass,U
 	return false;
 }
 
-void UBaseState::CreateFeatures(const FSoftObjectPath& StateDefintionDT, const FSoftObjectPath& BaseStateFeatureDefinitionDT)
+void UBaseState::CreateFeatures(const FSoftObjectPath& StateDefintionDT)
 {
 	ImportStateDefinition(StateDefintionDT);
 	
@@ -55,7 +56,7 @@ void UBaseState::CreateFeatures(const FSoftObjectPath& StateDefintionDT, const F
 		}
 		
 		UBaseStateFeature* ObjectToCreate = NewObject<UBaseStateFeature>(this, FeatureClass);
-		ObjectToCreate->Initialize(StateCallstack,BaseStateFeatureDefinitionDT);
+		ObjectToCreate->Initialize(StateCallstack);
 		Features.Add(ObjectToCreate);;
 	}
 }
@@ -68,6 +69,9 @@ void UBaseState::ImportStateDefinition(const FSoftObjectPath& StateDefintionDT)
 	for (const FStateDefinition Definition:StateDefinitions)
 	{
 		TSubclassOf<UBaseState> RowState = Definition.State;
+
+		if (!IsValid(RowState) || !UKismetSystemLibrary::IsValidClass(RowState))
+			continue;
 
 		if (!RowState->IsChildOf(GetClass()))
 			continue;

@@ -9,6 +9,7 @@
 
 class ASf_Character;
 
+
 UCLASS(Blueprintable, ClassGroup=(StateMachine), meta=(BlueprintSpawnableComponent) )
 class STARFIRE_API USf_CharacterStateMachine : public UActorComponent
 {

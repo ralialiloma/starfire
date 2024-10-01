@@ -173,6 +173,19 @@ void USF_CharacterMovementComponent::PhysCustom(const float DeltaTime, const int
 	}
 }
 
+void USF_CharacterMovementComponent::SetMovementMode(EMovementMode NewMovementMode, uint8 NewCustomMode)
+{
+	if (MovementMode != NewMovementMode || CustomMovementMode != NewCustomMode)
+	{
+		EMovementMode PreviousMovementMode = MovementMode;
+
+		Super::SetMovementMode(NewMovementMode, NewCustomMode);
+		OnMovementModeChanged.Broadcast(PreviousMovementMode, MovementMode);
+	}
+	Super::SetMovementMode(NewMovementMode, NewCustomMode);
+}
+
+
 bool USF_CharacterMovementComponent::IsCustomMovementMode(ECustomMovementMode InCustomMovementMode) const
 {
 	return MovementMode == MOVE_Custom && CustomMovementMode == InCustomMovementMode;
@@ -219,11 +232,13 @@ bool USF_CharacterMovementComponent::IsSprinting()
 void USF_CharacterMovementComponent::SprintPressed()
 {
 	Safe_bWantsToSprint = true;
+	OnSprintChange.Broadcast(true);
 }
 
 void USF_CharacterMovementComponent::SprintReleased()
 {
 	Safe_bWantsToSprint = false;
+	OnSprintChange.Broadcast(false);
 }
 
 float USF_CharacterMovementComponent::CapRadius() const
