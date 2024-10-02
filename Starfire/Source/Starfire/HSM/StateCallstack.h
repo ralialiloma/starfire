@@ -75,9 +75,11 @@ public:
 
 	UBaseState* GetStateByClass(TSubclassOf<UBaseState> ClassToSearchFor);
 
+	//Debug
+	UFUNCTION(BlueprintCallable)
+	void DisplayAllActiveStates() const;
 private:
-
-
+	
 	
 };
 

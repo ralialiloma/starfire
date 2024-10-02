@@ -4,6 +4,7 @@
 #include "SF_CharacterStateMachine.h"
 #include "GameFramework/Character.h"
 #include "Starfire/Character/Sf_Character.h"
+#include "Starfire/Utility/DebugSubsystem.h"
 
 DEFINE_LOG_CATEGORY_STATIC(SF_CharacterStateMachine, Display, Display);
 
@@ -55,12 +56,15 @@ void USf_CharacterStateMachine::InitializeComponent()
 void USf_CharacterStateMachine::BeginPlay()
 {
 	Super::BeginPlay();
-	 //StateCallstack = NewObject<UStateCallstack>(this);
 }
 
 
 void USf_CharacterStateMachine::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	if (UDebugSubsystem::GetDebugSubsystem()->HSMDebug.bPrint && IsValid(StateCallstack))
+	{
+		StateCallstack->DisplayAllActiveStates();
+	}
 }
 

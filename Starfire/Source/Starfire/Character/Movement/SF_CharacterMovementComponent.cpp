@@ -224,6 +224,11 @@ void USF_CharacterMovementComponent::UpdateFromCompressedFlags(uint8 Flags)
 	Super::UpdateFromCompressedFlags(Flags);
 }
 
+bool USF_CharacterMovementComponent::CanSprint()
+{
+	return IsMovementMode(MOVE_Walking) && !IsFalling() && !IsCustomMovementMode(CMOVE_WallRun);
+}
+
 bool USF_CharacterMovementComponent::IsSprinting()
 {
 	return Safe_bWantsToSprint;
@@ -231,14 +236,25 @@ bool USF_CharacterMovementComponent::IsSprinting()
 
 void USF_CharacterMovementComponent::SprintPressed()
 {
+	if (!CanSprint())
+		return;
+	
 	Safe_bWantsToSprint = true;
 	OnSprintChange.Broadcast(true);
 }
 
 void USF_CharacterMovementComponent::SprintReleased()
 {
+	if(!Safe_bWantsToSprint)
+		return;
+	
 	Safe_bWantsToSprint = false;
 	OnSprintChange.Broadcast(false);
+}
+
+ECustomMovementMode USF_CharacterMovementComponent::GetCustomMovementMode() const
+{
+	return static_cast<ECustomMovementMode>(CustomMovementMode);
 }
 
 float USF_CharacterMovementComponent::CapRadius() const

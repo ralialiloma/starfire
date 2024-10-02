@@ -119,6 +119,9 @@ public:
 	bool WallRunningIsRight() const {return  Safe_bWallRunIsRight;};
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
+	bool CanSprint();
+	
+	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool IsSprinting();
 	
 	UFUNCTION(BlueprintCallable)
@@ -126,6 +129,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SprintReleased();
+
+	UFUNCTION(BlueprintCallable)
+	ECustomMovementMode GetCustomMovementMode() const;
+
 
 	UPROPERTY(BlueprintAssignable)
 	FOnMovementModeChanged OnMovementModeChanged;

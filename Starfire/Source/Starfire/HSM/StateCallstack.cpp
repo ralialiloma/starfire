@@ -322,6 +322,17 @@ UBaseState* UStateCallstack::GetStateByClass(TSubclassOf<UBaseState> ClassToSear
 	return nullptr;
 }
 
+void UStateCallstack::DisplayAllActiveStates() const
+{
+	TArray<UBaseState*> ActiveStates = GetAllActiveStates();
+	FString DebugMessage;
+	for (UBaseState* ActiveState: ActiveStates)
+	{
+		DebugMessage = DebugMessage+ ActiveState->GetClass()->GetName() + " \n";
+	}
+	GEngine->AddOnScreenDebugMessage(-1, 0.01, FColor::Yellow, DebugMessage);
+}
+
 
 
 
