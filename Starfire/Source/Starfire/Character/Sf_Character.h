@@ -80,10 +80,14 @@ public:
 	UFUNCTION(BlueprintPure,Category = "Character")
 	FORCEINLINE USf_CharacterStateMachine* GetCharacterStateMachine() const{return SFCharacterStateMachine;};
 
-protected:
-	virtual void BeginPlay() override;
-
 public:
+	virtual void BeginPlay() override;
+	virtual void Jump() override;
+	virtual void StopJumping() override;
+	
+	bool bCustomJumpPressed = false;
+
+
 	virtual void Tick(float DeltaTime) override;
 	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;

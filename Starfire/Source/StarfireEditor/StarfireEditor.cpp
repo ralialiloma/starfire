@@ -15,6 +15,7 @@ void FStarfireEditorModule::StartupModule()
     FPropertyEditorModule& PropertyEditorModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
     PropertyEditorModule.RegisterCustomPropertyTypeLayout("WeaponAnimData", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FWeaponAnimDataEditor::MakeInstance));
     PropertyEditorModule.RegisterCustomPropertyTypeLayout("HSMConfig", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FHSMConfigEditor::MakeInstance));
+    //PropertyEditorModule.RegisterCustomClassLayout("Sf_Character");
 }
 
 void FStarfireEditorModule::ShutdownModule()
@@ -22,6 +23,7 @@ void FStarfireEditorModule::ShutdownModule()
     FPropertyEditorModule& PropertyEditorModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
     PropertyEditorModule.UnregisterCustomPropertyTypeLayout("WeaponAnimData");
     PropertyEditorModule.UnregisterCustomPropertyTypeLayout("HSMConfig");
+    //PropertyEditorModule.UnregisterCustomClassLayout("Sf_Character");
 }
 
 #undef LOCTEXT_NAMESPACE

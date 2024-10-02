@@ -117,6 +117,7 @@ FCollisionQueryParams ASf_Character::GetIgnoreCharacterParams()
 	GetAllChildActors(CharacterChildren);
 	Params.AddIgnoredActors(CharacterChildren);
 	Params.AddIgnoredActor(this);
+	Params.AddIgnoredActor(SFEquipmentComponent->GetActiveWeapon());
 
 	return Params;
 }
@@ -126,6 +127,21 @@ void ASf_Character::BeginPlay()
 {
 	Super::BeginPlay();
 	//LoadConfig();
+}
+
+void ASf_Character::Jump()
+{
+	Super::Jump();
+
+	bCustomJumpPressed = true;
+	bPressedJump = false;
+}
+
+void ASf_Character::StopJumping()
+{
+	Super::StopJumping();
+
+	bCustomJumpPressed = false;
 }
 
 // Called every frame
