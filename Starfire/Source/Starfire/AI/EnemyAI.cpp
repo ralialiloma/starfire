@@ -3,12 +3,12 @@
 
 #include "EnemyAI.h"
 
-// Sets default values
+#include "Starfire/DamageSystem/Sf_DamageReceiver.h"
+
 AEnemyAI::AEnemyAI()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+	SfDamageReceiver = CreateDefaultSubobject<USf_DamageReceiver>(TEXT("Damage Receiver"));
 }
 
 UEnemyFeature* AEnemyAI::GetFeatureByClass(TSubclassOf<UEnemyFeature> Class)
@@ -40,35 +40,16 @@ bool AEnemyAI::TryAddFeature(UEnemyFeature* Feature)
 	return true;
 }
 
+USf_DamageReceiver* AEnemyAI::GetSfDamageReceiver()
+{
+	return SfDamageReceiver;
+}
+
 // Called when the game starts or when spawned
 void AEnemyAI::BeginPlay()
 {
 	Super::BeginPlay();
 	
-}
-
-FVector AEnemyAI::CalculatePositionDeviation(FVector Position, float Accuracy)
-{
-	float X = CalculateDeviationValue(Position.X,Accuracy);
-	float Y = CalculateDeviationValue(Position.Y,Accuracy);
-	float Z = CalculateDeviationValue(Position.Z,Accuracy);
-
-	return FVector(X,Y,Z);
-}
-
-FRotator AEnemyAI::CalculateRotationDeviation(FRotator Rotator, float Accuracy)
-{
-	float Pitch = CalculateDeviationValue(Rotator.Pitch, Accuracy);
-	float Yaw = CalculateDeviationValue(Rotator.Yaw,Accuracy);
-	float Roll = CalculateDeviationValue(Rotator.Roll,Accuracy);
-
-	return FRotator(Pitch,Yaw,Roll);
-}
-
-float AEnemyAI::CalculateDeviationValue(float ValueToDeviateFrom,float Accuracy)
-{
-	Accuracy = Accuracy+0.000001f;
-	return ValueToDeviateFrom+FMath::RandRange(-1/Accuracy,1/Accuracy);
 }
 
 // Called every frame

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "EnemyFeature.h"
 #include "GameFramework/Character.h"
+#include "Starfire/DamageSystem/Sf_DamageReceiver.h"
 #include "EnemyAI.generated.h"
 
 UCLASS()
@@ -12,40 +13,36 @@ class STARFIRE_API AEnemyAI : public ACharacter
 {
 	GENERATED_BODY()
 
-private:
-	UPROPERTY()
-	TArray<UEnemyFeature*> Features;
-	
-public:
-	// Sets default values for this character's properties
-	AEnemyAI();
 
+private:
+	UPROPERTY(EditAnywhere)
+	TArray<UEnemyFeature*> Features;
+
+protected:
+	UPROPERTY(BlueprintReadOnly)
+	USf_DamageReceiver* SfDamageReceiver;
+
+	//Interface
+public:
+		//Features
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "EnemyFeatures", meta = (DeterminesOutputType = "Class"))
 	UEnemyFeature* GetFeatureByClass(TSubclassOf<UEnemyFeature> Class);
 
 	UFUNCTION(BlueprintCallable, Category = "EnemyFeatures")
 	bool TryAddFeature(UEnemyFeature* Feature);
 
-protected:
-	// Called when the game starts or when spawned
+		//Components
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	USf_DamageReceiver* GetSfDamageReceiver();
+
+	//Actor
+public:
+	AEnemyAI();
 	virtual void BeginPlay() override;
-
-	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "AIDeviations")
-	FVector CalculatePositionDeviation(FVector Position, float Accuracy);
-
-	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "AIDeviations")
-	FRotator CalculateRotationDeviation(FRotator Rotation, float Accuracy);
-
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "AIDeviations")
-	float CalculateDeviationValue(float ValuetoDeviateFrom, float Accuracy);
-
-
-public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	
+
 
 
 

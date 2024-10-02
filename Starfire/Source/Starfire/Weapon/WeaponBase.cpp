@@ -9,7 +9,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Misc/ConfigUtilities.h"
-#include "Starfire/DamageReceiver.h"
+#include "Starfire/DamageSystem/Sf_DamageReceiver.h"
 #include "Starfire/Utility/DebugSettings.h"
 #include "Starfire/Utility/DebugSubsystem.h"
 
@@ -119,7 +119,7 @@ void AWeaponBase::FireTraces(FHitResult& OutHitResult)
 		if (!OutHitResult.bBlockingHit)
 			continue;
 		
-		UDamageReceiver* DamageReceiver = OutHitResult.GetActor()->GetComponentByClass<UDamageReceiver>();
+		USf_DamageReceiver* DamageReceiver = OutHitResult.GetActor()->GetComponentByClass<USf_DamageReceiver>();
 		if (DamageReceiver==nullptr)
 			continue;
 
@@ -241,7 +241,7 @@ void AWeaponBase::ApplyMelee(AActor* ActorToApplyOn, FVector Start, FVector End,
 		IKnockbackReceiver:: Execute_ReceiveKnockback(ActorToApplyOn,Direction);
 
 	//Get Damage Receiver
-	UDamageReceiver* DamageReceiver =  ActorToApplyOn->GetComponentByClass<UDamageReceiver>();
+	USf_DamageReceiver* DamageReceiver =  ActorToApplyOn->GetComponentByClass<USf_DamageReceiver>();
 	if (!IsValid(DamageReceiver))
 		return;
 
