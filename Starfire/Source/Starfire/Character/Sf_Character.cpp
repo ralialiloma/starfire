@@ -145,11 +145,6 @@ UAnimInstance* ASf_Character::GetCharacterAnimInstance_Implementation() const
 	return FirstPersonMesh->GetAnimInstance();
 }
 
-UCameraComponent* ASf_Character::GetCamera_Implementation() const
-{
-	return FirstPersonCamera;
-}
-
 FTransform ASf_Character::GetFireTransform_Implementation() const
 {
 	return FirstPersonCamera->GetComponentTransform();

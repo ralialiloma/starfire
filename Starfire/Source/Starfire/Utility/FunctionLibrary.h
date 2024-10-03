@@ -9,6 +9,7 @@
 #include "Engine/DataTable.h"
 #include "UObject/SoftObjectPath.h"
 #include "Engine/EngineTypes.h" 
+#include "Starfire/AI/BlackboardKeyData.h"
 #include "FunctionLibrary.generated.h"
 
 #pragma region Enums
@@ -72,6 +73,9 @@ class STARFIRE_API UFunctionLibrary : public UBlueprintFunctionLibrary
 
 	UFUNCTION(BlueprintCallable, Category="Collision", meta=(WorldContext="WorldContextObject", AutoCreateRefTerm="ActorsToIgnore", DisplayName="Box Overlap Components"))
 	static bool BetterBoxOverlapComponents(const UObject* WorldContextObject, const FVector BoxPos, const FRotator BoxRot, FVector Extent, const TArray<TEnumAsByte<EObjectTypeQuery> > & ObjectTypes, UClass* ComponentClassFilter, const TArray<AActor*>& ActorsToIgnore, TArray<class UPrimitiveComponent*>& OutComponents);
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Behaviour Tree")
+	static  FBlackboardKeyData GetBlackboardKeyData();
 
 };
 

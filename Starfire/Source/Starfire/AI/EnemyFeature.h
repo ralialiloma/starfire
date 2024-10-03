@@ -6,7 +6,7 @@
 #include "Starfire/Utility/BetterObject.h"
 #include "EnemyFeature.generated.h"
 
-class AEnemyAI;
+class ASf_NPCharacter;
 
 UCLASS(Blueprintable)
 class STARFIRE_API UEnemyFeature : public UBetterObject
@@ -22,11 +22,11 @@ public:
 
 protected:
 	UPROPERTY(Blueprintable, BlueprintReadWrite)
-	AEnemyAI* OwningAIHolder = nullptr;
+	ASf_NPCharacter* OwningAIHolder = nullptr;
 
 
 public:
-	void Initialize(AEnemyAI* Holder);
+	void Initialize(ASf_NPCharacter* Holder);
 	
 	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "AIDeviations")
 	FVector CalculatePositionDeviation(FVector Position, float Accuracy);

@@ -110,6 +110,9 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool CanMelee() const;
 
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	AWeaponBase* GetEquippedWeapon() const; 
+
 	//Flags
 	UFUNCTION(BlueprintCallable)
 	int GetCompressedFlags() const;

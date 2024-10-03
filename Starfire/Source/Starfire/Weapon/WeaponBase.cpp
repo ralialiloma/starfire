@@ -483,6 +483,11 @@ int AWeaponBase::GetAmmoCount()
 	return CurrentClip;
 }
 
+FTransform AWeaponBase::GetMuzzleTransform()
+{
+	return SkeletalMesh->GetRelativeTransform();
+}
+
 void AWeaponBase::OnEquip(AActor* NewHolder)
 {
 	SetWeapon(true);

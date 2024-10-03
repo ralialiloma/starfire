@@ -99,6 +99,9 @@ public:
 	int GetAmmoCount();
 
 	UFUNCTION(BlueprintCallable,Category="WeaponBase")
+	virtual FTransform GetMuzzleTransform();
+
+	UFUNCTION(BlueprintCallable,Category="WeaponBase")
 	FWeaponConfig GetActiveConfig();
 
 	UFUNCTION(BlueprintCallable,Category="WeaponBase")

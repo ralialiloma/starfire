@@ -123,3 +123,8 @@ bool UFunctionLibrary::BetterBoxOverlapComponents(const UObject* WorldContextObj
 
 	return (OutComponents.Num() > 0);
 }
+
+FBlackboardKeyData UFunctionLibrary::GetBlackboardKeyData()
+{
+	return FBlackboardKeyData::Get();
+}

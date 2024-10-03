@@ -25,9 +25,6 @@ public:
 	UAnimInstance* GetCharacterAnimInstance() const;
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "WeaponOwner")
-	UCameraComponent* GetCamera() const;
-
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "WeaponOwner")
 	FTransform GetFireTransform() const;
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "WeaponOwner")

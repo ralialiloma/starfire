@@ -217,6 +217,11 @@ bool USF_Equipment::CanMelee() const
 	return EquippedWeapon->CanMelee();
 }
 
+AWeaponBase* USF_Equipment::GetEquippedWeapon() const
+{
+	return EquippedWeapon;
+}
+
 
 int USF_Equipment::GetCompressedFlags() const
 {

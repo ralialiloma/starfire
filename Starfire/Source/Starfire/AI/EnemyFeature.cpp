@@ -2,9 +2,9 @@
 
 
 #include "EnemyFeature.h"
-#include "EnemyAI.h"
+#include "Sf_NPCharacter.h"
 
-void UEnemyFeature::Initialize(AEnemyAI* Holder)
+void UEnemyFeature::Initialize(ASf_NPCharacter* Holder)
 {
 	this->OwningAIHolder = Holder;
 }
