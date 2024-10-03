@@ -200,14 +200,14 @@ auto FAsyncUtility::WaitForFutures(
 }
 
 UCLASS()
-class UEventWaitHelper : public UObject
+class UAsyncUtilityEventWaitHelper : public UObject
 {
 	GENERATED_BODY()
 
 public:
 	bool bEventTriggered;
 
-	UEventWaitHelper()
+	UAsyncUtilityEventWaitHelper()
 		: bEventTriggered(false) {}
 
 	UFUNCTION()
@@ -223,10 +223,10 @@ void FAsyncUtility::WaitForEventBlocking(const TWeakObjectPtr<UObject>& WorldCon
 	TBaseDynamicMulticastDelegate<ThreadSafetyMode, void, VarTypes...>& DelegateToWaitFor, float CheckInterval)
 {
 
-	const TFuture<UEventWaitHelper*> EventHelperCreation =
-		RunOnGameThread<UEventWaitHelper*>([&DelegateToWaitFor]() mutable  ->UEventWaitHelper* 
+	const TFuture<UAsyncUtilityEventWaitHelper*> EventHelperCreation =
+		RunOnGameThread<UAsyncUtilityEventWaitHelper*>([&DelegateToWaitFor]() mutable  ->UAsyncUtilityEventWaitHelper* 
 		{
-			UEventWaitHelper* EventWaitHelper = NewObject<UEventWaitHelper>();
+			UAsyncUtilityEventWaitHelper* EventWaitHelper = NewObject<UAsyncUtilityEventWaitHelper>();
 			EventWaitHelper->bEventTriggered = false;
 			TScriptDelegate<ThreadSafetyMode> ScriptDelegate;
 			ScriptDelegate.BindUFunction(EventWaitHelper, "OnEventTriggered");
@@ -236,7 +236,7 @@ void FAsyncUtility::WaitForEventBlocking(const TWeakObjectPtr<UObject>& WorldCon
 		});
 
 	Wait (EventHelperCreation,WorldContextObject);
-	UEventWaitHelper* EventWaitHelper = EventHelperCreation.Get();
+	UAsyncUtilityEventWaitHelper* EventWaitHelper = EventHelperCreation.Get();
 
 	// Wait loop
 	while (true)

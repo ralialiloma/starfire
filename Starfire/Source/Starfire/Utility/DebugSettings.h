@@ -74,4 +74,7 @@ public:
 
 	UPROPERTY(Config, EditAnywhere, Meta = (BlueprintBaseOnly), BlueprintReadOnly, Category= "Debug Settings")
 	FDebugSettingData HSMDebug;
+	
+	UPROPERTY(Config, EditAnywhere, Meta = (BlueprintBaseOnly), BlueprintReadOnly, Category= "Debug Settings")
+	FDebugSettingData MovementDebug;
 };

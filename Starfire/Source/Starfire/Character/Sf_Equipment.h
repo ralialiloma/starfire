@@ -74,6 +74,9 @@ public:
 	FWeaponAnimData GetAnimationData() const;
 
 	UFUNCTION(BlueprintCallable)
+	AWeaponBase* GetActiveWeapon() const;
+
+	UFUNCTION(BlueprintCallable)
 	void AddWeapon(AWeaponBase* WeaponToAdd, bool Equip, int& Index);
 
 	UFUNCTION(BlueprintCallable)

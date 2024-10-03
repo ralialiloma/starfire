@@ -72,6 +72,11 @@ FWeaponAnimData USF_Equipment::GetAnimationData() const
 	return EquippedWeapon->GetActiveConfig().GetAnimData();
 }
 
+AWeaponBase* USF_Equipment::GetActiveWeapon() const
+{
+	return EquippedWeapon;
+}
+
 void USF_Equipment::AddWeapon(AWeaponBase* WeaponToAdd, const bool Equip, int &Index)
 {
 	//If Weapon Is Already Equipped

@@ -1,6 +1,8 @@
 #pragma once
 #include "ConfigLoader.generated.h"
 
+DECLARE_LOG_CATEGORY_CLASS(Sf_ConfigLoaderLog, Log, All);
+
 USTRUCT()
 struct FConfigLoader
 {
@@ -8,9 +10,12 @@ struct FConfigLoader
 	
 	template <class T>
 	static void LoadConfigFile(T* ObjectToLoad, FString Name);
+	static void LoadConfigFile(UObject* ObjectToLoad, FString Name);
 
 	template <class T>
 	static void SaveCustomConfig(T* ObjectToSave, FString Name);
+	static void SaveCustomConfig(UObject* ObjectToSave, FString Name);
+	
 	template <class T>
 	static  void SaveProperty(FProperty* Property, T* ObjectToSave, FString Name, FString CustomConfigFilePath,
 	                 bool& SuccessfulSave);
@@ -37,9 +42,8 @@ private:
 			FProperty* Property = *PropIt;
 			LoadProperty<T>(Property, ObjectToLoad, Name, CustomConfigFilePath);
 		}
-
 		
-		UE_LOG(LogTemp, Warning, TEXT("Loaded custom config from %s"), *CustomConfigFilePath);
+		UE_LOG(Sf_ConfigLoaderLog, Log, TEXT("Loaded custom config from %s"), *CustomConfigFilePath);
 	}
 
 	template <class T>
@@ -130,18 +134,28 @@ private:
 		if (FObjectProperty* ObjectProperty = CastField<FObjectProperty>(Property))
 		{
 			FString AssetPath;
-			if (GConfig->GetString(*SectionName, *PropertyName, AssetPath, CustomConfigFilePath))
+			FString NormalizedConfigFilePath = FConfigCacheIni::NormalizeConfigIniPath(*CustomConfigFilePath);
+			
+			if (GConfig->GetString(*SectionName, *PropertyName, AssetPath, NormalizedConfigFilePath))
 			{
-				UObject* LoadedObject = StaticLoadObject(UObject::StaticClass(), nullptr, *AssetPath);
-				if (LoadedObject)
+				if (!AssetPath.IsEmpty())
 				{
-					ObjectProperty->SetObjectPropertyValue_InContainer(ObjectToLoad, LoadedObject);
-					return;
+					UObject* LoadedObject = StaticLoadObject(UObject::StaticClass(), nullptr, *AssetPath);
+					
+					if (LoadedObject)
+					{
+						ObjectProperty->SetObjectPropertyValue_InContainer(ObjectToLoad, LoadedObject);
+						return;
+					}
 				}
 				else
 				{
-					UE_LOG(LogTemp, Error, TEXT("Failed to load object from path: %s"), *AssetPath);
+					UE_LOG(Sf_ConfigLoaderLog, Warning, TEXT("Asset path is empty for property: %s in section: %s"), *PropertyName, *SectionName);
 				}
+			}
+			else
+			{
+				UE_LOG(Sf_ConfigLoaderLog, Warning, TEXT("Could not find property: %s in section: %s in config file: %s"), *PropertyName, *SectionName, *NormalizedConfigFilePath);
 			}
 		}
 		
@@ -151,7 +165,9 @@ private:
 	void FConfigLoader::SaveCustomConfig(T* ObjectToSave,FString Name)
 	{
 		if (!ObjectToSave || GConfig == nullptr)
+		{
 			return;
+		}
 
 		FString CustomConfigFilePath = GetConfigFilePath(Name);
 		FString SectionName = GetSectionName(Name);
@@ -176,7 +192,7 @@ private:
 		}
 		
 		GConfig->Flush(false, CustomConfigFilePath);
-		UE_LOG(LogTemp, Warning, TEXT("Saved custom config to %s"), *CustomConfigFilePath);
+		UE_LOG(Sf_ConfigLoaderLog, Log, TEXT("Saved custom config to %s"), *CustomConfigFilePath);
 	}
 
 	template <class T>
@@ -207,7 +223,7 @@ private:
 		{
 			float Value = *FloatProperty->ContainerPtrToValuePtr<float>(ObjectToSave);
 			GConfig->SetFloat(*SectionName, *PropertyName, Value, CustomConfigFilePath);
-			UE_LOG(LogTemp, Log, TEXT("SavedFloat"));
+			UE_LOG(Sf_ConfigLoaderLog, Log, TEXT("SavedFloat"));
 			SuccessfulSave = true;
 			return;
 		}

@@ -9,12 +9,12 @@ void UDebugSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 
-	UE_LOG(LogTemp, Warning, TEXT("DEBUGSUBSYSTEM --- INIT"));
+	//UE_LOG(LogTemp, Warning, TEXT("DEBUG SUBSYSTEM --- INIT"));
 }
 
 void UDebugSubsystem::Deinitialize()
 {
-	UE_LOG(LogTemp, Warning, TEXT("DEBUGSUBSYSTEM --- DESTROY"));
+	//UE_LOG(LogTemp, Warning, TEXT("DEBUG SUBSYSTEM --- DESTROY"));
 	
 	Super::Deinitialize();
 }
@@ -28,6 +28,7 @@ UDebugSubsystem* UDebugSubsystem::Refresh()
 	AIDebug = Settings->AIDebug;
 	WeaponDebug = Settings->WeaponDebug;
 	HSMDebug = Settings->HSMDebug;
+	MovementDebug = Settings->MovementDebug;
 
 	return this;
 }
@@ -69,5 +70,12 @@ bool UDebugSubsystem::GetHSMDebug(TEnumAsByte<EDebugType> DebugType)
 {
 	if (UDebugSubsystem* Subsystem = GetDebugSubsystem())
 		return Subsystem->HSMDebug.GetDebugType(DebugType) && Subsystem->AllowDebug;
+	return true;
+}
+
+bool UDebugSubsystem::GetMovementDebug(TEnumAsByte<EDebugType> DebugType)
+{
+	if (UDebugSubsystem* Subsystem = GetDebugSubsystem())
+		return Subsystem->MovementDebug.GetDebugType(DebugType) && Subsystem->AllowDebug;
 	return true;
 }
