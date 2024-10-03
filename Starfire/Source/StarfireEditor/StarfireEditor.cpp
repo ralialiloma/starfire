@@ -5,6 +5,8 @@
 
 #include "Editor/PropertyEditor/Public/PropertyEditorModule.h"
 #include "Animation/WeaponAnimDataEditor.h"
+#include "Player/Sf_CharacterEditor.h"
+#include "Starfire/Character/Sf_Character.h"
 
 IMPLEMENT_MODULE(FStarfireEditorModule, StarfireEditor)
 
@@ -15,7 +17,7 @@ void FStarfireEditorModule::StartupModule()
     FPropertyEditorModule& PropertyEditorModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
     PropertyEditorModule.RegisterCustomPropertyTypeLayout("WeaponAnimData", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FWeaponAnimDataEditor::MakeInstance));
     PropertyEditorModule.RegisterCustomPropertyTypeLayout("HSMConfig", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FHSMConfigEditor::MakeInstance));
-    //PropertyEditorModule.RegisterCustomClassLayout("Sf_Character");
+    PropertyEditorModule.RegisterCustomClassLayout(ASf_Character::StaticClass()->GetFName(), FOnGetDetailCustomizationInstance::CreateStatic(&Sf_CharacterEditor::MakeInstance));
 }
 
 void FStarfireEditorModule::ShutdownModule()
@@ -23,7 +25,7 @@ void FStarfireEditorModule::ShutdownModule()
     FPropertyEditorModule& PropertyEditorModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
     PropertyEditorModule.UnregisterCustomPropertyTypeLayout("WeaponAnimData");
     PropertyEditorModule.UnregisterCustomPropertyTypeLayout("HSMConfig");
-    //PropertyEditorModule.UnregisterCustomClassLayout("Sf_Character");
+    PropertyEditorModule.UnregisterCustomClassLayout(ASf_Character::StaticClass()->GetFName());
 }
 
 #undef LOCTEXT_NAMESPACE

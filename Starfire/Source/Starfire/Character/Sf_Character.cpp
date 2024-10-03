@@ -8,6 +8,7 @@
 #include "Components/BoxComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Kismet/KismetStringLibrary.h"
 #include "Movement/SF_CharacterMovementComponent.h"
 #include "Starfire/HSM/SF_CharacterStateMachine.h"
 #include "Starfire/Interact/InteractComponent.h"
@@ -16,16 +17,18 @@
 
 DEFINE_LOG_CATEGORY_STATIC(SF_Character, Display, Display);
 
-void ASf_Character::SaveToConfig()
+FReply ASf_Character::OnSaveButtonClicked()
 {
-	FConfigLoader::SaveCustomConfig<ASf_Character>(this,"SF_CharacterDefault");
-	FConfigLoader::SaveCustomConfig<USF_CharacterMovementComponent>(SFCharacterMovementComponent,"SF_CharacterDefault");
+	FConfigLoader::SaveCustomConfig(GetClass()->GetDefaultObject(),"SF_CharacterDefault");
+	FConfigLoader::SaveCustomConfig(GetClass()->GetDefaultObject<AActor>()->FindComponentByClass<USF_CharacterMovementComponent>(),"SF_CharacterDefault");
+	return FReply::Handled();
 }
 
-void ASf_Character::LoadConfig()
+FReply ASf_Character::OnLoadButtonClicked()
 {
-	FConfigLoader::LoadConfigFile<ASf_Character>(this,"SF_CharacterDefault");
-	FConfigLoader::LoadConfigFile<USF_CharacterMovementComponent>(SFCharacterMovementComponent,"SF_CharacterDefault");
+	FConfigLoader::LoadConfigFile(GetClass()->GetDefaultObject(),"SF_CharacterDefault");
+	FConfigLoader::LoadConfigFile(GetClass()->GetDefaultObject<AActor>()->FindComponentByClass<USF_CharacterMovementComponent>(),"SF_CharacterDefault");
+	return FReply::Handled();
 }
 
 ASf_Character::ASf_Character(const FObjectInitializer& ObjectInitializer)

@@ -444,7 +444,14 @@ bool USF_CharacterMovementComponent::TryMantle()
 {
 	if (!(IsMovementMode(MOVE_Walking) && !IsCrouching() || IsMovementMode(MOVE_Falling)))
 	{
-		PRINT("Cant Mantle.");
+		PRINT("Can't Mantle.");
+		return false;
+	}
+
+	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, FString::SanitizeFloat(Velocity.Length()));
+	if (Velocity.Length() < MantleMinVelocity)
+	{
+		PRINT("To slow for Mantle.");
 		return false;
 	}
 
@@ -530,32 +537,38 @@ void USF_CharacterMovementComponent::PhysMantle(float deltaTime, int32 Iteration
 	FVector Movement = MantleStartingVelocity.ProjectOnTo(Direction);
 	float Duration = FMath::Min(Direction.Length() / Movement.Length(), MantleMaxDuration);
 	float Alpha = FMath::Clamp(ElapsedMantleTime / Duration, 0 , 1);
-
-	FVector CurrentLocation = FVector();
-	// CharacterOwner->SetActorLocation(FMath::Lerp(MantleOriginLocation, MantleTargetLocation, Alpha));
-	float XYAlpha = Alpha*Alpha; 
-	float ZAlpha = Alpha * (2 - Alpha); 
-	float NewZ = FMath::Lerp(MantleOriginLocation.Z, MantleTargetLocation.Z, ZAlpha);
-
-	// Interpolate XY axes independently
-	FVector NewXY = FMath::Lerp(FVector(MantleOriginLocation.X, MantleOriginLocation.Y, 0.0f), 
-								FVector(MantleTargetLocation.X, MantleTargetLocation.Y, 0.0f), 
-								XYAlpha);
-
-	// Combine the interpolated Z and XY into the final position
-	FVector NewLocation = FVector(NewXY.X, NewXY.Y, NewZ);
-
-	// Set the new location
-	CharacterOwner->SetActorLocation(NewLocation);
 	
-	if (ElapsedMantleTime > Duration)
+	if (!MantleCurve)
+	{
+		UE_LOG(LogTemp, Error, TEXT("No Mantle curve found"));
+		CharacterOwner->SetActorLocation(FMath::Lerp(MantleOriginLocation, MantleTargetLocation, Alpha));
+	}
+	else
+	{
+		float Start = 0;
+		float End = 0;
+		MantleCurve->GetTimeRange(Start, End);
+		float MinCurveValue = MantleCurve->GetFloatValue(Start);
+		float MaxCurveValue = MantleCurve->GetFloatValue(End);
+		float CurveValue = ((MantleCurve->GetFloatValue(Start + Alpha * (End - Start)) - MinCurveValue) / (MaxCurveValue - MinCurveValue));
+		
+		float NewZ = FMath::Lerp(MantleOriginLocation.Z, MantleTargetLocation.Z, CurveValue);
+		FVector NewXY = FMath::Lerp(FVector(MantleOriginLocation.X, MantleOriginLocation.Y, 0.0f), 
+									FVector(MantleTargetLocation.X, MantleTargetLocation.Y, 0.0f), 
+									Alpha);
+		
+		FVector NewLocation = FVector(NewXY.X, NewXY.Y, NewZ);
+		CharacterOwner->SetActorLocation(NewLocation);
+	}
+
+	if (ElapsedMantleTime > Duration * 0.9f)
 	{
 		float Magnitude = MantleStartingVelocity.Length();
 		if (Magnitude > MantleMinVelocityForBoost)
 			Velocity = MantleStartingVelocity.ProjectOnTo(Direction.GetSafeNormal2D());
 		CAPSULE(GetActorLocation(),FColor::Blue)
 		
-		SetMovementMode(MOVE_Walking);
+		SetMovementMode(MOVE_Falling);
 	}
 	
 	ElapsedMantleTime += deltaTime;

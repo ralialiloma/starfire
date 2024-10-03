@@ -163,11 +163,15 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: Mantle", meta =(CustomConfig))
 	float MantleAlignmentAngle = 40.0f;
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: Mantle", meta =(CustomConfig))
-	float MantleMinVelocityForBoost = 20.0f;
+	float MantleMinVelocityForBoost = 100.0f;
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: Mantle", meta =(CustomConfig))
+	float MantleMinVelocity = 300.0f;
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: Mantle", meta =(CustomConfig))
 	float MantleMaxDuration = 0.7f;
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: Mantle", meta =(CustomConfig))
-	UAnimMontage* MantleMontage;
+	UCurveFloat* MantleCurve = nullptr;
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: Mantle", meta =(CustomConfig))
+	UAnimMontage* MantleMontage = nullptr;
 	
 private:
 	

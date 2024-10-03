@@ -46,12 +46,14 @@ protected:
 	UBoxComponent* MeleeTransform;
 
 public:
+#pragma region Editor
+#if WITH_EDITOR
 
-	UFUNCTION(CallInEditor, BlueprintCallable, Category = "Config")
-	void SaveToConfig();
-
-	UFUNCTION(CallInEditor, BlueprintCallable, Category = "Config")
-	void LoadConfig();
+	FReply OnSaveButtonClicked();
+	FReply OnLoadButtonClicked();
+	
+#endif
+#pragma endregion
 
 public:
 	ASf_Character(const FObjectInitializer& ObjectInitializer);
