@@ -45,8 +45,11 @@ class STARFIRE_API USf_FunctionLibrary : public UBlueprintFunctionLibrary
 	template <class EnumType>
 	static FName GetEnumAsName(int32 EnumValue);
 
-	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContext"))
-	static ASf_Character* GetSfPlayerpawn(UWorld* WorldContext);
+	UFUNCTION(BlueprintCallable,BlueprintPure, meta = (WorldContext = "WorldContext"))
+	static ASf_Character* GetSfPlayerpawn(const UObject* WorldContext);
+
+	UFUNCTION(BlueprintCallable,BlueprintPure, meta = (WorldContext = "WorldContext"))
+	static FVector GetPlayerLocation(const UObject* WorldContext);
 
 	template<typename RowType>
 	static TArray<RowType> GetRowDataFromDT(const FSoftObjectPath& DTPath);

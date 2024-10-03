@@ -12,7 +12,7 @@ EInputSignalType USf_FunctionLibrary::ConvertToInputSignalType(EInputSignalType 
 }
 
 
-ASf_Character* USf_FunctionLibrary::GetSfPlayerpawn(UWorld* WorldContext)
+ASf_Character* USf_FunctionLibrary::GetSfPlayerpawn(const UObject* WorldContext)
 {
 	if (!WorldContext)
 	{
@@ -34,6 +34,24 @@ ASf_Character* USf_FunctionLibrary::GetSfPlayerpawn(UWorld* WorldContext)
 	}
 
 	return SfCharacter;
+}
+
+FVector USf_FunctionLibrary::GetPlayerLocation(const UObject* WorldContext)
+{
+	if (!WorldContext)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Invalid WorldContext passed to GetPlayerLocation."));
+		return FVector::Zero();
+	}
+
+	APawn* Pawn = UGameplayStatics::GetPlayerPawn(WorldContext, 0);
+	if (!Pawn)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No player pawn found."));
+		return FVector::Zero();
+	}
+
+	return Pawn->GetActorLocation();
 }
 
 int USf_FunctionLibrary::ConvertEnumToInteger(uint8 Byte)

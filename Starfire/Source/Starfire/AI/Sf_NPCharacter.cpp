@@ -4,6 +4,7 @@
 #include "Sf_NPCharacter.h"
 
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Behaviour/BlackboardKeyHelperLibrary.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Starfire/Character/Sf_Equipment.h"
 #include "Starfire/DamageSystem/Sf_DamageReceiver.h"
@@ -81,10 +82,6 @@ USF_Equipment* ASf_NPCharacter::GetSfEquipment()
 	return SfEquipmentComponent;
 }
 
-void ASf_NPCharacter::InitializeBehaviourTreeData(TArray<FBlackboardKeySelector> KeySelectors)
-{
-	UBlackboardComponent* BlackboardComponent =  UAIBlueprintHelperLibrary::GetBlackboard(this);
-}
 
 // Called when the game starts or when spawned
 void ASf_NPCharacter::BeginPlay()

@@ -59,15 +59,32 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Blackboard|Setters")
 	static void SetFloatValue(UBlackboardComponent* BlackboardComp, EFloatBlackboardKey FloatBlackboardKey, float Value);
 
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Blackboard|Getters")
+	static float GetFloatValue(UBlackboardComponent* BlackboardComp, EFloatBlackboardKey FloatBlackboardKey);
+
 	// For Int Blackboard Keys
 	UFUNCTION(BlueprintCallable, Category = "Blackboard|Setters")
 	static void SetIntValue(UBlackboardComponent* BlackboardComp, EIntBlackboardKey IntBlackboardKey, int32 Value);
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Blackboard|Getters")
+	static int32 GetIntValue(UBlackboardComponent* BlackboardComp, EIntBlackboardKey IntBlackboardKey);
 
 	// For Bool Blackboard Keys
 	UFUNCTION(BlueprintCallable, Category = "Blackboard|Setters")
 	static void SetBoolValue(UBlackboardComponent* BlackboardComp, EBoolBlackboardKey BoolBlackboardKey, bool Value);
 
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Blackboard|Getters")
+	static bool GetBoolValue(UBlackboardComponent* BlackboardComp, EBoolBlackboardKey BoolBlackboardKey);
+
 	// For Actor Blackboard Keys
 	UFUNCTION(BlueprintCallable, Category = "Blackboard|Setters")
 	static void SetActorValue(UBlackboardComponent* BlackboardComp, EActorBlackboardKey ActorBlackboardKey, AActor* Value);
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Blackboard|Getters")
+	static AActor* GetActorValue(UBlackboardComponent* BlackboardComp, EActorBlackboardKey ActorBlackboardKey);
+	
+
+
+
+
 };

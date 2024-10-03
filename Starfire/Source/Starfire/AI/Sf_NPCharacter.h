@@ -46,8 +46,6 @@ public:
 	USF_Equipment* GetSfEquipment();
 
 		//Behaviour
-	UFUNCTION()
-	virtual void InitializeBehaviourTreeData(TArray<FBlackboardKeySelector> KeySelectors);
 
 	//Actor
 public:
