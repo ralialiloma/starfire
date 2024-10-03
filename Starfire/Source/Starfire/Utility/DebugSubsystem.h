@@ -45,5 +45,10 @@ public:
 	FDebugSettingData HSMDebug;
 	UFUNCTION(BlueprintCallable, BlueprintPure, meta = (WorldContext = "WorldContext"))
 	static bool GetHSMDebug(TEnumAsByte<EDebugType> DebugType);
+
+	UPROPERTY(BlueprintReadOnly)
+	FDebugSettingData MovementDebug;
+	UFUNCTION(BlueprintCallable, BlueprintPure, meta = (WorldContext = "WorldContext"))
+	static bool GetMovementDebug(TEnumAsByte<EDebugType> DebugType);
 	
 };

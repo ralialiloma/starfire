@@ -149,9 +149,11 @@ private:
 protected:
 	//Mantle
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: Mantle", meta =(CustomConfig))
-	float MantleDistance = 150.0f;
+	float MantleMinDistance = 100.0f;
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: Mantle", meta =(CustomConfig))
-	float MantleUpperDeviation = 150.0f;
+	float MantleMaxDistance = 300.0f;
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: Mantle", meta =(CustomConfig))
+	float MantleMaxHeight = 150.0f;
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: Mantle", meta =(CustomConfig))
 	float MantleLowerDeviation = 20.0f;
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: Mantle", meta =(CustomConfig))
@@ -161,18 +163,20 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: Mantle", meta =(CustomConfig))
 	float MantleAlignmentAngle = 40.0f;
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: Mantle", meta =(CustomConfig))
+	float MantleMinVelocityForBoost = 20.0f;
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: Mantle", meta =(CustomConfig))
+	float MantleMaxDuration = 0.7f;
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: Mantle", meta =(CustomConfig))
 	UAnimMontage* MantleMontage;
 	
 private:
-
-	UPROPERTY()
-	bool bWantsToMantle = false;
+	
 	UPROPERTY()
 	FVector MantleTargetLocation;
 	UPROPERTY()
 	FVector MantleOriginLocation;
 	UPROPERTY()
-	float MantleDuration = 0.5f;
+	FVector MantleStartingVelocity;
 	UPROPERTY()
 	float ElapsedMantleTime = 0;
 };

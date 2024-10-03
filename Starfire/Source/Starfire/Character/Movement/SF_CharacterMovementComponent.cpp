@@ -6,16 +6,17 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/Character.h"
 #include "DrawDebugHelpers.h"
+#include "Starfire/Utility/DebugSubsystem.h"
 
 DEFINE_LOG_CATEGORY_STATIC(SF_CharacterMovement, Display, Display);
 
 #pragma region HelperMacros
 #if 1
 float MacroDuration = 20.f;
-#define SLOG(x) GEngine->AddOnScreenDebugMessage(-1, MacroDuration ? MacroDuration : -1.f, FColor::Yellow, x);
-#define POINT(x, c) DrawDebugPoint(GetWorld(), x, 10, c, !MacroDuration, MacroDuration);
-#define LINE(x1, x2, c) DrawDebugLine(GetWorld(), x1, x2, c, !MacroDuration, MacroDuration);
-#define CAPSULE(x, c) DrawDebugCapsule(GetWorld(), x, CharacterOwner->GetCapsuleComponent()->GetScaledCapsuleHalfHeight(), CharacterOwner->GetCapsuleComponent()->GetScaledCapsuleRadius(), FQuat::Identity, c, !MacroDuration, MacroDuration);
+#define PRINT(x)  if (UDebugSubsystem::GetMovementDebug(EDebugType::Print)) GEngine->AddOnScreenDebugMessage(-1, MacroDuration ? MacroDuration : -1.f, FColor::Yellow, x); if (UDebugSubsystem::GetMovementDebug(EDebugType::Log)) UE_LOG(SF_CharacterMovement, Log, TEXT("%s"), *x);
+#define POINT(x, c) if (UDebugSubsystem::GetMovementDebug(EDebugType::Visual)) DrawDebugPoint(GetWorld(), x, 10, c, !MacroDuration, MacroDuration);
+#define LINE(x1, x2, c) if (UDebugSubsystem::GetMovementDebug(EDebugType::Visual)) DrawDebugLine(GetWorld(), x1, x2, c, !MacroDuration, MacroDuration);
+#define CAPSULE(x, c) if (UDebugSubsystem::GetMovementDebug(EDebugType::Visual)) DrawDebugCapsule(GetWorld(), x, CharacterOwner->GetCapsuleComponent()->GetScaledCapsuleHalfHeight(), CharacterOwner->GetCapsuleComponent()->GetScaledCapsuleRadius(), FQuat::Identity, c, !MacroDuration, MacroDuration);
 #else
 #define SLOG(x)
 #define POINT(x, c)
@@ -26,6 +27,7 @@ float MacroDuration = 20.f;
 
 USF_CharacterMovementComponent::FSavedMove_Sf::FSavedMove_Sf(): Saved_bWantsToSprint(0), Saved_bWallRunIsRight(0)
 {
+	
 }
 
 bool USF_CharacterMovementComponent::FSavedMove_Sf::CanCombineWith(const FSavedMovePtr& NewMove, ACharacter* InCharacter, float MaxDelta) const
@@ -142,6 +144,8 @@ void USF_CharacterMovementComponent::UpdateCharacterStateBeforeMovement(float De
 		{
 			SetMovementMode(MOVE_Custom, CMOVE_Mantle);
 			ElapsedMantleTime = 0;
+			MantleStartingVelocity = Velocity;
+			StopMovementImmediately();
 			CharacterOwner->StopJumping();
 		}
 		else
@@ -440,13 +444,13 @@ bool USF_CharacterMovementComponent::TryMantle()
 {
 	if (!(IsMovementMode(MOVE_Walking) && !IsCrouching() || IsMovementMode(MOVE_Falling)))
 	{
+		PRINT("Cant Mantle.");
 		return false;
 	}
 
 	MantleOriginLocation = UpdatedComponent->GetComponentLocation();
 	FVector MantleGroundLocation = MantleOriginLocation - FVector::UpVector * CharacterOwner->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
 	FVector MantleForward = UpdatedComponent->GetForwardVector().GetSafeNormal2D();
-	FVector MantleLocation = MantleGroundLocation + MantleForward * MantleDistance;
 	auto Params = SfCharacterOwner->GetIgnoreCharacterParams();
 	float CosMinWallAngle = FMath::Cos(FMath::DegreesToRadians(MantleMinWallAngle));
 	float CosMaxSurfaceAngle = FMath::Cos(FMath::DegreesToRadians(MantleMaxSurfaceAngle));
@@ -454,14 +458,15 @@ bool USF_CharacterMovementComponent::TryMantle()
 
 	//Check Front
 	FHitResult FrontHit;
-	//float CheckDistance = FMath::Clamp(Velocity | Fwd, CapsuleRadius() + 30, MantleMaxDistance);
-	FVector FrontStart = MantleGroundLocation + FVector::UpVector * (MaxStepHeight - 1);
+	float CheckDistance = FMath::Clamp(Velocity | MantleForward, MantleMinDistance, MantleMaxDistance);
+	float AdditiveBottomOffset = IsMovingOnGround() ? (MaxStepHeight - 1) : 0;
+	FVector FrontStart = MantleGroundLocation + FVector::UpVector * AdditiveBottomOffset;
 	for (int i = 0; i < 6; i++)
 	{
-LINE(FrontStart, FrontStart + MantleForward * MantleDistance, FColor::Red)
-		if (GetWorld()->LineTraceSingleByProfile(FrontHit, FrontStart, FrontStart + MantleForward * MantleDistance, "BlockAll", Params))
+		LINE(FrontStart, FrontStart + MantleForward * CheckDistance, FColor::Red)
+		if (GetWorld()->LineTraceSingleByProfile(FrontHit, FrontStart, FrontStart + MantleForward * CheckDistance, "BlockAll", Params))
 			break;
-		FrontStart += FVector::UpVector * (2.f * CapsuleHalfHeight() - (MaxStepHeight - 1)) / 5;
+		FrontStart += FVector::UpVector * (2.f * CapsuleHalfHeight() - AdditiveBottomOffset) / 5;
 	}
 	if (!FrontHit.IsValidBlockingHit())
 		return false;
@@ -470,7 +475,7 @@ LINE(FrontStart, FrontStart + MantleForward * MantleDistance, FColor::Red)
 	if (FMath::Abs(CosWallSteepnessAngle) > CosMinWallAngle || (MantleForward | -FrontHit.Normal) < CosAlignmentAngle)
 		return false;
 
-POINT(FrontHit.Location, FColor::Red);
+	POINT(FrontHit.Location, FColor::Red);
 	
 	// Check Top
 	TArray<FHitResult> HeightHits;
@@ -478,8 +483,8 @@ POINT(FrontHit.Location, FColor::Red);
 	FVector WallUp = FVector::VectorPlaneProject(FVector::UpVector, FrontHit.Normal).GetSafeNormal();
 	float WallCos = FVector::UpVector | FrontHit.Normal;
 	float WallSin = FMath::Sqrt(1 - WallCos * WallCos);
-	FVector TraceStart = FrontHit.Location + MantleForward + WallUp * (MantleUpperDeviation - (MaxStepHeight - 1)) / WallSin;
-LINE(TraceStart, FrontHit.Location + MantleForward, FColor::Orange)
+	FVector TraceStart = FrontHit.Location + MantleForward + WallUp * (MantleMaxHeight - AdditiveBottomOffset) / WallSin;
+	LINE(TraceStart, FrontHit.Location + MantleForward, FColor::Orange)
 	if (!GetWorld()->LineTraceMultiByProfile(HeightHits, TraceStart, FrontHit.Location + MantleForward, "BlockAll", Params))
 		return false;
 	for (const FHitResult& Hit : HeightHits)
@@ -494,10 +499,10 @@ LINE(TraceStart, FrontHit.Location + MantleForward, FColor::Orange)
 		return false;
 	float Height = (SurfaceHit.Location - MantleGroundLocation) | FVector::UpVector;
 
-SLOG(FString::Printf(TEXT("Height: %f"), Height))
-POINT(SurfaceHit.Location, FColor::Blue);
+	PRINT(FString::Printf(TEXT("Height: %f"), Height))
+	POINT(SurfaceHit.Location, FColor::Blue);
 	
-	if (Height > MantleUpperDeviation)
+	if (Height > MantleMaxHeight)
 		return false;
 
 	// Check Clearance
@@ -507,44 +512,52 @@ POINT(SurfaceHit.Location, FColor::Blue);
 	FCollisionShape CapShape = FCollisionShape::MakeCapsule(CapsuleRadius(), CapsuleHalfHeight());
 	if (GetWorld()->OverlapAnyTestByProfile(MantleTargetLocation, FQuat::Identity, "BlockAll", CapShape, Params))
 	{
-CAPSULE(MantleTargetLocation, FColor::Red)
+		CAPSULE(MantleTargetLocation, FColor::Red)
 		return false;
 	}
 	else
 	{
-CAPSULE(MantleTargetLocation, FColor::Green)
+		CAPSULE(MantleTargetLocation, FColor::Green)
 	}
-	SLOG("Can Mantle")
 	
 	CharacterOwner->PlayAnimMontage(MantleMontage);
 	return true;
-	
-	// FVector Start = MantleLocation + FVector::UpVector * MantleUpperDeviation;
-	// FVector End = MantleLocation - FVector::UpVector * MantleLowerDeviation;
-	// FHitResult HitResult;
-	// GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility);
-	//
-	// if (HitResult.bBlockingHit)
-	// {
-	// 	MantleTargetLocation = HitResult.Location;
-	// 	ElapsedMantleTime = 0;
-	// 	SetMovementMode(MOVE_Custom, CMOVE_Mantle);
-	// 	return true;
-	// }
-	// return false;
 }
 
 void USF_CharacterMovementComponent::PhysMantle(float deltaTime, int32 Iterations)
 {
-	if (ElapsedMantleTime > MantleDuration)
+	FVector Direction = (MantleTargetLocation - MantleOriginLocation);
+	FVector Movement = MantleStartingVelocity.ProjectOnTo(Direction);
+	float Duration = FMath::Min(Direction.Length() / Movement.Length(), MantleMaxDuration);
+	float Alpha = FMath::Clamp(ElapsedMantleTime / Duration, 0 , 1);
+
+	FVector CurrentLocation = FVector();
+	// CharacterOwner->SetActorLocation(FMath::Lerp(MantleOriginLocation, MantleTargetLocation, Alpha));
+	float XYAlpha = Alpha*Alpha; 
+	float ZAlpha = Alpha * (2 - Alpha); 
+	float NewZ = FMath::Lerp(MantleOriginLocation.Z, MantleTargetLocation.Z, ZAlpha);
+
+	// Interpolate XY axes independently
+	FVector NewXY = FMath::Lerp(FVector(MantleOriginLocation.X, MantleOriginLocation.Y, 0.0f), 
+								FVector(MantleTargetLocation.X, MantleTargetLocation.Y, 0.0f), 
+								XYAlpha);
+
+	// Combine the interpolated Z and XY into the final position
+	FVector NewLocation = FVector(NewXY.X, NewXY.Y, NewZ);
+
+	// Set the new location
+	CharacterOwner->SetActorLocation(NewLocation);
+	
+	if (ElapsedMantleTime > Duration)
 	{
-		SetMovementMode(MOVE_Falling);
+		float Magnitude = MantleStartingVelocity.Length();
+		if (Magnitude > MantleMinVelocityForBoost)
+			Velocity = MantleStartingVelocity.ProjectOnTo(Direction.GetSafeNormal2D());
+		CAPSULE(GetActorLocation(),FColor::Blue)
+		
+		SetMovementMode(MOVE_Walking);
 	}
-
-	float Alpha = ElapsedMantleTime / MantleDuration;
-
-	CharacterOwner->SetActorLocation(FMath::Lerp(MantleOriginLocation, MantleTargetLocation, Alpha));
-
+	
 	ElapsedMantleTime += deltaTime;
 }
 

@@ -28,6 +28,7 @@ UDebugSubsystem* UDebugSubsystem::Refresh()
 	AIDebug = Settings->AIDebug;
 	WeaponDebug = Settings->WeaponDebug;
 	HSMDebug = Settings->HSMDebug;
+	MovementDebug = Settings->MovementDebug ;
 
 	return this;
 }
@@ -69,5 +70,12 @@ bool UDebugSubsystem::GetHSMDebug(TEnumAsByte<EDebugType> DebugType)
 {
 	if (UDebugSubsystem* Subsystem = GetDebugSubsystem())
 		return Subsystem->HSMDebug.GetDebugType(DebugType) && Subsystem->AllowDebug;
+	return true;
+}
+
+bool UDebugSubsystem::GetMovementDebug(TEnumAsByte<EDebugType> DebugType)
+{
+	if (UDebugSubsystem* Subsystem = GetDebugSubsystem())
+		return Subsystem->MovementDebug.GetDebugType(DebugType) && Subsystem->AllowDebug;
 	return true;
 }
