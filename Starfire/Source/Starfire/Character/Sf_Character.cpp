@@ -14,7 +14,7 @@
 #include "Starfire/Utility/ConfigLoader.h"
 #include "UObject/UnrealTypePrivate.h"
 
-DEFINE_LOG_CATEGORY_STATIC(SF_Character, Display, Display);
+DEFINE_LOG_CATEGORY_STATIC(SF_Character_Log , Display, Display);
 
 void ASf_Character::SaveToConfig()
 {

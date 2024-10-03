@@ -8,9 +8,9 @@ FHSMConfig::FHSMConfig()
 
 void UHSMConfiguration::Refresh()
 {
-	UFunctionLibrary::ValidateAndUpdateEnumMap<EEquipmentFlags,TSubclassOf<UBaseState>>(ConfigStruct.EquipmentFlagMap);
-	UFunctionLibrary::ValidateAndUpdateEnumMap<EMovementMode,TSubclassOf<UBaseState>>(ConfigStruct.MovementModeFlag, TArray<TEnumAsByte<EMovementMode>>{EMovementMode::MOVE_Custom});
-	UFunctionLibrary::ValidateAndUpdateEnumMap<ECustomMovementMode,TSubclassOf<UBaseState>>(ConfigStruct.CustomMovementModeFlag);
+	USf_FunctionLibrary::ValidateAndUpdateEnumMap<EEquipmentFlags,TSubclassOf<UBaseState>>(ConfigStruct.EquipmentFlagMap);
+	USf_FunctionLibrary::ValidateAndUpdateEnumMap<EMovementMode,TSubclassOf<UBaseState>>(ConfigStruct.MovementModeFlag, TArray<TEnumAsByte<EMovementMode>>{EMovementMode::MOVE_Custom});
+	USf_FunctionLibrary::ValidateAndUpdateEnumMap<ECustomMovementMode,TSubclassOf<UBaseState>>(ConfigStruct.CustomMovementModeFlag);
 }
 
 void UHSMConfiguration::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)

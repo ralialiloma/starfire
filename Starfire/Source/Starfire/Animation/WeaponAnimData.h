@@ -2,7 +2,7 @@
 #include "WeaponAnimationAssetType.h"
 #include "WeaponAnimationMontageType.h"
 #include "WeaponBlendSpaceType.h"
-#include "Starfire/Utility/FunctionLibrary.h"
+#include "Starfire/Utility/Sf_FunctionLibrary.h"
 #include "WeaponAnimData.generated.h"
 
 USTRUCT(Blueprintable)

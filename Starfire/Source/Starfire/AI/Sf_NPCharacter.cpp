@@ -84,9 +84,6 @@ USF_Equipment* ASf_NPCharacter::GetSfEquipment()
 void ASf_NPCharacter::InitializeBehaviourTreeData(TArray<FBlackboardKeySelector> KeySelectors)
 {
 	UBlackboardComponent* BlackboardComponent =  UAIBlueprintHelperLibrary::GetBlackboard(this);
-	const FBlackboardKeyData& BlackboardKeys = FBlackboardKeyData::Get();
-	BlackboardComponent->SetValueAsFloat(BlackboardKeys.RemainingHealth.SelectedKeyName, 0.f);
-	BlackboardComponent->SetValue
 }
 
 // Called when the game starts or when spawned

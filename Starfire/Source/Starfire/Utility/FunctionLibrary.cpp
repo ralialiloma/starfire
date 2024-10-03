@@ -1,23 +1,47 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
-#include "FunctionLibrary.h"
-
+#include "Sf_FunctionLibrary.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Starfire/Character/Sf_Character.h"
 
-EInputSignalType UFunctionLibrary::ConvertToInputSignalType(EInputSignalType SignalType)
+
+EInputSignalType USf_FunctionLibrary::ConvertToInputSignalType(EInputSignalType SignalType)
 {
 	return  SignalType;
 }
 
 
+ASf_Character* USf_FunctionLibrary::GetSfPlayerpawn(UWorld* WorldContext)
+{
+	if (!WorldContext)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Invalid WorldContext passed to GetSfPlayerpawn."));
+		return nullptr;
+	}
 
-int UFunctionLibrary::ConvertEnumToInteger(uint8 Byte)
+	APawn* Pawn = UGameplayStatics::GetPlayerPawn(WorldContext, 0);
+	if (!Pawn)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No player pawn found."));
+		return nullptr;
+	}
+
+	ASf_Character* SfCharacter = dynamic_cast<ASf_Character*>(Pawn);
+	if (!SfCharacter)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Player pawn is not of type ASf_Character."));
+	}
+
+	return SfCharacter;
+}
+
+int USf_FunctionLibrary::ConvertEnumToInteger(uint8 Byte)
 {
 	return FMath::Pow(2,static_cast<float>(Byte));
 }
 
-void UFunctionLibrary::SetBit(bool bSet, int32& BitField, int32 BitPosition)
+void USf_FunctionLibrary::SetBit(bool bSet, int32& BitField, int32 BitPosition)
 {
 	if (bSet)
 		BitField |= (1 << BitPosition);
@@ -25,12 +49,12 @@ void UFunctionLibrary::SetBit(bool bSet, int32& BitField, int32 BitPosition)
 		BitField &= ~(1 << BitPosition);
 }
 
-bool UFunctionLibrary::CheckBitFlag(int32 BitField, int32 BitPosition)
+bool USf_FunctionLibrary::CheckBitFlag(int32 BitField, int32 BitPosition)
 {
 	return (BitField & (1 << BitPosition)) != 0;
 }
 
-UObject* UFunctionLibrary::GetAsType(TSubclassOf<UObject> OutputClass, UObject* ObjectToCovert)
+UObject* USf_FunctionLibrary::GetAsType(TSubclassOf<UObject> OutputClass, UObject* ObjectToCovert)
 {
 	{
 		if (!ObjectToCovert)
@@ -45,7 +69,7 @@ UObject* UFunctionLibrary::GetAsType(TSubclassOf<UObject> OutputClass, UObject* 
 	}
 }
 
-UObject* UFunctionLibrary::Cast(TEnumAsByte<ESuccessState>& Success, TSubclassOf<UObject> OutputClass,
+UObject* USf_FunctionLibrary::Cast(TEnumAsByte<ESuccessState>& Success, TSubclassOf<UObject> OutputClass,
 	UObject* ObjectToCovert)
 {
 	{
@@ -64,12 +88,12 @@ UObject* UFunctionLibrary::Cast(TEnumAsByte<ESuccessState>& Success, TSubclassOf
 	}
 }
 
-FColor UFunctionLibrary::BoolToColor(bool bValue)
+FColor USf_FunctionLibrary::BoolToColor(bool bValue)
 {
 	return bValue?FColor::Green:FColor::Red;
 }
 
-bool UFunctionLibrary::BetterBoxOverlapActors(const UObject* WorldContextObject, const FVector BoxPos, const FRotator BoxRot,
+bool USf_FunctionLibrary::BetterBoxOverlapActors(const UObject* WorldContextObject, const FVector BoxPos, const FRotator BoxRot,
                                               FVector BoxExtent, const TArray<TEnumAsByte<EObjectTypeQuery>>& ObjectTypes, UClass* ActorClassFilter,
                                               const TArray<AActor*>& ActorsToIgnore, TArray<AActor*>& OutActors)
 {
@@ -85,7 +109,7 @@ bool UFunctionLibrary::BetterBoxOverlapActors(const UObject* WorldContextObject,
 	return (OutActors.Num() > 0);
 }
 
-bool UFunctionLibrary::BetterBoxOverlapComponents(const UObject* WorldContextObject, const FVector BoxPos,
+bool USf_FunctionLibrary::BetterBoxOverlapComponents(const UObject* WorldContextObject, const FVector BoxPos,
                                                   const FRotator BoxRot, FVector BoxExtent, const TArray<TEnumAsByte<EObjectTypeQuery>>& ObjectTypes,
                                                   UClass* ComponentClassFilter, const TArray<AActor*>& ActorsToIgnore, TArray<UPrimitiveComponent*>& OutComponents)
 {
@@ -124,7 +148,3 @@ bool UFunctionLibrary::BetterBoxOverlapComponents(const UObject* WorldContextObj
 	return (OutComponents.Num() > 0);
 }
 
-FBlackboardKeyData UFunctionLibrary::GetBlackboardKeyData()
-{
-	return FBlackboardKeyData::Get();
-}

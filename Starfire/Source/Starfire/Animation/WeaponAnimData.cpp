@@ -1,6 +1,6 @@
 ﻿#include "WeaponAnimData.h"
 
-#include "Starfire/Utility/FunctionLibrary.h"
+#include "Starfire/Utility/Sf_FunctionLibrary.h"
 
 FWeaponAnimData::FWeaponAnimData()
 {
@@ -9,9 +9,9 @@ FWeaponAnimData::FWeaponAnimData()
 
 void FWeaponAnimData::UpdateEntries()
 {
-	UFunctionLibrary::ValidateAndUpdateEnumMap<EWeaponAnimationAssetType,UAnimSequenceBase*>(AnimationAssets);
-	UFunctionLibrary::ValidateAndUpdateEnumMap<EWeaponAnimationMontageType,UAnimMontage*>(AnimationMontages);
-	UFunctionLibrary::ValidateAndUpdateEnumMap<EWeaponBlendSpaceType,UBlendSpace*>(Blendspaces);
+	USf_FunctionLibrary::ValidateAndUpdateEnumMap<EWeaponAnimationAssetType,UAnimSequenceBase*>(AnimationAssets);
+	USf_FunctionLibrary::ValidateAndUpdateEnumMap<EWeaponAnimationMontageType,UAnimMontage*>(AnimationMontages);
+	USf_FunctionLibrary::ValidateAndUpdateEnumMap<EWeaponBlendSpaceType,UBlendSpace*>(Blendspaces);
 }
 
 UWeaponAnimationAsset::UWeaponAnimationAsset()

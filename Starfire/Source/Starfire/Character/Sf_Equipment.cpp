@@ -227,23 +227,23 @@ int USF_Equipment::GetCompressedFlags() const
 {
 	int EquipmentFlags = 0;
 
-	UFunctionLibrary::SetBit(IsEquipped(),EquipmentFlags,EEquipmentFlags::EquipmentState_Equipped);
-	UFunctionLibrary::SetBit(IsInFireCooldown(),EquipmentFlags,EEquipmentFlags::EquipmentState_FireCooldown);
-	UFunctionLibrary::SetBit(IsAiming(),EquipmentFlags,EEquipmentFlags::EquipmentState_Aiming);
-	UFunctionLibrary::SetBit(IsReloading(),EquipmentFlags,EEquipmentFlags::EquipmentState_Reloading);
-	UFunctionLibrary::SetBit(IsInMeleeCooldown(),EquipmentFlags,EEquipmentFlags::EquipmentState_MeleeCooldown);
+	USf_FunctionLibrary::SetBit(IsEquipped(),EquipmentFlags,EEquipmentFlags::EquipmentState_Equipped);
+	USf_FunctionLibrary::SetBit(IsInFireCooldown(),EquipmentFlags,EEquipmentFlags::EquipmentState_FireCooldown);
+	USf_FunctionLibrary::SetBit(IsAiming(),EquipmentFlags,EEquipmentFlags::EquipmentState_Aiming);
+	USf_FunctionLibrary::SetBit(IsReloading(),EquipmentFlags,EEquipmentFlags::EquipmentState_Reloading);
+	USf_FunctionLibrary::SetBit(IsInMeleeCooldown(),EquipmentFlags,EEquipmentFlags::EquipmentState_MeleeCooldown);
 
 	return EquipmentFlags;
 }
 
 bool USF_Equipment::CheckFlag(EEquipmentFlags EquipmentFlag) const
 {
-	return  UFunctionLibrary::CheckBitFlag(GetCompressedFlags(),EquipmentFlag);
+	return  USf_FunctionLibrary::CheckBitFlag(GetCompressedFlags(),EquipmentFlag);
 }
 
 bool USF_Equipment::CheckFlagForState(EEquipmentFlags EquipmentFlag, int StateToCheck) const
 {
-	return UFunctionLibrary::CheckBitFlag(StateToCheck,EquipmentFlag);
+	return USf_FunctionLibrary::CheckBitFlag(StateToCheck,EquipmentFlag);
 }
 
 bool USF_Equipment::GetSlot(AWeaponBase* WeaponBase, int& OutIndex) const

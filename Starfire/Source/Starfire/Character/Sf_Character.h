@@ -15,7 +15,7 @@ class USF_Equipment;
 class USF_CharacterMovementComponent;
 class UBoxComponent;
 
-UCLASS(Config = Game)
+UCLASS(Config = Game,BlueprintType)
 class STARFIRE_API ASf_Character : public ACharacter, public IWeaponOwner
 {
 	GENERATED_BODY()

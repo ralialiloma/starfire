@@ -3,32 +3,40 @@
 
 #include "EnemyFeature.h"
 #include "Sf_NPCharacter.h"
+#include "Behaviour/BlackboardKeyHelperLibrary.h"
+#include "Blueprint/AIBlueprintHelperLibrary.h"
 
 void UEnemyFeature::Initialize(ASf_NPCharacter* Holder)
 {
 	this->OwningAIHolder = Holder;
 }
 
-FVector UEnemyFeature::CalculatePositionDeviation(FVector Position, float Accuracy)
+void UEnemyFeature::SetBlackboardFloatValue(EFloatBlackboardKey FloatBlackboardKey, float Value)
 {
-	float X = CalculateDeviationValue(Position.X,Accuracy);
-	float Y = CalculateDeviationValue(Position.Y,Accuracy);
-	float Z = CalculateDeviationValue(Position.Z,Accuracy);
-
-	return FVector(X,Y,Z);
+	UBlackboardComponent* BlackboardComponent = UAIBlueprintHelperLibrary::GetBlackboard(OwningAIHolder);
+	UBlackboardKeyHelperLibrary::SetFloatValue(BlackboardComponent,FloatBlackboardKey,Value);
 }
 
-FRotator UEnemyFeature::CalculateRotationDeviation(FRotator Rotator, float Accuracy)
+void UEnemyFeature::SetBlackboardIntValue(EIntBlackboardKey IntBlackboardKey, int32 Value)
 {
-	float Pitch = CalculateDeviationValue(Rotator.Pitch, Accuracy);
-	float Yaw = CalculateDeviationValue(Rotator.Yaw,Accuracy);
-	float Roll = CalculateDeviationValue(Rotator.Roll,Accuracy);
-
-	return FRotator(Pitch,Yaw,Roll);
+	UBlackboardComponent* BlackboardComponent = UAIBlueprintHelperLibrary::GetBlackboard(OwningAIHolder);
+	UBlackboardKeyHelperLibrary::SetIntValue(BlackboardComponent,IntBlackboardKey,Value);
 }
 
-float UEnemyFeature::CalculateDeviationValue(float ValueToDeviateFrom,float Accuracy)
+void UEnemyFeature::SetBlackboardBoolValue(EBoolBlackboardKey BoolBlackboardKey, bool Value)
 {
-	Accuracy = Accuracy+0.000001f;
-	return ValueToDeviateFrom+FMath::RandRange(-1/Accuracy,1/Accuracy);
+	UBlackboardComponent* BlackboardComponent = UAIBlueprintHelperLibrary::GetBlackboard(OwningAIHolder);
+	UBlackboardKeyHelperLibrary::SetBoolValue(BlackboardComponent,BoolBlackboardKey,Value);
 }
+
+void UEnemyFeature::SetBlackboardActorValue(EActorBlackboardKey ActorBlackboardKey, AActor* Value)
+{
+	UBlackboardComponent* BlackboardComponent = UAIBlueprintHelperLibrary::GetBlackboard(OwningAIHolder);
+	UBlackboardKeyHelperLibrary::SetActorValue(BlackboardComponent,ActorBlackboardKey,Value);
+}
+
+UCharacterMovementComponent* UEnemyFeature::GetCharacterMovement()
+{
+	return OwningAIHolder->GetCharacterMovement();
+}
+
