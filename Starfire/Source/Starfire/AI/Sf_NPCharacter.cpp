@@ -120,7 +120,7 @@ UAnimInstance* ASf_NPCharacter::GetCharacterAnimInstance_Implementation() const
 FTransform ASf_NPCharacter::GetFireTransform_Implementation() const
 {
 	if (SfEquipmentComponent->IsEquipped())
-		return SfEquipmentComponent->GetEquippedWeapon()->GetMuzzleTransform();
+		return SfEquipmentComponent->GetActiveWeapon()->GetMuzzleTransform();
 	
 	return FTransform::Identity;
 }
