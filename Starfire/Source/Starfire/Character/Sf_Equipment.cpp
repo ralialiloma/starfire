@@ -11,7 +11,7 @@
 DEFINE_LOG_CATEGORY_STATIC(EquipmentComponent, Log, All);
 
 // Sets default values for this component's properties
-USF_Equipment::USF_Equipment(): EquippedWeapon(nullptr), WeaponOwner(nullptr)
+USF_Equipment::USF_Equipment(): EquippedWeapon(nullptr), CurrentEquipmentFlags(0)
 {
 	PrimaryComponentTick.bCanEverTick = true;
 	Mobility = EComponentMobility::Type::Movable;
@@ -20,13 +20,9 @@ USF_Equipment::USF_Equipment(): EquippedWeapon(nullptr), WeaponOwner(nullptr)
 void USF_Equipment::InitializeComponent()
 {
 	Super::InitializeComponent();
-
-	WeaponOwner = GetOwner();
-	if (!WeaponOwner->Implements<UWeaponOwner>())
-		UE_LOG(EquipmentComponent,
-		Error,
-		TEXT("Actor requires interface %s "),
-		*UWeaponOwner::StaticClass()->GetName())
+	
+	if (!GetOwner()->Implements<UWeaponOwner>())
+		UE_LOG(EquipmentComponent, Error, TEXT("Actor requires interface %s"),*UWeaponOwner::StaticClass()->GetName());
 
 	EquippedWeapon = nullptr;
 }
@@ -64,7 +60,7 @@ bool USF_Equipment::IsAiming() const
 	return EquippedWeapon->IsAiming();
 }
 
-FWeaponAnimData USF_Equipment::GetAnimationData() const
+FWeaponAnimData USF_Equipment::GetEquippedAnimationData() const
 {
 	if (!IsEquipped())
 		return FWeaponAnimData();
@@ -81,7 +77,7 @@ void USF_Equipment::AddWeapon(AWeaponBase* WeaponToAdd, const bool Equip, int &I
 {
 	//If Weapon Is Already Equipped
 	int FoundWeaponIndex = -1;
-	if (GetSlot(WeaponToAdd,FoundWeaponIndex))
+	if (GetSlotByWeapon(WeaponToAdd,FoundWeaponIndex))
 	{
 		UE_LOG(EquipmentComponent, Log, TEXT("Weapon Already Equipped"));
 		Index = FoundWeaponIndex;
@@ -163,7 +159,7 @@ bool USF_Equipment::IsReloading() const
 	return  EquippedWeapon->IsReloading();
 }
 
-bool USF_Equipment::IsInMeleeCooldown() const
+bool USF_Equipment::IsMeleeOnCooldown() const
 {
 	if (!IsEquipped())
 		return false;
@@ -185,7 +181,7 @@ void USF_Equipment::StopAiming()
 	EquippedWeapon->StopAiming();
 }
 
-bool USF_Equipment::IsInFireCooldown() const
+bool USF_Equipment::IsFireOnCooldown() const
 {
 	if (!IsEquipped())
 		return false;
@@ -207,10 +203,10 @@ void USF_Equipment::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	int NewState = GetCompressedFlags();
-	if (NewState!=CurrentState)
-		OnEquipmentStateChange.Broadcast(CurrentState, NewState);
-	CurrentState = NewState;
+	const int NewFlags = GetCompressedFlags();
+	if (NewFlags != CurrentEquipmentFlags)
+		OnEquipmentFlagsChange.Broadcast(CurrentEquipmentFlags, NewFlags);
+	CurrentEquipmentFlags = NewFlags;
 }
 
 
@@ -222,28 +218,23 @@ bool USF_Equipment::CanMelee() const
 	return EquippedWeapon->CanMelee();
 }
 
-AWeaponBase* USF_Equipment::GetEquippedWeapon() const
-{
-	return EquippedWeapon;
-}
-
 
 int USF_Equipment::GetCompressedFlags() const
 {
 	int EquipmentFlags = 0;
 
 	USf_FunctionLibrary::SetBit(IsEquipped(),EquipmentFlags,EEquipmentFlags::EquipmentState_Equipped);
-	USf_FunctionLibrary::SetBit(IsInFireCooldown(),EquipmentFlags,EEquipmentFlags::EquipmentState_FireCooldown);
+	USf_FunctionLibrary::SetBit(IsFireOnCooldown(),EquipmentFlags,EEquipmentFlags::EquipmentState_FireCooldown);
 	USf_FunctionLibrary::SetBit(IsAiming(),EquipmentFlags,EEquipmentFlags::EquipmentState_Aiming);
 	USf_FunctionLibrary::SetBit(IsReloading(),EquipmentFlags,EEquipmentFlags::EquipmentState_Reloading);
-	USf_FunctionLibrary::SetBit(IsInMeleeCooldown(),EquipmentFlags,EEquipmentFlags::EquipmentState_MeleeCooldown);
+	USf_FunctionLibrary::SetBit(IsMeleeOnCooldown(),EquipmentFlags,EEquipmentFlags::EquipmentState_MeleeCooldown);
 
 	return EquipmentFlags;
 }
 
 bool USF_Equipment::CheckFlag(EEquipmentFlags EquipmentFlag) const
 {
-	return  USf_FunctionLibrary::CheckBitFlag(GetCompressedFlags(),EquipmentFlag);
+	return USf_FunctionLibrary::CheckBitFlag(GetCompressedFlags(),EquipmentFlag);
 }
 
 bool USF_Equipment::CheckFlagForState(EEquipmentFlags EquipmentFlag, int StateToCheck) const
@@ -251,14 +242,24 @@ bool USF_Equipment::CheckFlagForState(EEquipmentFlags EquipmentFlag, int StateTo
 	return USf_FunctionLibrary::CheckBitFlag(StateToCheck,EquipmentFlag);
 }
 
-bool USF_Equipment::GetSlot(AWeaponBase* WeaponBase, int& OutIndex) const
+bool USF_Equipment::GetSlotByWeapon(AWeaponBase* WeaponBase, int& OutIndex) const
 {
 	OutIndex = -1;
 	if (!IsValid(WeaponBase))
 		return false;
 
-	OutIndex=  OwnedWeapons.Find(WeaponBase);
+	OutIndex = OwnedWeapons.Find(WeaponBase);
 	return OwnedWeapons.Contains(WeaponBase);
+}
+
+bool USF_Equipment::GetWeaponBySlot(int Index, AWeaponBase*& OutWeaponBase) const
+{
+	OutWeaponBase = nullptr;
+	if (Index < 0 || Index >= OwnedWeapons.Num())
+		return false;
+
+	OutWeaponBase = OwnedWeapons[Index];
+	return true;
 }
 
 void USF_Equipment::AttachToParentMesh()
@@ -272,7 +273,7 @@ void USF_Equipment::AttachToParentMesh()
 	AttachToComponent(Parent,AttachRules,WeaponAttachmentSocket);
 }
 
-TArray<FName> USF_Equipment::GetWeaponAttachmentSocketOptions()
+TArray<FName> USF_Equipment::GetWeaponAttachmentSocketOptions() const
 {
 	USceneComponent* Parent =  GetAttachParent();
 	USkeletalMeshComponent* SkeletalMeshComponent = Cast<USkeletalMeshComponent>(Parent);
@@ -284,13 +285,10 @@ TArray<FName> USF_Equipment::GetWeaponAttachmentSocketOptions()
 		return TArray<FName>{"None"};
 	
 	TArray<FName> AllSocketNames{};
-	const TArray<USkeletalMeshSocket*> AllSockets=
-		SkeletalMeshComponent->GetSkeletalMeshAsset()->GetActiveSocketList();
+	const TArray<USkeletalMeshSocket*> AllSockets = SkeletalMeshComponent->GetSkeletalMeshAsset()->GetActiveSocketList();
 
 	for (int32 SocketIdx = 0; SocketIdx < AllSockets.Num(); ++SocketIdx)
-	{
 		AllSocketNames.Add(AllSockets[SocketIdx]->SocketName);
-	}
 	
 	return AllSocketNames;
 }

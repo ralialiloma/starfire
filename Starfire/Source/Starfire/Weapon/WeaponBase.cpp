@@ -449,9 +449,7 @@ void AWeaponBase::StopReloading()
 {
 	GetWorld()->GetTimerManager().ClearTimer(ReloadTimer);
 	ReloadTimer.Invalidate();
-	UAnimMontage* ReloadMontage =  UWeaponAnimDataFunctions::GetAnimationMontage(
-		GetActiveConfig().GetAnimData(),
-		EWeaponAnimationMontageType::Reload);
+	UAnimMontage* ReloadMontage =  UWeaponAnimDataFunctions::GetAnimationMontage(GetActiveConfig().GetAnimData(), EWeaponAnimationMontageType::Reload);
 	StopMontage(ReloadMontage);
 }
 
