@@ -14,8 +14,8 @@ public class Starfire : ModuleRules
 			"CoreUObject", 
 			"Engine", 
 			"InputCore", 
-			"EnhancedInput" 
-			
+			"EnhancedInput" ,
+			"AIModule"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[]

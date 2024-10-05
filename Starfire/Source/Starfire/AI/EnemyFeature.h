@@ -3,10 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Starfire/Utility/BetterObject.h"
 #include "EnemyFeature.generated.h"
 
-class AEnemyAI;
+class ASf_NPCharacter;
 
 UCLASS(Blueprintable)
 class STARFIRE_API UEnemyFeature : public UBetterObject
@@ -22,19 +23,27 @@ public:
 
 protected:
 	UPROPERTY(Blueprintable, BlueprintReadWrite)
-	AEnemyAI* OwningAIHolder = nullptr;
-
+	ASf_NPCharacter* OwningAIHolder = nullptr;
 
 public:
-	void Initialize(AEnemyAI* Holder);
-	
-	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "AIDeviations")
-	FVector CalculatePositionDeviation(FVector Position, float Accuracy);
+	void Initialize(ASf_NPCharacter* Holder);
 
-	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "AIDeviations")
-	FRotator CalculateRotationDeviation(FRotator Rotation, float Accuracy);
+	UFUNCTION(BlueprintCallable, Category = "Blackboard|Setters")
+	void SetBlackboardFloatValue(EFloatBlackboardKey FloatBlackboardKey, float Value);
 
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "AIDeviations")
-	float CalculateDeviationValue(float ValuetoDeviateFrom, float Accuracy);
+	// For Int Blackboard Keys
+	UFUNCTION(BlueprintCallable, Category = "Blackboard|Setters")
+	void SetBlackboardIntValue(EIntBlackboardKey IntBlackboardKey, int32 Value);
+
+	// For Bool Blackboard Keys
+	UFUNCTION(BlueprintCallable, Category = "Blackboard|Setters")
+	void SetBlackboardBoolValue(EBoolBlackboardKey BoolBlackboardKey, bool Value);
+
+	// For Actor Blackboard Keys
+	UFUNCTION(BlueprintCallable, Category = "Blackboard|Setters")
+	void SetBlackboardActorValue(EActorBlackboardKey ActorBlackboardKey, AActor* Value);
+
+	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "Character")
+	UCharacterMovementComponent* GetCharacterMovement();
 	
 };

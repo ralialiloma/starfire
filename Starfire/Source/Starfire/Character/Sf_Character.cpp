@@ -15,7 +15,7 @@
 #include "Starfire/Utility/ConfigLoader.h"
 #include "UObject/UnrealTypePrivate.h"
 
-DEFINE_LOG_CATEGORY_STATIC(SF_Character, Display, Display);
+DEFINE_LOG_CATEGORY_STATIC(SF_Character_Log , Display, Display);
 
 FReply ASf_Character::OnSaveButtonClicked()
 {
@@ -162,11 +162,6 @@ void ASf_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 UAnimInstance* ASf_Character::GetCharacterAnimInstance_Implementation() const
 {
 	return FirstPersonMesh->GetAnimInstance();
-}
-
-UCameraComponent* ASf_Character::GetCamera_Implementation() const
-{
-	return FirstPersonCamera;
 }
 
 FTransform ASf_Character::GetFireTransform_Implementation() const

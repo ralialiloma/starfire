@@ -6,7 +6,7 @@
 #include "BaseStateFeatureDefinition.h"
 #include "ECallIInput.h"
 #include "Starfire/Utility/DebugSubsystem.h"
-#include "Starfire/Utility/FunctionLibrary.h"
+#include "Starfire/Utility/Sf_FunctionLibrary.h"
 
 DEFINE_LOG_CATEGORY_STATIC(SF_BaseStateFeature, Log, All);
 
@@ -39,7 +39,7 @@ void UBaseStateFeature::RunAction(ECallInput CallInput, const FStateModuleDataSt
 		return;
 	}
 	
-	const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("ECallInput"), true);
+	const UEnum* EnumPtr = FindObject<UEnum>(UEnum::StaticClass(), TEXT("ECallInput"), true);
 	if (!EnumPtr)
 	{
 		UE_LOG(SF_BaseStateFeature, Warning, TEXT("Enum not found for CallInput"));
@@ -62,7 +62,7 @@ void UBaseStateFeature::GetSupportedInputActions(TArray<UInputAction*> &OutSuppo
 void UBaseStateFeature::ImportFeatureDefinition(FSoftObjectPath BaseStateFeatureDefDT)
 {
 	TArray<FBaseStateFeatureDefintion> FeatureDefintions = 
-		UFunctionLibrary::GetRowDataFromDT<FBaseStateFeatureDefintion>(BaseStateFeatureDefDT);
+		USf_FunctionLibrary::GetRowDataFromDT<FBaseStateFeatureDefintion>(BaseStateFeatureDefDT);
 
 	for (FBaseStateFeatureDefintion Defintion: FeatureDefintions)
 	{

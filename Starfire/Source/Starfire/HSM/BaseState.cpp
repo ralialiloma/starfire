@@ -2,7 +2,7 @@
 
 
 #include "BaseState.h"
-#include "Starfire/Utility/FunctionLibrary.h"
+#include "Starfire/Utility/Sf_FunctionLibrary.h"
 #include "StateCallstack.h"
 #include "Kismet/KismetSystemLibrary.h"
 
@@ -64,7 +64,7 @@ void UBaseState::CreateFeatures(const FSoftObjectPath& StateDefintionDT)
 void UBaseState::ImportStateDefinition(const FSoftObjectPath& StateDefintionDT)
 {
 	TArray<FStateDefinition> StateDefinitions =
-		UFunctionLibrary::GetRowDataFromDT<FStateDefinition>(StateDefintionDT);
+		USf_FunctionLibrary::GetRowDataFromDT<FStateDefinition>(StateDefintionDT);
 	
 	for (const FStateDefinition Definition:StateDefinitions)
 	{

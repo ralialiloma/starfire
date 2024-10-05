@@ -8,8 +8,9 @@
 #include "UObject/UnrealType.h"
 #include "Engine/DataTable.h"
 #include "UObject/SoftObjectPath.h"
+#include "Starfire/Character/Sf_Character.h"
 #include "Engine/EngineTypes.h" 
-#include "FunctionLibrary.generated.h"
+#include "Sf_FunctionLibrary.generated.h"
 
 #pragma region Enums
 
@@ -21,9 +22,11 @@ enum  ESuccessState
 };
 #pragma endregion
 
+class ASf_Character;
 
+DECLARE_LOG_CATEGORY_CLASS(Sf_FunctionLibrary_Log,Log, Log);
 UCLASS()
-class STARFIRE_API UFunctionLibrary : public UBlueprintFunctionLibrary
+class STARFIRE_API USf_FunctionLibrary : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 
@@ -33,6 +36,20 @@ class STARFIRE_API UFunctionLibrary : public UBlueprintFunctionLibrary
 
 	template<typename EnumType>
 	static TArray<EnumType> GetAllEnumValues(bool ExcludeZero = false);
+	template<typename EnumType>
+	static FString GetEnumAsString(EnumType EnumValue);
+	template <class EnumType>
+	static FString GetEnumAsString(int32 EnumValue);
+	template <class EnumType>
+	static FName GetEnumAsName(EnumType EnumValue);
+	template <class EnumType>
+	static FName GetEnumAsName(int32 EnumValue);
+
+	UFUNCTION(BlueprintCallable,BlueprintPure, meta = (WorldContext = "WorldContext"))
+	static ASf_Character* GetSfPlayerpawn(const UObject* WorldContext);
+
+	UFUNCTION(BlueprintCallable,BlueprintPure, meta = (WorldContext = "WorldContext"))
+	static FVector GetPlayerLocation(const UObject* WorldContext);
 
 	template<typename RowType>
 	static TArray<RowType> GetRowDataFromDT(const FSoftObjectPath& DTPath);
@@ -72,11 +89,12 @@ class STARFIRE_API UFunctionLibrary : public UBlueprintFunctionLibrary
 
 	UFUNCTION(BlueprintCallable, Category="Collision", meta=(WorldContext="WorldContextObject", AutoCreateRefTerm="ActorsToIgnore", DisplayName="Box Overlap Components"))
 	static bool BetterBoxOverlapComponents(const UObject* WorldContextObject, const FVector BoxPos, const FRotator BoxRot, FVector Extent, const TArray<TEnumAsByte<EObjectTypeQuery> > & ObjectTypes, UClass* ComponentClassFilter, const TArray<AActor*>& ActorsToIgnore, TArray<class UPrimitiveComponent*>& OutComponents);
+	
 
 };
 
 template <typename EnumType>
-TArray<EnumType> UFunctionLibrary::GetAllEnumValues(bool ExcludeZero)
+TArray<EnumType> USf_FunctionLibrary::GetAllEnumValues(bool ExcludeZero)
 {
 	static_assert(TIsEnum<EnumType>::Value, "GetAllEnumValues can only be used with enum types!");
 	
@@ -103,8 +121,38 @@ TArray<EnumType> UFunctionLibrary::GetAllEnumValues(bool ExcludeZero)
 	return EnumValues;
 }
 
+template <typename EnumType>
+FString USf_FunctionLibrary::GetEnumAsString(EnumType EnumValue)
+{
+	static_assert(TIsEnum<EnumType>::Value, "GetEnumAsString can only be used with enum types!");
+	return  GetEnumAsName<EnumType>(EnumValue).ToString();
+}
+
+template <typename EnumType>
+FString USf_FunctionLibrary::GetEnumAsString(int32 EnumValue)
+{
+	static_assert(TIsEnum<EnumType>::Value, "GetEnumAsString can only be used with enum types!");
+	return  GetEnumAsName<EnumType>(EnumValue).ToString();
+}
+
+template <typename EnumType>
+FName USf_FunctionLibrary::GetEnumAsName(EnumType EnumValue)
+{
+	static_assert(TIsEnum<EnumType>::Value, "GetEnumAsName can only be used with enum types!");
+	return  GetEnumAsName<EnumType>(static_cast<int32>(EnumValue));
+}
+
+template <typename EnumType>
+FName USf_FunctionLibrary::GetEnumAsName(int32 EnumValue)
+{
+	static_assert(TIsEnum<EnumType>::Value, "GetEnumAsName can only be used with enum types!");
+	const UEnum* EnumInfo = StaticEnum<EnumType>();
+	FName EnumName = EnumInfo->GetNameByValue(EnumValue);
+	return EnumName;
+}
+
 template <typename RowType>
-TArray<RowType> UFunctionLibrary::GetRowDataFromDT(const FSoftObjectPath& DTPath)
+TArray<RowType> USf_FunctionLibrary::GetRowDataFromDT(const FSoftObjectPath& DTPath)
 {
 	UObject* ResolvedUObject = DTPath.ResolveObject();
 	UDataTable* DataTable = static_cast<UDataTable*>(ResolvedUObject);
@@ -154,11 +202,11 @@ TArray<RowType> UFunctionLibrary::GetRowDataFromDT(const FSoftObjectPath& DTPath
 }
 
 template <typename EnumType, typename AssetType>
-void UFunctionLibrary::ValidateAndUpdateEnumMap(TMap<EnumType, AssetType>& AssetMap)
+void USf_FunctionLibrary::ValidateAndUpdateEnumMap(TMap<EnumType, AssetType>& AssetMap)
 {
 	static_assert(TIsEnum<EnumType>::Value, "ValidateAndUpdateEnumMap can only be used with enum types!");
 
-	TArray<EnumType> AssetTypes = UFunctionLibrary::GetAllEnumValues<EnumType>(true);
+	TArray<EnumType> AssetTypes = USf_FunctionLibrary::GetAllEnumValues<EnumType>(true);
 
 	// Import New Enums
 	for (EnumType Type : AssetTypes)
@@ -190,14 +238,14 @@ void UFunctionLibrary::ValidateAndUpdateEnumMap(TMap<EnumType, AssetType>& Asset
 }
 
 template <typename EnumType, typename AssetType>
-void UFunctionLibrary::ValidateAndUpdateEnumMap(
+void USf_FunctionLibrary::ValidateAndUpdateEnumMap(
 	TMap<TEnumAsByte<EnumType>, AssetType>& AssetMap,
 	const TArray<TEnumAsByte<EnumType>>& ExcludedValues)
 {
 	static_assert(TIsEnum<EnumType>::Value, "ValidateAndUpdateEnumMap can only be used with enum types!");
 
 	// Get all enum values
-	TArray<EnumType> AssetTypes = UFunctionLibrary::GetAllEnumValues<EnumType>(true);
+	TArray<EnumType> AssetTypes = USf_FunctionLibrary::GetAllEnumValues<EnumType>(true);
 	const UEnum* EnumInfo = StaticEnum<EnumType>();
 
 	// Import New Enums, excluding specified values

@@ -15,7 +15,7 @@ class USF_Equipment;
 class USF_CharacterMovementComponent;
 class UBoxComponent;
 
-UCLASS(Config = Game)
+UCLASS(Config = Game,BlueprintType)
 class STARFIRE_API ASf_Character : public ACharacter, public IWeaponOwner
 {
 	GENERATED_BODY()
@@ -97,8 +97,6 @@ public:
 	//IWeaponOwner
 public:
 	virtual UAnimInstance* GetCharacterAnimInstance_Implementation() const override;
-	
-	virtual UCameraComponent* GetCamera_Implementation() const override;
 	
 	virtual FTransform GetFireTransform_Implementation() const override;
 	

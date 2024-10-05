@@ -95,7 +95,7 @@ void AWeaponBase::FireTraces(FHitResult& OutHitResult)
 		//Debug
 		EDrawDebugTrace::Type DebugType =
 			UDebugSubsystem::GetWeaponDebug(Visual) ? EDrawDebugTrace::ForDuration : EDrawDebugTrace::None;
-		FColor TraceColor = UFunctionLibrary::BoolToColor(bIsAiming);
+		FColor TraceColor = USf_FunctionLibrary::BoolToColor(bIsAiming);
 
 		//Ignore
 		TArray<AActor*> ActorsToIgnore = TArray<AActor*>{WeaponHolder};
@@ -211,7 +211,7 @@ void AWeaponBase::MeleeTraces()
 
 	TArray<AActor*> FoundActors{};
 	TArray<AActor*> IgnoredActors{this,WeaponHolder};
-	UFunctionLibrary::BetterBoxOverlapActors(
+	USf_FunctionLibrary::BetterBoxOverlapActors(
 		this,
 		MeleeInfo.Location,
 		MeleeInfo.Rotation,
@@ -481,6 +481,11 @@ bool AWeaponBase::CanMelee()
 int AWeaponBase::GetAmmoCount()
 {
 	return CurrentClip;
+}
+
+FTransform AWeaponBase::GetMuzzleTransform()
+{
+	return SkeletalMesh->GetRelativeTransform();
 }
 
 void AWeaponBase::OnEquip(AActor* NewHolder)
