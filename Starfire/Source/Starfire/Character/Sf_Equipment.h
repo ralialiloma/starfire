@@ -59,9 +59,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool IsReloading() const;
 	UFUNCTION(BlueprintCallable)
-	bool IsMeleeOnCooldown() const;
+	bool IsOnMeleeCooldown() const;
 	UFUNCTION(BlueprintCallable)
-	bool IsFireOnCooldown() const;
+	bool IsOnFireCooldown() const;
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool CanMelee() const;
 

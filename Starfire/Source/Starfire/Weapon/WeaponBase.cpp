@@ -43,16 +43,15 @@ AWeaponBase::AWeaponBase(const FObjectInitializer& ObjectInitializer)
 void AWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
-	ActiveConfig = InitialConfig;
-	CurrentClip = ActiveConfig.MaxClipSize; 
+	
+	CurrentClip = WeaponConfig.MaxClipSize; 
 }
 
 void AWeaponBase::PostInitProperties()
 {
 	Super::PostInitProperties();
-
-	ActiveConfig = InitialConfig;
-	CurrentClip = ActiveConfig.MaxClipSize; 
+	
+	CurrentClip = WeaponConfig.MaxClipSize; 
 }
 
 void AWeaponBase::Tick(float DeltaTime)
@@ -78,14 +77,14 @@ bool AWeaponBase::Fire(const EInputSignalType InputSignal,
 
 void AWeaponBase::FireTraces(FHitResult& OutHitResult)
 {
-	int BulletsPerShot = ActiveConfig.BulletsPerShot;
+	int BulletsPerShot = WeaponConfig.BulletsPerShot;
 	if (BulletsPerShot <= 0)
 	{
-		UE_LOG(SF_Weapon, Warning, TEXT("Invalid BulletsPerShot value: %d"), ActiveConfig.BulletsPerShot);
+		UE_LOG(SF_Weapon, Warning, TEXT("Invalid BulletsPerShot value: %d"), WeaponConfig.BulletsPerShot);
 		return;
 	}
 
-	const FTransform FireTransform = IWeaponOwner::Execute_GetFireTransform(WeaponHolder); 
+	const FTransform FireTransform = IWeaponOwner::Execute_GetFireTransform(WeaponOwner); 
 	for (int i= 0; i<BulletsPerShot;i++)
 	{
 		//Trace Points
@@ -98,7 +97,7 @@ void AWeaponBase::FireTraces(FHitResult& OutHitResult)
 		FColor TraceColor = USf_FunctionLibrary::BoolToColor(bIsAiming);
 
 		//Ignore
-		TArray<AActor*> ActorsToIgnore = TArray<AActor*>{WeaponHolder};
+		TArray<AActor*> ActorsToIgnore = TArray<AActor*>{WeaponOwner};
 		
 
 		//Line Trace
@@ -106,7 +105,7 @@ void AWeaponBase::FireTraces(FHitResult& OutHitResult)
 			this,
 			Start,
 			End,
-			ActiveConfig.TraceTypeQuery,
+			WeaponConfig.TraceTypeQuery,
 			false,
 			ActorsToIgnore,
 			DebugType,
@@ -127,7 +126,7 @@ void AWeaponBase::FireTraces(FHitResult& OutHitResult)
 			continue;
 
 		DamageReceiver->ApplyDamage(
-			ActiveConfig.Damage,
+			WeaponConfig.Damage,
 			OutHitResult.Location,
 			OutHitResult.Normal,
 			OutHitResult.Component.Get());
@@ -138,18 +137,11 @@ void AWeaponBase::FireTraces(FHitResult& OutHitResult)
 
 float AWeaponBase::PlayMontage(EWeaponAnimationMontageType MontageType)
 {
-	UAnimMontage* MontageToPlay =
-		UWeaponAnimDataFunctions::GetAnimationMontage(
-			ActiveConfig.GetAnimData(),
-			MontageType);
+	UAnimMontage* MontageToPlay = UWeaponAnimDataFunctions::GetAnimationMontage(WeaponConfig.GetAnimData(),	MontageType);
 
 	if (!IsValid(MontageToPlay))
 	{
-		UE_LOG(
-			SF_Weapon,
-			Warning,
-			TEXT("Missing Weapon Montage For %s"),
-			*UEnum::GetValueAsString(MontageType));
+		UE_LOG(SF_Weapon, Warning, TEXT("Missing Weapon Montage For %s"), *UEnum::GetValueAsString(MontageType));
 		return 0;
 	}
 	
@@ -166,11 +158,15 @@ void AWeaponBase::StopAiming()
 	bIsAiming = false;
 }
 
+void AWeaponBase::AimDownSight(float Alpha)
+{
+}
+
 void AWeaponBase::DoMelee()
 {
 	PlayMontage(EWeaponAnimationMontageType::Melee);
 
-	float CurrentMeleeDelay = ActiveConfig.MeleeDelay;
+	float CurrentMeleeDelay = WeaponConfig.MeleeDelay;
 	if (CurrentMeleeDelay>0)
 	{
 		//Start Cooldown
@@ -184,14 +180,14 @@ void AWeaponBase::DoMelee()
 
 void AWeaponBase::MeleeTraces()
 {
-	if (!IsValid(WeaponHolder))
+	if (!IsValid(WeaponOwner))
 	{
 		UE_LOG(SF_Weapon, Warning, TEXT("Invalid Weapon Holder to stop get melee info from"))
 		return;
 	}
 
 	//Get Melee Info
-	FMeleeInfo MeleeInfo =  IWeaponOwner::Execute_GetMeleeInfo(WeaponHolder);
+	FMeleeInfo MeleeInfo =  IWeaponOwner::Execute_GetMeleeInfo(WeaponOwner);
 	
 	//Draw Debug
 	if(UDebugSubsystem::GetWeaponDebug(EDebugType::Visual))
@@ -210,7 +206,7 @@ void AWeaponBase::MeleeTraces()
 	}
 
 	TArray<AActor*> FoundActors{};
-	TArray<AActor*> IgnoredActors{this,WeaponHolder};
+	TArray<AActor*> IgnoredActors{this,WeaponOwner};
 	USf_FunctionLibrary::BetterBoxOverlapActors(
 		this,
 		MeleeInfo.Location,
@@ -251,9 +247,9 @@ void AWeaponBase::ApplyMelee(AActor* ActorToApplyOn, FVector Start, FVector End,
 		this,
 		Start,
 		End,
-		ActiveConfig.TraceTypeQuery,
+		WeaponConfig.TraceTypeQuery,
 		false,
-		TArray<AActor*>{this,WeaponHolder},
+		TArray<AActor*>{this,WeaponOwner},
 		UDebugSubsystem::GetWeaponDebug(EDebugType::Visual)?EDrawDebugTrace::Persistent:EDrawDebugTrace::None,
 		HitResult,
 		true,
@@ -262,7 +258,7 @@ void AWeaponBase::ApplyMelee(AActor* ActorToApplyOn, FVector Start, FVector End,
 
 	//Apply Damage
 	DamageReceiver->ApplyDamage(
-		GetActiveConfig().MeleeDamage,
+		GetWeaponConfig().MeleeDamage,
 		HitResult.Location,
 		HitResult.Normal,
 		HitResult.Component.Get());
@@ -270,7 +266,7 @@ void AWeaponBase::ApplyMelee(AActor* ActorToApplyOn, FVector Start, FVector End,
 
 void AWeaponBase::StopMontage(UAnimMontage* MontageToStop)
 {
-	if (!IsValid(WeaponHolder))
+	if (!IsValid(WeaponOwner))
 	{
 		UE_LOG(SF_Weapon, Warning, TEXT("Invalid Weapon Holder to stop montage on"))
 		return;
@@ -282,7 +278,7 @@ void AWeaponBase::StopMontage(UAnimMontage* MontageToStop)
 		return;
 	}
 
-	if (!WeaponHolder->Implements<UWeaponOwner>())
+	if (!WeaponOwner->Implements<UWeaponOwner>())
 	{
 		UE_LOG(SF_Weapon,
 				Warning,
@@ -291,7 +287,7 @@ void AWeaponBase::StopMontage(UAnimMontage* MontageToStop)
 		return;
 	}
 
-	UAnimInstance* AnimInstance =  IWeaponOwner::Execute_GetCharacterAnimInstance(WeaponHolder);
+	UAnimInstance* AnimInstance =  IWeaponOwner::Execute_GetCharacterAnimInstance(WeaponOwner);
 
 	if (!IsValid(AnimInstance))
 	{
@@ -303,20 +299,20 @@ void AWeaponBase::StopMontage(UAnimMontage* MontageToStop)
 	if (!AnimInstance->Montage_IsActive(MontageToStop))
 		return;
 
-	AnimInstance->Montage_Stop(GetActiveConfig().ReloatBlendOutTime,MontageToStop);
+	AnimInstance->Montage_Stop(GetWeaponConfig().ReloadBlendOutTime,MontageToStop);
 	
 	UE_LOG(
 		SF_Weapon,
 		Log,
 		TEXT("Stoping Montage %s on %s "),
 		*MontageToStop->GetName(),
-		*WeaponHolder->GetName());
+		*WeaponOwner->GetName());
 }
 
 
 float AWeaponBase::PlayMontage(UAnimMontage* MontageToPlay)
 {
-	if (!IsValid(WeaponHolder))
+	if (!IsValid(WeaponOwner))
 	{
 		UE_LOG(SF_Weapon, Warning, TEXT("Invalid Weapon Owner to play montage on"))
 		return 0;
@@ -328,7 +324,7 @@ float AWeaponBase::PlayMontage(UAnimMontage* MontageToPlay)
 		return 0;
 	}
 
-	if (!WeaponHolder->Implements<UWeaponOwner>())
+	if (!WeaponOwner->Implements<UWeaponOwner>())
 	{
 		UE_LOG(SF_Weapon,
 				Warning,
@@ -337,7 +333,7 @@ float AWeaponBase::PlayMontage(UAnimMontage* MontageToPlay)
 		return 0;
 	}
 
-	UAnimInstance* AnimInstance =  IWeaponOwner::Execute_GetCharacterAnimInstance(WeaponHolder);
+	UAnimInstance* AnimInstance =  IWeaponOwner::Execute_GetCharacterAnimInstance(WeaponOwner);
 
 	if (!IsValid(AnimInstance))
 	{
@@ -350,7 +346,7 @@ float AWeaponBase::PlayMontage(UAnimMontage* MontageToPlay)
 		Log,
 		TEXT("Playing Montage %s on %s "),
 		*MontageToPlay->GetName(),
-		*WeaponHolder->GetName());
+		*WeaponOwner->GetName());
 	
 	return AnimInstance->Montage_Play(
 		MontageToPlay,
@@ -364,12 +360,12 @@ float AWeaponBase::PlayMontage(UAnimMontage* MontageToPlay)
 void AWeaponBase::GetTracePoints(FTransform InFireTransform, FVector& OutStart, FVector& OutEnd)
 {
 	//Calculate Shot Angle
-	float ShotAngle = ActiveConfig.GetShotAngle(bIsAiming);
+	float ShotAngle = WeaponConfig.GetShotAngle(bIsAiming);
 	OutStart = InFireTransform.GetLocation();
 
 	//Calculate Start And End Points
 	UE::Math::TQuat<double> Rotation = InFireTransform.GetRotation();
-	FVector ForwardVector =  Rotation.GetForwardVector()*ActiveConfig.Range;
+	FVector ForwardVector =  Rotation.GetForwardVector()*WeaponConfig.Range;
 	FVector UpVector = Rotation.GetUpVector();
 	FVector ShotAngleVector = UKismetMathLibrary::RotateAngleAxis(ForwardVector,ShotAngle,UpVector);
 	float RandomAngle = UKismetMathLibrary::RandomFloatInRange(0,360);
@@ -382,15 +378,15 @@ void AWeaponBase::GetTracePoints(FTransform InFireTransform, FVector& OutStart, 
 bool AWeaponBase::CheckInputSignalType(EInputSignalType InputSignalType)
 {
 	uint8 InputSignalValue = static_cast<uint8>(InputSignalType);
-	return (ActiveConfig.AllowedInputSignals & InputSignalValue) == InputSignalValue;
+	return (WeaponConfig.AllowedInputSignals & InputSignalValue) == InputSignalValue;
 }
 
-bool AWeaponBase::IsInFireCooldown()
+bool AWeaponBase::IsOnFireCooldown()
 {
 	return GetWorld()->GetTimerManager().IsTimerActive(FireCooldown);
 }
 
-bool AWeaponBase::IsInMeleeCooldown()
+bool AWeaponBase::IsOnMeleeCooldown()
 {
 	return GetWorld()->GetTimerManager().IsTimerActive(MeleeCooldown);
 }
@@ -404,7 +400,7 @@ bool AWeaponBase::IsAiming()
 void AWeaponBase::DoFire(FHitResult& OutHitResult)
 {
 	//Start Fire Delay
-	float CurrentFireDelay = ActiveConfig.FireDelay;
+	float CurrentFireDelay = WeaponConfig.FireDelay;
 	if (CurrentFireDelay>0)
 	{
 		//Start Cooldown
@@ -414,7 +410,7 @@ void AWeaponBase::DoFire(FHitResult& OutHitResult)
 	}
 
 	//Reduce Clip
-	CurrentClip -= ActiveConfig.bInfiniteAmmo?0:1;
+	CurrentClip -= WeaponConfig.bInfiniteAmmo?0:1;
 
 	//Shoot Traces
 	FireTraces(OutHitResult);
@@ -434,7 +430,7 @@ bool AWeaponBase::Reload()
 	float MontageTime = PlayMontage(EWeaponAnimationMontageType::Reload);
 
 	FTimerDelegate TimerDel;
-	TimerDel.BindLambda([this]() -> void {CurrentClip = ActiveConfig.MaxClipSize;});
+	TimerDel.BindLambda([this]() -> void {CurrentClip = WeaponConfig.MaxClipSize;});
 	GetWorld()->GetTimerManager().SetTimer(ReloadTimer,TimerDel,MontageTime,false);
 
 	return true;
@@ -449,7 +445,7 @@ void AWeaponBase::StopReloading()
 {
 	GetWorld()->GetTimerManager().ClearTimer(ReloadTimer);
 	ReloadTimer.Invalidate();
-	UAnimMontage* ReloadMontage =  UWeaponAnimDataFunctions::GetAnimationMontage(GetActiveConfig().GetAnimData(), EWeaponAnimationMontageType::Reload);
+	UAnimMontage* ReloadMontage =  UWeaponAnimDataFunctions::GetAnimationMontage(GetWeaponConfig().GetAnimData(), EWeaponAnimationMontageType::Reload);
 	StopMontage(ReloadMontage);
 }
 
@@ -464,7 +460,7 @@ bool AWeaponBase::Melee()
 
 bool AWeaponBase::CanMelee()
 {
-	if (!IsValid(WeaponHolder))
+	if (!IsValid(WeaponOwner))
 		return false;
 	if(IsAiming())
 		return false;
@@ -476,20 +472,20 @@ bool AWeaponBase::CanMelee()
 	return true;
 }
 
-int AWeaponBase::GetAmmoCount()
+int AWeaponBase::GetAmmoCount() const
 {
 	return CurrentClip;
 }
 
-FTransform AWeaponBase::GetMuzzleTransform()
+FTransform AWeaponBase::GetMuzzleTransform() const
 {
 	return SkeletalMesh->GetRelativeTransform();
 }
 
 void AWeaponBase::OnEquip(AActor* NewHolder)
 {
-	SetWeapon(true);
-	WeaponHolder = NewHolder;
+	SetWeaponActive(true);
+	WeaponOwner = NewHolder;
 	PlayMontage(EWeaponAnimationMontageType::Equip);
 	UE_LOG(SF_Weapon, Log, TEXT("Equipped %s"),*GetClass()->GetName())
 }
@@ -497,7 +493,7 @@ void AWeaponBase::OnEquip(AActor* NewHolder)
 bool AWeaponBase::CanFire(EInputSignalType InputSignal, EFireType FireType,TEnumAsByte<EFireBlock>& OutBlock)
 {
 	//WeaponHolder
-	if (!IsValid(WeaponHolder))
+	if (!IsValid(WeaponOwner))
 	{
 		OutBlock = EFireBlock::Error;
 		UE_LOG(SF_Weapon, Error, TEXT("Invalid Weapon Holder"))
@@ -512,20 +508,20 @@ bool AWeaponBase::CanFire(EInputSignalType InputSignal, EFireType FireType,TEnum
 	}
 
 	//Clip
-	if (CurrentClip<=ActiveConfig.AmmoCost && !ActiveConfig.bInfiniteAmmo)
+	if (CurrentClip<=WeaponConfig.AmmoCost && !WeaponConfig.bInfiniteAmmo)
 	{
 		OutBlock = CurrentClip==0?EFireBlock::EmptyClip:EFireBlock::NotEnoughAmmo;
 		return false;
 	}
 
 	//Cooldown
-	if (IsInFireCooldown())
+	if (IsOnFireCooldown())
 	{
 		OutBlock = EFireBlock::FireCooldown;
 		return false;
 	}
 
-	if (IsInMeleeCooldown())
+	if (IsOnMeleeCooldown())
 	{
 		OutBlock = EFireBlock::MeleeCooldown;
 		return false;
@@ -535,12 +531,17 @@ bool AWeaponBase::CanFire(EInputSignalType InputSignal, EFireType FireType,TEnum
 	return true;
 }
 
-FWeaponConfig AWeaponBase::GetActiveConfig()
+FWeaponConfig AWeaponBase::GetWeaponConfig() const
 {
-	return  ActiveConfig;
+	return  WeaponConfig;
 }
 
-void AWeaponBase::SetWeapon(bool Active)
+AActor* AWeaponBase::GetWeaponOwner() const
+{
+	return WeaponOwner;
+}
+
+void AWeaponBase::SetWeaponActive(bool Active)
 {
 	SetActorEnableCollision(Active);
 	SetActorHiddenInGame(!Active);

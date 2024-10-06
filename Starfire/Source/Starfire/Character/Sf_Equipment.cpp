@@ -65,7 +65,7 @@ FWeaponAnimData USF_Equipment::GetEquippedAnimationData() const
 	if (!IsEquipped())
 		return FWeaponAnimData();
 
-	return EquippedWeapon->GetActiveConfig().GetAnimData();
+	return EquippedWeapon->GetWeaponConfig().GetAnimData();
 }
 
 AWeaponBase* USF_Equipment::GetActiveWeapon() const
@@ -159,12 +159,12 @@ bool USF_Equipment::IsReloading() const
 	return  EquippedWeapon->IsReloading();
 }
 
-bool USF_Equipment::IsMeleeOnCooldown() const
+bool USF_Equipment::IsOnMeleeCooldown() const
 {
 	if (!IsEquipped())
 		return false;
 
-	return EquippedWeapon->IsInMeleeCooldown();
+	return EquippedWeapon->IsOnMeleeCooldown();
 }
 
 bool USF_Equipment::Aim()
@@ -181,12 +181,12 @@ void USF_Equipment::StopAiming()
 	EquippedWeapon->StopAiming();
 }
 
-bool USF_Equipment::IsFireOnCooldown() const
+bool USF_Equipment::IsOnFireCooldown() const
 {
 	if (!IsEquipped())
 		return false;
 	
-	return EquippedWeapon->IsInFireCooldown();
+	return EquippedWeapon->IsOnFireCooldown();
 }
 
 bool USF_Equipment::Melee()
@@ -224,10 +224,10 @@ int USF_Equipment::GetCompressedFlags() const
 	int EquipmentFlags = 0;
 
 	USf_FunctionLibrary::SetBit(IsEquipped(),EquipmentFlags,EEquipmentFlags::EquipmentState_Equipped);
-	USf_FunctionLibrary::SetBit(IsFireOnCooldown(),EquipmentFlags,EEquipmentFlags::EquipmentState_FireCooldown);
+	USf_FunctionLibrary::SetBit(IsOnFireCooldown(),EquipmentFlags,EEquipmentFlags::EquipmentState_FireCooldown);
 	USf_FunctionLibrary::SetBit(IsAiming(),EquipmentFlags,EEquipmentFlags::EquipmentState_Aiming);
 	USf_FunctionLibrary::SetBit(IsReloading(),EquipmentFlags,EEquipmentFlags::EquipmentState_Reloading);
-	USf_FunctionLibrary::SetBit(IsMeleeOnCooldown(),EquipmentFlags,EEquipmentFlags::EquipmentState_MeleeCooldown);
+	USf_FunctionLibrary::SetBit(IsOnMeleeCooldown(),EquipmentFlags,EEquipmentFlags::EquipmentState_MeleeCooldown);
 
 	return EquipmentFlags;
 }
