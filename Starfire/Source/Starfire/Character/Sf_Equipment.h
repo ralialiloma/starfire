@@ -8,6 +8,7 @@
 #include "Starfire/Weapon/FireType.h"
 #include "Starfire/Weapon/WeaponBase.h"
 #include "Starfire/Utility/InputSignalType.h"
+#include "Starfire/Utility/NavigationDirectionType.h"
 #include "Sf_Equipment.generated.h"
 
 #pragma region Enums and Structs
@@ -27,6 +28,7 @@ ENUM_CLASS_FLAGS(EEquipmentFlags)
 
 #pragma region Delegates
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnEquipmentStateChange, int, PreviousState, int, UpdatedState);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnWeaponChange, AWeaponBase*, NewWeapon, AWeaponBase*, OldWeapon);
 #pragma endregion
 
 UCLASS(ClassGroup=(Character), meta=(BlueprintSpawnableComponent))
@@ -49,27 +51,43 @@ public:
 
 	//Gets
 	UFUNCTION(BlueprintCallable)
+	bool HasWeapon(AWeaponBase* WeaponBase) const;
+	UFUNCTION(BlueprintCallable, BlueprintPure)
 	AWeaponBase* GetActiveWeapon() const;
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	int GetActiveSlot() const;
+	UFUNCTION(BlueprintCallable, BlueprintPure)
 	FWeaponAnimData GetEquippedAnimationData() const;
-	UFUNCTION(BlueprintCallable,BlueprintPure)
+	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool IsEquipped() const;
-	UFUNCTION(BlueprintCallable,BlueprintPure)
+	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool IsAiming() const;
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool IsReloading() const;
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool IsOnMeleeCooldown() const;
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool IsOnFireCooldown() const;
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool CanMelee() const;
 
-	//New Weapons
+	//Weapon Management
 	UFUNCTION(BlueprintCallable)
-	void AddWeapon(AWeaponBase* WeaponToAdd, bool Equip, int& Index);
+	void AddWeapon(AWeaponBase* WeaponToAdd, bool Equip, int& Slot);
 	UFUNCTION(BlueprintCallable)
-	void AddWeaponByClass(TSubclassOf<AWeaponBase> ActorClass, bool Equip, int& Index);
+	void AddWeaponByClass(TSubclassOf<AWeaponBase> WeaponClassToAdd, bool Equip, int& Index);
+	UFUNCTION(BlueprintCallable)
+	bool RemoveWeapon(AWeaponBase* WeaponToRemove);
+	UFUNCTION(BlueprintCallable)
+	bool RemoveWeaponByClass(TSubclassOf<AWeaponBase> WeaponClassToRemove);
+	UFUNCTION(BlueprintCallable)
+	void CycleWeapons(ENavigationDirectionType Direction);
+	UFUNCTION(BlueprintCallable)
+	bool EquipWeaponByReference(AWeaponBase* Weapon);
+	UFUNCTION(BlueprintCallable)
+	bool EquipWeaponBySlot(int Slot);
+	UFUNCTION(BlueprintCallable)
+    bool UnequipWeapon(bool HideWeapon = true);
 
 	//Actions
 	UFUNCTION(BlueprintCallable)
@@ -94,19 +112,27 @@ public:
 	bool CheckFlagForState(EEquipmentFlags EquipmentFlag, int StateToCheck) const;
 
 protected:
-
+	
 	UFUNCTION(BlueprintCallable)
 	bool GetSlotByWeapon(AWeaponBase* WeaponBase, int& OutIndex) const;
 	UFUNCTION(BlueprintCallable)
 	bool GetWeaponBySlot(int Index, AWeaponBase*& OutWeaponBase) const;
+
+	UFUNCTION(BlueprintCallable)
+	void SetWeaponActive(AWeaponBase* Weapon, bool Active);
+	UFUNCTION(BlueprintCallable)
+	bool ActivateWeapon(AWeaponBase* Weapon);
 	
 #pragma endregion
 
 #pragma region Properties
 public:
 
-	UPROPERTY(BlueprintAssignable, Category = "Equipment|State")
+	UPROPERTY(BlueprintAssignable, Category = "Equipment|Events")
 	FOnEquipmentStateChange OnEquipmentFlagsChange;
+
+	UPROPERTY(BlueprintAssignable, Category = "Equipment|Events")
+	FOnWeaponChange OnWeaponChange;
 
 protected:
 

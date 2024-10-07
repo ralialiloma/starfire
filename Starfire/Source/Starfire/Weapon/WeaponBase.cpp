@@ -9,6 +9,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Misc/ConfigUtilities.h"
+#include "Starfire/Character/Sf_Equipment.h"
 #include "Starfire/DamageSystem/Sf_DamageReceiver.h"
 #include "Starfire/Utility/DebugSettings.h"
 #include "Starfire/Utility/DebugSubsystem.h"
@@ -37,7 +38,6 @@ AWeaponBase::AWeaponBase(const FObjectInitializer& ObjectInitializer)
 	SkeletalMesh->SetUsingAbsoluteLocation(false);
 	SkeletalMesh->SetUsingAbsoluteRotation(false);
 	SkeletalMesh->SetUsingAbsoluteScale(false);
-	
 }
 
 void AWeaponBase::BeginPlay()
@@ -54,17 +54,22 @@ void AWeaponBase::PostInitProperties()
 	CurrentClip = WeaponConfig.MaxClipSize; 
 }
 
-void AWeaponBase::Tick(float DeltaTime)
+void AWeaponBase::OnInteractStart_Implementation(UInteractComponent* InteractComponent, APawn* TriggeringPawn)
 {
-	Super::Tick(DeltaTime);
+	IPrimaryInteract::OnInteractStart_Implementation(InteractComponent, TriggeringPawn);
+
+	if (IsValid(TriggeringPawn))
+	{
+		if (USF_Equipment* EquipmentComponent = TriggeringPawn->GetComponentByClass<USF_Equipment>())
+		{
+			int Slot = 0;
+			EquipmentComponent->AddWeapon(this, true, Slot);
+		}
+	}
 }
 
-bool AWeaponBase::Fire(const EInputSignalType InputSignal,
-						EFireType FireType,
-						FHitResult& OutHitResult,
-						TEnumAsByte<EFireBlock>& OutFireBlock) 
+bool AWeaponBase::Fire(const EInputSignalType InputSignal, EFireType FireType, FHitResult& OutHitResult, TEnumAsByte<EFireBlock>& OutFireBlock) 
 {
-
 	StopReloading();
 	
 	if (!CanFire(InputSignal,FireType,OutFireBlock))
@@ -482,12 +487,29 @@ FTransform AWeaponBase::GetMuzzleTransform() const
 	return SkeletalMesh->GetRelativeTransform();
 }
 
-void AWeaponBase::OnEquip(AActor* NewHolder)
+void AWeaponBase::OnPickup(AActor* NewHolder)
 {
-	SetWeaponActive(true);
 	WeaponOwner = NewHolder;
+	SkeletalMesh->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
+	UE_LOG(SF_Weapon, Log, TEXT("Picked up %s"),*GetClass()->GetName())
+}
+
+void AWeaponBase::OnDrop()
+{
+	WeaponOwner = nullptr;
+	SkeletalMesh->SetCollisionEnabled(ECollisionEnabled::Type::QueryOnly);
+	UE_LOG(SF_Weapon, Log, TEXT("Dropped %s"),*GetClass()->GetName())
+}
+
+void AWeaponBase::OnEquip()
+{
 	PlayMontage(EWeaponAnimationMontageType::Equip);
 	UE_LOG(SF_Weapon, Log, TEXT("Equipped %s"),*GetClass()->GetName())
+}
+
+void AWeaponBase::OnUnequip()
+{
+	UE_LOG(SF_Weapon, Log, TEXT("Unequipped %s"),*GetClass()->GetName())
 }
 
 bool AWeaponBase::CanFire(EInputSignalType InputSignal, EFireType FireType,TEnumAsByte<EFireBlock>& OutBlock)

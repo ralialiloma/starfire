@@ -9,12 +9,13 @@
 #include "GameFramework/Actor.h"
 #include "Starfire/Utility/InputSignalType.h"
 #include "Starfire/Animation/WeaponAnimData.h"
+#include "Starfire/Interact/InteractInterfaces.h"
 #include "WeaponBase.generated.h"
 
 DEFINE_LOG_CATEGORY_STATIC(SF_Weapon, Display, Display);
 
 UCLASS(BlueprintType)
-class STARFIRE_API AWeaponBase : public AActor
+class STARFIRE_API AWeaponBase : public AActor, public IPrimaryInteract
 {
 	GENERATED_BODY()
 
@@ -24,7 +25,40 @@ public:
 	
 	virtual void BeginPlay() override;
 	virtual void PostInitProperties() override;
-	virtual void Tick(float DeltaTime) override;
+
+	virtual void OnInteractStart_Implementation(UInteractComponent* InteractComponent, APawn* TriggeringPawn) override;
+
+#pragma region Functions
+public:
+
+	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
+	int GetAmmoCount() const;
+	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
+	FTransform GetMuzzleTransform() const;
+	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
+	FWeaponConfig GetWeaponConfig() const;
+	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
+	AActor* GetWeaponOwner() const;
+	
+	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
+	void SetWeaponActive(bool Active);
+	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
+	void OnPickup(AActor* NewHolder);
+	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
+	void OnDrop();
+	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
+	void OnEquip();
+	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
+	void OnUnequip();
+
+protected:
+
+	//Animation
+	float PlayMontage(UAnimMontage* MontageToPlay);
+	float PlayMontage (EWeaponAnimationMontageType MontageType);
+	void StopMontage(UAnimMontage* MontageToStop);
+	
+#pragma endregion
 
 #pragma region Properties
 
@@ -67,32 +101,6 @@ private:
 
 #pragma endregion
 
-#pragma region Functions
-public:
-
-	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
-	int GetAmmoCount() const;
-	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
-	FTransform GetMuzzleTransform() const;
-	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
-	FWeaponConfig GetWeaponConfig() const;
-	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
-	AActor* GetWeaponOwner() const;
-	
-	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
-	void SetWeaponActive(bool Active);
-	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
-	void OnEquip(AActor* NewHolder);
-
-protected:
-
-	//Animation
-	float PlayMontage(UAnimMontage* MontageToPlay);
-	float PlayMontage (EWeaponAnimationMontageType MontageType);
-	void StopMontage(UAnimMontage* MontageToStop);
-	
-#pragma endregion
-
 #pragma region Fire
 public:
 
@@ -125,7 +133,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category="WeaponBase")
 	void StopReloading();
 	
-#pragma endregion
+#pragma endregion 
 
 #pragma region Aim
 public:
