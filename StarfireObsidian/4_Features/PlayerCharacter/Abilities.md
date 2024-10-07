@@ -1,4 +1,4 @@
-#🎮GameDesign #👾Tech
+#GameDesign🎮 #Tech👾 
 
 1. Look
 2. Jump

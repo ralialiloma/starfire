@@ -1,4 +1,4 @@
-#👾Tech 
+#Tech👾
 
 1. Player Character
 	1. Look
