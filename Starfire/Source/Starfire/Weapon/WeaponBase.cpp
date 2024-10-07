@@ -60,10 +60,10 @@ void AWeaponBase::OnInteractStart_Implementation(UInteractComponent* InteractCom
 
 	if (IsValid(TriggeringPawn))
 	{
-		if (USF_Equipment* EquipmentComponent = TriggeringPawn->GetComponentByClass<USF_Equipment>())
+		if (USF_Equipment* EquipmentComp = TriggeringPawn->GetComponentByClass<USF_Equipment>())
 		{
 			int Slot = 0;
-			EquipmentComponent->AddWeapon(this, true, Slot);
+			EquipmentComp->AddWeapon(this, true, Slot);
 		}
 	}
 }
