@@ -39,7 +39,7 @@ void UBaseStateFeature::RunAction(ECallInput CallInput, const FStateModuleDataSt
 		return;
 	}
 	
-	const UEnum* EnumPtr = FindObject<UEnum>(UEnum::StaticClass(), TEXT("ECallInput"), true);
+	const UEnum* EnumPtr = FindObject<UEnum>(UEnum::StaticClass(), TEXT("CallInput"), true);
 	if (!EnumPtr)
 	{
 		UE_LOG(SF_BaseStateFeature, Warning, TEXT("Enum not found for CallInput"));
