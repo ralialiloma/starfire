@@ -4,9 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "MeleeInfo.h"
-#include "Camera/CameraComponent.h"
+#include "Starfire/Animation/WeaponAnimMontageController.h"
 #include "UObject/Interface.h"
 #include "WeaponOwner.generated.h"
+
+
 
 // This class does not need to be modified.
 UINTERFACE()
@@ -23,6 +25,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "WeaponOwner")
 	UAnimInstance* GetCharacterAnimInstance() const;
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "WeaponOwner")
+	USf_WeaponAnimMontageController* GetAnimMontageController() const;
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "WeaponOwner")
 	FTransform GetFireTransform() const;

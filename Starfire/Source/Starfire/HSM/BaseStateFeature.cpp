@@ -39,16 +39,10 @@ void UBaseStateFeature::RunAction(ECallInput CallInput, const FStateModuleDataSt
 		return;
 	}
 	
-	const UEnum* EnumPtr = FindObject<UEnum>(UEnum::StaticClass(), TEXT("CallInput"), true);
-	if (!EnumPtr)
-	{
-		UE_LOG(SF_BaseStateFeature, Warning, TEXT("Enum not found for CallInput"));
-		return;
-	}
 
 	if (UDebugSubsystem::GetHSMDebug(EDebugType::Log))
 	{
-		FString CallInputString = EnumPtr->GetNameStringByValue(static_cast<int32>(CallInput));
+		FString CallInputString = USf_FunctionLibrary::GetEnumAsString<ECallInput>(CallInput);
 		UE_LOG(SF_BaseStateFeature, Log, TEXT("%s Feature: %s"), *CallInputString, *GetClass()->GetName());
 	}
 	

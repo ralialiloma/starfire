@@ -57,7 +57,9 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	int GetActiveSlot() const;
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	FWeaponAnimData GetEquippedAnimationData() const;
+	FWeaponAnimData_FP GetEquippedAnimationData_FP() const;
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	FWeaponAnimData_TP GetEquippedAnimationData_TP() const;
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool IsEquipped() const;
 	UFUNCTION(BlueprintCallable, BlueprintPure)

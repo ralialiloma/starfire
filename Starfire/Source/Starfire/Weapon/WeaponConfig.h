@@ -1,5 +1,6 @@
 ﻿#pragma once
-#include "Starfire/Animation/WeaponAnimData.h"
+#include "Starfire/Animation/AnimationData/FP/WeaponAnimData_FP.h"
+#include "Starfire/Animation/AnimationData/TP/WeaponAnimData_TP.h"
 #include "Starfire/Utility/InputSignalType.h"
 #include "WeaponConfig.generated.h"
 
@@ -13,12 +14,15 @@ public:
 	
 	FWeaponConfig();
 	
-	float GetShotAngle(bool bIsAiming);
+	float GetShotAngle(bool bIsAiming) const;
 	float GetAimAccuracy() const;
 	float GetAccuracy(bool bIsAiming) const;
 	float GetSpread(bool bIsAiming) const;
 	float GetAimSpread() const;
-	FWeaponAnimData GetAnimData() const;
+
+	FWeaponAnimData_FP GetAnimData_FP() const;
+
+	FWeaponAnimData_TP GetAnimData_TP() const;
 
 public:
 	
@@ -86,7 +90,11 @@ public:
 
 	//Animation
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Animation")
-	UWeaponAnimationAsset* WeaponAnimationAsset = nullptr;
+	UWeaponAnimationAsset_FP* WeaponAnimationAsset_FPS = nullptr;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Animation")
+	UWeaponAnimationAsset_TP* WeaponAnimationAsset_TP = nullptr;
+
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Animation")
 	FTransform AimOffset = FTransform();
 	

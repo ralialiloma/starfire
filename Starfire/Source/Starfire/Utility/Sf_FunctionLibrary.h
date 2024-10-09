@@ -212,7 +212,16 @@ void USf_FunctionLibrary::ValidateAndUpdateEnumMap(TMap<EnumType, AssetType>& As
 	for (EnumType Type : AssetTypes)
 	{
 		if (!AssetMap.Contains(Type))
-			AssetMap.Add(Type, nullptr);
+		{
+			if constexpr (TIsEnum<AssetType>::Value)
+			{
+				AssetMap.Add(Type, static_cast<AssetType>(0));
+			}
+			else
+			{
+				AssetMap.Add(Type, nullptr);
+			}
+		}
 	}
 
 	// Remove Empty Enum Entries (None)

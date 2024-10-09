@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 UENUM(Blueprintable)
-enum class EWeaponAnimationAssetType: uint8
+enum class EWeaponAnimationAssetType_FP: uint8
 {
 	None = 0 UMETA(Hidden),
 	Idle= 2 ,

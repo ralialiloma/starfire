@@ -7,10 +7,11 @@
 #include "FireType.h"
 #include "WeaponConfig.h"
 #include "GameFramework/Actor.h"
+#include "Starfire/Animation/WeaponMontageEventPackage.h"
 #include "Starfire/Utility/InputSignalType.h"
-#include "Starfire/Animation/WeaponAnimData.h"
 #include "Starfire/Interact/InteractInterfaces.h"
 #include "WeaponBase.generated.h"
+
 
 DEFINE_LOG_CATEGORY_STATIC(SF_Weapon, Display, Display);
 
@@ -54,9 +55,11 @@ public:
 protected:
 
 	//Animation
-	float PlayMontage(UAnimMontage* MontageToPlay);
-	float PlayMontage (EWeaponAnimationMontageType MontageType);
-	void StopMontage(UAnimMontage* MontageToStop);
+	//float PlayMontage(UAnimMontage* MontageToPlay) const;
+	//float PlayMontage (EWeaponAnimationMontageType_FP MontageType);
+	//void StopMontage(UAnimMontage* MontageToStop);
+	float ExecuteAnimationAndReturnAnimLength(EWeaponAnimationEventType WeaponAnimationEventType, bool bIsStarting = true) const;
+	void ExecuteAnimation(EWeaponAnimationEventType WeaponAnimationEventType, bool bIsStarting = true) const;
 	
 #pragma endregion
 
@@ -126,7 +129,7 @@ protected:
 public:
 
 	UFUNCTION(BlueprintCallable, Category="WeaponBase")
-	bool IsReloading();
+	bool IsReloading() const;
 
 	UFUNCTION(BlueprintCallable, Category="WeaponBase")
 	bool Reload();
@@ -145,10 +148,6 @@ public:
 	void AimDownSight();
 	UFUNCTION(BlueprintCallable, Category="WeaponBase")
 	void StopAiming();
-	
-protected:
-	
-	void AimDownSight(float Alpha);
 	
 #pragma endregion
 	

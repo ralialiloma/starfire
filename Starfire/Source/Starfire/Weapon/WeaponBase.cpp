@@ -8,11 +8,14 @@
 #include "WeaponOwner.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "Misc/ConfigUtilities.h"
+#include "Starfire/Animation/WeaponMontageEventPackage.h"
+#include "Starfire/Animation/WeaponAnimMontageController.h"
+#include "Starfire/Animation/AnimationData/WeaponAnimDataHelper.h"
 #include "Starfire/Character/Sf_Equipment.h"
 #include "Starfire/DamageSystem/Sf_DamageReceiver.h"
 #include "Starfire/Utility/DebugSettings.h"
 #include "Starfire/Utility/DebugSubsystem.h"
+#include "Starfire/Utility/Sf_FunctionLibrary.h"
 
 
 AWeaponBase::AWeaponBase(const FObjectInitializer& ObjectInitializer)
@@ -140,9 +143,9 @@ void AWeaponBase::FireTraces(FHitResult& OutHitResult)
 	}
 }
 
-float AWeaponBase::PlayMontage(EWeaponAnimationMontageType MontageType)
+/*float AWeaponBase::PlayMontage(EWeaponAnimationMontageType_FP MontageType)
 {
-	UAnimMontage* MontageToPlay = UWeaponAnimDataFunctions::GetAnimationMontage(WeaponConfig.GetAnimData(),	MontageType);
+	UAnimMontage* MontageToPlay = UWeaponAnimDataHelper::GetAnimationMontage_TP(WeaponConfig.GetAnimData_FP(),	MontageType);
 
 	if (!IsValid(MontageToPlay))
 	{
@@ -151,25 +154,25 @@ float AWeaponBase::PlayMontage(EWeaponAnimationMontageType MontageType)
 	}
 	
 	return PlayMontage(MontageToPlay);
-}
+}*/
 
 void AWeaponBase::AimDownSight()
 {
+	ExecuteAnimation(EWeaponAnimationEventType::Aim,true);
 	bIsAiming = true;
 }
 
 void AWeaponBase::StopAiming()
 {
+	ExecuteAnimation(EWeaponAnimationEventType::Aim,false);
 	bIsAiming = false;
 }
 
-void AWeaponBase::AimDownSight(float Alpha)
-{
-}
 
 void AWeaponBase::DoMelee()
 {
-	PlayMontage(EWeaponAnimationMontageType::Melee);
+	ExecuteAnimation(EWeaponAnimationEventType::Melee);
+	//PlayMontage(EWeaponAnimationMontageType_FP::Melee);
 
 	float CurrentMeleeDelay = WeaponConfig.MeleeDelay;
 	if (CurrentMeleeDelay>0)
@@ -224,11 +227,11 @@ void AWeaponBase::MeleeTraces()
 
 	for (AActor* FoundActor: FoundActors)
 	{
-		FVector Start = MeleeInfo.Location;
+		//FVector Start = MeleeInfo.Location;
 		FVector Origin;
 		FVector BoxExtent;
 		FoundActor->GetActorBounds(false,Origin,BoxExtent,true);
-		FVector End = MeleeInfo.Location*MeleeInfo.Direction*MeleeInfo.Extent*BoxExtent;
+		const FVector End = MeleeInfo.Location*MeleeInfo.Direction*MeleeInfo.Extent*BoxExtent;
 		ApplyMelee(FoundActor,MeleeInfo.Location,End, MeleeInfo.Direction);
 	}
 	
@@ -269,96 +272,42 @@ void AWeaponBase::ApplyMelee(AActor* ActorToApplyOn, FVector Start, FVector End,
 		HitResult.Component.Get());
 }
 
-void AWeaponBase::StopMontage(UAnimMontage* MontageToStop)
+
+float AWeaponBase::ExecuteAnimationAndReturnAnimLength(EWeaponAnimationEventType WeaponAnimationEventType, const bool bIsStarting) const
 {
+	TArray<UActorComponent*> Components;
+	GetComponents(Components);
+
 	if (!IsValid(WeaponOwner))
 	{
-		UE_LOG(SF_Weapon, Warning, TEXT("Invalid Weapon Holder to stop montage on"))
-		return;
+		UE_LOG(SF_Weapon, Warning, TEXT("Invalid Weapon Holder to get %s from"),*USf_WeaponAnimMontageController::StaticClass()->GetName())
+		return 0;
 	}
 	
-	if (!IsValid(MontageToStop))
+	USf_WeaponAnimMontageController* AnimMontageController =  IWeaponOwner::Execute_GetAnimMontageController(WeaponOwner);
+
+	if (!IsValid(AnimMontageController))
 	{
-		UE_LOG(SF_Weapon, Warning, TEXT("Invalid Montage to stop"))
-		return;
+		UE_LOG(
+			SF_Weapon,
+			Warning,
+			TEXT("Invalid %s Weapon Holder to broadcast animation event on montage on"),
+			*USf_WeaponAnimMontageController::StaticClass()->GetName())
+		return 0;
 	}
 
-	if (!WeaponOwner->Implements<UWeaponOwner>())
-	{
-		UE_LOG(SF_Weapon,
-				Warning,
-				TEXT("Actor Requires %s interface to stop montage on "),
-			   *UWeaponOwner::StaticClass()->GetName())
-		return;
-	}
-
-	UAnimInstance* AnimInstance =  IWeaponOwner::Execute_GetCharacterAnimInstance(WeaponOwner);
-
-	if (!IsValid(AnimInstance))
-	{
-		UE_LOG(SF_Weapon, Warning, TEXT("Invalid AnimInstance To Stop Montage"))
-		return;
-	}
-
+	FWeaponMontageEventPackage WeaponAnimationUpdateData(
+		WeaponAnimationEventType,
+		bIsStarting,
+		GetWeaponConfig().GetAnimData_FP(),
+		GetWeaponConfig().GetAnimData_TP());
+	return AnimMontageController->RunAnimation(WeaponAnimationUpdateData);
 	
-	if (!AnimInstance->Montage_IsActive(MontageToStop))
-		return;
-
-	AnimInstance->Montage_Stop(GetWeaponConfig().ReloadBlendOutTime,MontageToStop);
-	
-	UE_LOG(
-		SF_Weapon,
-		Log,
-		TEXT("Stoping Montage %s on %s "),
-		*MontageToStop->GetName(),
-		*WeaponOwner->GetName());
 }
 
-
-float AWeaponBase::PlayMontage(UAnimMontage* MontageToPlay)
+void AWeaponBase::ExecuteAnimation(EWeaponAnimationEventType WeaponAnimationEventType, bool bIsStarting) const
 {
-	if (!IsValid(WeaponOwner))
-	{
-		UE_LOG(SF_Weapon, Warning, TEXT("Invalid Weapon Owner to play montage on"))
-		return 0;
-	}
-	
-	if (!IsValid(MontageToPlay))
-	{
-		UE_LOG(SF_Weapon, Warning, TEXT("Invalid Montage to play"))
-		return 0;
-	}
-
-	if (!WeaponOwner->Implements<UWeaponOwner>())
-	{
-		UE_LOG(SF_Weapon,
-				Warning,
-				TEXT("Actor Requires %s interface to play shoot montage"),
-			   *UWeaponOwner::StaticClass()->GetName())
-		return 0;
-	}
-
-	UAnimInstance* AnimInstance =  IWeaponOwner::Execute_GetCharacterAnimInstance(WeaponOwner);
-
-	if (!IsValid(AnimInstance))
-	{
-		UE_LOG(SF_Weapon, Warning, TEXT("Invalid AnimInstance"))
-		return 0;
-	}
-
-	UE_LOG(
-		SF_Weapon,
-		Log,
-		TEXT("Playing Montage %s on %s "),
-		*MontageToPlay->GetName(),
-		*WeaponOwner->GetName());
-	
-	return AnimInstance->Montage_Play(
-		MontageToPlay,
-		1
-		,EMontagePlayReturnType::MontageLength,
-		0,
-		true);
+	float Time = ExecuteAnimationAndReturnAnimLength(WeaponAnimationEventType,bIsStarting);
 }
 
 
@@ -423,7 +372,8 @@ void AWeaponBase::DoFire(FHitResult& OutHitResult)
 	//todo callshoot event
 
 	//Play Shoot Montage
-	PlayMontage(EWeaponAnimationMontageType::PrimaryFire);
+	ExecuteAnimation(EWeaponAnimationEventType::Fire);
+	//PlayMontage(EWeaponAnimationMontageType_FP::PrimaryFire);
 	
 }
 
@@ -432,7 +382,8 @@ bool AWeaponBase::Reload()
 	if (IsReloading())
 		return false;
 	
-	float MontageTime = PlayMontage(EWeaponAnimationMontageType::Reload);
+	//float MontageTime = PlayMontage(EWeaponAnimationMontageType_FP::Reload);
+	const float MontageTime = ExecuteAnimationAndReturnAnimLength(EWeaponAnimationEventType::Reload,true);
 
 	FTimerDelegate TimerDel;
 	TimerDel.BindLambda([this]() -> void {CurrentClip = WeaponConfig.MaxClipSize;});
@@ -441,17 +392,22 @@ bool AWeaponBase::Reload()
 	return true;
 }
 
-bool AWeaponBase::IsReloading()
+bool AWeaponBase::IsReloading() const
 {
 	return GetWorld()->GetTimerManager().IsTimerActive(ReloadTimer);
 }
 
 void AWeaponBase::StopReloading()
 {
+	if (!IsReloading())
+		return;
+	
 	GetWorld()->GetTimerManager().ClearTimer(ReloadTimer);
 	ReloadTimer.Invalidate();
-	UAnimMontage* ReloadMontage =  UWeaponAnimDataFunctions::GetAnimationMontage(GetWeaponConfig().GetAnimData(), EWeaponAnimationMontageType::Reload);
-	StopMontage(ReloadMontage);
+	
+	ExecuteAnimation(EWeaponAnimationEventType::Reload,false);
+	//UAnimMontage* ReloadMontage =  UWeaponAnimDataHelper::GetAnimationMontage_FP(GetWeaponConfig().GetAnimData_FP(), EWeaponAnimationMontageType_FP::Reload);
+	//StopMontage(ReloadMontage);
 }
 
 bool AWeaponBase::Melee()
@@ -503,7 +459,8 @@ void AWeaponBase::OnDrop()
 
 void AWeaponBase::OnEquip()
 {
-	PlayMontage(EWeaponAnimationMontageType::Equip);
+	const float MontageTime = ExecuteAnimationAndReturnAnimLength(EWeaponAnimationEventType::Equip,true);
+	//PlayMontage(EWeaponAnimationMontageType_FP::Equip);
 	UE_LOG(SF_Weapon, Log, TEXT("Equipped %s"),*GetClass()->GetName())
 }
 

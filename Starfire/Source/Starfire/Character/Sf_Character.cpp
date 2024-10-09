@@ -4,16 +4,15 @@
 #include "Sf_Character.h"
 
 #include "Sf_Equipment.h"
+#include "WeaponAnimMontageController_FP.h"
 #include "Camera/CameraComponent.h"
 #include "Components/BoxComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "Kismet/KismetStringLibrary.h"
 #include "Movement/SF_CharacterMovementComponent.h"
 #include "Starfire/HSM/SF_CharacterStateMachine.h"
 #include "Starfire/Interact/InteractComponent.h"
 #include "Starfire/Utility/ConfigLoader.h"
-#include "UObject/UnrealTypePrivate.h"
 
 DEFINE_LOG_CATEGORY_STATIC(SF_Character_Log , Display, Display);
 
@@ -68,8 +67,7 @@ ASf_Character::ASf_Character(const FObjectInitializer& ObjectInitializer)
 	SFEquipmentComponent->SetUsingAbsoluteRotation(false);
 	SFEquipmentComponent->SetUsingAbsoluteScale(false);
 	SFEquipmentComponent->SetupAttachment(FirstPersonMesh,TEXT("GripPoint"));
-
-
+	
 	//Weapon Transform
 	MeleeTransform = CreateDefaultSubobject<UBoxComponent>(TEXT("Melee Transform"));
 	MeleeTransform->SetUsingAbsoluteLocation(false);
@@ -81,9 +79,6 @@ ASf_Character::ASf_Character(const FObjectInitializer& ObjectInitializer)
 	MeleeTransform->ShapeColor = FColor::Purple;
 	MeleeTransform->SetLineThickness(1.0f);
 
-	////MeleeTransform->SetUsingAbsoluteRotation(false);
-	//MeleeTransform->SetUsingAbsoluteScale(false);
-
 	//Interact
 	InteractComponent = CreateDefaultSubobject<UInteractComponent>(TEXT("Interact"));
 	InteractComponent->SetupAttachment(RootComponent);
@@ -92,7 +87,8 @@ ASf_Character::ASf_Character(const FObjectInitializer& ObjectInitializer)
 	SFCharacterStateMachine =
 		CreateDefaultSubobject<USf_CharacterStateMachine>(TEXT("StateMachine"));
 
-	//FConfigLoader::LoadConfigFile<ASf_Character>(this,"SF_CharacterDefault");
+	//Weapon Animation Receiver
+	WeaponAnimMontageController = CreateDefaultSubobject<USf_WeaponAnimMontageController_FP>(TEXT("WeaponAnimMontageController"));
 }
 
 void ASf_Character::PostInitProperties()
@@ -177,6 +173,11 @@ FMeleeInfo ASf_Character::GetMeleeInfo_Implementation() const
 	const FVector Direction = GetActorLocation()-Location;
 	const FMeleeInfo MeleeInfo = FMeleeInfo(Location,Extent,Rotation,Direction);
 	return MeleeInfo;
+}
+
+USf_WeaponAnimMontageController* ASf_Character::GetAnimMontageController_Implementation() const
+{
+	return WeaponAnimMontageController;
 }
 
 

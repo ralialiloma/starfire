@@ -3,7 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "WeaponAnimMontageController_FP.h"
 #include "GameFramework/Character.h"
+#include "Starfire/Animation/WeaponAnimMontageController.h"
 #include "Starfire/HSM/SF_CharacterStateMachine.h"
 #include "Starfire/Weapon/WeaponOwner.h"
 #include "Sf_Character.generated.h"
@@ -44,6 +46,10 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Weapon")
 	UBoxComponent* MeleeTransform;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Animation")
+	USf_WeaponAnimMontageController_FP* WeaponAnimMontageController;
+
 
 public:
 #pragma region Editor
@@ -101,4 +107,6 @@ public:
 	virtual FTransform GetFireTransform_Implementation() const override;
 	
 	virtual FMeleeInfo GetMeleeInfo_Implementation() const override;
+
+	virtual USf_WeaponAnimMontageController* GetAnimMontageController_Implementation() const override;
 };

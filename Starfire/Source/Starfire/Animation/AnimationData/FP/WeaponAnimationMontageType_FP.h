@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 UENUM(Blueprintable)
-enum class EWeaponAnimationMontageType: uint8
+enum class EWeaponAnimationMontageType_FP: uint8
 {
 	None = 0 UMETA(Hidden),
 	PrimaryFire = 1,

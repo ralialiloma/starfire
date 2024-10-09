@@ -9,7 +9,7 @@ FWeaponConfig::FWeaponConfig()
 {
 }
 
-float FWeaponConfig::GetShotAngle(bool bIsAiming)
+float FWeaponConfig::GetShotAngle(bool bIsAiming) const
 {
 	float CurrentAccuracy = GetAccuracy(bIsAiming);
 	float Randfloat = UKismetMathLibrary::RandomFloat();
@@ -39,12 +39,22 @@ float FWeaponConfig::GetAimSpread() const
 	return (bUseMultipliers?Spread*SpreadMultiplier:AimSpread)*SpreadMultiplier;
 }
 
-FWeaponAnimData FWeaponConfig::GetAnimData() const
+FWeaponAnimData_FP FWeaponConfig::GetAnimData_FP() const
 {
-	if (!IsValid(WeaponAnimationAsset))
+	if (!IsValid(WeaponAnimationAsset_FPS))
 	{
 		UE_LOG(WeaponConfig, Log, TEXT("Missing Animation Asset"))
-		return FWeaponAnimData();
+		return FWeaponAnimData_FP();
 	}
-	return WeaponAnimationAsset->WeaponAnimData;
+	return WeaponAnimationAsset_FPS->WeaponAnimData;
+}
+
+FWeaponAnimData_TP FWeaponConfig::GetAnimData_TP() const
+{
+	if (!IsValid(WeaponAnimationAsset_TP))
+	{
+		UE_LOG(WeaponConfig, Log, TEXT("Missing Animation Asset"))
+		return FWeaponAnimData_TP();
+	}
+	return WeaponAnimationAsset_TP->WeaponAnimData;
 }

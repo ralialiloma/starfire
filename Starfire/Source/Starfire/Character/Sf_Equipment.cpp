@@ -7,6 +7,7 @@
 #include "Starfire/Weapon/FireBlocks.h"
 #include "Starfire/Weapon/WeaponOwner.h"
 #include "Starfire/Utility/InputSignalType.h"
+#include "Starfire/Utility/Sf_FunctionLibrary.h"
 
 DEFINE_LOG_CATEGORY_STATIC(EquipmentComponent, Log, All);
 
@@ -67,12 +68,20 @@ bool USF_Equipment::IsAiming() const
 	return EquippedWeapon->IsAiming();
 }
 
-FWeaponAnimData USF_Equipment::GetEquippedAnimationData() const
+FWeaponAnimData_FP USF_Equipment::GetEquippedAnimationData_FP() const
 {
 	if (!IsEquipped())
-		return FWeaponAnimData();
+		return FWeaponAnimData_FP();
 
-	return EquippedWeapon->GetWeaponConfig().GetAnimData();
+	return EquippedWeapon->GetWeaponConfig().GetAnimData_FP();
+}
+
+FWeaponAnimData_TP USF_Equipment::GetEquippedAnimationData_TP() const
+{
+	if (!IsEquipped())
+		return FWeaponAnimData_TP();
+
+	return EquippedWeapon->GetWeaponConfig().GetAnimData_TP();
 }
 
 AWeaponBase* USF_Equipment::GetActiveWeapon() const
@@ -244,8 +253,8 @@ void USF_Equipment::StopReloading()
 {
 	if (!IsEquipped())
 		return;
-
-	return EquippedWeapon->StopReloading();
+	
+	EquippedWeapon->StopReloading();
 }
 
 bool USF_Equipment::IsReloading() const
@@ -275,6 +284,9 @@ bool USF_Equipment::Aim()
 
 void USF_Equipment::StopAiming()
 {
+	if (!IsEquipped())
+		return;
+	
 	EquippedWeapon->StopAiming();
 }
 

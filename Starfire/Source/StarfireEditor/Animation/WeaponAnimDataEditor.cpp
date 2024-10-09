@@ -2,9 +2,9 @@
 
 
 #include "WeaponAnimDataEditor.h"
-#include "Starfire/Animation/WeaponAnimationAssetType.h"
-#include "Starfire/Animation/WeaponAnimationMontageType.h"
-#include "Starfire/Animation/WeaponBlendSpaceType.h"
+#include "Starfire/Animation/AnimationData/FP/WeaponAnimationAssetType_FP.h"
+#include "Starfire/Animation/AnimationData/FP/WeaponAnimationMontageType_FP.h"
+#include "Starfire/Animation/AnimationData/FP/WeaponBlendSpaceType_FP.h"
 #include "StarfireEditor/Utility/EditorHelpers.h"
 #include "StarfireEditor/Utility/EnumMapEditorHelpers.h"
 
@@ -26,15 +26,15 @@ void FWeaponAnimDataEditor::CustomizeChildren(TSharedRef<IPropertyHandle> Proper
 
 	TSharedPtr<IPropertyHandle> AssetsHandle = PropertyHandle->GetChildHandle("AnimationAssets", false);
 	EditedProperties.Add(AssetsHandle);
-	EnumMapEditorHelpers::DisplayFixedEnumMap<EWeaponAnimationAssetType, UAnimSequenceBase*>(AssetsHandle, ChildBuilder);
+	EnumMapEditorHelpers::DisplayFixedEnumMap<EWeaponAnimationAssetType_FP, UAnimSequenceBase*>(AssetsHandle, ChildBuilder);
 
 	TSharedPtr<IPropertyHandle> MontagesHandle = PropertyHandle->GetChildHandle("AnimationMontages", false);
 	EditedProperties.Add(MontagesHandle);
-	EnumMapEditorHelpers::DisplayFixedEnumMap<EWeaponAnimationMontageType, UAnimMontage*>(MontagesHandle, ChildBuilder);
+	EnumMapEditorHelpers::DisplayFixedEnumMap<EWeaponAnimationMontageType_FP, UAnimMontage*>(MontagesHandle, ChildBuilder);
 
 	TSharedPtr<IPropertyHandle> BlendspacesHandle = PropertyHandle->GetChildHandle("Blendspaces", false);
 	EditedProperties.Add(BlendspacesHandle);
-	EnumMapEditorHelpers::DisplayFixedEnumMap<EWeaponBlendSpaceType, UBlendSpace*>(BlendspacesHandle, ChildBuilder);
+	EnumMapEditorHelpers::DisplayFixedEnumMap<EWeaponBlendSpaceType_FP, UBlendSpace*>(BlendspacesHandle, ChildBuilder);
 
 	EditorHelpers::DisplayDefaultChildren(PropertyHandle, ChildBuilder, EditedProperties);
 }
