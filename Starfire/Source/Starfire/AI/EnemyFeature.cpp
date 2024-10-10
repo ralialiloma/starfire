@@ -9,6 +9,7 @@
 void UEnemyFeature::Initialize(ASf_NPCharacter* Holder)
 {
 	this->OwningAIHolder = Holder;
+	this->OwningAIController = Cast<AAIController>(Holder->GetController());
 }
 
 void UEnemyFeature::SetBlackboardFloatValue(EFloatBlackboardKey FloatBlackboardKey, float Value)
@@ -35,8 +36,53 @@ void UEnemyFeature::SetBlackboardActorValue(EActorBlackboardKey ActorBlackboardK
 	UBlackboardKeyHelperLibrary::SetActorValue(BlackboardComponent,ActorBlackboardKey,Value);
 }
 
-UCharacterMovementComponent* UEnemyFeature::GetCharacterMovement()
+UCharacterMovementComponent* UEnemyFeature::GetOwningSfMovement()
 {
 	return OwningAIHolder->GetCharacterMovement();
+}
+
+USF_Equipment* UEnemyFeature::GetOwningSfEquipment()
+{
+	return OwningAIHolder->GetSfEquipment();
+}
+
+ASf_NPCharacter* UEnemyFeature::GetOwningCharacter()
+{
+	return OwningAIHolder;
+}
+
+AAIController* UEnemyFeature::GetOwningAIController()
+{
+	return OwningAIController;
+}
+
+FVector UEnemyFeature::GetOwnerLocation() const
+{
+	return GetOwnerTransform().GetLocation();
+}
+
+FRotator UEnemyFeature::GetOwnerRotation() const
+{
+	return GetOwnerTransform().GetRotation().Rotator();
+}
+
+AWeaponBase* UEnemyFeature::GetOwningCharacterActiveWeapon()
+{
+	return GetOwningSfEquipment()->GetActiveWeapon();
+}
+
+FCollisionQueryParams UEnemyFeature::GetIgnoreCharacterParams()
+{
+	return GetOwningCharacter()->GetIgnoreCharacterParams();
+}
+
+TArray<AActor*> UEnemyFeature::GetIgnoreActors() const
+{
+	return GetOwningCharacter()->GetIgnoreActors();
+}
+
+FTransform UEnemyFeature::GetOwnerTransform() const
+{
+	return OwningAIHolder->GetTransform();
 }
 
