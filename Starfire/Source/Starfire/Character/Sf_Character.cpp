@@ -46,12 +46,19 @@ ASf_Character::ASf_Character(const FObjectInitializer& ObjectInitializer)
 	SprintArmComponent->SetUsingAbsoluteScale(false);
 	SprintArmComponent->SetupAttachment(GetCapsuleComponent());
 
+	//ProceduralCameraAnimationRoot
+	ProceduralCameraAnimationRoot = CreateDefaultSubobject<USceneComponent>(TEXT("ProcCameraAnimRoot"));
+	ProceduralCameraAnimationRoot->SetUsingAbsoluteLocation(false);
+	ProceduralCameraAnimationRoot->SetUsingAbsoluteRotation(false);
+	ProceduralCameraAnimationRoot->SetUsingAbsoluteScale(false);
+	ProceduralCameraAnimationRoot->SetupAttachment(SprintArmComponent);
+
 	//FirstPersonCamera
 	FirstPersonCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FPCam"));
 	FirstPersonCamera->SetUsingAbsoluteLocation(false);
 	FirstPersonCamera->SetUsingAbsoluteRotation(false);
 	FirstPersonCamera->SetUsingAbsoluteScale(false);
-	FirstPersonCamera->SetupAttachment(SprintArmComponent);
+	FirstPersonCamera->SetupAttachment(ProceduralCameraAnimationRoot);
 
 	//First Person Person Character Mesh
 	FirstPersonMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("FPMesh"));

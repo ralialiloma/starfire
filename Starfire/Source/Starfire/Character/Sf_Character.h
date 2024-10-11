@@ -29,6 +29,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Weapon")
 	USF_Equipment* SFEquipmentComponent;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Camera")
+	USceneComponent* ProceduralCameraAnimationRoot;
+	
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Camera")
 	UCameraComponent* FirstPersonCamera;
 
