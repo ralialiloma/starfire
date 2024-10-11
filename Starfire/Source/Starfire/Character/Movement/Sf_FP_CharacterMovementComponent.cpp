@@ -1,19 +1,17 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "SF_CharacterMovementComponent.h"
+#include "Sf_FP_CharacterMovementComponent.h"
 
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/Character.h"
 #include "DrawDebugHelpers.h"
 #include "Starfire/Utility/DebugSubsystem.h"
 
-DEFINE_LOG_CATEGORY_STATIC(SF_CharacterMovement, Display, Display);
-
 #pragma region HelperMacros
 #if 1
 float MacroDuration = 20.f;
-#define PRINT(x)  if (UDebugSubsystem::GetMovementDebug(EDebugType::Print)) GEngine->AddOnScreenDebugMessage(-1, MacroDuration ? MacroDuration : -1.f, FColor::Yellow, x); if (UDebugSubsystem::GetMovementDebug(EDebugType::Log)) UE_LOG(SF_CharacterMovement, Log, TEXT("%s"), *x);
+#define PRINT(x)  if (UDebugSubsystem::GetMovementDebug(EDebugType::Print)) GEngine->AddOnScreenDebugMessage(-1, MacroDuration ? MacroDuration : -1.f, FColor::Yellow, x); if (UDebugSubsystem::GetMovementDebug(EDebugType::Log)) UE_LOG(SF_FP_CharacterMovement, Log, TEXT("%s"), *x);
 #define POINT(x, c) if (UDebugSubsystem::GetMovementDebug(EDebugType::Visual)) DrawDebugPoint(GetWorld(), x, 10, c, !MacroDuration, MacroDuration);
 #define LINE(x1, x2, c) if (UDebugSubsystem::GetMovementDebug(EDebugType::Visual)) DrawDebugLine(GetWorld(), x1, x2, c, !MacroDuration, MacroDuration);
 #define CAPSULE(x, c) if (UDebugSubsystem::GetMovementDebug(EDebugType::Visual)) DrawDebugCapsule(GetWorld(), x, CharacterOwner->GetCapsuleComponent()->GetScaledCapsuleHalfHeight(), CharacterOwner->GetCapsuleComponent()->GetScaledCapsuleRadius(), FQuat::Identity, c, !MacroDuration, MacroDuration);
@@ -25,12 +23,12 @@ float MacroDuration = 20.f;
 #endif
 #pragma endregion
 
-USF_CharacterMovementComponent::FSavedMove_Sf::FSavedMove_Sf(): Saved_bWantsToSprint(0), Saved_bWallRunIsRight(0)
+USf_FP_CharacterMovementComponent::FSavedMove_Sf::FSavedMove_Sf(): Saved_bWantsToSprint(0), Saved_bWallRunIsRight(0)
 {
 	
 }
 
-bool USF_CharacterMovementComponent::FSavedMove_Sf::CanCombineWith(const FSavedMovePtr& NewMove, ACharacter* InCharacter, float MaxDelta) const
+bool USf_FP_CharacterMovementComponent::FSavedMove_Sf::CanCombineWith(const FSavedMovePtr& NewMove, ACharacter* InCharacter, float MaxDelta) const
 {
 	const FSavedMove_Sf* NewSfMove = static_cast<FSavedMove_Sf*>(NewMove.Get());
 
@@ -43,7 +41,7 @@ bool USF_CharacterMovementComponent::FSavedMove_Sf::CanCombineWith(const FSavedM
 	return FSavedMove_Character::CanCombineWith(NewMove, InCharacter, MaxDelta);
 }
 
-void USF_CharacterMovementComponent::FSavedMove_Sf::Clear()
+void USf_FP_CharacterMovementComponent::FSavedMove_Sf::Clear()
 {
 	FSavedMove_Character::Clear();
 
@@ -51,34 +49,34 @@ void USF_CharacterMovementComponent::FSavedMove_Sf::Clear()
 	Saved_bWantsToSprint = 0;
 }
 
-void USF_CharacterMovementComponent::FSavedMove_Sf::SetMoveFor(ACharacter* C, float InDeltaTime, FVector const& NewAccel, FNetworkPredictionData_Client_Character& ClientData)
+void USf_FP_CharacterMovementComponent::FSavedMove_Sf::SetMoveFor(ACharacter* C, float InDeltaTime, FVector const& NewAccel, FNetworkPredictionData_Client_Character& ClientData)
 {
 	FSavedMove_Character::SetMoveFor(C, InDeltaTime, NewAccel, ClientData);
-	const USF_CharacterMovementComponent* CharacterMovementComponent =
-		Cast<USF_CharacterMovementComponent>(C->GetCharacterMovement());
+	const USf_FP_CharacterMovementComponent* CharacterMovementComponent =
+		Cast<USf_FP_CharacterMovementComponent>(C->GetCharacterMovement());
 
 	Saved_bWallRunIsRight = CharacterMovementComponent->Saved_bWallRunIsRight;
 	Saved_bWantsToSprint = CharacterMovementComponent->Safe_bWantsToSprint;
 	Saved_bCustomJump = CharacterMovementComponent->SfCharacterOwner->bCustomJumpPressed;
 }
 
-void USF_CharacterMovementComponent::FSavedMove_Sf::PrepMoveFor(ACharacter* C)
+void USf_FP_CharacterMovementComponent::FSavedMove_Sf::PrepMoveFor(ACharacter* C)
 {
 	FSavedMove_Character::PrepMoveFor(C);
-	USF_CharacterMovementComponent* CharacterMovementComponent =
-		Cast<USF_CharacterMovementComponent>(C->GetCharacterMovement());
+	USf_FP_CharacterMovementComponent* CharacterMovementComponent =
+		Cast<USf_FP_CharacterMovementComponent>(C->GetCharacterMovement());
 
 	CharacterMovementComponent->Saved_bWallRunIsRight = Saved_bWallRunIsRight;
 	CharacterMovementComponent->Safe_bWantsToSprint =  Saved_bWantsToSprint;
 	CharacterMovementComponent->SfCharacterOwner->bCustomJumpPressed = Saved_bCustomJump;
 }
 
-bool USF_CharacterMovementComponent::CanAttemptJump() const
+bool USf_FP_CharacterMovementComponent::CanAttemptJump() const
 {
 	return Super::CanAttemptJump() || IsWallRunning();
 }
 
-bool USF_CharacterMovementComponent::DoJump(bool bReplayingMoves)
+bool USf_FP_CharacterMovementComponent::DoJump(bool bReplayingMoves)
 {
 	bool bWasWallRunning = IsWallRunning();
 
@@ -104,7 +102,7 @@ bool USF_CharacterMovementComponent::DoJump(bool bReplayingMoves)
 	return false;
 }
 
-float USF_CharacterMovementComponent::GetMaxSpeed() const
+float USf_FP_CharacterMovementComponent::GetMaxSpeed() const
 {
 	if (MovementMode !=MOVE_Custom) return Super::GetMaxSpeed();
 	switch(CustomMovementMode)
@@ -112,12 +110,12 @@ float USF_CharacterMovementComponent::GetMaxSpeed() const
 		case CMOVE_WallRun:
 			return MaxWallRunSpeed;
 		default:
-				UE_LOG(LogTemp, Fatal, TEXT("Invalid Movement Mode"))
+				UE_LOG(SF_FP_CharacterMovement, Fatal, TEXT("Invalid Movement Mode"))
 				return -1.f;
 	}
 }
 
-float USF_CharacterMovementComponent::GetMaxBrakingDeceleration() const
+float USf_FP_CharacterMovementComponent::GetMaxBrakingDeceleration() const
 {
 	if (MovementMode !=MOVE_Custom) return Super::GetMaxBrakingDeceleration();
 
@@ -126,12 +124,12 @@ float USF_CharacterMovementComponent::GetMaxBrakingDeceleration() const
 		case CMOVE_WallRun:
 			return 0.f ;
 		default:
-			UE_LOG(LogTemp, Fatal, TEXT("Invalid Movement Mode"))
+			UE_LOG(SF_FP_CharacterMovement, Fatal, TEXT("Invalid Movement Mode"))
 			return -1.f;
 	}
 }
 
-void USF_CharacterMovementComponent::UpdateCharacterStateBeforeMovement(float DeltaSeconds)
+void USf_FP_CharacterMovementComponent::UpdateCharacterStateBeforeMovement(float DeltaSeconds)
 {
 	if (IsFalling())
 	{
@@ -159,14 +157,14 @@ void USF_CharacterMovementComponent::UpdateCharacterStateBeforeMovement(float De
 	Super::UpdateCharacterStateBeforeMovement(DeltaSeconds);
 }
 
-void USF_CharacterMovementComponent::UpdateCharacterStateAfterMovement(float DeltaSeconds)
+void USf_FP_CharacterMovementComponent::UpdateCharacterStateAfterMovement(float DeltaSeconds)
 {
 	Super::UpdateCharacterStateAfterMovement(DeltaSeconds);
 
 	//TODO: Maybe fill out
 }
 
-void USF_CharacterMovementComponent::OnMovementUpdated(float DeltaSeconds, const FVector& OldLocation,const FVector& OldVelocity)
+void USf_FP_CharacterMovementComponent::OnMovementUpdated(float DeltaSeconds, const FVector& OldLocation,const FVector& OldVelocity)
 {
 	Super::OnMovementUpdated(DeltaSeconds, OldLocation, OldVelocity);
 
@@ -183,7 +181,7 @@ void USF_CharacterMovementComponent::OnMovementUpdated(float DeltaSeconds, const
 	}
 }
 
-void USF_CharacterMovementComponent::PhysCustom(const float DeltaTime, const int32 Iterations)
+void USf_FP_CharacterMovementComponent::PhysCustom(const float DeltaTime, const int32 Iterations)
 {
 	Super::PhysCustom(DeltaTime, Iterations);
 	
@@ -196,11 +194,11 @@ void USF_CharacterMovementComponent::PhysCustom(const float DeltaTime, const int
 			PhysMantle(DeltaTime, Iterations);
 			break;
 		default:
-			UE_LOG(LogTemp, Fatal, TEXT("Invalid Movement Mode"))
+			UE_LOG(SF_FP_CharacterMovement, Fatal, TEXT("Invalid Movement Mode"))
 	}
 }
 
-void USF_CharacterMovementComponent::SetMovementMode(EMovementMode NewMovementMode, uint8 NewCustomMode)
+void USf_FP_CharacterMovementComponent::SetMovementMode(EMovementMode NewMovementMode, uint8 NewCustomMode)
 {
 	if (MovementMode != NewMovementMode || CustomMovementMode != NewCustomMode)
 	{
@@ -213,33 +211,28 @@ void USF_CharacterMovementComponent::SetMovementMode(EMovementMode NewMovementMo
 }
 
 
-bool USF_CharacterMovementComponent::IsCustomMovementMode(ECustomMovementMode InCustomMovementMode) const
+bool USf_FP_CharacterMovementComponent::IsCustomMovementMode(ECustomMovementMode InCustomMovementMode) const
 {
 	return MovementMode == MOVE_Custom && CustomMovementMode == InCustomMovementMode;
 }
 
-bool USF_CharacterMovementComponent::IsMovementMode(EMovementMode InMovementMode) const
-{
-	return MovementMode == InMovementMode;
-}
-
-void USF_CharacterMovementComponent::InitializeComponent()
+void USf_FP_CharacterMovementComponent::InitializeComponent()
 {
 	Super::InitializeComponent();
 	SfCharacterOwner = Cast<ASf_Character>(CharacterOwner);
 }
 
-bool USF_CharacterMovementComponent::CanSprint()
+bool USf_FP_CharacterMovementComponent::CanSprint()
 {
 	return IsMovementMode(MOVE_Walking) && !IsFalling() && !IsCustomMovementMode(CMOVE_WallRun);
 }
 
-bool USF_CharacterMovementComponent::IsSprinting()
+bool USf_FP_CharacterMovementComponent::IsSprinting()
 {
 	return Safe_bWantsToSprint;
 }
 
-void USF_CharacterMovementComponent::SprintPressed()
+void USf_FP_CharacterMovementComponent::SprintPressed()
 {
 	if (!CanSprint())
 		return;
@@ -248,7 +241,7 @@ void USF_CharacterMovementComponent::SprintPressed()
 	OnSprintChange.Broadcast(true);
 }
 
-void USF_CharacterMovementComponent::SprintReleased()
+void USf_FP_CharacterMovementComponent::SprintReleased()
 {
 	if(!Safe_bWantsToSprint)
 		return;
@@ -257,27 +250,17 @@ void USF_CharacterMovementComponent::SprintReleased()
 	OnSprintChange.Broadcast(false);
 }
 
-ECustomMovementMode USF_CharacterMovementComponent::GetCustomMovementMode() const
+ECustomMovementMode USf_FP_CharacterMovementComponent::GetCustomMovementMode() const
 {
 	return static_cast<ECustomMovementMode>(CustomMovementMode);
 }
 
-float USF_CharacterMovementComponent::CapRadius() const
-{
-	return CharacterOwner->GetCapsuleComponent()->GetScaledCapsuleRadius();
-}
-
-float USF_CharacterMovementComponent::CapHalfHeight() const
-{
-	return CharacterOwner->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
-}
-
-void USF_CharacterMovementComponent::Crouch(bool bClientSimulation)
+void USf_FP_CharacterMovementComponent::Crouch(bool bClientSimulation)
 {
 	Super::Crouch(bClientSimulation);
 }
 
-bool USF_CharacterMovementComponent::TryWallRun()
+bool USf_FP_CharacterMovementComponent::TryWallRun()
 {
 	//Check Falling
 	if (!IsFalling())
@@ -326,7 +309,7 @@ bool USF_CharacterMovementComponent::TryWallRun()
 	return true;
 }
 
-void USF_CharacterMovementComponent::PhysWallRun(float deltaTime, int32 Iterations)
+void USf_FP_CharacterMovementComponent::PhysWallRun(float deltaTime, int32 Iterations)
 {
 	if (deltaTime<MIN_TICK_TIME)
 	{
@@ -347,7 +330,7 @@ void USF_CharacterMovementComponent::PhysWallRun(float deltaTime, int32 Iteratio
 
 	if (!IsValid(WallRunGravityScaleCurve))
 	{
-		UE_LOG(SF_CharacterMovement, Error, TEXT("Missing WallRunGravityScaleCurve"))
+		UE_LOG(SF_FP_CharacterMovement, Error, TEXT("Missing WallRunGravityScaleCurve"))
 		Acceleration = FVector::ZeroVector;
 		Velocity = FVector::ZeroVector;
 		return;
@@ -440,7 +423,7 @@ void USF_CharacterMovementComponent::PhysWallRun(float deltaTime, int32 Iteratio
 	
 }
 
-bool USF_CharacterMovementComponent::TryMantle()
+bool USf_FP_CharacterMovementComponent::TryMantle()
 {
 	if (!(IsMovementMode(MOVE_Walking) && !IsCrouching() || IsMovementMode(MOVE_Falling)))
 	{
@@ -473,7 +456,7 @@ bool USF_CharacterMovementComponent::TryMantle()
 		LINE(FrontStart, FrontStart + MantleForward * CheckDistance, FColor::Red)
 		if (GetWorld()->LineTraceSingleByProfile(FrontHit, FrontStart, FrontStart + MantleForward * CheckDistance, "BlockAll", Params))
 			break;
-		FrontStart += FVector::UpVector * (2.f * CapsuleHalfHeight() - AdditiveBottomOffset) / 5;
+		FrontStart += FVector::UpVector * (2.f * CapHalfHeight() - AdditiveBottomOffset) / 5;
 	}
 	if (!FrontHit.IsValidBlockingHit())
 		return false;
@@ -515,8 +498,13 @@ bool USF_CharacterMovementComponent::TryMantle()
 	// Check Clearance
 	float SurfaceCos = FVector::UpVector | SurfaceHit.Normal;
 	float SurfaceSin = FMath::Sqrt(1 - SurfaceCos * SurfaceCos);
-	MantleTargetLocation = SurfaceHit.Location + MantleForward * CapsuleRadius() + FVector::UpVector * (CapsuleHalfHeight() + 1 + CapsuleRadius() * 2 * SurfaceSin);
-	FCollisionShape CapShape = FCollisionShape::MakeCapsule(CapsuleRadius(), CapsuleHalfHeight());
+	MantleTargetLocation =
+		SurfaceHit.Location
+		+ MantleForward * CapRadius()
+		+ FVector::UpVector* (CapHalfHeight()
+		+ 1
+		+ CapRadius() * 2 * SurfaceSin);
+	FCollisionShape CapShape = FCollisionShape::MakeCapsule(CapRadius(), CapHalfHeight());
 	if (GetWorld()->OverlapAnyTestByProfile(MantleTargetLocation, FQuat::Identity, "BlockAll", CapShape, Params))
 	{
 		CAPSULE(MantleTargetLocation, FColor::Red)
@@ -531,7 +519,7 @@ bool USF_CharacterMovementComponent::TryMantle()
 	return true;
 }
 
-void USF_CharacterMovementComponent::PhysMantle(float deltaTime, int32 Iterations)
+void USf_FP_CharacterMovementComponent::PhysMantle(float deltaTime, int32 Iterations)
 {
 	FVector Direction = (MantleTargetLocation - MantleOriginLocation);
 	FVector Movement = MantleStartingVelocity.ProjectOnTo(Direction);
@@ -540,7 +528,7 @@ void USF_CharacterMovementComponent::PhysMantle(float deltaTime, int32 Iteration
 	
 	if (!MantleCurve)
 	{
-		UE_LOG(LogTemp, Error, TEXT("No Mantle curve found"));
+		UE_LOG(SF_FP_CharacterMovement, Error, TEXT("No Mantle curve found"));
 		CharacterOwner->SetActorLocation(FMath::Lerp(MantleOriginLocation, MantleTargetLocation, Alpha));
 	}
 	else
@@ -572,14 +560,4 @@ void USF_CharacterMovementComponent::PhysMantle(float deltaTime, int32 Iteration
 	}
 	
 	ElapsedMantleTime += deltaTime;
-}
-
-float USF_CharacterMovementComponent::CapsuleRadius() const
-{
-	return CharacterOwner->GetCapsuleComponent()->GetScaledCapsuleRadius();
-}
-
-float USF_CharacterMovementComponent::CapsuleHalfHeight() const
-{
-	return CharacterOwner->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
 }

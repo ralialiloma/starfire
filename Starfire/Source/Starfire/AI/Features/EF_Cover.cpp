@@ -2,21 +2,55 @@
 
 #include "Kismet/KismetStringLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Starfire/AI/Sf_NPCharacter.h"
 #include "Starfire/Utility/DebugSubsystem.h"
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
 
 bool UEF_Cover::EnterCover()
 {
-	if (bIsInCover)
+	if (bIsInCoverState)
+	{
 		return true;
+	}
+	
+	if (CanBeHitByPlayer(MinCoverHeight))
+	{
+		bIsInCoverState = false;
+		return false;
+	}
+		
+	if (CanBeHitByPlayer(MaxCrouchCoverHeight+0.001f))
+	{
+		GetOwningCharacter()->Crouch();
+		bIsInCoverState = true;
+		return true;
+	}
 
-	if ()
+	bIsInCoverState = true;
+	return true;
 }
 
-bool UEF_Cover::IsCovered() const
+bool UEF_Cover::ExitCover()
 {
-	FVector Start = GetOwnerLocation()+MinCoverHeight;
-	FVector End = USf_FunctionLibrary::GetPlayerLocation(this)+MinCoverHeight;
+	GetOwningCharacter()->UnCrouch();
+	bIsInCoverState = false;
+	return true;
+}
+
+bool UEF_Cover::CanBeHitByPlayer() const
+{
+	return CanBeHitByPlayer(MinCoverHeight);
+}
+
+bool UEF_Cover::IsInCoverState() const
+{
+	return bIsInCoverState;
+}
+
+bool UEF_Cover::CanBeHitByPlayer(float HeightOffset) const
+{
+	FVector Start = GetOwnerLocation()+HeightOffset;
+	FVector End = USf_FunctionLibrary::GetPlayerLocation(this)+HeightOffset;
 	FHitResult HitResult;
 	TArray<AActor*> ActorsToIgnore{};
 	bool ShowDebug = UDebugSubsystem::GetAIDebug(EDebugType::Visual);
@@ -46,6 +80,5 @@ bool UEF_Cover::IsCovered() const
 	if (!HitActor->IsA(ASf_Character::StaticClass()))
 		return true;
 
-	return true;
-		
+	return false;
 }

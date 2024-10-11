@@ -5,17 +5,14 @@
 #include "CoreMinimal.h"
 #include "BaseState.h"
 #include "ECallIInput.h"
-#include "Starfire/Utility/BetterObject.h"
 #include "InputAction.h"
 #include "StateCallstack.generated.h"
-
-
 
 /**
  * 
  */
 UCLASS(Blueprintable,ClassGroup=(StateMachine))
-class STARFIRE_API UStateCallstack : public UBetterObject
+class STARFIRE_API UStateCallstack : public USf_Object
 {
 	GENERATED_BODY()
 

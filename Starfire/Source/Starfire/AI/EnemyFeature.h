@@ -8,13 +8,13 @@
 #include "Starfire/Character/Sf_Equipment.h"
 #include "CollisionQueryParams.h"
 #include "CoreMinimal.h"
-#include "Starfire/Utility/BetterObject.h"
+#include "Starfire/Sf_Bases/Sf_Object.h"
 #include "EnemyFeature.generated.h"
 
 class ASf_NPCharacter;
 
 UCLASS(Blueprintable)
-class STARFIRE_API UEnemyFeature : public UBetterObject
+class STARFIRE_API UEnemyFeature : public USf_Object
 {
 	GENERATED_BODY()
 

@@ -78,7 +78,7 @@ FCollisionQueryParams UEnemyFeature::GetIgnoreCharacterParams()
 
 TArray<AActor*> UEnemyFeature::GetIgnoreActors() const
 {
-	return GetOwningCharacter()->GetIgnoreActors();
+	return OwningAIHolder->GetIgnoreActors();
 }
 
 FTransform UEnemyFeature::GetOwnerTransform() const

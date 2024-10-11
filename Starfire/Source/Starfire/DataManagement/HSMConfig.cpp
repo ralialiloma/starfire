@@ -1,6 +1,7 @@
 ﻿#include "HSMConfig.h"
 
-#include "Starfire/Character/Movement/SF_CharacterMovementComponent.h"
+#include "Starfire/Character/Movement/Sf_FP_CharacterMovementComponent.h"
+#include "Starfire/Utility/Sf_FunctionLibrary.h"
 
 FHSMConfig::FHSMConfig()
 {
