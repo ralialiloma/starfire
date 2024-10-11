@@ -327,6 +327,17 @@ bool USF_Equipment::CanMelee() const
 	return EquippedWeapon->CanMelee();
 }
 
+FWeaponConfig USF_Equipment::GetWeaponConfig()
+{
+	if (!IsEquipped())
+	{
+		UE_LOG(EquipmentComponent, Error, TEXT("Cannot get config because no weapon is equipped"))
+		FWeaponConfig();
+	}
+
+	return  GetActiveWeapon()->GetWeaponConfig();
+}
+
 
 int USF_Equipment::GetCompressedFlags() const
 {

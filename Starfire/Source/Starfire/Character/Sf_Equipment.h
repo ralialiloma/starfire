@@ -72,6 +72,8 @@ public:
 	bool IsOnFireCooldown() const;
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool CanMelee() const;
+	UFUNCTION(BlueprintCallable,BlueprintPure)
+	FWeaponConfig GetWeaponConfig();
 
 	//Weapon Management
 	UFUNCTION(BlueprintCallable)
