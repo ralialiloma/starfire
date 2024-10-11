@@ -135,3 +135,25 @@ FMeleeInfo ASf_NPCharacter::GetMeleeInfo_Implementation() const
 	return MeleeInfo;
 }
 
+FCollisionQueryParams ASf_NPCharacter::GetIgnoreCharacterParams()
+{
+	FCollisionQueryParams Params;
+
+	TArray<AActor*> CharacterChildren;
+	GetAllChildActors(CharacterChildren);
+	Params.AddIgnoredActors(CharacterChildren);
+	Params.AddIgnoredActor(this);
+	Params.AddIgnoredActor(GetSfEquipment()->GetActiveWeapon());
+
+	return Params;
+}
+
+TArray<AActor*> ASf_NPCharacter::GetIgnoreActors()
+{
+	TArray<AActor*> IgnoreActors{this};
+	AWeaponBase* ActiveWapon = GetSfEquipment()->GetActiveWeapon();
+	if (IsValid(ActiveWapon))
+		IgnoreActors.Add(ActiveWapon);
+	return IgnoreActors;
+}
+

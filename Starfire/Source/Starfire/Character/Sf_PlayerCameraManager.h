@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Camera/PlayerCameraManager.h"
-#include "Movement/SF_CharacterMovementComponent.h"
+#include "Movement/Sf_FP_CharacterMovementComponent.h"
 #include "Sf_PlayerCameraManager.generated.h"
 
 /**
@@ -38,7 +38,7 @@ public:
 	virtual void ProcessViewRotation(float DeltaTime, FRotator& OutViewRotation, FRotator& OutDeltaRot) override;
 
 private:
-	float ProcessWallRunRollOverwrite(USF_CharacterMovementComponent* SfCharacterMovementComponent,
+	float ProcessWallRunRollOverwrite(USf_FP_CharacterMovementComponent* SfCharacterMovementComponent,
 	                               ASf_Character* SfCharacter, float DeltaTime);
 
 };

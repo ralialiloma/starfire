@@ -45,6 +45,10 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	USF_Equipment* GetSfEquipment();
 
+		//Collision
+	FCollisionQueryParams GetIgnoreCharacterParams();
+	TArray<AActor*> GetIgnoreActors();
+
 		//Behaviour
 
 	//Actor

@@ -14,7 +14,7 @@ class UInteractComponent;
 class USpringArmComponent;
 class UCameraComponent;
 class USF_Equipment;
-class USF_CharacterMovementComponent;
+class USf_FP_CharacterMovementComponent;
 class UBoxComponent;
 
 UCLASS(Config = Game,BlueprintType)
@@ -24,7 +24,7 @@ class STARFIRE_API ASf_Character : public ACharacter, public IWeaponOwner
 
 protected:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Movement")
-	USF_CharacterMovementComponent* SFCharacterMovementComponent;
+	USf_FP_CharacterMovementComponent* SFCharacterMovementComponent;
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Weapon")
 	USF_Equipment* SFEquipmentComponent;
@@ -71,7 +71,7 @@ public:
 	FCollisionQueryParams GetIgnoreCharacterParams();
 
 	UFUNCTION(BlueprintPure,Category = "Character")
-	FORCEINLINE USF_CharacterMovementComponent* GetSfCharacterMovementComponent() const{return SFCharacterMovementComponent;};
+	FORCEINLINE USf_FP_CharacterMovementComponent* GetSfCharacterMovementComponent() const{return SFCharacterMovementComponent;};
 
 	UFUNCTION(BlueprintPure,Category = "Character")
 	FORCEINLINE UCameraComponent* GetFirstPersonCamera() const{return FirstPersonCamera;};

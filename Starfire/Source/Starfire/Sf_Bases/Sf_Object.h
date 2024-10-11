@@ -4,32 +4,33 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include "BetterObject.generated.h"
+#include "Sf_Object.generated.h"
 
 /**
  * 
  */
 UCLASS(Blueprintable, Abstract)
-class STARFIRE_API UBetterObject : public UObject
+class STARFIRE_API USf_Object : public UObject
 {
 	GENERATED_BODY()
-	
-	//UObject interface implementation
+public:
 	virtual UWorld* GetWorld() const override;
-
+	virtual void PostInitProperties() override;
+	
+#pragma region Functions
+public:
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	AActor* GetOwningActor() const;
 
 	UFUNCTION(BlueprintCallable)
 	void DestroyObject();
-	
 protected:
-
-	//Custom Construct and Destroy Event
 	UFUNCTION(BlueprintImplementableEvent, Category = "Core")
 	void OnConstruct();
 	UFUNCTION(BlueprintImplementableEvent, Category = "Core")
 	void OnDestroyed();
+#pragma endregion
+	
 
-	virtual void PostInitProperties() override;
+
 };
