@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "EnemyFeature.h"
+#include "WeaponAnimMontageController_TP.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/Character.h"
 #include "Starfire/Character/Sf_Equipment.h"
-#include "Starfire/DamageSystem/Sf_DamageReceiver.h"
+#include "Starfire/DamageSystem/Sf_DamageController.h"
 #include "Starfire/Weapon/WeaponOwner.h"
 #include "Sf_NPCharacter.generated.h"
 
@@ -22,13 +23,19 @@ public:
 
 protected:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Damage")
-	USf_DamageReceiver* SfDamageReceiver;
+	USf_DamageController* SfDamageReceiver;
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Weapon")
 	USF_Equipment* SfEquipmentComponent;
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Weapon")
 	UBoxComponent* MeleeTransform;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Animation")
+	USf_WeaponAnimMontageController_TP* WeaponAnimMontageController;
+	
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Damage")
+	USf_DamageController* DamageController;
 
 	//Interface
 public:
@@ -41,7 +48,7 @@ public:
 
 		//Components
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	USf_DamageReceiver* GetSfDamageReceiver();
+	USf_DamageController* GetSfDamageReceiver();
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	USF_Equipment* GetSfEquipment();
 
@@ -54,6 +61,7 @@ public:
 	//Actor
 public:
 	ASf_NPCharacter();
+	virtual void PreInitializeComponents() override;
 	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
@@ -76,4 +84,6 @@ public:
 	virtual FTransform GetFireTransform_Implementation() const override;
 	
 	virtual FMeleeInfo GetMeleeInfo_Implementation() const override;
+
+	virtual USf_WeaponAnimMontageController* GetAnimMontageController_Implementation() const override;
 };

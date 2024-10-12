@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Sf_DamageReceiver.h"
+#include "Sf_DamageController.h"
 
-USf_DamageReceiver::USf_DamageReceiver()
+USf_DamageController::USf_DamageController()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 	MaxHealth = 100;
@@ -11,25 +11,25 @@ USf_DamageReceiver::USf_DamageReceiver()
 }
 
 
-void USf_DamageReceiver::BeginPlay()
+void USf_DamageController::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
-void USf_DamageReceiver::InitializeComponent()
+void USf_DamageController::InitializeComponent()
 {
 	Super::InitializeComponent();
 	CurrentHealth = MaxHealth;
 	CurrentArmor = MaxArmor;
 }
 
-void USf_DamageReceiver::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void USf_DamageController::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
 
-float USf_DamageReceiver::ApplyDamage(float Damage,FVector HitLocation, FVector HitNormal,UPrimitiveComponent* HitComponent)
+float USf_DamageController::ApplyDamage(float Damage,FVector HitLocation, FVector HitNormal,UPrimitiveComponent* HitComponent)
 {
 	if (CurrentHealth<=0)
 		return 0;
@@ -56,12 +56,12 @@ float USf_DamageReceiver::ApplyDamage(float Damage,FVector HitLocation, FVector 
 }
 
 
-float USf_DamageReceiver::GetCurrentHealth() const
+float USf_DamageController::GetCurrentHealth() const
 {
 	return CurrentHealth;
 }
 
-float USf_DamageReceiver::GetCurrentArmor() const
+float USf_DamageController::GetCurrentArmor() const
 {
 	return CurrentArmor;
 }

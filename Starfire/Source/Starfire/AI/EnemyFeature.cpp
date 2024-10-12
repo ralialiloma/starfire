@@ -8,8 +8,29 @@
 
 void UEnemyFeature::Initialize(ASf_NPCharacter* Holder)
 {
-	this->OwningAIHolder = Holder;
-	this->OwningAIController = Cast<AAIController>(Holder->GetController());
+	OwningAIHolder = Holder;
+	AController* Controller = Holder->GetController();
+
+	if (!IsValid(Controller))
+	{
+		UE_LOG(EnemyFeature, Error, TEXT("Invalid Controller"))
+		return;
+	}
+	
+	OwningAIController = Cast<AAIController>(Holder->GetController());
+	if (!IsValid(OwningAIController))
+	{
+		UE_LOG(
+			EnemyFeature,
+			Error,
+			TEXT("Invalid type. Needs to be AIController but its %s instead"),
+			*OwningAIController->GetClass()->GetName())
+		return;
+	}
+}
+
+void UEnemyFeature::OnTick()
+{
 }
 
 void UEnemyFeature::SetBlackboardFloatValue(EFloatBlackboardKey FloatBlackboardKey, float Value)

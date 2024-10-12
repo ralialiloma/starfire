@@ -13,7 +13,10 @@
 
 class ASf_NPCharacter;
 
-UCLASS(Blueprintable)
+DEFINE_LOG_CATEGORY_STATIC(EnemyFeature, Display, Display);
+
+
+UCLASS(BlueprintType,Blueprintable)
 class STARFIRE_API UEnemyFeature : public USf_Object
 {
 	GENERATED_BODY()
@@ -21,7 +24,8 @@ class STARFIRE_API UEnemyFeature : public USf_Object
 
 #pragma region Functions
 public:
-	void Initialize(ASf_NPCharacter* Holder);
+	virtual void Initialize(ASf_NPCharacter* Holder);
+	virtual void OnTick();
 protected:
 	UFUNCTION(BlueprintCallable, Category = "Blackboard|Setters")
 	void SetBlackboardFloatValue(EFloatBlackboardKey FloatBlackboardKey, float Value);
@@ -61,7 +65,7 @@ protected:
 #pragma region Properties
 public:
 	UPROPERTY(Blueprintable, BlueprintReadWrite)
-	bool RunInTick = false;
+	bool bRunInTick = false;
 
 	UPROPERTY(Blueprintable, BlueprintReadWrite)
 	float UpdateRateInSeconds = 1;

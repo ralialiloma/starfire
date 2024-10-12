@@ -8,6 +8,25 @@
 #include "Templates/SharedPointer.h"
 #include "AsyncUtility.generated.h"
 
+UCLASS()
+class USf_AsyncUtilityEventWaitHelper : public UObject
+{
+	GENERATED_BODY()
+
+public:
+	bool bEventTriggered;
+
+	USf_AsyncUtilityEventWaitHelper()
+		: bEventTriggered(false) {}
+
+	UFUNCTION()
+	void OnEventTriggered()
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, "Event Triggered");
+		bEventTriggered = true;
+	}
+	
+};
 
 /**
  * A utility class for handling asynchronous operations in Unreal Engine.
@@ -199,34 +218,16 @@ auto FAsyncUtility::WaitForFutures(
 	}
 }
 
-UCLASS()
-class UAsyncUtilityEventWaitHelper : public UObject
-{
-	GENERATED_BODY()
 
-public:
-	bool bEventTriggered;
-
-	UAsyncUtilityEventWaitHelper()
-		: bEventTriggered(false) {}
-
-	UFUNCTION()
-	void OnEventTriggered()
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, "Event Triggered");
-		bEventTriggered = true;
-	}
-	
-};
 template <class ThreadSafetyMode, typename ... VarTypes>
 void FAsyncUtility::WaitForEventBlocking(const TWeakObjectPtr<UObject>& WorldContextObject,
 	TBaseDynamicMulticastDelegate<ThreadSafetyMode, void, VarTypes...>& DelegateToWaitFor, float CheckInterval)
 {
 
-	const TFuture<UAsyncUtilityEventWaitHelper*> EventHelperCreation =
-		RunOnGameThread<UAsyncUtilityEventWaitHelper*>([&DelegateToWaitFor]() mutable  ->UAsyncUtilityEventWaitHelper* 
+	const TFuture<USf_AsyncUtilityEventWaitHelper*> EventHelperCreation =
+		RunOnGameThread<USf_AsyncUtilityEventWaitHelper*>([&DelegateToWaitFor]() mutable  ->USf_AsyncUtilityEventWaitHelper* 
 		{
-			UAsyncUtilityEventWaitHelper* EventWaitHelper = NewObject<UAsyncUtilityEventWaitHelper>();
+			USf_AsyncUtilityEventWaitHelper* EventWaitHelper = NewObject<USf_AsyncUtilityEventWaitHelper>();
 			EventWaitHelper->bEventTriggered = false;
 			TScriptDelegate<ThreadSafetyMode> ScriptDelegate;
 			ScriptDelegate.BindUFunction(EventWaitHelper, "OnEventTriggered");
@@ -236,7 +237,7 @@ void FAsyncUtility::WaitForEventBlocking(const TWeakObjectPtr<UObject>& WorldCon
 		});
 
 	Wait (EventHelperCreation,WorldContextObject);
-	UAsyncUtilityEventWaitHelper* EventWaitHelper = EventHelperCreation.Get();
+	USf_AsyncUtilityEventWaitHelper* EventWaitHelper = EventHelperCreation.Get();
 
 	// Wait loop
 	while (true)

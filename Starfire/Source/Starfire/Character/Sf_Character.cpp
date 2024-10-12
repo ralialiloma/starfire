@@ -96,6 +96,9 @@ ASf_Character::ASf_Character(const FObjectInitializer& ObjectInitializer)
 
 	//Weapon Animation Receiver
 	WeaponAnimMontageController = CreateDefaultSubobject<USf_WeaponAnimMontageController_FP>(TEXT("WeaponAnimMontageController"));
+
+	//Damage Controller
+	DamageController = CreateDefaultSubobject<USf_DamageController>(TEXT("DamageController"));
 }
 
 void ASf_Character::PostInitProperties()

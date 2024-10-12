@@ -240,13 +240,22 @@ bool USF_Equipment::Fire(EInputSignalType InputSignal, EFireType FireType, FHitR
 	return EquippedWeapon->Fire(InputSignal,FireType,OutHitResult,OutFireBlock);
 }
 
-
-bool USF_Equipment::Reload()
+bool USF_Equipment::Reload() const
 {
 	if (!IsEquipped())
 		return false;
 
-	return EquippedWeapon->Reload();
+	float MontageTime = 0;
+	return EquippedWeapon->Reload(MontageTime);
+}
+
+
+bool USF_Equipment::Reload(float &OutMontageTime)
+{
+	if (!IsEquipped())
+		return false;
+
+	return EquippedWeapon->Reload(OutMontageTime);
 }
 
 void USF_Equipment::StopReloading()
@@ -332,7 +341,7 @@ FWeaponConfig USF_Equipment::GetWeaponConfig()
 	if (!IsEquipped())
 	{
 		UE_LOG(EquipmentComponent, Error, TEXT("Cannot get config because no weapon is equipped"))
-		FWeaponConfig();
+		return FWeaponConfig();
 	}
 
 	return  GetActiveWeapon()->GetWeaponConfig();

@@ -10,10 +10,12 @@
 #include "Starfire/Animation/WeaponMontageEventPackage.h"
 #include "Starfire/Utility/InputSignalType.h"
 #include "Starfire/Interact/InteractInterfaces.h"
+#include "Starfire/Sf_Bases/Sf_Delegate.h"
 #include "WeaponBase.generated.h"
 
 
 DEFINE_LOG_CATEGORY_STATIC(SF_Weapon, Display, Display);
+
 
 UCLASS(BlueprintType)
 class STARFIRE_API AWeaponBase : public AActor, public IPrimaryInteract
@@ -75,7 +77,7 @@ protected:
 	
 	//Config
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Config")
-	FWeaponConfig WeaponConfig;
+	FWeaponConfig WeaponConfig = FWeaponConfig();
 
 private:
 
@@ -97,16 +99,12 @@ private:
 	UPROPERTY()
 	FTimerHandle MeleeCooldown = FTimerHandle();
 	UPROPERTY()
-	FTimerHandle ReloadTimer = FTimerHandle();
-
-	UPROPERTY()
 	AActor* WeaponOwner = nullptr;
 
 #pragma endregion
 
 #pragma region Fire
 public:
-
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "WeaponBase")
 	bool CanFire(EInputSignalType InputSignal, EFireType FireType, TEnumAsByte<EFireBlock>& OutBlock);
 	UFUNCTION(BlueprintCallable,Category="WeaponBase")
@@ -116,7 +114,6 @@ public:
 	bool Fire(const EInputSignalType InputSignal, EFireType FireType, FHitResult& OutHitResult,	TEnumAsByte<EFireBlock>& OutFireBlock);
 
 protected:
-	
 	void GetTracePoints(FTransform InFireTransform, FVector& OutStart, FVector& OutEnd);
 	bool CheckInputSignalType(EInputSignalType InputSignalType);
 	
@@ -126,16 +123,36 @@ protected:
 #pragma endregion
 
 #pragma region Reload
-public:
+#pragma region Functions
 
+public:
 	UFUNCTION(BlueprintCallable, Category="WeaponBase")
 	bool IsReloading() const;
 
 	UFUNCTION(BlueprintCallable, Category="WeaponBase")
+	bool Reload(float& OutMontageTime);
 	bool Reload();
+
 	UFUNCTION(BlueprintCallable, Category="WeaponBase")
 	void StopReloading();
-	
+#pragma endregion
+
+#pragma region Properties
+public:
+	UPROPERTY(BlueprintAssignable)
+	FSf_VoidDelegate_BP OnReloadStopped_BP;
+	FSf_VoidDelegate_CPP OnReloadStopped_CPP;
+
+	UPROPERTY(BlueprintAssignable)
+	FSf_VoidDelegate_BP OnReloadFinish_BP;
+	FSf_VoidDelegate_CPP OnReloadFinish_CPP;
+private:
+	UPROPERTY()
+	FTimerHandle ReloadTimer = FTimerHandle();
+
+#pragma endregion
+
+
 #pragma endregion 
 
 #pragma region Aim

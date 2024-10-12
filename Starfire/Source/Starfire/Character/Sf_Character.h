@@ -6,6 +6,7 @@
 #include "WeaponAnimMontageController_FP.h"
 #include "GameFramework/Character.h"
 #include "Starfire/Animation/WeaponAnimMontageController.h"
+#include "Starfire/DamageSystem/Sf_DamageController.h"
 #include "Starfire/HSM/SF_CharacterStateMachine.h"
 #include "Starfire/Weapon/WeaponOwner.h"
 #include "Sf_Character.generated.h"
@@ -52,6 +53,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Animation")
 	USf_WeaponAnimMontageController_FP* WeaponAnimMontageController;
+	
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Damage")
+	USf_DamageController* DamageController;
 
 
 public:

@@ -3,16 +3,17 @@
 
 #include "Sf_NPCharacter.h"
 
+#include "WeaponAnimMontageController_TP.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Behaviour/BlackboardKeyHelperLibrary.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Starfire/Character/Sf_Equipment.h"
-#include "Starfire/DamageSystem/Sf_DamageReceiver.h"
+#include "Starfire/DamageSystem/Sf_DamageController.h"
 
 ASf_NPCharacter::ASf_NPCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	SfDamageReceiver = CreateDefaultSubobject<USf_DamageReceiver>(TEXT("Damage Receiver"));
+	SfDamageReceiver = CreateDefaultSubobject<USf_DamageController>(TEXT("Damage Receiver"));
 
 	//Equipment
 	SfEquipmentComponent = CreateDefaultSubobject<USF_Equipment>(TEXT("SFEquip"));
@@ -30,6 +31,17 @@ ASf_NPCharacter::ASf_NPCharacter()
 	MeleeTransform->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
 	MeleeTransform->ShapeColor = FColor::Purple;
 	MeleeTransform->SetLineThickness(1.0f);
+
+	//WeaponAnimMontageController
+	WeaponAnimMontageController = CreateDefaultSubobject<USf_WeaponAnimMontageController_TP>(TEXT("WeaponAnimMontageController"));
+
+	//Damage Controller
+	DamageController = CreateDefaultSubobject<USf_DamageController>(TEXT("DamageController"));
+}
+
+void ASf_NPCharacter::PreInitializeComponents()
+{
+	Super::PreInitializeComponents();
 }
 
 void ASf_NPCharacter::PostInitializeComponents()
@@ -69,10 +81,11 @@ bool ASf_NPCharacter::TryAddFeature(TSubclassOf<UEnemyFeature>&  FeatureType)
 	UEnemyFeature* Feature = NewObject<UEnemyFeature>(this,FeatureType);
 	Features.Add(Feature);
 	Feature->Initialize(this);
+	UE_LOG(LogTemp, Log, TEXT("Added Feature %s"),*FeatureType->GetName())
 	return true;
 }
 
-USf_DamageReceiver* ASf_NPCharacter::GetSfDamageReceiver()
+USf_DamageController* ASf_NPCharacter::GetSfDamageReceiver()
 {
 	return SfDamageReceiver;
 }
@@ -115,6 +128,11 @@ void ASf_NPCharacter::ImportStartFeatures()
 UAnimInstance* ASf_NPCharacter::GetCharacterAnimInstance_Implementation() const
 {
 	return GetMesh()->GetAnimInstance();
+}
+
+USf_WeaponAnimMontageController* ASf_NPCharacter::GetAnimMontageController_Implementation() const
+{
+	return WeaponAnimMontageController;
 }
 
 FTransform ASf_NPCharacter::GetFireTransform_Implementation() const

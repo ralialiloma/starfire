@@ -7,7 +7,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Starfire/Utility/DebugSubsystem.h"
 
-DEFINE_LOG_CATEGORY_STATIC(SF_TP_CharacterMovement, Display, Display);
+
 
 USf_TP_CharacterMovementComponent::FSavedMove_Sf::FSavedMove_Sf(): Saved_bWantsToSprint(0)
 {

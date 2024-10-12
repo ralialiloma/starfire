@@ -97,7 +97,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool Fire(EInputSignalType InputSignal, EFireType FireType, FHitResult& OutHitResult, TEnumAsByte<EFireBlock>& OutFireBlock);
 	UFUNCTION(BlueprintCallable)
-	bool Reload();
+	bool Reload(float &OutMontageTime);
+	bool Reload() const;
 	UFUNCTION(BlueprintCallable)
 	void StopReloading();
 	UFUNCTION(BlueprintCallable)
@@ -139,8 +140,6 @@ public:
 	FOnWeaponChange OnWeaponChange;
 
 protected:
-
-	//References
 	UPROPERTY()
 	TArray<AWeaponBase*> OwnedWeapons;
 	UPROPERTY()

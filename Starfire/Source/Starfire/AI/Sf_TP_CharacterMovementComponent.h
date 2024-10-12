@@ -9,7 +9,7 @@
 #include "Sf_TP_CharacterMovementComponent.generated.h"
 
 
-
+DEFINE_LOG_CATEGORY_STATIC(SF_TP_CharacterMovement, Display, Display);
 UCLASS()
 class STARFIRE_API USf_TP_CharacterMovementComponent : public USf_CharacterMovementComponent
 {

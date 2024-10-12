@@ -59,8 +59,9 @@ bool UStateCallstack::TryAddState(TSubclassOf<UBaseState> BaseStateClass)
 	NotifyFeatures();
 	
 	RunActiveStateFeatures(CreatedState,Enter, Data);
-	
-	UE_LOG(SF_StateCallStack, Log, TEXT("Added New State %s"),*BaseStateClass->GetName())
+
+	if (UDebugSubsystem::GetHSMDebug(EDebugType::Log))
+		UE_LOG(SF_StateCallStack, Log, TEXT("Added New State %s"),*BaseStateClass->GetName())
 
 	return true;
 }
@@ -136,7 +137,8 @@ bool UStateCallstack::TryRemoveState(TSubclassOf<UBaseState> BaseStateClass)
 		if (State->IsA(BaseStateClass))
 		{
 			ActiveStatesByPriority.Remove(State);
-			UE_LOG(SF_StateCallStack, Log, TEXT("Removed State %s"),*BaseStateClass->GetName())
+			if (UDebugSubsystem::GetHSMDebug(EDebugType::Log))
+				UE_LOG(SF_StateCallStack, Log, TEXT("Removed State %s"),*BaseStateClass->GetName())
 			//CurrentActiveFeatures = GetAllActiveFeatures();
 			NotifyFeatures();
 			return true;
@@ -214,7 +216,9 @@ void UStateCallstack::RunCallStackByInputAction(UInputAction* InputAction, ECall
 		{
 			UClass* SuperClass =  Feature->GetClass()->GetSuperClass();
 			RunCallStackByFeature(SuperClass,CallInput,Data);
-			UE_LOG(SF_StateCallStack,Log , TEXT("Run Feature %s"),*SuperClass->GetName())
+
+			if (UDebugSubsystem::GetHSMDebug(EDebugType::Log))
+				UE_LOG(SF_StateCallStack,Log , TEXT("Run Feature %s"),*SuperClass->GetName())
 		}
 	}
 }
