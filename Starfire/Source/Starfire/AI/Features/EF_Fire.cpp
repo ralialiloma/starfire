@@ -77,11 +77,12 @@ void UEF_Fire::StartFire(bool bScoped)
 	if (bHitOtherNPC)
 		StopFire();
 	const float FireDelay = GetOwningSfEquipment()->GetWeaponConfig().FireDelay;
+	float FireRate = 1.0f/FireDelay;
 	//Start Fire Timer
 	GetWorld()->GetTimerManager().SetTimer(
 		FireTimer,
 		[bScoped,this,&bHitOtherNPC]()->void{this->DoFire(EInputSignalType::InputSignal_Triggered,bScoped, bHitOtherNPC);},
-		FireDelay+0.01f,
+		FireRate-0.01f,
 		true
 		);
 }
