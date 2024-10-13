@@ -7,15 +7,16 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Behaviour/BlackboardKeyHelperLibrary.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
+#include "Features/EF_Cover.h"
+#include "Features/EF_Fire.h"
+#include "Features/EF_Locomotion.h"
 #include "Starfire/Character/Sf_Equipment.h"
 #include "Starfire/DamageSystem/Sf_DamageController.h"
 
 ASf_NPCharacter::ASf_NPCharacter(const FObjectInitializer& ObjectInitializer): Super(
-		  ObjectInitializer.SetDefaultSubobjectClass<USf_TP_CharacterMovementComponent>(ACharacter::CharacterMovementComponentName)
-		  .DoNotCreateDefaultSubobject(ACharacter::MeshComponentName))
+		  ObjectInitializer.SetDefaultSubobjectClass<USf_TP_CharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
 {
 	PrimaryActorTick.bCanEverTick = true;
-	SfDamageReceiver = CreateDefaultSubobject<USf_DamageController>(TEXT("Damage Receiver"));
 
 	//Equipment
 	SfEquipmentComponent = CreateDefaultSubobject<USF_Equipment>(TEXT("SFEquip"));
@@ -90,9 +91,9 @@ bool ASf_NPCharacter::TryAddFeature(TSubclassOf<UEnemyFeature>&  FeatureType)
 	return true;
 }
 
-USf_DamageController* ASf_NPCharacter::GetSfDamageReceiver()
+USf_DamageController* ASf_NPCharacter::GetSfDamageController()
 {
-	return SfDamageReceiver;
+	return DamageController;
 }
 
 USF_Equipment* ASf_NPCharacter::GetSfEquipment()
@@ -129,10 +130,20 @@ void ASf_NPCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 void ASf_NPCharacter::ImportStartFeatures()
 {
-	for (TSubclassOf<UEnemyFeature> Feature: StartFeatures)
+	for (TSubclassOf<UEnemyFeature> Feature: GetAllStartFeatures())
 	{
 		TryAddFeature(Feature);
 	}
+}
+
+TSet<TSubclassOf<UEnemyFeature>> ASf_NPCharacter::GetAllStartFeatures() const
+{
+	TSet<TSubclassOf<UEnemyFeature>> AllFeatures{
+		UEF_Cover::StaticClass(),
+		UEF_Fire::StaticClass(),
+		UEF_Locomotion::StaticClass()};
+	AllFeatures.Append(StartFeatures);
+	return AllFeatures;
 }
 
 UAnimInstance* ASf_NPCharacter::GetCharacterAnimInstance_Implementation() const
