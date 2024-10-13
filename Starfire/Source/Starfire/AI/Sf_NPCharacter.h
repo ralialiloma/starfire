@@ -37,6 +37,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Damage")
 	USf_DamageController* DamageController;
 
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Movement")
+	USf_TP_CharacterMovementComponent* SFCharacterMovementComponent;
+
 	//Interface
 public:
 		//Features
@@ -51,6 +54,8 @@ public:
 	USf_DamageController* GetSfDamageReceiver();
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	USF_Equipment* GetSfEquipment();
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	USf_TP_CharacterMovementComponent* GetSfMovement();
 
 		//Collision
 	FCollisionQueryParams GetIgnoreCharacterParams();
@@ -60,7 +65,7 @@ public:
 
 	//Actor
 public:
-	ASf_NPCharacter();
+	ASf_NPCharacter(const FObjectInitializer& ObjectInitializer);
 	virtual void PreInitializeComponents() override;
 	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;

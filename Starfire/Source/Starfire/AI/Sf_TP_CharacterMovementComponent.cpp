@@ -4,6 +4,7 @@
 #include "Sf_TP_CharacterMovementComponent.h"
 #include "GameFramework/Character.h"
 #include "DrawDebugHelpers.h"
+#include "Sf_NPCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "Starfire/Utility/DebugSubsystem.h"
 

@@ -10,7 +10,9 @@
 #include "Starfire/Character/Sf_Equipment.h"
 #include "Starfire/DamageSystem/Sf_DamageController.h"
 
-ASf_NPCharacter::ASf_NPCharacter()
+ASf_NPCharacter::ASf_NPCharacter(const FObjectInitializer& ObjectInitializer): Super(
+		  ObjectInitializer.SetDefaultSubobjectClass<USf_TP_CharacterMovementComponent>(ACharacter::CharacterMovementComponentName)
+		  .DoNotCreateDefaultSubobject(ACharacter::MeshComponentName))
 {
 	PrimaryActorTick.bCanEverTick = true;
 	SfDamageReceiver = CreateDefaultSubobject<USf_DamageController>(TEXT("Damage Receiver"));
@@ -37,6 +39,9 @@ ASf_NPCharacter::ASf_NPCharacter()
 
 	//Damage Controller
 	DamageController = CreateDefaultSubobject<USf_DamageController>(TEXT("DamageController"));
+
+	//Movement Component
+	SFCharacterMovementComponent = Cast<USf_TP_CharacterMovementComponent>(GetCharacterMovement());;
 }
 
 void ASf_NPCharacter::PreInitializeComponents()
@@ -93,6 +98,11 @@ USf_DamageController* ASf_NPCharacter::GetSfDamageReceiver()
 USF_Equipment* ASf_NPCharacter::GetSfEquipment()
 {
 	return SfEquipmentComponent;
+}
+
+USf_TP_CharacterMovementComponent* ASf_NPCharacter::GetSfMovement()
+{
+	return SFCharacterMovementComponent;
 }
 
 

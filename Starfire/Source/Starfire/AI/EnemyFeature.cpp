@@ -57,9 +57,9 @@ void UEnemyFeature::SetBlackboardActorValue(EActorBlackboardKey ActorBlackboardK
 	UBlackboardKeyHelperLibrary::SetActorValue(BlackboardComponent,ActorBlackboardKey,Value);
 }
 
-UCharacterMovementComponent* UEnemyFeature::GetOwningSfMovement()
+USf_TP_CharacterMovementComponent* UEnemyFeature::GetOwningSfMovement()
 {
-	return OwningAIHolder->GetCharacterMovement();
+	return OwningAIHolder->GetSfMovement();
 }
 
 USF_Equipment* UEnemyFeature::GetOwningSfEquipment()

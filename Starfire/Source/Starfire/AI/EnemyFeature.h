@@ -4,10 +4,10 @@
 #include "CoreMinimal.h"
 #include "AIController.h"
 #include "Behaviour/BlackboardKeyHelperLibrary.h"
-#include "GameFramework/CharacterMovementComponent.h"
 #include "Starfire/Character/Sf_Equipment.h"
 #include "CollisionQueryParams.h"
 #include "CoreMinimal.h"
+#include "Sf_TP_CharacterMovementComponent.h"
 #include "Starfire/Sf_Bases/Sf_Object.h"
 #include "EnemyFeature.generated.h"
 
@@ -37,7 +37,7 @@ protected:
 	void SetBlackboardActorValue(EActorBlackboardKey ActorBlackboardKey, AActor* Value);
 
 	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "Character")
-	UCharacterMovementComponent* GetOwningSfMovement();
+	USf_TP_CharacterMovementComponent* GetOwningSfMovement();
 	
 	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "Character")
 	ASf_NPCharacter* GetOwningCharacter();

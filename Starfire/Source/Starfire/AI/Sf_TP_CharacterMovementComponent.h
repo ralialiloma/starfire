@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Sf_NPCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Starfire/Sf_bases/Sf_CharacterMovementComponent.h"
 #include "Sf_TP_CharacterMovementComponent.generated.h"
 
+class ASf_NPCharacter;
 
 DEFINE_LOG_CATEGORY_STATIC(SF_TP_CharacterMovement, Display, Display);
 UCLASS()
