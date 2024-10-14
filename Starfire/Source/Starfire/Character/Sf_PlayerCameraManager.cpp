@@ -2,7 +2,7 @@
 
 #include "Sf_PlayerCameraManager.h"
 #include "Sf_Character.h"
-#include "Movement/SF_CharacterMovementComponent.h"
+#include "Movement/Sf_FP_CharacterMovementComponent.h"
 #include "Sf_Equipment.h"
 DEFINE_LOG_CATEGORY_STATIC(SF_PlayerCameraManager, Display, Display);
 
@@ -17,7 +17,7 @@ void ASF_PlayerCameraManager::UpdateViewTarget(FTViewTarget& OutVT, float DeltaT
 		return;
 	}
 
-	USF_CharacterMovementComponent* SfCharacterMovementComponent = SfCharacter->GetSfCharacterMovementComponent();
+	USf_FP_CharacterMovementComponent* SfCharacterMovementComponent = SfCharacter->GetSfCharacterMovementComponent();
 	if (!IsValid(SfCharacterMovementComponent))
 	{
 		UE_LOG(SF_PlayerCameraManager, Warning, TEXT("Invalid SF_CharactermovementComponent"))
@@ -57,7 +57,7 @@ void ASF_PlayerCameraManager::ProcessViewRotation(float DeltaTime, FRotator& Out
 	Super::ProcessViewRotation(DeltaTime, OutViewRotation, OutDeltaRot);
 }
 
-float ASF_PlayerCameraManager::ProcessWallRunRollOverwrite(USF_CharacterMovementComponent* SfCharacterMovementComponent,
+float ASF_PlayerCameraManager::ProcessWallRunRollOverwrite(USf_FP_CharacterMovementComponent* SfCharacterMovementComponent,
                                                         ASf_Character* SfCharacter, float DeltaTime)
 {
 	const bool bIsWallRunning = SfCharacterMovementComponent->IsWallRunning();

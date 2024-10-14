@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "Starfire/Character/Sf_Equipment.h"
-#include "Starfire/Character/Movement/SF_CharacterMovementComponent.h"
+#include "Starfire/Character/Movement/Sf_FP_CharacterMovementComponent.h"
 #include "Starfire/HSM/BaseState.h"
 #include "HSMConfig.generated.h"
 

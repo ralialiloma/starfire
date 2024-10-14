@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "BaseStateFeature.h"
+#include "Starfire/Sf_Bases/Sf_Object.h"
 #include "BaseState.generated.h"
 
 class UStateCallstack;
@@ -32,7 +33,7 @@ struct STARFIRE_API FStateDefinition: public FTableRowBase
 
 
 UCLASS(Blueprintable, Abstract)
-class STARFIRE_API UBaseState : public UBetterObject
+class STARFIRE_API UBaseState : public USf_Object
 {
 	GENERATED_BODY()
 

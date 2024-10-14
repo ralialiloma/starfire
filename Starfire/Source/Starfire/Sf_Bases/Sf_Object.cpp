@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "BetterObject.h"
+#include "Sf_Object.h"
 
-void UBetterObject::PostInitProperties()
+void USf_Object::PostInitProperties()
 {
     UObject::PostInitProperties();
     if (GetWorld())
@@ -12,7 +12,7 @@ void UBetterObject::PostInitProperties()
     }
 }
 
-UWorld* UBetterObject::GetWorld() const
+UWorld* USf_Object::GetWorld() const
 {
     if (GetOuter() == nullptr)
     {
@@ -27,12 +27,12 @@ UWorld* UBetterObject::GetWorld() const
     return GetOwningActor()->GetWorld();
 }
 
-AActor* UBetterObject::GetOwningActor() const
+AActor* USf_Object::GetOwningActor() const
 {
     return GetTypedOuter<AActor>();
 }
 
-void UBetterObject::DestroyObject()
+void USf_Object::DestroyObject()
 {
     if (IsValid(this))
     {

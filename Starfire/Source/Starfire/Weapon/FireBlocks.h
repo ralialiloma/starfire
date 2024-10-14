@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 UENUM(BlueprintType)
-enum EFireBlock: uint8
+enum class EFireBlock: uint8
 {
 	None = 0 ,
 	Reload = 1 UMETA(ToolTip="The weapon is reloading."),

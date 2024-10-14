@@ -72,6 +72,8 @@ public:
 	bool IsOnFireCooldown() const;
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool CanMelee() const;
+	UFUNCTION(BlueprintCallable,BlueprintPure)
+	FWeaponConfig GetWeaponConfig();
 
 	//Weapon Management
 	UFUNCTION(BlueprintCallable)
@@ -93,9 +95,10 @@ public:
 
 	//Actions
 	UFUNCTION(BlueprintCallable)
-	bool Fire(EInputSignalType InputSignal, EFireType FireType, FHitResult& OutHitResult, TEnumAsByte<EFireBlock>& OutFireBlock);
+	bool Fire(EInputSignalType InputSignal, EFireType FireType, FHitResult& OutHitResult, EFireBlock& OutFireBlock);
 	UFUNCTION(BlueprintCallable)
-	bool Reload();
+	bool Reload(float &OutMontageTime);
+	bool Reload() const;
 	UFUNCTION(BlueprintCallable)
 	void StopReloading();
 	UFUNCTION(BlueprintCallable)
@@ -137,8 +140,6 @@ public:
 	FOnWeaponChange OnWeaponChange;
 
 protected:
-
-	//References
 	UPROPERTY()
 	TArray<AWeaponBase*> OwnedWeapons;
 	UPROPERTY()

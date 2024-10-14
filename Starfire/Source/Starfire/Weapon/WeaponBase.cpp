@@ -12,7 +12,7 @@
 #include "Starfire/Animation/WeaponAnimMontageController.h"
 #include "Starfire/Animation/AnimationData/WeaponAnimDataHelper.h"
 #include "Starfire/Character/Sf_Equipment.h"
-#include "Starfire/DamageSystem/Sf_DamageReceiver.h"
+#include "Starfire/DamageSystem/Sf_DamageController.h"
 #include "Starfire/Utility/DebugSettings.h"
 #include "Starfire/Utility/DebugSubsystem.h"
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
@@ -71,7 +71,7 @@ void AWeaponBase::OnInteractStart_Implementation(UInteractComponent* InteractCom
 	}
 }
 
-bool AWeaponBase::Fire(const EInputSignalType InputSignal, EFireType FireType, FHitResult& OutHitResult, TEnumAsByte<EFireBlock>& OutFireBlock) 
+bool AWeaponBase::Fire(const EInputSignalType InputSignal, EFireType FireType, FHitResult& OutHitResult,EFireBlock& OutFireBlock) 
 {
 	StopReloading();
 	
@@ -105,7 +105,7 @@ void AWeaponBase::FireTraces(FHitResult& OutHitResult)
 		FColor TraceColor = USf_FunctionLibrary::BoolToColor(bIsAiming);
 
 		//Ignore
-		TArray<AActor*> ActorsToIgnore = TArray<AActor*>{WeaponOwner};
+		TArray<AActor*> ActorsToIgnore = TArray<AActor*>{WeaponOwner,this};
 		
 
 		//Line Trace
@@ -126,7 +126,7 @@ void AWeaponBase::FireTraces(FHitResult& OutHitResult)
 		if (!OutHitResult.bBlockingHit)
 			continue;
 		
-		USf_DamageReceiver* DamageReceiver = OutHitResult.GetActor()->GetComponentByClass<USf_DamageReceiver>();
+		USf_DamageController* DamageReceiver = OutHitResult.GetActor()->GetComponentByClass<USf_DamageController>();
 		if (DamageReceiver==nullptr)
 			continue;
 
@@ -245,7 +245,7 @@ void AWeaponBase::ApplyMelee(AActor* ActorToApplyOn, FVector Start, FVector End,
 		IKnockbackReceiver:: Execute_ReceiveKnockback(ActorToApplyOn,Direction);
 
 	//Get Damage Receiver
-	USf_DamageReceiver* DamageReceiver =  ActorToApplyOn->GetComponentByClass<USf_DamageReceiver>();
+	USf_DamageController* DamageReceiver =  ActorToApplyOn->GetComponentByClass<USf_DamageController>();
 	if (!IsValid(DamageReceiver))
 		return;
 
@@ -337,7 +337,7 @@ bool AWeaponBase::CheckInputSignalType(EInputSignalType InputSignalType)
 
 bool AWeaponBase::IsOnFireCooldown()
 {
-	return GetWorld()->GetTimerManager().IsTimerActive(FireCooldown);
+	return bActiveFireCooldown;
 }
 
 bool AWeaponBase::IsOnMeleeCooldown()
@@ -358,9 +358,10 @@ void AWeaponBase::DoFire(FHitResult& OutHitResult)
 	if (CurrentFireDelay>0)
 	{
 		//Start Cooldown
+		bActiveFireCooldown = true;
 		FTimerDelegate TimerDel;
 		TimerDel.BindLambda([this]() -> void { bActiveFireCooldown = false;});
-		GetWorld()->GetTimerManager().SetTimer(FireCooldown, TimerDel,CurrentFireDelay,false);
+		GetWorld()->GetTimerManager().SetTimer(FireCooldown, TimerDel,CurrentFireDelay,false,CurrentFireDelay);
 	}
 
 	//Reduce Clip
@@ -379,6 +380,12 @@ void AWeaponBase::DoFire(FHitResult& OutHitResult)
 
 bool AWeaponBase::Reload()
 {
+	float MontageTime = 0;
+	return Reload(MontageTime);
+}
+
+bool AWeaponBase::Reload(float& OutMontageTime)
+{
 	if (IsReloading())
 		return false;
 	
@@ -386,7 +393,12 @@ bool AWeaponBase::Reload()
 	const float MontageTime = ExecuteAnimationAndReturnAnimLength(EWeaponAnimationEventType::Reload,true);
 
 	FTimerDelegate TimerDel;
-	TimerDel.BindLambda([this]() -> void {CurrentClip = WeaponConfig.MaxClipSize;});
+	TimerDel.BindLambda([this]() ->void
+	{
+		CurrentClip = WeaponConfig.MaxClipSize;
+		OnReloadFinish_BP.Broadcast();
+		OnReloadFinish_CPP.Broadcast();
+	});
 	GetWorld()->GetTimerManager().SetTimer(ReloadTimer,TimerDel,MontageTime,false);
 
 	return true;
@@ -404,11 +416,15 @@ void AWeaponBase::StopReloading()
 	
 	GetWorld()->GetTimerManager().ClearTimer(ReloadTimer);
 	ReloadTimer.Invalidate();
+
+	OnReloadStopped_BP.Broadcast();
+	OnReloadStopped_CPP.Broadcast();
 	
 	ExecuteAnimation(EWeaponAnimationEventType::Reload,false);
-	//UAnimMontage* ReloadMontage =  UWeaponAnimDataHelper::GetAnimationMontage_FP(GetWeaponConfig().GetAnimData_FP(), EWeaponAnimationMontageType_FP::Reload);
-	//StopMontage(ReloadMontage);
 }
+
+
+
 
 bool AWeaponBase::Melee()
 {
@@ -469,7 +485,7 @@ void AWeaponBase::OnUnequip()
 	UE_LOG(SF_Weapon, Log, TEXT("Unequipped %s"),*GetClass()->GetName())
 }
 
-bool AWeaponBase::CanFire(EInputSignalType InputSignal, EFireType FireType,TEnumAsByte<EFireBlock>& OutBlock)
+bool AWeaponBase::CanFire(EInputSignalType InputSignal, EFireType FireType,EFireBlock& OutBlock)
 {
 	//WeaponHolder
 	if (!IsValid(WeaponOwner))

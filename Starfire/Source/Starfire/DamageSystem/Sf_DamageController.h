@@ -5,24 +5,24 @@
 #include "CoreMinimal.h"
 #include "SF_Hitbox.h"
 #include "Components/ActorComponent.h"
-#include "Sf_DamageReceiver.generated.h"
+#include "Sf_DamageController.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FReceivedDamage , float, RemainingHealth, float, DamageReceived, FVector, HitLocation, FVector, HitNormal);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FZeroHealth);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent), Blueprintable)
-class STARFIRE_API USf_DamageReceiver : public UActorComponent
+class STARFIRE_API USf_DamageController : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
-	USf_DamageReceiver();
+	USf_DamageController();
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "Damage Receiver")
-	float MaxHealth;
+	float MaxHealth= 100;
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "Damage Receiver")
-	float MaxArmor;
+	float MaxArmor = 50;
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,BlueprintAssignable, Category = "Damage Receiver")
 	FReceivedDamage OnDamageReceived;
@@ -33,10 +33,10 @@ public:
 private:
 
 	UPROPERTY()
-	float CurrentHealth;
+	float CurrentHealth = 0;
 
 	UPROPERTY()
-	float CurrentArmor;
+	float CurrentArmor = 0;
 
 	//Interface
 public:

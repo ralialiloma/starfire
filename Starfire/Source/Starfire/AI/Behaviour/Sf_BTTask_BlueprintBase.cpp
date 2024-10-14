@@ -57,19 +57,23 @@ void USf_BTTask_BlueprintBase::SetOwner(AActor* NewOwner)
 {
 	Super::SetOwner(NewOwner);
 	
-	if (!IsValid(NewOwner))
-	{
-		return;
-	}
-	OwningNPCharacter = Cast<ASf_NPCharacter>(NewOwner);
-
-	if (IsValid(OwningNPCharacter))
+	if (!IsValid(AIOwner->GetPawn()))
 	{
 		UE_LOG(
 			USf_BTT_BlueprintBase_Log,
 			Error,
-			TEXT("Require character of type %s"),
-			*ASf_NPCharacter::StaticClass()->GetName());
+			TEXT("Owner ist invalid"));
+		return;
+	}
+	OwningNPCharacter = Cast<ASf_NPCharacter>(AIOwner->GetPawn());
+
+	if (!IsValid(OwningNPCharacter))
+	{
+		UE_LOG(
+			USf_BTT_BlueprintBase_Log,
+			Error,
+			TEXT("Require character of type %s but got character of type %s"),
+			*ASf_NPCharacter::StaticClass()->GetName(),*NewOwner->GetName());
 	}
 	
 }

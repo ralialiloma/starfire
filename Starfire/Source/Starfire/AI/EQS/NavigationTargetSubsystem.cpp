@@ -36,7 +36,6 @@ TArray<FVector> UNavigationTargetSubsystem::GetAllReservedCovers()
 	return  ReservedCovers;
 }
 
-//Private Functions
 bool UNavigationTargetSubsystem::LocationInReservedCover(const FVector Location, float RadiusToCheck) const
 {
 	for (auto ReservedCover: ReservedCovers)
@@ -44,9 +43,9 @@ bool UNavigationTargetSubsystem::LocationInReservedCover(const FVector Location,
 		const float Distance = FVector::Distance(Location, ReservedCover);
 		if (Distance<=RadiusToCheck)
 		{
-			return false;
+			return true;
 		}
 	}
-	return true;
+	return false;
 }
 

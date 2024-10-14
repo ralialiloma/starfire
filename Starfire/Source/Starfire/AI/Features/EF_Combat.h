@@ -1,0 +1,93 @@
+﻿#pragma once
+#include "CoreMinimal.h"
+#include "Starfire/AI/EnemyFeature.h"
+#include "Starfire/Sf_Bases/Sf_Delegate.h"
+#include "EF_Combat.generated.h"
+
+DEFINE_LOG_CATEGORY_STATIC(EF_Fire, Display, Display);
+
+#pragma region Structs And Enums
+UENUM(BlueprintType)
+enum class EStopFireReason: uint8
+{
+	None = 0,
+	FireBlock = 1,
+	ManualInput = 2,
+	HitOtherNPC = 3,
+	StartedReload = 4
+};
+
+USTRUCT(BlueprintType)
+struct FStopFireInfo
+{
+	GENERATED_BODY();
+
+public:
+	UPROPERTY(BlueprintReadWrite)
+	EStopFireReason StopFireReason;
+
+	UPROPERTY(BlueprintReadWrite)
+	EFireBlock FireBlock;
+
+	FStopFireInfo();
+
+	explicit FStopFireInfo(EStopFireReason InStopFireReason, EFireBlock InFireBlock = EFireBlock::None);
+
+	FString ToString();
+
+	
+};
+#pragma endregion
+
+
+UCLASS(BlueprintType,Blueprintable,DefaultToInstanced,EditInlineNew)
+class STARFIRE_API UEF_Combat : public UEnemyFeature
+{
+	GENERATED_BODY()
+
+#pragma region Functions
+public:
+	UFUNCTION(BlueprintCallable, Category = "EnemyFeature|Combat")
+	void StartFire(bool bScoped);
+
+	UFUNCTION(BlueprintCallable, Category = "EnemyFeature|Combat")
+	void StopFire();
+
+	UFUNCTION(BlueprintCallable, Category = "EnemyFeature|Combat")
+	void StartReload();
+	UFUNCTION(BlueprintCallable, Category = "EnemyFeature|Combat")
+	void StopReload();
+
+	UFUNCTION(BlueprintCallable, Category = "EnemyFeature|Combat")
+	bool Melee();
+private:
+	void StopFire(FStopFireInfo StopFireInfo);
+	void DoFire(EInputSignalType InputSignalType, bool bScoped);
+	bool OtherNPCWouldBeHit();
+	static bool OtherNPCWouldBeHit(FHitResult HitResult);
+
+#pragma endregion
+	
+#pragma region Properties
+public:
+	FSf_VoidDelegate_CPP OnReloadFinish_CPP;
+	UPROPERTY(BlueprintAssignable)
+	FSf_VoidDelegate_BP OnReloadFinish_BP;
+
+	FSf_VoidDelegate_CPP OnReloadStopped_CPP;
+	UPROPERTY(BlueprintAssignable)
+	FSf_VoidDelegate_BP OnReloadStopped_BP;
+
+	FSf_VoidDelegate_CPP OnFireStopped_CPP;
+	UPROPERTY(BlueprintAssignable)
+	FSf_VoidDelegate_BP OnFireStopped_BP;
+
+
+
+private:
+	bool bIsFiring;
+	int FiredBullets;
+#pragma endregion
+
+
+};

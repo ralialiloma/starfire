@@ -9,7 +9,7 @@
 #include "Components/BoxComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "Movement/SF_CharacterMovementComponent.h"
+#include "Movement/Sf_FP_CharacterMovementComponent.h"
 #include "Starfire/HSM/SF_CharacterStateMachine.h"
 #include "Starfire/Interact/InteractComponent.h"
 #include "Starfire/Utility/ConfigLoader.h"
@@ -19,25 +19,25 @@ DEFINE_LOG_CATEGORY_STATIC(SF_Character_Log , Display, Display);
 FReply ASf_Character::OnSaveButtonClicked()
 {
 	FConfigLoader::SaveCustomConfig(GetClass()->GetDefaultObject(),"SF_CharacterDefault");
-	FConfigLoader::SaveCustomConfig(GetClass()->GetDefaultObject<AActor>()->FindComponentByClass<USF_CharacterMovementComponent>(),"SF_CharacterDefault");
+	FConfigLoader::SaveCustomConfig(GetClass()->GetDefaultObject<AActor>()->FindComponentByClass<USf_FP_CharacterMovementComponent>(),"SF_CharacterDefault");
 	return FReply::Handled();
 }
 
 FReply ASf_Character::OnLoadButtonClicked()
 {
 	FConfigLoader::LoadConfigFile(GetClass()->GetDefaultObject(),"SF_CharacterDefault");
-	FConfigLoader::LoadConfigFile(GetClass()->GetDefaultObject<AActor>()->FindComponentByClass<USF_CharacterMovementComponent>(),"SF_CharacterDefault");
+	FConfigLoader::LoadConfigFile(GetClass()->GetDefaultObject<AActor>()->FindComponentByClass<USf_FP_CharacterMovementComponent>(),"SF_CharacterDefault");
 	return FReply::Handled();
 }
 
 ASf_Character::ASf_Character(const FObjectInitializer& ObjectInitializer)
 	: Super(
-		  ObjectInitializer.SetDefaultSubobjectClass<USF_CharacterMovementComponent>(ACharacter::CharacterMovementComponentName)
+		  ObjectInitializer.SetDefaultSubobjectClass<USf_FP_CharacterMovementComponent>(ACharacter::CharacterMovementComponentName)
 		  .DoNotCreateDefaultSubobject(ACharacter::MeshComponentName))
 {
 
 	//CharacterMovement
-	SFCharacterMovementComponent  = Cast<USF_CharacterMovementComponent>(GetCharacterMovement());;
+	SFCharacterMovementComponent  = Cast<USf_FP_CharacterMovementComponent>(GetCharacterMovement());;
 
 	//SprintArmComponent
 	SprintArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
@@ -46,12 +46,19 @@ ASf_Character::ASf_Character(const FObjectInitializer& ObjectInitializer)
 	SprintArmComponent->SetUsingAbsoluteScale(false);
 	SprintArmComponent->SetupAttachment(GetCapsuleComponent());
 
+	//ProceduralCameraAnimationRoot
+	ProceduralCameraAnimationRoot = CreateDefaultSubobject<USceneComponent>(TEXT("ProcCameraAnimRoot"));
+	ProceduralCameraAnimationRoot->SetUsingAbsoluteLocation(false);
+	ProceduralCameraAnimationRoot->SetUsingAbsoluteRotation(false);
+	ProceduralCameraAnimationRoot->SetUsingAbsoluteScale(false);
+	ProceduralCameraAnimationRoot->SetupAttachment(SprintArmComponent);
+
 	//FirstPersonCamera
 	FirstPersonCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FPCam"));
 	FirstPersonCamera->SetUsingAbsoluteLocation(false);
 	FirstPersonCamera->SetUsingAbsoluteRotation(false);
 	FirstPersonCamera->SetUsingAbsoluteScale(false);
-	FirstPersonCamera->SetupAttachment(SprintArmComponent);
+	FirstPersonCamera->SetupAttachment(ProceduralCameraAnimationRoot);
 
 	//First Person Person Character Mesh
 	FirstPersonMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("FPMesh"));
@@ -89,6 +96,12 @@ ASf_Character::ASf_Character(const FObjectInitializer& ObjectInitializer)
 
 	//Weapon Animation Receiver
 	WeaponAnimMontageController = CreateDefaultSubobject<USf_WeaponAnimMontageController_FP>(TEXT("WeaponAnimMontageController"));
+
+	//Damage Controller
+	DamageController = CreateDefaultSubobject<USf_DamageController>(TEXT("DamageController"));
+
+	//AIPerceptionStimuliSourceComponent
+	AIPerceptionStimuliSourceComponent = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("AIPerceptionStimuliSourceComponent"));
 }
 
 void ASf_Character::PostInitProperties()
@@ -99,7 +112,7 @@ void ASf_Character::PostInitProperties()
 void ASf_Character::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-	SFCharacterMovementComponent = Cast<USF_CharacterMovementComponent>(GetCharacterMovement());
+	SFCharacterMovementComponent = Cast<USf_FP_CharacterMovementComponent>(GetCharacterMovement());
 	//FConfigLoader::LoadConfigFile<ASf_Character>(this,"SF_CharacterDefault");
 }
 

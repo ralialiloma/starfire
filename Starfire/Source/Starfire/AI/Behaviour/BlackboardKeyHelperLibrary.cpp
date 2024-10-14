@@ -5,7 +5,7 @@
 
 void UBlackboardKeyHelperLibrary::SetFloatValue(UBlackboardComponent* BlackboardComp, EFloatBlackboardKey FloatBlackboardKey, float Value)
 {
-    if (!BlackboardComp)
+    if (!IsValid(BlackboardComp))
     {
         UE_LOG(SF_BlackboardKeyHelper, Error, TEXT("Cannot set value for %s"), *USf_FunctionLibrary::GetEnumAsString<EFloatBlackboardKey>(FloatBlackboardKey));
         return;
@@ -17,7 +17,7 @@ void UBlackboardKeyHelperLibrary::SetFloatValue(UBlackboardComponent* Blackboard
 
 void UBlackboardKeyHelperLibrary::SetIntValue(UBlackboardComponent* BlackboardComp, EIntBlackboardKey IntBlackboardKey, int32 Value)
 {
-    if (!BlackboardComp)
+    if (!IsValid(BlackboardComp))
     {
         UE_LOG(SF_BlackboardKeyHelper, Error, TEXT("Cannot set value for %s"), *USf_FunctionLibrary::GetEnumAsString<EIntBlackboardKey>(IntBlackboardKey));
         return;
@@ -29,7 +29,7 @@ void UBlackboardKeyHelperLibrary::SetIntValue(UBlackboardComponent* BlackboardCo
 
 void UBlackboardKeyHelperLibrary::SetBoolValue(UBlackboardComponent* BlackboardComp, EBoolBlackboardKey BoolBlackboardKey, bool Value)
 {
-    if (!BlackboardComp)
+    if (!IsValid(BlackboardComp))
     {
         UE_LOG(SF_BlackboardKeyHelper, Error, TEXT("Cannot set value for %s"), *USf_FunctionLibrary::GetEnumAsString<EBoolBlackboardKey>(BoolBlackboardKey));
         return;
@@ -39,21 +39,21 @@ void UBlackboardKeyHelperLibrary::SetBoolValue(UBlackboardComponent* BlackboardC
     BlackboardComp->SetValueAsBool(KeyName, Value);
 }
 
-void UBlackboardKeyHelperLibrary::SetActorValue(UBlackboardComponent* BlackboardComp, EActorBlackboardKey ActorBlackboardKey, AActor* Value)
+void UBlackboardKeyHelperLibrary::SetVectorValue(UBlackboardComponent* BlackboardComp, ELocationBlackboardKey ActorBlackboardKey, FVector Value)
 {
-    if (!BlackboardComp)
+    if (!IsValid(BlackboardComp))
     {
-        UE_LOG(SF_BlackboardKeyHelper, Error, TEXT("Cannot set value for %s"), *USf_FunctionLibrary::GetEnumAsString<EActorBlackboardKey>(ActorBlackboardKey));
+        UE_LOG(SF_BlackboardKeyHelper, Error, TEXT("Cannot set value for %s"), *USf_FunctionLibrary::GetEnumAsString<ELocationBlackboardKey>(ActorBlackboardKey));
         return;
     }
 
-    const FName KeyName = USf_FunctionLibrary::GetEnumAsName<EActorBlackboardKey>(ActorBlackboardKey);
-    BlackboardComp->SetValueAsObject(KeyName, Value);
+    const FName KeyName = USf_FunctionLibrary::GetEnumAsName<ELocationBlackboardKey>(ActorBlackboardKey);
+    BlackboardComp->SetValueAsVector(KeyName, Value);
 }
 
 float UBlackboardKeyHelperLibrary::GetFloatValue(UBlackboardComponent* BlackboardComp, EFloatBlackboardKey FloatBlackboardKey)
 {
-    if (!BlackboardComp)
+    if (!IsValid(BlackboardComp))
     {
         UE_LOG(SF_BlackboardKeyHelper, Error, TEXT("Cannot get value for %s"), *USf_FunctionLibrary::GetEnumAsString<EFloatBlackboardKey>(FloatBlackboardKey));
         return 0.0f;
@@ -65,7 +65,7 @@ float UBlackboardKeyHelperLibrary::GetFloatValue(UBlackboardComponent* Blackboar
 
 int32 UBlackboardKeyHelperLibrary::GetIntValue(UBlackboardComponent* BlackboardComp, EIntBlackboardKey IntBlackboardKey)
 {
-    if (!BlackboardComp)
+    if (!IsValid(BlackboardComp))
     {
         UE_LOG(SF_BlackboardKeyHelper, Error, TEXT("Cannot get value for %s"), *USf_FunctionLibrary::GetEnumAsString<EIntBlackboardKey>(IntBlackboardKey));
         return 0;
@@ -77,7 +77,7 @@ int32 UBlackboardKeyHelperLibrary::GetIntValue(UBlackboardComponent* BlackboardC
 
 bool UBlackboardKeyHelperLibrary::GetBoolValue(UBlackboardComponent* BlackboardComp, EBoolBlackboardKey BoolBlackboardKey)
 {
-    if (!BlackboardComp)
+    if (!IsValid(BlackboardComp))
     {
         UE_LOG(SF_BlackboardKeyHelper, Error, TEXT("Cannot get value for %s"), *USf_FunctionLibrary::GetEnumAsString<EBoolBlackboardKey>(BoolBlackboardKey));
         return false;
@@ -87,14 +87,62 @@ bool UBlackboardKeyHelperLibrary::GetBoolValue(UBlackboardComponent* BlackboardC
     return BlackboardComp->GetValueAsBool(KeyName);
 }
 
-AActor* UBlackboardKeyHelperLibrary::GetActorValue(UBlackboardComponent* BlackboardComp, EActorBlackboardKey ActorBlackboardKey)
+FVector UBlackboardKeyHelperLibrary::GetVectorValue(UBlackboardComponent* BlackboardComp, ELocationBlackboardKey ActorBlackboardKey)
 {
-    if (!BlackboardComp)
+    if (!IsValid(BlackboardComp))
     {
-        UE_LOG(SF_BlackboardKeyHelper, Error, TEXT("Cannot get value for %s"), *USf_FunctionLibrary::GetEnumAsString<EActorBlackboardKey>(ActorBlackboardKey));
-        return nullptr;
+        UE_LOG(SF_BlackboardKeyHelper, Error, TEXT("Cannot get value for %s"), *USf_FunctionLibrary::GetEnumAsString<ELocationBlackboardKey>(ActorBlackboardKey));
+        return FVector(0,0,0);
     }
 
-    const FName KeyName = USf_FunctionLibrary::GetEnumAsName<EActorBlackboardKey>(ActorBlackboardKey);
-    return Cast<AActor>(BlackboardComp->GetValueAsObject(KeyName));
+    const FName KeyName = USf_FunctionLibrary::GetEnumAsName<ELocationBlackboardKey>(ActorBlackboardKey);
+    return BlackboardComp->GetValueAsVector(KeyName);
+}
+
+void UBlackboardKeyHelperLibrary::ClearFloatValue(UBlackboardComponent* BlackboardComp, EFloatBlackboardKey FloatBlackboardKey)
+{
+    if (!IsValid(BlackboardComp))
+    {
+        UE_LOG(SF_BlackboardKeyHelper, Error, TEXT("Cannot clear value for %s"), *USf_FunctionLibrary::GetEnumAsString<EFloatBlackboardKey>(FloatBlackboardKey));
+        return;
+    }
+
+    const FName KeyName = USf_FunctionLibrary::GetEnumAsName<EFloatBlackboardKey>(FloatBlackboardKey);
+    BlackboardComp->ClearValue(KeyName);
+}
+
+void UBlackboardKeyHelperLibrary::ClearIntValue(UBlackboardComponent* BlackboardComp, EIntBlackboardKey IntBlackboardKey)
+{
+    if (!IsValid(BlackboardComp))
+    {
+        UE_LOG(SF_BlackboardKeyHelper, Error, TEXT("Cannot clear value for %s"), *USf_FunctionLibrary::GetEnumAsString<EIntBlackboardKey>(IntBlackboardKey));
+        return;
+    }
+
+    const FName KeyName = USf_FunctionLibrary::GetEnumAsName<EIntBlackboardKey>(IntBlackboardKey);
+    BlackboardComp->ClearValue(KeyName);
+}
+
+void UBlackboardKeyHelperLibrary::ClearBoolValue(UBlackboardComponent* BlackboardComp, EBoolBlackboardKey BoolBlackboardKey)
+{
+    if (!IsValid(BlackboardComp))
+    {
+        UE_LOG(SF_BlackboardKeyHelper, Error, TEXT("Cannot clear value for %s"), *USf_FunctionLibrary::GetEnumAsString<EBoolBlackboardKey>(BoolBlackboardKey));
+        return;
+    }
+
+    const FName KeyName = USf_FunctionLibrary::GetEnumAsName<EBoolBlackboardKey>(BoolBlackboardKey);
+    BlackboardComp->ClearValue(KeyName);
+}
+
+void UBlackboardKeyHelperLibrary::ClearVectorValue(UBlackboardComponent* BlackboardComp, ELocationBlackboardKey ActorBlackboardKey)
+{
+    if (!IsValid(BlackboardComp))
+    {
+        UE_LOG(SF_BlackboardKeyHelper, Error, TEXT("Cannot clear value for %s"), *USf_FunctionLibrary::GetEnumAsString<ELocationBlackboardKey>(ActorBlackboardKey));
+        return;
+    }
+
+    const FName KeyName = USf_FunctionLibrary::GetEnumAsName<ELocationBlackboardKey>(ActorBlackboardKey);
+    BlackboardComp->ClearValue(KeyName);
 }

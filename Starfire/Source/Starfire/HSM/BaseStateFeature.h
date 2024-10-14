@@ -6,7 +6,7 @@
 #include  "ECallIInput.h"
 #include "StateModuleDataStruct.h"
 #include "InputAction.h"
-#include "Starfire/Utility/BetterObject.h"
+#include "Starfire/Sf_Bases/Sf_Object.h"
 #include "BaseStateFeature.generated.h"
 
 class UBaseState;
@@ -14,7 +14,7 @@ class UStateCallstack;
 
 
 UCLASS(Abstract, Blueprintable)
-class STARFIRE_API UBaseStateFeature : public UBetterObject
+class STARFIRE_API UBaseStateFeature : public USf_Object
 {
 	GENERATED_BODY()
 

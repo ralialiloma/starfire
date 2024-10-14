@@ -8,7 +8,29 @@
 
 void UEnemyFeature::Initialize(ASf_NPCharacter* Holder)
 {
-	this->OwningAIHolder = Holder;
+	OwningAIHolder = Holder;
+	AController* Controller = Holder->GetController();
+
+	if (!IsValid(Controller))
+	{
+		UE_LOG(EnemyFeature, Error, TEXT("Invalid Controller"))
+		return;
+	}
+	
+	OwningAIController = Cast<AAIController>(Holder->GetController());
+	if (!IsValid(OwningAIController))
+	{
+		UE_LOG(
+			EnemyFeature,
+			Error,
+			TEXT("Invalid type. Needs to be AIController but its %s instead"),
+			*OwningAIController->GetClass()->GetName())
+		return;
+	}
+}
+
+void UEnemyFeature::OnTick()
+{
 }
 
 void UEnemyFeature::SetBlackboardFloatValue(EFloatBlackboardKey FloatBlackboardKey, float Value)
@@ -29,14 +51,66 @@ void UEnemyFeature::SetBlackboardBoolValue(EBoolBlackboardKey BoolBlackboardKey,
 	UBlackboardKeyHelperLibrary::SetBoolValue(BlackboardComponent,BoolBlackboardKey,Value);
 }
 
-void UEnemyFeature::SetBlackboardActorValue(EActorBlackboardKey ActorBlackboardKey, AActor* Value)
+void UEnemyFeature::SetBlackboardVectorValue(ELocationBlackboardKey ActorBlackboardKey, FVector Value)
 {
 	UBlackboardComponent* BlackboardComponent = UAIBlueprintHelperLibrary::GetBlackboard(OwningAIHolder);
-	UBlackboardKeyHelperLibrary::SetActorValue(BlackboardComponent,ActorBlackboardKey,Value);
+	UBlackboardKeyHelperLibrary::SetVectorValue(BlackboardComponent,ActorBlackboardKey,Value);
 }
 
-UCharacterMovementComponent* UEnemyFeature::GetCharacterMovement()
+UEnemyFeature* UEnemyFeature::GetFeatureByClass(TSubclassOf<UEnemyFeature> Class)
 {
-	return OwningAIHolder->GetCharacterMovement();
+	return  GetOwningCharacter()->GetFeatureByClass(Class);
+}
+
+
+
+USf_TP_CharacterMovementComponent* UEnemyFeature::GetOwningSfMovement()
+{
+	return OwningAIHolder->GetSfMovement();
+}
+
+USF_Equipment* UEnemyFeature::GetOwningSfEquipment()
+{
+	return OwningAIHolder->GetSfEquipment();
+}
+
+ASf_NPCharacter* UEnemyFeature::GetOwningCharacter()
+{
+	return OwningAIHolder;
+}
+
+AAIController* UEnemyFeature::GetOwningAIController()
+{
+	return OwningAIController;
+}
+
+FVector UEnemyFeature::GetOwnerLocation() const
+{
+	return GetOwnerTransform().GetLocation();
+}
+
+FRotator UEnemyFeature::GetOwnerRotation() const
+{
+	return GetOwnerTransform().GetRotation().Rotator();
+}
+
+AWeaponBase* UEnemyFeature::GetOwningCharacterActiveWeapon()
+{
+	return GetOwningSfEquipment()->GetActiveWeapon();
+}
+
+FCollisionQueryParams UEnemyFeature::GetIgnoreCharacterParams()
+{
+	return GetOwningCharacter()->GetIgnoreCharacterParams();
+}
+
+TArray<AActor*> UEnemyFeature::GetIgnoreActors() const
+{
+	return OwningAIHolder->GetIgnoreActors();
+}
+
+FTransform UEnemyFeature::GetOwnerTransform() const
+{
+	return OwningAIHolder->GetTransform();
 }
 

@@ -133,6 +133,12 @@ void USF_Equipment::AddWeapon(AWeaponBase* WeaponToAdd, const bool Equip, int &S
 
 void USF_Equipment::AddWeaponByClass(TSubclassOf<AWeaponBase> WeaponClassToAdd, bool Equip, int& Index)
 {
+	if (!IsValid(WeaponClassToAdd))
+	{
+		UE_LOG(EquipmentComponent, Error, TEXT("Invalid Weapon Class To Add"))
+		return;
+	}
+
 	AWeaponBase* WeaponBase =  GetWorld()->SpawnActor<AWeaponBase>(WeaponClassToAdd);
 	AddWeapon(WeaponBase, Equip, Index);
 }
@@ -229,7 +235,7 @@ bool USF_Equipment::UnequipWeapon(bool HideWeapon)
 	return true;
 }
 
-bool USF_Equipment::Fire(EInputSignalType InputSignal, EFireType FireType, FHitResult& OutHitResult, TEnumAsByte<EFireBlock>& OutFireBlock)
+bool USF_Equipment::Fire(EInputSignalType InputSignal, EFireType FireType, FHitResult& OutHitResult, EFireBlock& OutFireBlock)
 {
 	if (!IsEquipped())
 	{
@@ -240,13 +246,22 @@ bool USF_Equipment::Fire(EInputSignalType InputSignal, EFireType FireType, FHitR
 	return EquippedWeapon->Fire(InputSignal,FireType,OutHitResult,OutFireBlock);
 }
 
-
-bool USF_Equipment::Reload()
+bool USF_Equipment::Reload() const
 {
 	if (!IsEquipped())
 		return false;
 
-	return EquippedWeapon->Reload();
+	float MontageTime = 0;
+	return EquippedWeapon->Reload(MontageTime);
+}
+
+
+bool USF_Equipment::Reload(float &OutMontageTime)
+{
+	if (!IsEquipped())
+		return false;
+
+	return EquippedWeapon->Reload(OutMontageTime);
 }
 
 void USF_Equipment::StopReloading()
@@ -325,6 +340,17 @@ bool USF_Equipment::CanMelee() const
 		return false;
 
 	return EquippedWeapon->CanMelee();
+}
+
+FWeaponConfig USF_Equipment::GetWeaponConfig()
+{
+	if (!IsEquipped())
+	{
+		UE_LOG(EquipmentComponent, Error, TEXT("Cannot get config because no weapon is equipped"))
+		return FWeaponConfig();
+	}
+
+	return  GetActiveWeapon()->GetWeaponConfig();
 }
 
 
