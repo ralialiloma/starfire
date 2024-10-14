@@ -13,13 +13,38 @@
 #include "Starfire/HSM/SF_CharacterStateMachine.h"
 #include "Starfire/Interact/InteractComponent.h"
 #include "Starfire/Utility/ConfigLoader.h"
+#include "UObject/UnrealTypePrivate.h"
 
-DEFINE_LOG_CATEGORY_STATIC(SF_Character_Log , Display, Display);
+DEFINE_LOG_CATEGORY_STATIC(SF_Character_Log, Display, Display);
+
+TArray<FName> ASf_Character::GetAllPropertiesWithoutCustomConfig()
+{
+	TArray<FName> Returns;
+	
+	for (TFieldIterator<FProperty> PropIt(StaticClass()); PropIt; ++PropIt)
+	{
+		FProperty* Property = *PropIt;
+
+		if (!Property)
+			continue;
+
+		if (Property->HasMetaData(TEXT("CustomConfig")))
+			continue;
+		
+		if (!Property->HasAnyPropertyFlags(CPF_Edit | CPF_EditConst | CPF_InstancedReference))
+			continue;
+		
+		Returns.Add(Property->GetFName());
+	}
+
+	return Returns;
+}
 
 FReply ASf_Character::OnSaveButtonClicked()
 {
 	FConfigLoader::SaveCustomConfig(GetClass()->GetDefaultObject(),"SF_CharacterDefault");
 	FConfigLoader::SaveCustomConfig(GetClass()->GetDefaultObject<AActor>()->FindComponentByClass<USf_FP_CharacterMovementComponent>(),"SF_CharacterDefault");
+	FConfigLoader::SaveCustomConfig(GetClass()->GetDefaultObject<AActor>()->FindComponentByClass<USF_Equipment>(),"USF_Equipment");
 	return FReply::Handled();
 }
 
@@ -27,6 +52,7 @@ FReply ASf_Character::OnLoadButtonClicked()
 {
 	FConfigLoader::LoadConfigFile(GetClass()->GetDefaultObject(),"SF_CharacterDefault");
 	FConfigLoader::LoadConfigFile(GetClass()->GetDefaultObject<AActor>()->FindComponentByClass<USf_FP_CharacterMovementComponent>(),"SF_CharacterDefault");
+	FConfigLoader::LoadConfigFile(GetClass()->GetDefaultObject<AActor>()->FindComponentByClass<USF_Equipment>(),"USF_Equipment");
 	return FReply::Handled();
 }
 

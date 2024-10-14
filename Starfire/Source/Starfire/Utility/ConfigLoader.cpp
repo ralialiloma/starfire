@@ -1,6 +1,6 @@
 #include "ConfigLoader.h"
 
-void FConfigLoader::LoadConfigFile(UObject* ObjectToLoad, FString Name)
+void FConfigLoader::LoadConfigFile(UObject* ObjectToLoad, FString Name, TArray<FName> AdditionalProperties)
 {
 	FString CustomConfigFilePath = GetConfigFilePath(Name);
 
@@ -10,13 +10,20 @@ void FConfigLoader::LoadConfigFile(UObject* ObjectToLoad, FString Name)
 	for (TFieldIterator<FProperty> PropIt(ObjectToLoad->GetClass()); PropIt; ++PropIt)
 	{
 		FProperty* Property = *PropIt;
+
+		if (!Property)
+			continue;
+
+		if (!Property->HasMetaData(TEXT("CustomConfig")) && AdditionalProperties.Contains(Property->GetFName()))
+			continue;
+		
 		LoadProperty<UObject>(Property, ObjectToLoad, Name, CustomConfigFilePath);
 	}
 	
 	UE_LOG(Sf_ConfigLoaderLog, Log, TEXT("Loaded custom config from %s"), *CustomConfigFilePath);
 }
 
-void FConfigLoader::SaveCustomConfig(UObject* ObjectToSave, FString Name)
+void FConfigLoader::SaveCustomConfig(UObject* ObjectToSave, FString Name, TArray<FName> AdditionalProperties)
 {
 	if (!ObjectToSave || GConfig == nullptr)
 	{
@@ -34,9 +41,12 @@ void FConfigLoader::SaveCustomConfig(UObject* ObjectToSave, FString Name)
 		if (PropIt->GetOwnerClass() != ObjectToSave->GetClass())
 			continue;
 
-		bool SuccesFullSave = false;
-		SaveProperty<UObject>(Property,ObjectToSave,Name,CustomConfigFilePath,SuccesFullSave);
-		if (SuccesFullSave)
+		if (!Property->HasMetaData(TEXT("CustomConfig")) && !AdditionalProperties.Contains(Property->GetFName()))
+			continue;
+
+		bool bSuccessfulSave = false;
+		SaveProperty<UObject>(Property, ObjectToSave, Name, CustomConfigFilePath, bSuccessfulSave);
+		if (bSuccessfulSave)
 			SavedProperties++;
 	}
 

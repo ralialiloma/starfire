@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Sf_Equipment.h"
 #include "WeaponAnimMontageController_FP.h"
 #include "GameFramework/Character.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
@@ -60,8 +61,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Damage")
 	UAIPerceptionStimuliSourceComponent* AIPerceptionStimuliSourceComponent;
-
-
+	
 public:
 #pragma region Editor
 #if WITH_EDITOR
@@ -70,6 +70,13 @@ public:
 	FReply OnLoadButtonClicked();
 	
 #endif
+
+	UPROPERTY(EditDefaultsOnly, meta = (GetOptions = "GetAllPropertiesWithoutCustomConfig"))
+	TArray<FName> AdditionalConfigSavedProperties = {};
+
+	UFUNCTION()
+	static TArray<FName> GetAllPropertiesWithoutCustomConfig();
+	
 #pragma endregion
 
 public:

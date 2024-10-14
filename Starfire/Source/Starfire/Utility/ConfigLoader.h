@@ -9,12 +9,12 @@ struct FConfigLoader
 	GENERATED_BODY()
 	
 	template <class T>
-	static void LoadConfigFile(T* ObjectToLoad, FString Name);
-	static void LoadConfigFile(UObject* ObjectToLoad, FString Name);
+	static void LoadConfigFile(T* ObjectToLoad, FString Name, TArray<FName> AdditionalProperties = {});
+	static void LoadConfigFile(UObject* ObjectToLoad, FString Name, TArray<FName> AdditionalProperties = {});
 
 	template <class T>
-	static void SaveCustomConfig(T* ObjectToSave, FString Name);
-	static void SaveCustomConfig(UObject* ObjectToSave, FString Name);
+	static void SaveCustomConfig(T* ObjectToSave, FString Name, TArray<FName> AdditionalProperties = {});
+	static void SaveCustomConfig(UObject* ObjectToSave, FString Name, TArray<FName> AdditionalProperties = {});
 	
 	template <class T>
 	static  void SaveProperty(FProperty* Property, T* ObjectToSave, FString Name, FString CustomConfigFilePath,
@@ -30,7 +30,7 @@ private:
 
 
 	template <typename T>
-	void FConfigLoader::LoadConfigFile(T* ObjectToLoad, FString Name)
+	void FConfigLoader::LoadConfigFile(T* ObjectToLoad, FString Name, TArray<FName> AdditionalProperties)
 	{
 		FString CustomConfigFilePath = GetConfigFilePath(Name);
 
@@ -40,6 +40,13 @@ private:
 		for (TFieldIterator<FProperty> PropIt(T::StaticClass()); PropIt; ++PropIt)
 		{
 			FProperty* Property = *PropIt;
+
+			if (!Property)
+				continue;
+
+			if (!Property->HasMetaData(TEXT("CustomConfig")) && AdditionalProperties.Contains(Property->GetFName()))
+				continue;
+			
 			LoadProperty<T>(Property, ObjectToLoad, Name, CustomConfigFilePath);
 		}
 		
@@ -53,9 +60,6 @@ private:
 			return;
 
 		if (!ObjectToLoad)
-			return;
-		
-		if (!Property->HasMetaData(TEXT("CustomConfig")))
 			return;
 
 		FString PropertyName = Property->GetName();
@@ -162,7 +166,7 @@ private:
 	}
 
 	template <typename T>
-	void FConfigLoader::SaveCustomConfig(T* ObjectToSave,FString Name)
+	void FConfigLoader::SaveCustomConfig(T* ObjectToSave,FString Name, TArray<FName> AdditionalProperties)
 	{
 		if (!ObjectToSave || GConfig == nullptr)
 		{
@@ -180,9 +184,12 @@ private:
 			if (PropIt->GetOwnerClass() != T::StaticClass())
 				continue;
 
-			bool SuccesFullSave = false;
-			SaveProperty<T>(Property,ObjectToSave,Name,CustomConfigFilePath,SuccesFullSave);
-			if (SuccesFullSave)
+			if (!Property->HasMetaData(TEXT("CustomConfig")) && !AdditionalProperties.Contains(Property->GetFName()))
+				continue;
+
+			bool bSuccessfulSave = false;
+			SaveProperty<T>(Property,ObjectToSave,Name,CustomConfigFilePath,bSuccessfulSave);
+			if (bSuccessfulSave)
 				SavedProperties++;
 		}
 
@@ -198,9 +205,6 @@ private:
 	template <class T>
 	void FConfigLoader::SaveProperty(FProperty* Property, T* ObjectToSave, FString Name, FString CustomConfigFilePath, bool& SuccessfulSave)
 	{
-		if (!Property->HasMetaData(TEXT("CustomConfig")))
-			return;
-
 		FString PropertyName = Property->GetName();
 		FString SectionName = GetSectionName(Name);
 
