@@ -79,8 +79,10 @@ public:
 #pragma endregion
 	
 #pragma region Properties
+	
 	UPROPERTY(Transient)
 	ASf_Character* SfCharacterOwner;
+	
 #pragma endregion
 	
 #pragma region Sprint
@@ -135,7 +137,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun", meta =(CustomConfig))
 	float MaxVerticalWallRunSpeed = 200.0f;
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun", meta =(CustomConfig))
-	float WallRunPullAwayAngle =75;
+	float WallRunPullAwayAngle = 75;
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun", meta =(CustomConfig))
 	float WallAttractionForce = 200.0f;
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun", meta =(CustomConfig))
@@ -144,7 +146,9 @@ protected:
 	UCurveFloat* WallRunGravityScaleCurve = nullptr;
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun", meta =(CustomConfig))
 	float WallJumpOffForce = 300.f;
-private:
+
+	FVector2D WallNormal = FVector2D::ZeroVector;
+
 	bool Saved_bWallRunIsRight;
 #pragma endregion
 	
