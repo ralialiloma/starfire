@@ -79,8 +79,10 @@ public:
 #pragma endregion
 	
 #pragma region Properties
+	
 	UPROPERTY(Transient)
 	ASf_Character* SfCharacterOwner;
+	
 #pragma endregion
 	
 #pragma region Sprint
@@ -144,10 +146,6 @@ protected:
 	UCurveFloat* WallRunGravityScaleCurve = nullptr;
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun", meta =(CustomConfig))
 	float WallJumpOffForce = 300.f;
-	
-	//Transient
-	UPROPERTY(Transient)
-	ASf_Character* SfCharacterOwner;
 
 	FVector2D WallNormal = FVector2D::ZeroVector;
 
