@@ -64,7 +64,7 @@ class STARFIRE_API USF_CharacterMovementComponent : public UCharacterMovementCom
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun", meta =(CustomConfig))
 	float MaxVerticalWallRunSpeed = 200.0f;
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun", meta =(CustomConfig))
-	float WallRunPullAwayAngle =75;
+	float WallRunPullAwayAngle = 75;
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun", meta =(CustomConfig))
 	float WallAttractionForce = 200.0f;
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun", meta =(CustomConfig))
@@ -77,7 +77,8 @@ class STARFIRE_API USF_CharacterMovementComponent : public UCharacterMovementCom
 	//Transient
 	UPROPERTY(Transient)
 	ASf_Character* SfCharacterOwner;
-	
+
+	FVector2D WallNormal = FVector2D::ZeroVector;
 	bool Saved_bWallRunIsRight;
 	bool Safe_bWantsToSprint;
 
