@@ -11,16 +11,16 @@ class STARFIRE_API UEF_Cover : public UEnemyFeature
 
 #pragma region Functions
 public:
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "EnemyFeature|Cover")
 	bool EnterCover();
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "EnemyFeature|Cover")
 	bool ExitCover();
 	
-	UFUNCTION(BlueprintPure)
+	UFUNCTION(BlueprintCallable, Category = "EnemyFeature|Cover")
 	bool CanBeHitByPlayer() const;
 
-	UFUNCTION(BlueprintPure)
+	UFUNCTION(BlueprintCallable, Category = "EnemyFeature|Cover")
 	bool IsInCoverState() const;
 
 private:

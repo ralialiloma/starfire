@@ -99,6 +99,9 @@ ASf_Character::ASf_Character(const FObjectInitializer& ObjectInitializer)
 
 	//Damage Controller
 	DamageController = CreateDefaultSubobject<USf_DamageController>(TEXT("DamageController"));
+
+	//AIPerceptionStimuliSourceComponent
+	AIPerceptionStimuliSourceComponent = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("AIPerceptionStimuliSourceComponent"));
 }
 
 void ASf_Character::PostInitProperties()

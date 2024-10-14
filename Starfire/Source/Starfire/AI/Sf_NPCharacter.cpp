@@ -8,8 +8,10 @@
 #include "Behaviour/BlackboardKeyHelperLibrary.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Features/EF_Cover.h"
-#include "Features/EF_Fire.h"
+#include "Features/EF_Combat.h"
+#include "Features/EF_Death.h"
 #include "Features/EF_Locomotion.h"
+#include "Perception/AIPerceptionComponent.h"
 #include "Starfire/Character/Sf_Equipment.h"
 #include "Starfire/DamageSystem/Sf_DamageController.h"
 
@@ -43,6 +45,12 @@ ASf_NPCharacter::ASf_NPCharacter(const FObjectInitializer& ObjectInitializer): S
 
 	//Movement Component
 	SFCharacterMovementComponent = Cast<USf_TP_CharacterMovementComponent>(GetCharacterMovement());;
+
+	//Pawn Sensing
+	PawnSensingComponent = CreateDefaultSubobject<UPawnSensingComponent>(TEXT("PawnSensingComponent"));
+
+	//Pawn Sensing
+	AIPerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerceptionComponent"));
 }
 
 void ASf_NPCharacter::PreInitializeComponents()
@@ -140,8 +148,9 @@ TSet<TSubclassOf<UEnemyFeature>> ASf_NPCharacter::GetAllStartFeatures() const
 {
 	TSet<TSubclassOf<UEnemyFeature>> AllFeatures{
 		UEF_Cover::StaticClass(),
-		UEF_Fire::StaticClass(),
-		UEF_Locomotion::StaticClass()};
+		UEF_Combat::StaticClass(),
+		UEF_Locomotion::StaticClass(),
+		UEF_Death::StaticClass()};
 	AllFeatures.Append(StartFeatures);
 	return AllFeatures;
 }

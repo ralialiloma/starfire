@@ -19,10 +19,10 @@ public:
 	USf_DamageController();
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "Damage Receiver")
-	float MaxHealth;
+	float MaxHealth= 100;
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "Damage Receiver")
-	float MaxArmor;
+	float MaxArmor = 50;
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,BlueprintAssignable, Category = "Damage Receiver")
 	FReceivedDamage OnDamageReceived;
@@ -33,10 +33,10 @@ public:
 private:
 
 	UPROPERTY()
-	float CurrentHealth;
+	float CurrentHealth = 0;
 
 	UPROPERTY()
-	float CurrentArmor;
+	float CurrentArmor = 0;
 
 	//Interface
 public:

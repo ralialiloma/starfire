@@ -51,11 +51,18 @@ void UEnemyFeature::SetBlackboardBoolValue(EBoolBlackboardKey BoolBlackboardKey,
 	UBlackboardKeyHelperLibrary::SetBoolValue(BlackboardComponent,BoolBlackboardKey,Value);
 }
 
-void UEnemyFeature::SetBlackboardActorValue(EActorBlackboardKey ActorBlackboardKey, AActor* Value)
+void UEnemyFeature::SetBlackboardVectorValue(ELocationBlackboardKey ActorBlackboardKey, FVector Value)
 {
 	UBlackboardComponent* BlackboardComponent = UAIBlueprintHelperLibrary::GetBlackboard(OwningAIHolder);
-	UBlackboardKeyHelperLibrary::SetActorValue(BlackboardComponent,ActorBlackboardKey,Value);
+	UBlackboardKeyHelperLibrary::SetVectorValue(BlackboardComponent,ActorBlackboardKey,Value);
 }
+
+UEnemyFeature* UEnemyFeature::GetFeatureByClass(TSubclassOf<UEnemyFeature> Class)
+{
+	return  GetOwningCharacter()->GetFeatureByClass(Class);
+}
+
+
 
 USf_TP_CharacterMovementComponent* UEnemyFeature::GetOwningSfMovement()
 {

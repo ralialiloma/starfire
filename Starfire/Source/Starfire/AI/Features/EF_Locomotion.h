@@ -11,7 +11,7 @@
 #pragma region Enums And Structs
 
 UENUM(BlueprintType)
-enum class E_NP_LocomotionType: uint8
+enum class E_Sf_TP_LocomotionType: uint8
 {
 	KeepCurrent = 0,
 	Walk = 2,
@@ -20,7 +20,7 @@ enum class E_NP_LocomotionType: uint8
 };
 
 USTRUCT(BlueprintType)
-struct FMoveRequest
+struct F_SF_MoveRequest
 {
 	GENERATED_BODY()
 
@@ -29,14 +29,14 @@ struct FMoveRequest
 	UPROPERTY(BlueprintReadWrite)
 	float AcceptanceRadius;
 	UPROPERTY(BlueprintReadWrite)
-	E_NP_LocomotionType LocomotionType;
+	E_Sf_TP_LocomotionType LocomotionType;
 	UPROPERTY(BlueprintReadWrite)
 	TSubclassOf<UNavigationQueryFilter> FilterClass;
 
-	FMoveRequest()
+	F_SF_MoveRequest()
 		: Destination(FVector::ZeroVector)
 		, AcceptanceRadius(100.f)
-		, LocomotionType(E_NP_LocomotionType::Walk)
+		, LocomotionType(E_Sf_TP_LocomotionType::Walk)
 		, FilterClass(nullptr)
 	{
 	}
@@ -54,12 +54,12 @@ class STARFIRE_API UEF_Locomotion : public UEnemyFeature
 	
 #pragma region Functions
 public:
-	UFUNCTION(BlueprintCallable)
-	bool MoveToLocation(FMoveRequest MoveRequest);
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "EnemyFeature|Locomotion")
+	bool MoveToLocation(F_SF_MoveRequest MoveRequest);
+	UFUNCTION(BlueprintCallable, Category = "EnemyFeature|Locomotion")
 	void StopMovement();
 private:
-	void ProcessLocomotionType(E_NP_LocomotionType LocomotionType);
+	void ProcessLocomotionType(E_Sf_TP_LocomotionType LocomotionType);
 	UFUNCTION()
 	void OnMoveCompleted(FAIRequestID RequestID,EPathFollowingResult::Type Result);
 	void ClearAllDelegates();

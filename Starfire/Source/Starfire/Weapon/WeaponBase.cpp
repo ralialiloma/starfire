@@ -71,7 +71,7 @@ void AWeaponBase::OnInteractStart_Implementation(UInteractComponent* InteractCom
 	}
 }
 
-bool AWeaponBase::Fire(const EInputSignalType InputSignal, EFireType FireType, FHitResult& OutHitResult, TEnumAsByte<EFireBlock>& OutFireBlock) 
+bool AWeaponBase::Fire(const EInputSignalType InputSignal, EFireType FireType, FHitResult& OutHitResult,EFireBlock& OutFireBlock) 
 {
 	StopReloading();
 	
@@ -337,7 +337,7 @@ bool AWeaponBase::CheckInputSignalType(EInputSignalType InputSignalType)
 
 bool AWeaponBase::IsOnFireCooldown()
 {
-	return GetWorld()->GetTimerManager().IsTimerActive(FireCooldown);
+	return bActiveFireCooldown;
 }
 
 bool AWeaponBase::IsOnMeleeCooldown()
@@ -358,9 +358,10 @@ void AWeaponBase::DoFire(FHitResult& OutHitResult)
 	if (CurrentFireDelay>0)
 	{
 		//Start Cooldown
+		bActiveFireCooldown = true;
 		FTimerDelegate TimerDel;
 		TimerDel.BindLambda([this]() -> void { bActiveFireCooldown = false;});
-		GetWorld()->GetTimerManager().SetTimer(FireCooldown, TimerDel,CurrentFireDelay,false);
+		GetWorld()->GetTimerManager().SetTimer(FireCooldown, TimerDel,CurrentFireDelay,false,CurrentFireDelay);
 	}
 
 	//Reduce Clip
@@ -484,7 +485,7 @@ void AWeaponBase::OnUnequip()
 	UE_LOG(SF_Weapon, Log, TEXT("Unequipped %s"),*GetClass()->GetName())
 }
 
-bool AWeaponBase::CanFire(EInputSignalType InputSignal, EFireType FireType,TEnumAsByte<EFireBlock>& OutBlock)
+bool AWeaponBase::CanFire(EInputSignalType InputSignal, EFireType FireType,EFireBlock& OutBlock)
 {
 	//WeaponHolder
 	if (!IsValid(WeaponOwner))

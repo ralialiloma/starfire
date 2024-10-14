@@ -106,12 +106,12 @@ private:
 #pragma region Fire
 public:
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "WeaponBase")
-	bool CanFire(EInputSignalType InputSignal, EFireType FireType, TEnumAsByte<EFireBlock>& OutBlock);
+	bool CanFire(EInputSignalType InputSignal, EFireType FireType, EFireBlock& OutBlock);
 	UFUNCTION(BlueprintCallable,Category="WeaponBase")
 	bool IsOnFireCooldown();
 	
 	UFUNCTION(BlueprintCallable, Category="WeaponBase")
-	bool Fire(const EInputSignalType InputSignal, EFireType FireType, FHitResult& OutHitResult,	TEnumAsByte<EFireBlock>& OutFireBlock);
+	bool Fire(const EInputSignalType InputSignal, EFireType FireType, FHitResult& OutHitResult, EFireBlock& OutFireBlock);
 
 protected:
 	void GetTracePoints(FTransform InFireTransform, FVector& OutStart, FVector& OutEnd);

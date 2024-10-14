@@ -34,11 +34,14 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "Blackboard|Setters")
 	void SetBlackboardBoolValue(EBoolBlackboardKey BoolBlackboardKey, bool Value);
 	UFUNCTION(BlueprintCallable, Category = "Blackboard|Setters")
-	void SetBlackboardActorValue(EActorBlackboardKey ActorBlackboardKey, AActor* Value);
+	void SetBlackboardVectorValue(ELocationBlackboardKey ActorBlackboardKey, FVector Value);
 
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "EnemyFeatures", meta = (DeterminesOutputType = "Class"))
+	UEnemyFeature* GetFeatureByClass(TSubclassOf<UEnemyFeature> Class);
+	
+	
 	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "Character")
 	USf_TP_CharacterMovementComponent* GetOwningSfMovement();
-	
 	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "Character")
 	ASf_NPCharacter* GetOwningCharacter();
 	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "Character")
@@ -76,9 +79,5 @@ private:
 	UPROPERTY()
 	AAIController* OwningAIController = nullptr;
 #pragma endregion
-	
-
-
-
 	
 };

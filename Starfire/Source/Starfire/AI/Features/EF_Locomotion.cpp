@@ -8,7 +8,7 @@
 #include "Starfire/AI/EQS/NavigationTargetSubsystem.h"
 
 
-bool UEF_Locomotion::MoveToLocation(FMoveRequest MoveRequest)
+bool UEF_Locomotion::MoveToLocation(F_SF_MoveRequest MoveRequest)
 {
 	UNavigationTargetSubsystem* NavTargetSys = GetWorld()->GetGameInstance()->GetSubsystem<UNavigationTargetSubsystem>();
 
@@ -80,25 +80,25 @@ void UEF_Locomotion::StopMovement()
 	ClearAllDelegates();
 }
 
-void UEF_Locomotion::ProcessLocomotionType(E_NP_LocomotionType LocomotionType)
+void UEF_Locomotion::ProcessLocomotionType(E_Sf_TP_LocomotionType LocomotionType)
 {
 	USf_TP_CharacterMovementComponent* MovementComponent =  GetOwningSfMovement();
 	
 	switch (LocomotionType)
 	{
-		case E_NP_LocomotionType::Crouch:
+		case E_Sf_TP_LocomotionType::Crouch:
 			MovementComponent->SprintReleased();
 			MovementComponent->Crouch();
 			break;
-		case E_NP_LocomotionType::Walk:
+		case E_Sf_TP_LocomotionType::Walk:
 			MovementComponent->UnCrouch();
 			MovementComponent->SprintReleased();
 			break;
-		case E_NP_LocomotionType::Sprint:
+		case E_Sf_TP_LocomotionType::Sprint:
 			MovementComponent->UnCrouch();
 			MovementComponent->SprintPressed();
 				break;
-		case E_NP_LocomotionType::KeepCurrent:
+		case E_Sf_TP_LocomotionType::KeepCurrent:
 			break;
 		default:
 			break;

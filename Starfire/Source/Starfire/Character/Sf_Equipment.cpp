@@ -133,6 +133,12 @@ void USF_Equipment::AddWeapon(AWeaponBase* WeaponToAdd, const bool Equip, int &S
 
 void USF_Equipment::AddWeaponByClass(TSubclassOf<AWeaponBase> WeaponClassToAdd, bool Equip, int& Index)
 {
+	if (!IsValid(WeaponClassToAdd))
+	{
+		UE_LOG(EquipmentComponent, Error, TEXT("Invalid Weapon Class To Add"))
+		return;
+	}
+
 	AWeaponBase* WeaponBase =  GetWorld()->SpawnActor<AWeaponBase>(WeaponClassToAdd);
 	AddWeapon(WeaponBase, Equip, Index);
 }
@@ -229,7 +235,7 @@ bool USF_Equipment::UnequipWeapon(bool HideWeapon)
 	return true;
 }
 
-bool USF_Equipment::Fire(EInputSignalType InputSignal, EFireType FireType, FHitResult& OutHitResult, TEnumAsByte<EFireBlock>& OutFireBlock)
+bool USF_Equipment::Fire(EInputSignalType InputSignal, EFireType FireType, FHitResult& OutHitResult, EFireBlock& OutFireBlock)
 {
 	if (!IsEquipped())
 	{

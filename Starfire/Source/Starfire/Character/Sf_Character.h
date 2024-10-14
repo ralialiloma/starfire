@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "WeaponAnimMontageController_FP.h"
 #include "GameFramework/Character.h"
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Starfire/Animation/WeaponAnimMontageController.h"
 #include "Starfire/DamageSystem/Sf_DamageController.h"
 #include "Starfire/HSM/SF_CharacterStateMachine.h"
@@ -56,6 +57,9 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Damage")
 	USf_DamageController* DamageController;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Damage")
+	UAIPerceptionStimuliSourceComponent* AIPerceptionStimuliSourceComponent;
 
 
 public:

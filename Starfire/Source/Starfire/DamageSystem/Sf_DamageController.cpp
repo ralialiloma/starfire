@@ -14,6 +14,8 @@ USf_DamageController::USf_DamageController()
 void USf_DamageController::BeginPlay()
 {
 	Super::BeginPlay();
+	CurrentHealth = MaxHealth;
+	CurrentArmor = MaxArmor;
 }
 
 void USf_DamageController::InitializeComponent()
@@ -40,7 +42,8 @@ float USf_DamageController::ApplyDamage(float Damage,FVector HitLocation, FVecto
 		return 0;
 
 	//Total Damage
-	float TotalDamage = (Damage/CurrentArmor)*Hitbox->DamageMultiplier;
+	float SafeCurrentArmor = FMath::Max(CurrentArmor,1);
+	float TotalDamage = (Damage/SafeCurrentArmor)*Hitbox->DamageMultiplier;
 
 	//Update CurrentHealth
 	CurrentHealth = FMath::Max(CurrentHealth-TotalDamage,0);

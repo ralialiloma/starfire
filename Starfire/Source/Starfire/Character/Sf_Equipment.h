@@ -95,7 +95,7 @@ public:
 
 	//Actions
 	UFUNCTION(BlueprintCallable)
-	bool Fire(EInputSignalType InputSignal, EFireType FireType, FHitResult& OutHitResult, TEnumAsByte<EFireBlock>& OutFireBlock);
+	bool Fire(EInputSignalType InputSignal, EFireType FireType, FHitResult& OutHitResult, EFireBlock& OutFireBlock);
 	UFUNCTION(BlueprintCallable)
 	bool Reload(float &OutMontageTime);
 	bool Reload() const;
