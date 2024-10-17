@@ -106,7 +106,6 @@ void AWeaponBase::FireTraces(FHitResult& OutHitResult)
 
 		//Ignore
 		TArray<AActor*> ActorsToIgnore = TArray<AActor*>{WeaponOwner,this};
-		
 
 		//Line Trace
 		UKismetSystemLibrary::LineTraceSingle(
@@ -122,7 +121,7 @@ void AWeaponBase::FireTraces(FHitResult& OutHitResult)
 			TraceColor,
 			FColor::Yellow,
 			3.f);
-
+		
 		if (!OutHitResult.bBlockingHit)
 			continue;
 		
@@ -311,21 +310,26 @@ void AWeaponBase::ExecuteAnimation(EWeaponAnimationEventType WeaponAnimationEven
 }
 
 
-void AWeaponBase::GetTracePoints(FTransform InFireTransform, FVector& OutStart, FVector& OutEnd)
+void AWeaponBase::GetTracePoints(const FTransform& InFireTransform, FVector& OutStart, FVector& OutEnd) const
 {
-	//Calculate Shot Angle
+	// Calculate Shot Angle
 	float ShotAngle = WeaponConfig.GetShotAngle(bIsAiming);
 	OutStart = InFireTransform.GetLocation();
 
-	//Calculate Start And End Points
+	// Get rotation from the fire transform
 	UE::Math::TQuat<double> Rotation = InFireTransform.GetRotation();
-	FVector ForwardVector =  Rotation.GetForwardVector()*WeaponConfig.Range;
+	FVector ForwardVector = Rotation.GetForwardVector();
 	FVector UpVector = Rotation.GetUpVector();
-	FVector ShotAngleVector = UKismetMathLibrary::RotateAngleAxis(ForwardVector,ShotAngle,UpVector);
-	float RandomAngle = UKismetMathLibrary::RandomFloatInRange(0,360);
-	FVector RandomShotAngleVector =
-		UKismetMathLibrary::RotateAngleAxis(ShotAngleVector,RandomAngle,ForwardVector);
-	OutEnd = OutStart+RandomShotAngleVector;
+
+	// Apply shot angle offset
+	FVector ShotAngleVector = UKismetMathLibrary::RotateAngleAxis(ForwardVector, ShotAngle, UpVector);
+    
+	// Apply random angle to the shot angle vector
+	float RandomAngle = UKismetMathLibrary::RandomFloatInRange(0, 360.0f);
+	FVector RandomShotAngleVector = UKismetMathLibrary::RotateAngleAxis(ShotAngleVector, RandomAngle, ForwardVector);
+
+	// Calculate end point by normalizing the direction and multiplying by the range
+	OutEnd = OutStart + RandomShotAngleVector.GetSafeNormal() * WeaponConfig.Range;
 }
 
 

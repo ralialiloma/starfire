@@ -42,7 +42,7 @@ public:
 
 	//Accuracy
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Accuracy")
-	int Range = 10;
+	int Range = 600;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Accuracy")
 	float Spread = 5;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Accuracy")

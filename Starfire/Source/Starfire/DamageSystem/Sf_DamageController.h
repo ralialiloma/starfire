@@ -55,9 +55,5 @@ public:
 	virtual void InitializeComponent() override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	//Private
-private:
-	void ImportHitBoxes();
-
 		
 };

@@ -114,7 +114,7 @@ public:
 	bool Fire(const EInputSignalType InputSignal, EFireType FireType, FHitResult& OutHitResult, EFireBlock& OutFireBlock);
 
 protected:
-	void GetTracePoints(FTransform InFireTransform, FVector& OutStart, FVector& OutEnd);
+	void GetTracePoints(const FTransform& InFireTransform, FVector& OutStart, FVector& OutEnd) const;
 	bool CheckInputSignalType(EInputSignalType InputSignalType);
 	
 	void DoFire(FHitResult& OutHitResult);
