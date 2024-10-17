@@ -54,3 +54,27 @@ UBlackboardComponent* USf_BTService_BlueprintBase::GetOwningBlackboardComponent(
 {
 	return UAIBlueprintHelperLibrary::GetBlackboard(OwningAIHolder);
 }
+
+void USf_BTService_BlueprintBase::Sf_SetBlackboardFloatValue(const EFloatBlackboardKey FloatBlackboardKey, const float Value)
+{
+	UBlackboardComponent* BlackboardComponent = GetOwningBlackboardComponent();
+	UBlackboardKeyHelperLibrary::SetFloatValue(BlackboardComponent,FloatBlackboardKey,Value);
+}
+
+void USf_BTService_BlueprintBase::Sf_SetBlackboardIntValue(const EIntBlackboardKey IntBlackboardKey, const int32 Value)
+{
+	UBlackboardComponent* BlackboardComponent = GetOwningBlackboardComponent();
+	UBlackboardKeyHelperLibrary::SetIntValue(BlackboardComponent,IntBlackboardKey,Value);
+}
+
+void USf_BTService_BlueprintBase::Sf_SetBlackboardBoolValue(const EBoolBlackboardKey BoolBlackboardKey, const bool Value)
+{
+	UBlackboardComponent* BlackboardComponent = GetOwningBlackboardComponent();
+	UBlackboardKeyHelperLibrary::SetBoolValue(BlackboardComponent,BoolBlackboardKey,Value);
+}
+
+void USf_BTService_BlueprintBase::Sf_SetBlackboardVectorValue(const ELocationBlackboardKey ActorBlackboardKey, const FVector Value)
+{
+	UBlackboardComponent* BlackboardComponent = GetOwningBlackboardComponent();
+	UBlackboardKeyHelperLibrary::SetVectorValue(BlackboardComponent,ActorBlackboardKey,Value);
+}

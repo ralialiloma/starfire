@@ -37,13 +37,13 @@ class STARFIRE_API USf_FunctionLibrary : public UBlueprintFunctionLibrary
 	template<typename EnumType>
 	static TArray<EnumType> GetAllEnumValues(bool ExcludeZero = false);
 	template<typename EnumType>
-	static FString GetEnumAsString(EnumType EnumValue);
+	static FString GetEnumAsString(EnumType EnumValue,const bool RemoveEnumName = true);
 	template <class EnumType>
-	static FString GetEnumAsString(int32 EnumValue);
+	static FString GetEnumAsString(int32 EnumValue,const bool RemoveEnumName = true);
 	template <class EnumType>
-	static FName GetEnumAsName(EnumType EnumValue);
+	static FName GetEnumAsName(EnumType EnumValue,const bool RemoveEnumName = true);
 	template <class EnumType>
-	static FName GetEnumAsName(int32 EnumValue);
+	static FName GetEnumAsName(int32 EnumValue, const bool RemoveEnumName = true);
 
 	UFUNCTION(BlueprintCallable,BlueprintPure, meta = (WorldContext = "WorldContext"))
 	static ASf_Character* GetSfPlayerpawn(const UObject* WorldContext);
@@ -122,33 +122,45 @@ TArray<EnumType> USf_FunctionLibrary::GetAllEnumValues(bool ExcludeZero)
 }
 
 template <typename EnumType>
-FString USf_FunctionLibrary::GetEnumAsString(EnumType EnumValue)
+FString USf_FunctionLibrary::GetEnumAsString(EnumType EnumValue,const bool RemoveEnumName)
 {
 	static_assert(TIsEnum<EnumType>::Value, "GetEnumAsString can only be used with enum types!");
-	return  GetEnumAsName<EnumType>(EnumValue).ToString();
+	return  GetEnumAsName<EnumType>(EnumValue,RemoveEnumName).ToString();
 }
 
 template <typename EnumType>
-FString USf_FunctionLibrary::GetEnumAsString(int32 EnumValue)
+FString USf_FunctionLibrary::GetEnumAsString(int32 EnumValue,const bool RemoveEnumName)
 {
 	static_assert(TIsEnum<EnumType>::Value, "GetEnumAsString can only be used with enum types!");
-	return  GetEnumAsName<EnumType>(EnumValue).ToString();
+	return  GetEnumAsName<EnumType>(EnumValue,RemoveEnumName).ToString();
 }
 
 template <typename EnumType>
-FName USf_FunctionLibrary::GetEnumAsName(EnumType EnumValue)
+FName USf_FunctionLibrary::GetEnumAsName(EnumType EnumValue,const bool RemoveEnumName)
 {
 	static_assert(TIsEnum<EnumType>::Value, "GetEnumAsName can only be used with enum types!");
-	return  GetEnumAsName<EnumType>(static_cast<int32>(EnumValue));
+	return  GetEnumAsName<EnumType>(static_cast<int32>(EnumValue),RemoveEnumName);
 }
 
 template <typename EnumType>
-FName USf_FunctionLibrary::GetEnumAsName(int32 EnumValue)
+FName USf_FunctionLibrary::GetEnumAsName(int32 EnumValue, const bool RemoveEnumName)
 {
 	static_assert(TIsEnum<EnumType>::Value, "GetEnumAsName can only be used with enum types!");
+
 	const UEnum* EnumInfo = StaticEnum<EnumType>();
-	FName EnumName = EnumInfo->GetNameByValue(EnumValue);
-	return EnumName;
+	const FString FullEnumName = EnumInfo->GetNameByValue(EnumValue).ToString();
+
+	if (RemoveEnumName)
+	{
+		FString EnumValueName;
+		FullEnumName.Split(TEXT("::"), nullptr, &EnumValueName);
+		return FName(EnumValueName);
+	}
+	else
+	{
+		return FName(FullEnumName);
+	}
+
 }
 
 template <typename RowType>

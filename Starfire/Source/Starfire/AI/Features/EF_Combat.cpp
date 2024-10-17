@@ -125,10 +125,36 @@ void UEF_Combat::StopFire()
 
 void UEF_Combat::StopFire(FStopFireInfo StopFireInfo)
 {
-	
 	if (bIsFiring == false)
 		return;
 
+	/*if (StopFireInfo.StopFireReason == EStopFireReason::FireBlock)
+	{
+		switch (StopFireInfo.FireBlock)
+		{
+		case EFireBlock::None:
+			break;
+		case EFireBlock::Reload:
+		case EFireBlock::EmptyClip:
+		case EFireBlock::NotEnoughAmmo:
+			SetBlackboardBoolValue(EBoolBlackboardKey::HasToReload,true);
+			break;
+		case EFireBlock::Jammed:
+			break;
+		case EFireBlock::FireCooldown:
+			break;
+		case EFireBlock::TriggerType:
+			break;
+		case EFireBlock::Error:
+			break;
+		case EFireBlock::NoWeapon:
+			break;
+		case EFireBlock::MeleeCooldown:
+			break;
+		default: ;
+		}
+	}*/
+	
 	bIsFiring = false;
 	FiredBullets = 0;
 	UE_LOG(LogTemp, Log, TEXT("Stopped Firing due to %s"),*StopFireInfo.ToString())
@@ -168,15 +194,7 @@ void UEF_Combat::StartReload()
 
 	if (bIsFiring)
 		StopFire(FStopFireInfo(EStopFireReason::StartedReload));
-
-	float OutMontageTime  = 0;
-	bool bReloadSuccess =  Equipment->Reload(OutMontageTime);
-	if (!bReloadSuccess)
-	{
-		StopReload();
-		return;
-	}
-
+	
 	//On Reload Finish
 	AWeaponBase* ActiveWeapon = Equipment->GetActiveWeapon();
 	FDelegateHandle OnReloadFinishHandle =  ActiveWeapon->OnReloadFinish_CPP.AddLambda([this,ActiveWeapon,OnReloadFinishHandle]()->void
@@ -195,6 +213,15 @@ void UEF_Combat::StartReload()
 		OnReloadStopped_CPP.Broadcast();
 		OnReloadStopped_BP.Broadcast();
 	});
+
+	float OutMontageTime  = 0;
+	const bool bReloadSuccess =  Equipment->Reload(OutMontageTime);
+	if (!bReloadSuccess)
+	{
+		StopReload();
+		return;
+	}
+
 }
 
 void UEF_Combat::StopReload()

@@ -3,6 +3,7 @@
 #include "Kismet/KismetStringLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Starfire/AI/Sf_NPCharacter.h"
+#include "Starfire/Utility/CollisionData.h"
 #include "Starfire/Utility/DebugSubsystem.h"
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
 
@@ -55,11 +56,13 @@ bool UEF_Cover::CanBeHitByPlayer(float HeightOffset) const
 	TArray<AActor*> ActorsToIgnore{};
 	bool ShowDebug = UDebugSubsystem::GetAIDebug(EDebugType::Visual);
 
-	UKismetSystemLibrary::LineTraceSingleByProfile(
+	ETraceTypeQuery TraceType = UEngineTypes::ConvertToTraceType(EEC_BULLETTRACES);
+
+	UKismetSystemLibrary::LineTraceSingle(
 		this,
 		Start,
 		End,
-		"BulletShots",
+		TraceType,
 		false,
 		GetIgnoreActors(),
 		EDrawDebugTrace::ForDuration,
@@ -68,8 +71,8 @@ bool UEF_Cover::CanBeHitByPlayer(float HeightOffset) const
 		FColor::Red,
 		FColor::Green,
 		ShowDebug?1:0
-	);
-
+		);
+	
 	if (!HitResult.bBlockingHit)
 		return true;
 

@@ -48,7 +48,19 @@ void UEnvQueryTest_LookForCoverWall::RunTest(FEnvQueryInstance& QueryInstance) c
 		//Check Distance To Next Cover
 		const FVector Location = GetItemLocation(QueryInstance,It.GetIndex());
 		FHitResult HitResult;
-		UKismetSystemLibrary::LineTraceSingle(this,Location,LocationToHideFrom,TraceTypeQuery,false,IgnoredActors,DebugDrawTraceType,HitResult,true, FLinearColor::Blue, FLinearColor::Red);
+		UKismetSystemLibrary::LineTraceSingle(
+			this,
+			Location,
+			LocationToHideFrom,
+			TraceTypeQuery,
+			false,
+			IgnoredActors,
+			DebugDrawTraceType,
+			HitResult,
+			true,
+			FLinearColor::Blue,
+			FLinearColor::Red
+			);
 		float Distance = MinThresholdValue-1;
         Distance = HitResult.Distance;
 		float Score = Distance;

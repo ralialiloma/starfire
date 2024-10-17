@@ -12,6 +12,13 @@ void UBlackboardKeyHelperLibrary::SetFloatValue(UBlackboardComponent* Blackboard
     }
 
     const FName KeyName = USf_FunctionLibrary::GetEnumAsName<EFloatBlackboardKey>(FloatBlackboardKey);
+    const FBlackboard::FKey KeyID = BlackboardComp->GetKeyID(KeyName);
+    if (KeyID == FBlackboard::InvalidKey)
+    {
+        UE_LOG(SF_BlackboardKeyHelper, Error, TEXT("Blackboard key %s does not exist in %s"), *KeyName.ToString(), *BlackboardComp->GetName());
+        return;
+    }
+    
     BlackboardComp->SetValueAsFloat(KeyName, Value);
 }
 
@@ -24,6 +31,13 @@ void UBlackboardKeyHelperLibrary::SetIntValue(UBlackboardComponent* BlackboardCo
     }
 
     const FName KeyName = USf_FunctionLibrary::GetEnumAsName<EIntBlackboardKey>(IntBlackboardKey);
+    const FBlackboard::FKey KeyID = BlackboardComp->GetKeyID(KeyName);
+    if (KeyID == FBlackboard::InvalidKey)
+    {
+        UE_LOG(SF_BlackboardKeyHelper, Error, TEXT("Blackboard key %s does not exist in %s"), *KeyName.ToString(), *BlackboardComp->GetName());
+        return;
+    }
+    
     BlackboardComp->SetValueAsInt(KeyName, Value);
 }
 
@@ -36,6 +50,13 @@ void UBlackboardKeyHelperLibrary::SetBoolValue(UBlackboardComponent* BlackboardC
     }
 
     const FName KeyName = USf_FunctionLibrary::GetEnumAsName<EBoolBlackboardKey>(BoolBlackboardKey);
+    const FBlackboard::FKey KeyID = BlackboardComp->GetKeyID(KeyName);
+    if (KeyID == FBlackboard::InvalidKey)
+    {
+        UE_LOG(SF_BlackboardKeyHelper, Error, TEXT("Blackboard key %s does not exist in %s"), *KeyName.ToString(), *BlackboardComp->GetName());
+        return;
+    }
+    
     BlackboardComp->SetValueAsBool(KeyName, Value);
 }
 
@@ -48,6 +69,13 @@ void UBlackboardKeyHelperLibrary::SetVectorValue(UBlackboardComponent* Blackboar
     }
 
     const FName KeyName = USf_FunctionLibrary::GetEnumAsName<ELocationBlackboardKey>(ActorBlackboardKey);
+    const FBlackboard::FKey KeyID = BlackboardComp->GetKeyID(KeyName);
+    if (KeyID == FBlackboard::InvalidKey)
+    {
+        UE_LOG(SF_BlackboardKeyHelper, Error, TEXT("Blackboard key %s does not exist in %s"), *KeyName.ToString(), *BlackboardComp->GetName());
+        return;
+    }
+    
     BlackboardComp->SetValueAsVector(KeyName, Value);
 }
 
@@ -60,6 +88,13 @@ float UBlackboardKeyHelperLibrary::GetFloatValue(UBlackboardComponent* Blackboar
     }
 
     const FName KeyName = USf_FunctionLibrary::GetEnumAsName<EFloatBlackboardKey>(FloatBlackboardKey);
+    const FBlackboard::FKey KeyID = BlackboardComp->GetKeyID(KeyName);
+    if (KeyID == FBlackboard::InvalidKey)
+    {
+        UE_LOG(SF_BlackboardKeyHelper, Error, TEXT("Blackboard key %s does not exist in %s"), *KeyName.ToString(), *BlackboardComp->GetName());
+        return 0;
+    }
+    
     return BlackboardComp->GetValueAsFloat(KeyName);
 }
 
@@ -96,6 +131,13 @@ FVector UBlackboardKeyHelperLibrary::GetVectorValue(UBlackboardComponent* Blackb
     }
 
     const FName KeyName = USf_FunctionLibrary::GetEnumAsName<ELocationBlackboardKey>(ActorBlackboardKey);
+    const FBlackboard::FKey KeyID = BlackboardComp->GetKeyID(KeyName);
+    if (KeyID == FBlackboard::InvalidKey)
+    {
+        UE_LOG(SF_BlackboardKeyHelper, Error, TEXT("Blackboard key %s does not exist in %s"), *KeyName.ToString(), *BlackboardComp->GetName());
+        return FVector(0,0,0);
+    }
+    
     return BlackboardComp->GetValueAsVector(KeyName);
 }
 
@@ -108,6 +150,13 @@ void UBlackboardKeyHelperLibrary::ClearFloatValue(UBlackboardComponent* Blackboa
     }
 
     const FName KeyName = USf_FunctionLibrary::GetEnumAsName<EFloatBlackboardKey>(FloatBlackboardKey);
+    const FBlackboard::FKey KeyID = BlackboardComp->GetKeyID(KeyName);
+    if (KeyID == FBlackboard::InvalidKey)
+    {
+        UE_LOG(SF_BlackboardKeyHelper, Error, TEXT("Blackboard key %s does not exist in %s"), *KeyName.ToString(), *BlackboardComp->GetName());
+        return;
+    }
+    
     BlackboardComp->ClearValue(KeyName);
 }
 
@@ -120,6 +169,13 @@ void UBlackboardKeyHelperLibrary::ClearIntValue(UBlackboardComponent* Blackboard
     }
 
     const FName KeyName = USf_FunctionLibrary::GetEnumAsName<EIntBlackboardKey>(IntBlackboardKey);
+    const FBlackboard::FKey KeyID = BlackboardComp->GetKeyID(KeyName);
+    if (KeyID == FBlackboard::InvalidKey)
+    {
+        UE_LOG(SF_BlackboardKeyHelper, Error, TEXT("Blackboard key %s does not exist in %s"), *KeyName.ToString(), *BlackboardComp->GetName());
+        return;
+    }
+    
     BlackboardComp->ClearValue(KeyName);
 }
 
@@ -132,6 +188,13 @@ void UBlackboardKeyHelperLibrary::ClearBoolValue(UBlackboardComponent* Blackboar
     }
 
     const FName KeyName = USf_FunctionLibrary::GetEnumAsName<EBoolBlackboardKey>(BoolBlackboardKey);
+    const FBlackboard::FKey KeyID = BlackboardComp->GetKeyID(KeyName);
+    if (KeyID == FBlackboard::InvalidKey)
+    {
+        UE_LOG(SF_BlackboardKeyHelper, Error, TEXT("Blackboard key %s does not exist in %s"), *KeyName.ToString(), *BlackboardComp->GetName());
+        return;
+    }
+    
     BlackboardComp->ClearValue(KeyName);
 }
 
@@ -144,5 +207,12 @@ void UBlackboardKeyHelperLibrary::ClearVectorValue(UBlackboardComponent* Blackbo
     }
 
     const FName KeyName = USf_FunctionLibrary::GetEnumAsName<ELocationBlackboardKey>(ActorBlackboardKey);
+    const FBlackboard::FKey KeyID = BlackboardComp->GetKeyID(KeyName);
+    if (KeyID == FBlackboard::InvalidKey)
+    {
+        UE_LOG(SF_BlackboardKeyHelper, Error, TEXT("Blackboard key %s does not exist in %s"), *KeyName.ToString(), *BlackboardComp->GetName());
+        return;
+    }
+    
     BlackboardComp->ClearValue(KeyName);
 }

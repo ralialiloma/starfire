@@ -1,6 +1,7 @@
 ﻿#include "Sf_BTTask_BlueprintBase.h"
 
 #include "AIController.h"
+#include "Blueprint/AIBlueprintHelperLibrary.h"
 
 
 USf_BTTask_BlueprintBase::USf_BTTask_BlueprintBase(const FObjectInitializer& ObjectInitializer)
@@ -38,6 +39,11 @@ AAIController* USf_BTTask_BlueprintBase::GetOwningAIController() const
 	return Cast<AAIController>(OwningNPCharacter->GetController());
 }
 
+UBlackboardComponent* USf_BTTask_BlueprintBase::GetOwningBlackboard() const
+{
+	return GetOwningAIController()->GetBlackboardComponent();
+}
+
 UEnemyFeature* USf_BTTask_BlueprintBase::GetFeatureByClass(TSubclassOf<UEnemyFeature> Class)
 {
 	if(!IsValid(OwningNPCharacter))
@@ -52,6 +58,31 @@ UEnemyFeature* USf_BTTask_BlueprintBase::GetFeatureByClass(TSubclassOf<UEnemyFea
 	
 	return OwningNPCharacter->GetFeatureByClass(Class);
 }
+
+void USf_BTTask_BlueprintBase::Sf_SetBlackboardFloatValue(const EFloatBlackboardKey FloatBlackboardKey, const float Value)
+{
+	UBlackboardComponent* BlackboardComponent = UAIBlueprintHelperLibrary::GetBlackboard(GetOwningAIController());
+	UBlackboardKeyHelperLibrary::SetFloatValue(BlackboardComponent,FloatBlackboardKey,Value);
+}
+
+void USf_BTTask_BlueprintBase::Sf_SetBlackboardIntValue(const EIntBlackboardKey IntBlackboardKey, const int32 Value)
+{
+	UBlackboardComponent* BlackboardComponent = UAIBlueprintHelperLibrary::GetBlackboard(GetOwningAIController());
+	UBlackboardKeyHelperLibrary::SetIntValue(BlackboardComponent,IntBlackboardKey,Value);
+}
+
+void USf_BTTask_BlueprintBase::Sf_SetBlackboardBoolValue(const EBoolBlackboardKey BoolBlackboardKey, const bool Value)
+{
+	UBlackboardComponent* BlackboardComponent = UAIBlueprintHelperLibrary::GetBlackboard(GetOwningAIController());
+	UBlackboardKeyHelperLibrary::SetBoolValue(BlackboardComponent,BoolBlackboardKey,Value);
+}
+
+void USf_BTTask_BlueprintBase::Sf_SetBlackboardVectorValue(const ELocationBlackboardKey ActorBlackboardKey, const FVector Value)
+{
+	UBlackboardComponent* BlackboardComponent = UAIBlueprintHelperLibrary::GetBlackboard(GetOwningAIController());
+	UBlackboardKeyHelperLibrary::SetVectorValue(BlackboardComponent,ActorBlackboardKey,Value);
+}
+
 
 void USf_BTTask_BlueprintBase::SetOwner(AActor* NewOwner)
 {

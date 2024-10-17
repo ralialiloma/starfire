@@ -26,6 +26,15 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Sf_BTService_BlueprintBase")
 	UBlackboardComponent* GetOwningBlackboardComponent() const;
 
+	UFUNCTION(BlueprintCallable, Category = "Blackboard|Setters")
+	void Sf_SetBlackboardFloatValue(EFloatBlackboardKey FloatBlackboardKey, float Value);
+	UFUNCTION(BlueprintCallable, Category = "Blackboard|Setters")
+	void Sf_SetBlackboardIntValue(EIntBlackboardKey IntBlackboardKey, int32 Value);
+	UFUNCTION(BlueprintCallable, Category = "Blackboard|Setters")
+	void Sf_SetBlackboardBoolValue(EBoolBlackboardKey BoolBlackboardKey, bool Value);
+	UFUNCTION(BlueprintCallable, Category = "Blackboard|Setters")
+	void Sf_SetBlackboardVectorValue(ELocationBlackboardKey ActorBlackboardKey, FVector Value);
+
 
 private:
 	UPROPERTY()

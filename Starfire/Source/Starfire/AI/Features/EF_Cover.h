@@ -33,7 +33,7 @@ protected:
 	float MinCoverHeight = 40;
 
 	UPROPERTY(EditDefaultsOnly)
-	float MaxCrouchCoverHeight = 60 ;
+	float MaxCrouchCoverHeight = 60;
 private:
 	UPROPERTY()
 	bool bIsInCoverState = false;

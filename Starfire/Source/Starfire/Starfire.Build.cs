@@ -17,7 +17,7 @@ public class Starfire : ModuleRules
 			"EnhancedInput" ,
 			"AIModule",
 			"NavigationSystem",
-			"GameplayTags" 
+			"GameplayTags"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[]

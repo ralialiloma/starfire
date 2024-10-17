@@ -399,8 +399,9 @@ bool AWeaponBase::Reload(float& OutMontageTime)
 		OnReloadFinish_BP.Broadcast();
 		OnReloadFinish_CPP.Broadcast();
 	});
-	GetWorld()->GetTimerManager().SetTimer(ReloadTimer,TimerDel,MontageTime,false);
 
+	const float EffectiveMontageTime = FMath::Max(MontageTime, 0.001f);
+	GetWorld()->GetTimerManager().SetTimer(ReloadTimer,TimerDel,EffectiveMontageTime,false);
 	return true;
 }
 

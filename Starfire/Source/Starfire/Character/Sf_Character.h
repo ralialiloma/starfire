@@ -13,6 +13,7 @@
 #include "Starfire/Weapon/WeaponOwner.h"
 #include "Sf_Character.generated.h"
 
+class USf_CoverGenComponent;
 class UInteractComponent;
 class USpringArmComponent;
 class UCameraComponent;
@@ -56,8 +57,11 @@ protected:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Damage")
 	USf_DamageController* DamageController;
 
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Damage")
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "AI")
 	UAIPerceptionStimuliSourceComponent* AIPerceptionStimuliSourceComponent;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "AI")
+	USf_CoverGenComponent* SfCoverGenComponent;
 	
 public:
 #pragma region Editor
@@ -102,6 +106,9 @@ public:
 
 	UFUNCTION(BlueprintPure,Category = "Character")
 	FORCEINLINE USf_CharacterStateMachine* GetCharacterStateMachine() const{return SFCharacterStateMachine;};
+
+	UFUNCTION(BlueprintPure,Category = "Character")
+	FORCEINLINE USf_CoverGenComponent* GetCoverGenComponent() const{return SfCoverGenComponent;};
 
 public:
 	virtual void BeginPlay() override;
