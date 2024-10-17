@@ -109,6 +109,8 @@ public:
 	bool CanFire(EInputSignalType InputSignal, EFireType FireType, EFireBlock& OutBlock);
 	UFUNCTION(BlueprintCallable,Category="WeaponBase")
 	bool IsOnFireCooldown();
+	UFUNCTION(BlueprintCallable,Category="WeaponBase")
+	bool HasEnoughAmmoToFire() const;
 	
 	UFUNCTION(BlueprintCallable, Category="WeaponBase")
 	bool Fire(const EInputSignalType InputSignal, EFireType FireType, FHitResult& OutHitResult, EFireBlock& OutFireBlock);

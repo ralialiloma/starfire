@@ -344,6 +344,11 @@ bool AWeaponBase::IsOnFireCooldown()
 	return bActiveFireCooldown;
 }
 
+bool AWeaponBase::HasEnoughAmmoToFire() const
+{
+	return  WeaponConfig.bInfiniteAmmo||CurrentClip>=WeaponConfig.AmmoCost;
+}
+
 bool AWeaponBase::IsOnMeleeCooldown()
 {
 	return GetWorld()->GetTimerManager().IsTimerActive(MeleeCooldown);
@@ -508,7 +513,7 @@ bool AWeaponBase::CanFire(EInputSignalType InputSignal, EFireType FireType,EFire
 	}
 
 	//Clip
-	if (CurrentClip<=WeaponConfig.AmmoCost && !WeaponConfig.bInfiniteAmmo)
+	if (!HasEnoughAmmoToFire())
 	{
 		OutBlock = CurrentClip==0?EFireBlock::EmptyClip:EFireBlock::NotEnoughAmmo;
 		return false;
