@@ -23,16 +23,26 @@ void USf_CoverGenComponent::GetCoverLocations(TArray<FVector>& CoverLocations) c
 	CoverLocations.Empty();
 	if(!IsValid(CoverQueryInstance))
 		return;
-	
-	TArray<FVector> QueryLocations{};
-	GetQueryLocations(QueryLocations);
-	for (int i= 0; i<QueryLocations.Num();i++)
+
+	const FEnvQueryResult* QueryResult = GetQueryResult();
+	if (!QueryResult)
+		return;
+
+	int Counter =0;
+	const int ResultCount = QueryResult->Items.Num();
+	for (int i = 0; i < ResultCount; i++)
 	{
-		if (CoverQueryInstance->GetItemScore(i)>0)
+		if (QueryResult->GetItemScore(i)>0.1f)
 		{
-			CoverLocations.Add(QueryLocations[i]);
+			CoverLocations.Add(QueryResult->GetItemAsLocation(i));
+			UKismetSystemLibrary::DrawDebugSphere(this,QueryResult->GetItemAsLocation(i),40,6,FColor::Purple,QueryUpdateRate,1);
+		}
+		else
+		{
+			Counter++;
 		}
 	}
+
 }
 
 void USf_CoverGenComponent::GetPeakLocations(TArray<FVector>& PeakLocations) const
@@ -87,6 +97,14 @@ void USf_CoverGenComponent::GetQueryLocations(TArray<FVector>& QueryLocations) c
 	CoverQueryInstance->GetQueryResultsAsLocations(QueryLocations);
 }
 
+const FEnvQueryResult* USf_CoverGenComponent::GetQueryResult() const
+{
+	if (!IsValid(CoverQueryInstance))
+		return nullptr;
+
+	return CoverQueryInstance->GetQueryResult();
+}
+
 void USf_CoverGenComponent::DebugCoverLocations() const
 {
 	if (!IsValid(CoverQueryInstance))
@@ -96,7 +114,7 @@ void USf_CoverGenComponent::DebugCoverLocations() const
 	GetCoverLocations(CoverLocations);
 	for (FVector Location: CoverLocations)
 	{
-		UKismetSystemLibrary::DrawDebugSphere(this,Location,40,6,FColor::Purple,QueryUpdateRate,1);
+	//	UKismetSystemLibrary::DrawDebugSphere(this,Location,40,6,FColor::Purple,QueryUpdateRate,1);
 	}
 }
 
@@ -134,6 +152,9 @@ void USf_CoverGenComponent::DoRunQuery()
 
 void USf_CoverGenComponent::OnQueryFinished(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus)
 {
+	if (QueryStatus != EEnvQueryStatus::Success)
+		return;
+	
 	CoverQueryInstance = QueryInstance;
 	
 	if (UDebugSubsystem::GetAIDebug(EDebugType::Visual))

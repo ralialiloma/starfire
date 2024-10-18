@@ -32,5 +32,11 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, Category=WallCover)
 	TSubclassOf<UEnvQueryContext> HideFrom;
+
+	UPROPERTY(EditDefaultsOnly, Category=WallCover)
+	float MaxDistanceToCover = 100.f;
+
+	UPROPERTY(EditDefaultsOnly, Category=WallCover)
+	float MinDistanceToCover = 20.f;
 	
 };

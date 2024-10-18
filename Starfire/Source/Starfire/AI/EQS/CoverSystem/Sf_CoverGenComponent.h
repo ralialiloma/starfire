@@ -31,6 +31,7 @@ protected:
 	void OnQueryFinished(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
 
 	void GetQueryLocations(TArray<FVector>& QueryLocations) const;
+	const FEnvQueryResult* GetQueryResult() const;
 
 	void DebugCoverLocations() const;
 #pragma endregion

@@ -42,11 +42,10 @@ void UEnvQueryTest_LookForCoverWall::RunTest(FEnvQueryInstance& QueryInstance) c
 	QueryInstance.PrepareContext(UEnvQueryContext_Querier::StaticClass(), IgnoredActors);
 	IgnoredActors.Append(IgnoreCtx);
 	
-
-	for (FEnvQueryInstance::ItemIterator It(this, QueryInstance); It; ++It)
+	for (FEnvQueryInstance::ItemIterator Iterator(this, QueryInstance); Iterator; ++Iterator)
 	{
 		//Check Distance To Next Cover
-		const FVector Location = GetItemLocation(QueryInstance,It.GetIndex());
+		const FVector Location = GetItemLocation(QueryInstance,Iterator.GetIndex());
 		FHitResult HitResult;
 		UKismetSystemLibrary::LineTraceSingle(
 			this,
@@ -59,21 +58,23 @@ void UEnvQueryTest_LookForCoverWall::RunTest(FEnvQueryInstance& QueryInstance) c
 			HitResult,
 			true,
 			FLinearColor::Blue,
-			FLinearColor::Red
-			);
-		float Distance = MinThresholdValue-1;
-        Distance = HitResult.Distance;
-		float Score = Distance;
+			FLinearColor::Red,
+			1.0f);
 
-		if (!HitResult.bBlockingHit|| Distance<MinThresholdValue||Distance>MaxThresholdValue)
+		float DistanceToCover = HitResult.Distance;
+		float Score = 0;
+
+		if (HitResult.bBlockingHit)
 		{
-			Score = 0;
+			Score = (DistanceToCover - MinDistanceToCover) / MaxDistanceToCover;
+			Score = 1 - FMath::Min(1.0f, Score);
 		}
 
-		It.SetScore(TestPurpose, FilterType,Score,MinThresholdValue, MaxThresholdValue);
+		//FColor DebugColor = FColor(Score*255,0,0);
+		//UKismetSystemLibrary::DrawDebugPoint(this,Location,25,DebugColor,1.0f);
 		
+		Iterator.SetScore(EEnvTestPurpose::Type::Score, EEnvTestFilterType::Type::Range,Score,0, 1);
 	}
-	
 }
 
 FText UEnvQueryTest_LookForCoverWall::GetDescriptionTitle() const
