@@ -20,10 +20,10 @@ public:
 #pragma region Functions
 public:
 	UFUNCTION(BlueprintCallable,BlueprintPure)
-	void GetCoverLocations(TArray<FVector>& CoverLocations) const;
+	TArray<FVector> GetCoverLocations() const;
 
 	UFUNCTION(BlueprintCallable,BlueprintPure)
-	void GetPeakLocations(TArray<FVector>& PeakLocations) const;
+	TArray<FVector> GetPeakLocations() const;
 protected:
 	void StartRunQuery();
 	void DoRunQuery();
@@ -32,6 +32,9 @@ protected:
 
 	void GetQueryLocations(TArray<FVector>& QueryLocations) const;
 	const FEnvQueryResult* GetQueryResult() const;
+
+	void FindCoverLocations(TArray<FVector>& OutCoverLocations, float MinValue= 0.1f) const;
+	void FindPeakLocations(TArray<FVector>& PeakLocations) const;
 
 	void DebugCoverLocations() const;
 #pragma endregion
@@ -48,6 +51,12 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly)
 	UEnvQueryInstanceBlueprintWrapper* CoverQueryInstance;
+
+private:
+	UPROPERTY()
+	TArray<FVector> SavedCoverLocations;
+	UPROPERTY()
+	TArray<FVector> SavedPeakLocations;
 #pragma endregion
 
 };
