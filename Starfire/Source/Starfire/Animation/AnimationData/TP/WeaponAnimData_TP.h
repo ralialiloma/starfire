@@ -1,5 +1,7 @@
 ﻿#pragma once
-#include "WeaponAnimationAssetType_TP.h"
+#include "WeaponAnimationAssetType_FB_TP.h"
+#include "WeaponAnimationAssetType_LB_TP.h"
+#include "WeaponAnimationAssetType_UB_TP.h"
 #include "WeaponAnimationMontageType_TP.h"
 #include "WeaponBlendSpaceType_TP.h"
 #include "WeaponAnimData_TP.generated.h"
@@ -13,8 +15,14 @@ struct STARFIRE_API FWeaponAnimData_TP:public FTableRowBase
 
 	void UpdateEntries();
 
-	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ReadOnlyKeys,ForceInlineRow))
-	TMap<EWeaponAnimationAssetType_TP ,UAnimSequenceBase*> AnimationAssets;
+	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ReadOnlyKeys,ForceInlineRow), Category = "Sequences")
+	TMap<EWeaponAnimationAssetType_UB_TP ,UAnimSequenceBase*> AnimationAssets_UB;
+
+	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ReadOnlyKeys,ForceInlineRow), Category = "Sequences")
+	TMap<EWeaponAnimationAssetType_LB_TP ,UAnimSequenceBase*> AnimationAssets_LB;
+
+	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ReadOnlyKeys,ForceInlineRow), Category = "Sequences")
+	TMap<EWeaponAnimationAssetType_FB_TP ,UAnimSequenceBase*> AnimationAssets_FB;
 
 	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ReadOnlyKeys,ForceInlineRow))
 	TMap<EWeaponAnimationMontageType_TP, UAnimMontage*> AnimationMontages;

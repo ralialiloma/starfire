@@ -9,7 +9,9 @@ FWeaponAnimData_TP::FWeaponAnimData_TP()
 
 void FWeaponAnimData_TP::UpdateEntries()
 {
-	USf_FunctionLibrary::ValidateAndUpdateEnumMap<EWeaponAnimationAssetType_TP,UAnimSequenceBase*>(AnimationAssets);
+	USf_FunctionLibrary::ValidateAndUpdateEnumMap<EWeaponAnimationAssetType_UB_TP,UAnimSequenceBase*>(AnimationAssets_UB);
+	USf_FunctionLibrary::ValidateAndUpdateEnumMap<EWeaponAnimationAssetType_LB_TP,UAnimSequenceBase*>(AnimationAssets_LB);
+	USf_FunctionLibrary::ValidateAndUpdateEnumMap<EWeaponAnimationAssetType_FB_TP,UAnimSequenceBase*>(AnimationAssets_FB);
 	USf_FunctionLibrary::ValidateAndUpdateEnumMap<EWeaponAnimationMontageType_TP,UAnimMontage*>(AnimationMontages);
 	USf_FunctionLibrary::ValidateAndUpdateEnumMap<EWeaponBlendSpaceType_TP,UBlendSpace*>(Blendspaces);
 }

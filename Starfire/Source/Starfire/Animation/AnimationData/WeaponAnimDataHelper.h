@@ -12,7 +12,13 @@ class STARFIRE_API UWeaponAnimDataHelper : public UBlueprintFunctionLibrary
 public:
 	
 	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "WeaponAnimation",meta = (BlueprintThreadSafe))
-	static UAnimSequenceBase* GetAnimationAsset_TP(FWeaponAnimData_TP AnimData,EWeaponAnimationAssetType_TP AssetType);
+	static UAnimSequenceBase* GetAnimationAsset_UB_TP(FWeaponAnimData_TP AnimData,EWeaponAnimationAssetType_UB_TP AssetType);
+
+	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "WeaponAnimation",meta = (BlueprintThreadSafe))
+	static UAnimSequenceBase* GetAnimationAsset_LB_TP(FWeaponAnimData_TP AnimData,EWeaponAnimationAssetType_LB_TP AssetType);
+
+	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "WeaponAnimation",meta = (BlueprintThreadSafe))
+	static UAnimSequenceBase* GetAnimationAsset_FB_TP(FWeaponAnimData_TP AnimData,EWeaponAnimationAssetType_FB_TP AssetType);
 
 	UFUNCTION(BlueprintCallable,BlueprintPure,Category = "WeaponAnimation",meta = (BlueprintThreadSafe))
 	static UAnimMontage* GetAnimationMontage_TP(FWeaponAnimData_TP AnimData, EWeaponAnimationMontageType_TP AssetType);
