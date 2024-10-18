@@ -473,13 +473,16 @@ void AWeaponBase::OnPickup(AActor* NewHolder)
 {
 	WeaponOwner = NewHolder;
 	SkeletalMesh->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
+	SkeletalMesh->SetSimulatePhysics(false);
+	SkeletalMesh->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 	UE_LOG(SF_Weapon, Log, TEXT("Picked up %s"),*GetClass()->GetName())
 }
 
 void AWeaponBase::OnDrop()
 {
 	WeaponOwner = nullptr;
-	SkeletalMesh->SetCollisionEnabled(ECollisionEnabled::Type::QueryOnly);
+	SkeletalMesh->SetCollisionEnabled(ECollisionEnabled::Type::QueryAndPhysics);
+	SkeletalMesh->SetSimulatePhysics(true);
 	UE_LOG(SF_Weapon, Log, TEXT("Dropped %s"),*GetClass()->GetName())
 }
 
