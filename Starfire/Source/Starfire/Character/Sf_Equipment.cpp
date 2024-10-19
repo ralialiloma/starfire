@@ -115,7 +115,7 @@ void USF_Equipment::AddWeapon(AWeaponBase* WeaponToAdd, const bool Equip, int &S
 
 	//Add Weapon To List
 	Slot = OwnedWeapons.Add(WeaponToAdd);
-	WeaponToAdd->OnPickup(GetOwner());
+	WeaponToAdd->OnPickup(GetOwner<APawn>());
 
 	//Attach Weapon
 	FAttachmentTransformRules AttachRules = FAttachmentTransformRules (

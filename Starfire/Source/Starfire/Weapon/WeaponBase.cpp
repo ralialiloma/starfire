@@ -79,6 +79,7 @@ bool AWeaponBase::Fire(const EInputSignalType InputSignal, EFireType FireType, F
 		return false;
 	
 	DoFire(OutHitResult);
+	ApplyRecoil();
 
 	return true;
 }
@@ -142,18 +143,15 @@ void AWeaponBase::FireTraces(FHitResult& OutHitResult)
 	}
 }
 
-/*float AWeaponBase::PlayMontage(EWeaponAnimationMontageType_FP MontageType)
+void AWeaponBase::ApplyRecoil(float Modifier) const
 {
-	UAnimMontage* MontageToPlay = UWeaponAnimDataHelper::GetAnimationMontage_TP(WeaponConfig.GetAnimData_FP(),	MontageType);
-
-	if (!IsValid(MontageToPlay))
-	{
-		UE_LOG(SF_Weapon, Warning, TEXT("Missing Weapon Montage For %s"), *UEnum::GetValueAsString(MontageType));
-		return 0;
-	}
+	if (GetWeaponConfig().RecoilAngle == 0)
+		return;
 	
-	return PlayMontage(MontageToPlay);
-}*/
+	FRotator ControlRotation = GetWeaponOwner()->GetController()->GetControlRotation();
+	ControlRotation.Pitch += GetWeaponConfig().RecoilAngle * Modifier;
+	GetWeaponOwner()->GetController()->SetControlRotation(ControlRotation);
+}
 
 void AWeaponBase::AimDownSight()
 {
@@ -469,7 +467,7 @@ FTransform AWeaponBase::GetMuzzleTransform() const
 	return SkeletalMesh->GetRelativeTransform();
 }
 
-void AWeaponBase::OnPickup(AActor* NewHolder)
+void AWeaponBase::OnPickup(APawn* NewHolder)
 {
 	WeaponOwner = NewHolder;
 	SkeletalMesh->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
@@ -544,7 +542,7 @@ FWeaponConfig AWeaponBase::GetWeaponConfig() const
 	return  WeaponConfig;
 }
 
-AActor* AWeaponBase::GetWeaponOwner() const
+APawn* AWeaponBase::GetWeaponOwner() const
 {
 	return WeaponOwner;
 }

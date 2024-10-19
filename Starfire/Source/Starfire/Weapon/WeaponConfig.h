@@ -36,9 +36,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Common")
 	int MaxClipSize = 12;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Common")
-	float FireDelay  =1;
+	float FireDelay = 1;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Common")
-	float Recoil = 1;
+	float RecoilAngle = 0;
 
 	//Accuracy
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Accuracy")
