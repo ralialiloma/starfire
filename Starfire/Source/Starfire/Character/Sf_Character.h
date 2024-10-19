@@ -25,8 +25,57 @@ UCLASS(Config = Game,BlueprintType)
 class STARFIRE_API ASf_Character : public ACharacter, public IWeaponOwner
 {
 	GENERATED_BODY()
+	
+	friend USf_FP_CharacterMovementComponent;
+
+public:
+	ASf_Character(const FObjectInitializer& ObjectInitializer);
+
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	
+	virtual void Jump() override;
+	virtual void StopJumping() override;
+	
+	virtual void PostInitProperties() override;
+	virtual void PostInitializeComponents() override;
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+
+#pragma region Functions
+
+public:
+	FCollisionQueryParams GetIgnoreCharacterParams();
+
+#pragma endregion
+
+#pragma region Properties
 
 protected:
+	bool bCustomJumpPressed = false;
+	
+#pragma endregion
+
+#pragma region Components
+public:
+	
+	UFUNCTION(BlueprintPure,Category = "Character")
+	FORCEINLINE USf_FP_CharacterMovementComponent* GetSfCharacterMovementComponent() const{return SFCharacterMovementComponent;};
+	UFUNCTION(BlueprintPure,Category = "Character")
+	FORCEINLINE UCameraComponent* GetFirstPersonCamera() const{return FirstPersonCamera;};
+	UFUNCTION(BlueprintPure,Category = "Character")
+	FORCEINLINE USkeletalMeshComponent* GetFirstPersonMesh() const{return FirstPersonMesh;};
+	UFUNCTION(BlueprintPure,Category = "Character")
+	FORCEINLINE USF_Equipment* GetSFEquipmentComponent() const{return SFEquipmentComponent;};
+	UFUNCTION(BlueprintPure,Category = "Character")
+	FORCEINLINE UInteractComponent* GetInteractComponent() const{return InteractComponent;};
+	UFUNCTION(BlueprintPure,Category = "Character")
+	FORCEINLINE USf_CharacterStateMachine* GetCharacterStateMachine() const{return SFCharacterStateMachine;};
+	UFUNCTION(BlueprintPure,Category = "Character")
+	FORCEINLINE USf_CoverGenComponent* GetCoverGenComponent() const{return SfCoverGenComponent;};
+	
+protected:
+	
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Movement")
 	USf_FP_CharacterMovementComponent* SFCharacterMovementComponent;
 
@@ -63,8 +112,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "AI")
 	USf_CoverGenComponent* SfCoverGenComponent;
 	
-public:
+#pragma endregion
+
 #pragma region Editor
+public:
 #if WITH_EDITOR
 
 	FReply OnSaveButtonClicked();
@@ -80,55 +131,12 @@ public:
 	
 #pragma endregion
 
-public:
-	ASf_Character(const FObjectInitializer& ObjectInitializer);
+#pragma region IWeaponOwnerInterface
 
-	virtual void PostInitProperties() override;
-	virtual void PostInitializeComponents() override;
-	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
-	
-	FCollisionQueryParams GetIgnoreCharacterParams();
-
-	UFUNCTION(BlueprintPure,Category = "Character")
-	FORCEINLINE USf_FP_CharacterMovementComponent* GetSfCharacterMovementComponent() const{return SFCharacterMovementComponent;};
-
-	UFUNCTION(BlueprintPure,Category = "Character")
-	FORCEINLINE UCameraComponent* GetFirstPersonCamera() const{return FirstPersonCamera;};
-
-	UFUNCTION(BlueprintPure,Category = "Character")
-	FORCEINLINE USkeletalMeshComponent* GetFirstPersonMesh() const{return FirstPersonMesh;};
-
-	UFUNCTION(BlueprintPure,Category = "Character")
-	FORCEINLINE USF_Equipment* GetSFEquipmentComponent() const{return SFEquipmentComponent;};
-
-	UFUNCTION(BlueprintPure,Category = "Character")
-	FORCEINLINE UInteractComponent* GetInteractComponent() const{return InteractComponent;};
-
-	UFUNCTION(BlueprintPure,Category = "Character")
-	FORCEINLINE USf_CharacterStateMachine* GetCharacterStateMachine() const{return SFCharacterStateMachine;};
-
-	UFUNCTION(BlueprintPure,Category = "Character")
-	FORCEINLINE USf_CoverGenComponent* GetCoverGenComponent() const{return SfCoverGenComponent;};
-
-public:
-	virtual void BeginPlay() override;
-	virtual void Jump() override;
-	virtual void StopJumping() override;
-	
-	bool bCustomJumpPressed = false;
-
-
-	virtual void Tick(float DeltaTime) override;
-	
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	//IWeaponOwner
-public:
 	virtual UAnimInstance* GetCharacterAnimInstance_Implementation() const override;
-	
 	virtual FTransform GetFireTransform_Implementation() const override;
-	
 	virtual FMeleeInfo GetMeleeInfo_Implementation() const override;
-
 	virtual USf_WeaponAnimMontageController* GetAnimMontageController_Implementation() const override;
+
+#pragma endregion
 };
