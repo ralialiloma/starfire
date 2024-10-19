@@ -36,9 +36,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Common")
 	int MaxClipSize = 12;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Common")
-	float FireDelay  =1;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Common")
-	float Recoil = 1;
+	float FireDelay = 1;
+	
+	//Recoil
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Recoil")
+	float RecoilAngle = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Recoil")
+	TSoftClassPtr<UCameraShakeBase> RecoilShake = nullptr;
 
 	//Accuracy
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Accuracy")
@@ -74,7 +78,7 @@ public:
 
 	//Reload
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Reloading")
-	float ReloadBlendOutTime =0.3f;
+	float ReloadBlendOutTime = 0.3f;
 
 	//Melee
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Melee")

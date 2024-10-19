@@ -41,12 +41,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
 	FWeaponConfig GetWeaponConfig() const;
 	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
-	AActor* GetWeaponOwner() const;
+	APawn* GetWeaponOwner() const;
 	
 	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
 	void SetWeaponActive(bool Active);
 	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
-	void OnPickup(AActor* NewHolder);
+	void OnPickup(APawn* NewHolder);
 	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
 	void OnDrop();
 	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
@@ -57,9 +57,6 @@ public:
 protected:
 
 	//Animation
-	//float PlayMontage(UAnimMontage* MontageToPlay) const;
-	//float PlayMontage (EWeaponAnimationMontageType_FP MontageType);
-	//void StopMontage(UAnimMontage* MontageToStop);
 	float ExecuteAnimationAndReturnAnimLength(EWeaponAnimationEventType WeaponAnimationEventType, bool bIsStarting = true) const;
 	void ExecuteAnimation(EWeaponAnimationEventType WeaponAnimationEventType, bool bIsStarting = true) const;
 	
@@ -99,7 +96,7 @@ private:
 	UPROPERTY()
 	FTimerHandle MeleeCooldown = FTimerHandle();
 	UPROPERTY()
-	AActor* WeaponOwner = nullptr;
+	APawn* WeaponOwner = nullptr;
 
 #pragma endregion
 
@@ -121,6 +118,7 @@ protected:
 	
 	void DoFire(FHitResult& OutHitResult);
 	void FireTraces(FHitResult& OutHitResult);
+	void ApplyRecoil(float Modifier = 1) const;
 	
 #pragma endregion
 

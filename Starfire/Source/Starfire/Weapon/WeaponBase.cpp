@@ -79,6 +79,7 @@ bool AWeaponBase::Fire(const EInputSignalType InputSignal, EFireType FireType, F
 		return false;
 	
 	DoFire(OutHitResult);
+	ApplyRecoil();
 
 	return true;
 }
@@ -142,18 +143,25 @@ void AWeaponBase::FireTraces(FHitResult& OutHitResult)
 	}
 }
 
-/*float AWeaponBase::PlayMontage(EWeaponAnimationMontageType_FP MontageType)
+void AWeaponBase::ApplyRecoil(float Modifier) const
 {
-	UAnimMontage* MontageToPlay = UWeaponAnimDataHelper::GetAnimationMontage_TP(WeaponConfig.GetAnimData_FP(),	MontageType);
+	if (!GetWeaponOwner() || !GetWeaponOwner()->GetController())
+		return;
 
-	if (!IsValid(MontageToPlay))
+	APlayerController* PlayerController = Cast<APlayerController>(GetWeaponOwner()->GetController());
+	if (!PlayerController)
+		return;
+
+	if (GetWeaponConfig().RecoilAngle != 0)
 	{
-		UE_LOG(SF_Weapon, Warning, TEXT("Missing Weapon Montage For %s"), *UEnum::GetValueAsString(MontageType));
-		return 0;
+		FRotator ControlRotation = PlayerController->GetControlRotation();
+		ControlRotation.Pitch += GetWeaponConfig().RecoilAngle * Modifier;
+		PlayerController->SetControlRotation(ControlRotation);
 	}
-	
-	return PlayMontage(MontageToPlay);
-}*/
+
+	if (GetWeaponConfig().RecoilShake.IsValid()) //Use Async Load when weapon is loaded in for better performance
+		PlayerController->PlayerCameraManager->StartCameraShake(GetWeaponConfig().RecoilShake.LoadSynchronous());
+}
 
 void AWeaponBase::AimDownSight()
 {
@@ -469,7 +477,7 @@ FTransform AWeaponBase::GetMuzzleTransform() const
 	return SkeletalMesh->GetRelativeTransform();
 }
 
-void AWeaponBase::OnPickup(AActor* NewHolder)
+void AWeaponBase::OnPickup(APawn* NewHolder)
 {
 	WeaponOwner = NewHolder;
 	SkeletalMesh->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
@@ -544,7 +552,7 @@ FWeaponConfig AWeaponBase::GetWeaponConfig() const
 	return  WeaponConfig;
 }
 
-AActor* AWeaponBase::GetWeaponOwner() const
+APawn* AWeaponBase::GetWeaponOwner() const
 {
 	return WeaponOwner;
 }
