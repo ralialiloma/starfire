@@ -145,12 +145,22 @@ void AWeaponBase::FireTraces(FHitResult& OutHitResult)
 
 void AWeaponBase::ApplyRecoil(float Modifier) const
 {
-	if (GetWeaponConfig().RecoilAngle == 0)
+	if (!GetWeaponOwner() || !GetWeaponOwner()->GetController())
 		return;
-	
-	FRotator ControlRotation = GetWeaponOwner()->GetController()->GetControlRotation();
-	ControlRotation.Pitch += GetWeaponConfig().RecoilAngle * Modifier;
-	GetWeaponOwner()->GetController()->SetControlRotation(ControlRotation);
+
+	APlayerController* PlayerController = Cast<APlayerController>(GetWeaponOwner()->GetController());
+	if (!PlayerController)
+		return;
+
+	if (GetWeaponConfig().RecoilAngle != 0)
+	{
+		FRotator ControlRotation = PlayerController->GetControlRotation();
+		ControlRotation.Pitch += GetWeaponConfig().RecoilAngle * Modifier;
+		PlayerController->SetControlRotation(ControlRotation);
+	}
+
+	if (GetWeaponConfig().RecoilShake.IsValid()) //Use Async Load when weapon is loaded in for better performance
+		PlayerController->PlayerCameraManager->StartCameraShake(GetWeaponConfig().RecoilShake.LoadSynchronous());
 }
 
 void AWeaponBase::AimDownSight()
