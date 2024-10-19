@@ -6,7 +6,6 @@
 #include "EnemyFeature.h"
 #include "WeaponAnimMontageController_TP.h"
 #include "Components/BoxComponent.h"
-#include "GameFramework/Character.h"
 #include "Perception/PawnSensingComponent.h"
 #include "Starfire/Character/Sf_Equipment.h"
 #include "Starfire/DamageSystem/Sf_DamageController.h"
@@ -15,7 +14,7 @@
 
 
 UCLASS(BlueprintType)
-class STARFIRE_API ASf_NPCharacter : public ACharacter,public IWeaponOwner
+class STARFIRE_API ASf_NPCharacter : public ASf_CharacterBase
 {
 	GENERATED_BODY()
 
@@ -100,13 +99,12 @@ private:
 	
 #pragma region WeaponOwner
 public:
+	
 	virtual UAnimInstance* GetCharacterAnimInstance_Implementation() const override;
-	
 	virtual FTransform GetFireTransform_Implementation() const override;
-	
 	virtual FMeleeInfo GetMeleeInfo_Implementation() const override;
-
 	virtual USf_WeaponAnimMontageController* GetAnimMontageController_Implementation() const override;
+	
 #pragma endregion
 
 };

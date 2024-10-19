@@ -36,6 +36,9 @@ void UEF_Death::Kill()
 
 	//Focus
 	GetOwningAIController()->ClearFocus(EAIFocusPriority::Gameplay);
+	
+	//Pawn Message
+	GetOwningCharacter()->PawnDeath();
 
 	//Collision
 	GetOwningCharacter()->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);

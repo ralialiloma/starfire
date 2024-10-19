@@ -8,15 +8,12 @@
 #include "UObject/Interface.h"
 #include "WeaponOwner.generated.h"
 
-
-
 // This class does not need to be modified.
 UINTERFACE()
 class UWeaponOwner : public UInterface
 {
 	GENERATED_BODY()
 };
-
 
 class STARFIRE_API IWeaponOwner: public IInterface
 {
@@ -34,4 +31,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "WeaponOwner")
 	FMeleeInfo GetMeleeInfo() const;
+
+	// virtual const TMulticastScriptDelegate<>& GetDeathEvent() const = 0;
 };

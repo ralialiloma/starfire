@@ -5,11 +5,11 @@
 #include "CoreMinimal.h"
 #include "Sf_Equipment.h"
 #include "WeaponAnimMontageController_FP.h"
-#include "GameFramework/Character.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Starfire/Animation/WeaponAnimMontageController.h"
 #include "Starfire/DamageSystem/Sf_DamageController.h"
 #include "Starfire/HSM/SF_CharacterStateMachine.h"
+#include "Starfire/Sf_Bases/Sf_CharacterBase.h"
 #include "Starfire/Weapon/WeaponOwner.h"
 #include "Sf_Character.generated.h"
 
@@ -22,7 +22,7 @@ class USf_FP_CharacterMovementComponent;
 class UBoxComponent;
 
 UCLASS(Config = Game,BlueprintType)
-class STARFIRE_API ASf_Character : public ACharacter, public IWeaponOwner
+class STARFIRE_API ASf_Character : public ASf_CharacterBase
 {
 	GENERATED_BODY()
 	
