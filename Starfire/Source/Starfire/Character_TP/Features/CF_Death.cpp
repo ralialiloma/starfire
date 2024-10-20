@@ -36,6 +36,10 @@ void UCF_Death::Kill()
 
 	//Focus
 	GetOwningAIController()->ClearFocus(EAIFocusPriority::Gameplay);
+
+	//Drop Weapon
+	if (GetOwningSfEquipment()->IsEquipped())
+		GetOwningSfEquipment()->RemoveWeaponActiveWeapon();
 	
 	//Pawn Message
 	GetOwningCharacter()->PawnDeath();

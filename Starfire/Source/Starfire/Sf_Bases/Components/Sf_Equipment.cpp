@@ -132,13 +132,20 @@ void USf_Equipment::AddWeapon(AWeaponBase* WeaponToAdd, const bool Equip, int &S
 
 void USf_Equipment::AddWeaponByClass(TSubclassOf<AWeaponBase> WeaponClassToAdd, bool Equip, int& Index)
 {
-	if (!IsValid(WeaponClassToAdd))
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		UE_LOG(EquipmentComponent, Error, TEXT("GetWorld returned nullptr"));
+		return;
+	}
+	
+	if (!IsValid(WeaponClassToAdd)||!IsValid(WeaponClassToAdd.Get()))
 	{
 		UE_LOG(EquipmentComponent, Error, TEXT("Invalid Weapon Class To Add"))
 		return;
 	}
 
-	AWeaponBase* WeaponBase =  GetWorld()->SpawnActor<AWeaponBase>(WeaponClassToAdd);
+	AWeaponBase* WeaponBase =  World->SpawnActor<AWeaponBase>(WeaponClassToAdd);
 	AddWeapon(WeaponBase, Equip, Index);
 }
 
@@ -157,6 +164,14 @@ bool USf_Equipment::RemoveWeapon(AWeaponBase* WeaponToRemove)
 	WeaponToRemove->OnDrop();
 
 	return true;
+}
+
+bool USf_Equipment::RemoveWeaponActiveWeapon()
+{
+	if (!IsEquipped())
+		return false;
+
+	return  RemoveWeapon(GetActiveWeapon());
 }
 
 bool USf_Equipment::RemoveWeaponByClass(TSubclassOf<AWeaponBase> WeaponClassToRemove)

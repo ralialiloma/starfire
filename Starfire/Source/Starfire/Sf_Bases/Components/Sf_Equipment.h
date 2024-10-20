@@ -83,6 +83,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool RemoveWeapon(AWeaponBase* WeaponToRemove);
 	UFUNCTION(BlueprintCallable)
+	bool RemoveWeaponActiveWeapon();
+	UFUNCTION(BlueprintCallable)
 	bool RemoveWeaponByClass(TSubclassOf<AWeaponBase> WeaponClassToRemove);
 	UFUNCTION(BlueprintCallable)
 	void CycleWeapons(ENavigationDirectionType Direction);
