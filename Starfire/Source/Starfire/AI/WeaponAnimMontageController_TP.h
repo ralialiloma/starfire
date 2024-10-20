@@ -17,14 +17,14 @@ public:
 
 # pragma region Functions
 private:
-	float PlayFPMontage(FWeaponAnimData_TP AnimData_FP, EWeaponAnimationMontageType_TP MontageType) const;
-	void StopFPMontage(FWeaponAnimData_TP AnimData_FP, EWeaponAnimationMontageType_TP MontageType) const;
+	float PlayFPMontage(FWeaponAnimData_TP AnimData_FP, FGameplayTag MontageType) const;
+	void StopFPMontage(FWeaponAnimData_TP AnimData_FP, FGameplayTag MontageType) const;
 # pragma endregion Functions
 
 # pragma region Properties
 protected:
-	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly, Category = "AnimationData",  meta =(CustomConfig))
-	TMap<EWeaponAnimationEventType,EWeaponAnimationMontageType_TP> AnimationStartMappings;
+	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly, Category = "AnimationData",  meta =(CustomConfig,Categories="Animation.Character.TP.Montage"))
+	TMap<EWeaponAnimationEventType,FGameplayTag> AnimationStartMappings;
 # pragma endregion Properties
 
 };

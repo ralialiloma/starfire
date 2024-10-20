@@ -1,7 +1,7 @@
 ﻿#pragma once
+#include "GameplayTagContainer.h"
 #include "WeaponAnimationAssetType_FB_TP.h"
 #include "WeaponAnimationAssetType_LB_TP.h"
-#include "WeaponAnimationAssetType_UB_TP.h"
 #include "WeaponAnimationMontageType_TP.h"
 #include "WeaponBlendSpaceType_TP.h"
 #include "WeaponAnimData_TP.generated.h"
@@ -15,20 +15,29 @@ struct STARFIRE_API FWeaponAnimData_TP:public FTableRowBase
 
 	void UpdateEntries();
 
+	//UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ReadOnlyKeys,ForceInlineRow), Category = "Sequences")
+	//TMap<EWeaponAnimationAssetType_UB_TP ,UAnimSequenceBase*> AnimationAssets_UB;
+
+	//UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ReadOnlyKeys,ForceInlineRow), Category = "Sequences")
+	//UPROPERTY(BlueprintReadWrite,EditAnywhere, meta=(Categories="Animation.Character.TP.AnimSequence",ForceInlineRow),Category = "Sequences")
+	//TMap<FGameplayTag ,UAnimSequenceBase*> AnimationAssets_UB;
+	
+	TMap<FGameplayTag ,UAnimSequence*> GetAllSequences() const;
+	
 	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ReadOnlyKeys,ForceInlineRow), Category = "Sequences")
-	TMap<EWeaponAnimationAssetType_UB_TP ,UAnimSequenceBase*> AnimationAssets_UB;
+	TMap<FGameplayTag ,UAnimSequence*> AnimationSequences_UB;
+	
+	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ReadOnlyKeys,ForceInlineRow), Category = "Sequences")
+	TMap<FGameplayTag ,UAnimSequence*> AnimationSequences_LB;
 
 	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ReadOnlyKeys,ForceInlineRow), Category = "Sequences")
-	TMap<EWeaponAnimationAssetType_LB_TP ,UAnimSequenceBase*> AnimationAssets_LB;
-
-	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ReadOnlyKeys,ForceInlineRow), Category = "Sequences")
-	TMap<EWeaponAnimationAssetType_FB_TP ,UAnimSequenceBase*> AnimationAssets_FB;
+	TMap<FGameplayTag ,UAnimSequence*> AnimationSequences_FB;
 
 	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ReadOnlyKeys,ForceInlineRow))
-	TMap<EWeaponAnimationMontageType_TP, UAnimMontage*> AnimationMontages;
+	TMap<FGameplayTag, UAnimMontage*> AnimationMontages;
 
 	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ReadOnlyKeys,ForceInlineRow))
-	TMap<EWeaponBlendSpaceType_TP, UBlendSpace*> Blendspaces;
+	TMap<FGameplayTag, UBlendSpace*> Blendspaces;
 };
 
 

@@ -31,35 +31,16 @@ UBlendSpace* UWeaponAnimDataHelper::GetBlendspace_FP(FWeaponAnimData_FP AnimData
 }
 
 
-UAnimSequenceBase* UWeaponAnimDataHelper::GetAnimationAsset_UB_TP(FWeaponAnimData_TP AnimData, EWeaponAnimationAssetType_UB_TP AssetType)
+UAnimSequence* UWeaponAnimDataHelper::GetAnimationSequence_TP(FWeaponAnimData_TP AnimData, FGameplayTag Tag)
 {
-	UAnimSequenceBase* FoundSequence = nullptr;
-	UAnimSequenceBase** FoundSequencePtr = AnimData.AnimationAssets_UB.Find(AssetType);
+	UAnimSequence* FoundSequence = nullptr;
+	UAnimSequence** FoundSequencePtr = AnimData.GetAllSequences().Find(Tag);
 	if (FoundSequencePtr!=nullptr)
 		FoundSequence = *FoundSequencePtr;
 	return FoundSequence;
 }
 
-UAnimSequenceBase* UWeaponAnimDataHelper::GetAnimationAsset_LB_TP(FWeaponAnimData_TP AnimData, EWeaponAnimationAssetType_LB_TP AssetType)
-{
-	UAnimSequenceBase* FoundSequence = nullptr;
-	UAnimSequenceBase** FoundSequencePtr = AnimData.AnimationAssets_LB.Find(AssetType);
-	if (FoundSequencePtr!=nullptr)
-		FoundSequence = *FoundSequencePtr;
-	return FoundSequence;
-}
-
-
-UAnimSequenceBase* UWeaponAnimDataHelper::GetAnimationAsset_FB_TP(FWeaponAnimData_TP AnimData, EWeaponAnimationAssetType_FB_TP AssetType)
-{
-	UAnimSequenceBase* FoundSequence = nullptr;
-	UAnimSequenceBase** FoundSequencePtr = AnimData.AnimationAssets_FB.Find(AssetType);
-	if (FoundSequencePtr!=nullptr)
-		FoundSequence = *FoundSequencePtr;
-	return FoundSequence;
-}
-
-UAnimMontage* UWeaponAnimDataHelper::GetAnimationMontage_TP(FWeaponAnimData_TP AnimData, EWeaponAnimationMontageType_TP AssetType)
+UAnimMontage* UWeaponAnimDataHelper::GetAnimationMontage_TP(FWeaponAnimData_TP AnimData, FGameplayTag AssetType)
 {
 	UAnimMontage* FoundMontage = nullptr;
 	UAnimMontage** FoundSequencePtr = AnimData.AnimationMontages.Find(AssetType);
@@ -68,7 +49,7 @@ UAnimMontage* UWeaponAnimDataHelper::GetAnimationMontage_TP(FWeaponAnimData_TP A
 	return FoundMontage;
 }
 
-UBlendSpace* UWeaponAnimDataHelper::GetBlendspace_TP(FWeaponAnimData_TP AnimData, EWeaponBlendSpaceType_TP AssetType)
+UBlendSpace* UWeaponAnimDataHelper::GetBlendspace_TP(FWeaponAnimData_TP AnimData, FGameplayTag AssetType)
 {
 	UBlendSpace* FoundBlendspace = nullptr;
 	UBlendSpace** FoundBlendSpacePointer = AnimData.Blendspaces.Find(AssetType);

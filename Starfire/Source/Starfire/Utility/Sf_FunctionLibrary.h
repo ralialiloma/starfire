@@ -231,7 +231,7 @@ void USf_FunctionLibrary::ValidateAndUpdateEnumMap(TMap<EnumType, AssetType>& As
 			}
 			else
 			{
-				AssetMap.Add(Type, nullptr);
+				AssetMap.Add(Type, AssetType{});
 			}
 		}
 	}

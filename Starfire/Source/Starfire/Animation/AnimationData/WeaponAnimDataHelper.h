@@ -11,20 +11,20 @@ class STARFIRE_API UWeaponAnimDataHelper : public UBlueprintFunctionLibrary
 
 public:
 	
-	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "WeaponAnimation",meta = (BlueprintThreadSafe))
-	static UAnimSequenceBase* GetAnimationAsset_UB_TP(FWeaponAnimData_TP AnimData,EWeaponAnimationAssetType_UB_TP AssetType);
-
-	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "WeaponAnimation",meta = (BlueprintThreadSafe))
-	static UAnimSequenceBase* GetAnimationAsset_LB_TP(FWeaponAnimData_TP AnimData,EWeaponAnimationAssetType_LB_TP AssetType);
-
-	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "WeaponAnimation",meta = (BlueprintThreadSafe))
-	static UAnimSequenceBase* GetAnimationAsset_FB_TP(FWeaponAnimData_TP AnimData,EWeaponAnimationAssetType_FB_TP AssetType);
+	UFUNCTION(BlueprintCallable,BlueprintPure,Category = "WeaponAnimation",meta = (BlueprintThreadSafe))
+	static UAnimSequence* GetAnimationSequence_TP(
+		FWeaponAnimData_TP AnimData,
+		UPARAM(meta=(Categories="Animation.Character.TP.AnimSequence"))FGameplayTag Tag);
+	
+	UFUNCTION(BlueprintCallable,BlueprintPure,Category = "WeaponAnimation",meta = (BlueprintThreadSafe))
+	static UAnimMontage* GetAnimationMontage_TP(
+		FWeaponAnimData_TP AnimData,
+		UPARAM(meta=(Categories="Animation.Character.TP.Montage"))FGameplayTag AssetType);
 
 	UFUNCTION(BlueprintCallable,BlueprintPure,Category = "WeaponAnimation",meta = (BlueprintThreadSafe))
-	static UAnimMontage* GetAnimationMontage_TP(FWeaponAnimData_TP AnimData, EWeaponAnimationMontageType_TP AssetType);
-
-	UFUNCTION(BlueprintCallable,BlueprintPure,Category = "WeaponAnimation", meta = (BlueprintThreadSafe))
-	static UBlendSpace* GetBlendspace_TP(FWeaponAnimData_TP AnimData, EWeaponBlendSpaceType_TP AssetType);
+	static UBlendSpace* GetBlendspace_TP(
+		FWeaponAnimData_TP AnimData,
+		UPARAM(meta=(Categories="Animation.Character.TP.Blendspace"))FGameplayTag AssetType);
 
 	
 	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "WeaponAnimation",meta = (BlueprintThreadSafe))

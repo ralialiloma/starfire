@@ -4,6 +4,7 @@
 #include "Starfire/Animation/AnimationData/FP/WeaponAnimationMontageType_FP.h"
 #include "Starfire/Animation/AnimationData/TP/WeaponAnimationMontageType_TP.h"
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
+#include "Starfire/Utility/Sf_GameplayTagUtil.h"
 
 
 void USf_WeaponAnimMontageController_TP::InitializeComponent()
@@ -14,13 +15,13 @@ void USf_WeaponAnimMontageController_TP::InitializeComponent()
 void USf_WeaponAnimMontageController_TP::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
-	USf_FunctionLibrary::ValidateAndUpdateEnumMap<EWeaponAnimationEventType,EWeaponAnimationMontageType_TP>(AnimationStartMappings);
+	USf_FunctionLibrary::ValidateAndUpdateEnumMap<EWeaponAnimationEventType,FGameplayTag>(AnimationStartMappings);
 }
 
 float USf_WeaponAnimMontageController_TP::RunAnimation(FWeaponMontageEventPackage WeaponAnimationUpdateData) const
 {
 	const EWeaponAnimationEventType EventType = WeaponAnimationUpdateData.AnimationEventType;
-	const EWeaponAnimationMontageType_TP* MontageType  =  AnimationStartMappings.Find(EventType);
+	const FGameplayTag* MontageType  =  AnimationStartMappings.Find(EventType);
 	if (MontageType == nullptr)
 	{
 		FString StartEndValue = WeaponAnimationUpdateData.bStart?"Start":"End";
@@ -43,26 +44,24 @@ float USf_WeaponAnimMontageController_TP::RunAnimation(FWeaponMontageEventPackag
 	return PlayFPMontage(WeaponAnimationUpdateData.AnimData_TP,*MontageType);
 }
 
-float USf_WeaponAnimMontageController_TP::PlayFPMontage(FWeaponAnimData_TP AnimData_TP,EWeaponAnimationMontageType_TP MontageType) const
+float USf_WeaponAnimMontageController_TP::PlayFPMontage(FWeaponAnimData_TP AnimData_TP,FGameplayTag MontageType) const
 {
 	UAnimMontage* AnimMontage =  UWeaponAnimDataHelper::GetAnimationMontage_TP(AnimData_TP,MontageType);
 	if (!IsValid(AnimMontage))
 	{
-		FString MontageTypeName = USf_FunctionLibrary::GetEnumAsString<EWeaponAnimationMontageType_TP>(MontageType);
-		UE_LOG(Sf_WeaponAnimMontageController_FP, Warning, TEXT("Could not find montage to play for %s"),*MontageTypeName)
+		UE_LOG(Sf_WeaponAnimMontageController_FP, Warning, TEXT("Could not find montage to play for %s"),*MontageType.GetTagName().ToString())
 		return 0;
 	}
 	
 	return PlayMontage(AnimMontage);
 }
 
-void USf_WeaponAnimMontageController_TP::StopFPMontage(FWeaponAnimData_TP AnimData_FP, EWeaponAnimationMontageType_TP MontageType) const
+void USf_WeaponAnimMontageController_TP::StopFPMontage(FWeaponAnimData_TP AnimData_FP, FGameplayTag MontageType) const
 {
 	UAnimMontage* AnimMontage =  UWeaponAnimDataHelper::GetAnimationMontage_TP(AnimData_FP,MontageType);
 	if (!IsValid(AnimMontage))
 	{
-		FString MontageTypeName = USf_FunctionLibrary::GetEnumAsString<EWeaponAnimationMontageType_TP>(MontageType);
-		UE_LOG(Sf_WeaponAnimMontageController_FP, Warning, TEXT("Could not find montage to stop for %s"),*MontageTypeName)
+		UE_LOG(Sf_WeaponAnimMontageController_FP, Warning, TEXT("Could not find montage to stop for %s"),*MontageType.GetTagName().ToString())
 		return;
 	}
 
