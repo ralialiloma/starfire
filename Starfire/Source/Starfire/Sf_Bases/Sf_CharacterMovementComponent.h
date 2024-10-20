@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Starfire/Character/Sf_Character.h"
+#include "Starfire/Character_FP/Sf_FP_Character.h"
 #include "Sf_CharacterMovementComponent.generated.h"
 
 DEFINE_LOG_CATEGORY_STATIC(SF_CharacterMovement, Display, Display);

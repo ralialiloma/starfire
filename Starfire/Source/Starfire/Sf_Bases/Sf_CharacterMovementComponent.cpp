@@ -5,16 +5,13 @@
 #include "GameFramework/Character.h"
 #include "DrawDebugHelpers.h"
 #include "Components/CapsuleComponent.h"
-#include "Starfire/Utility/DebugSubsystem.h"
-
-
 
 
 void USf_CharacterMovementComponent::SetMovementMode(EMovementMode NewMovementMode, uint8 NewCustomMode)
 {
 	if (MovementMode != NewMovementMode || CustomMovementMode != NewCustomMode)
 	{
-		EMovementMode PreviousMovementMode = MovementMode;
+		const EMovementMode PreviousMovementMode = MovementMode;
 
 		Super::SetMovementMode(NewMovementMode, NewCustomMode);
 		OnMovementModeChanged.Broadcast(PreviousMovementMode, MovementMode);

@@ -23,6 +23,11 @@ UWorld* USf_Object::GetWorld() const
     {
         return Cast<UWorld>(GetOuter()->GetOuter());
     }
+
+    if (GetOwningActor() == nullptr)
+    {
+        return nullptr;
+    }
 		
     return GetOwningActor()->GetWorld();
 }

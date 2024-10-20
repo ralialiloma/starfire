@@ -3,7 +3,7 @@
 #include "DetailCategoryBuilder.h"
 #include "DetailLayoutBuilder.h"
 #include "DetailWidgetRow.h"
-#include "Starfire/Character/Sf_Character.h"
+#include "Starfire/Character_FP/Sf_FP_Character.h"
 
 TSharedRef<IDetailCustomization> Sf_CharacterEditor::MakeInstance()
 {
@@ -13,14 +13,14 @@ TSharedRef<IDetailCustomization> Sf_CharacterEditor::MakeInstance()
 void Sf_CharacterEditor::CustomizeDetails(IDetailLayoutBuilder& DetailBuilder)
 {
 	IDetailCategoryBuilder& Category = DetailBuilder.EditCategory("CustomConfig", FText::GetEmpty(), ECategoryPriority::Important);
-	ASf_Character* Character = nullptr;
+	ASf_FP_Character* Character = nullptr;
 	TArray<TWeakObjectPtr<UObject>> CustomizedObjects;
 	DetailBuilder.GetObjectsBeingCustomized(CustomizedObjects);
 	for (auto Object : CustomizedObjects)
 	{
 		if (Object.IsValid())
 		{
-			Character = Cast<ASf_Character>(Object);
+			Character = Cast<ASf_FP_Character>(Object);
 			if (Character)
 				break;
 		}
@@ -41,7 +41,7 @@ void Sf_CharacterEditor::CustomizeDetails(IDetailLayoutBuilder& DetailBuilder)
 		.Text(FText::FromString("Save"))
 		.ToolTipText(FText::FromString("Saves the set values to the custom config."))
 		.HAlign(HAlign_Center)
-		.OnClicked_UObject(Character, &ASf_Character::OnSaveButtonClicked)
+		.OnClicked_UObject(Character, &ASf_FP_Character::OnSaveButtonClicked)
 	];
 
 	Category.AddCustomRow(FText::FromString("Config"))
@@ -57,7 +57,7 @@ void Sf_CharacterEditor::CustomizeDetails(IDetailLayoutBuilder& DetailBuilder)
 		.Text(FText::FromString("Load"))
 		.ToolTipText(FText::FromString("Loads saved values from config into the actor."))
 		.HAlign(HAlign_Center)
-		.OnClicked_UObject(Character, &ASf_Character::OnLoadButtonClicked)
+		.OnClicked_UObject(Character, &ASf_FP_Character::OnLoadButtonClicked)
 	];
 	
 }

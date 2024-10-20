@@ -3,7 +3,7 @@
 #include "Sf_FunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "Starfire/Character/Sf_Character.h"
+#include "Starfire/Character_FP/Sf_FP_Character.h"
 
 
 EInputSignalType USf_FunctionLibrary::ConvertToInputSignalType(EInputSignalType SignalType)
@@ -12,7 +12,7 @@ EInputSignalType USf_FunctionLibrary::ConvertToInputSignalType(EInputSignalType 
 }
 
 
-ASf_Character* USf_FunctionLibrary::GetSfPlayerpawn(const UObject* WorldContext)
+ASf_FP_Character* USf_FunctionLibrary::GetSfPlayerpawn(const UObject* WorldContext)
 {
 	if (!WorldContext)
 	{
@@ -27,10 +27,10 @@ ASf_Character* USf_FunctionLibrary::GetSfPlayerpawn(const UObject* WorldContext)
 		return nullptr;
 	}
 
-	ASf_Character* SfCharacter = dynamic_cast<ASf_Character*>(Pawn);
+	ASf_FP_Character* SfCharacter = dynamic_cast<ASf_FP_Character*>(Pawn);
 	if (!SfCharacter)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Player pawn is not of type ASf_Character."));
+		UE_LOG(LogTemp, Warning, TEXT("Player pawn is not of type ASf_FP_Character."));
 	}
 
 	return SfCharacter;

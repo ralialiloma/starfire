@@ -1,7 +1,6 @@
 ﻿#include "WeaponAnimMontageController.h"
-
 #include "WeaponMontageEventPackage.h"
-#include "Starfire/Weapon/WeaponOwner.h"
+#include "Starfire/Shared/Weapon/Interfaces/WeaponOwner.h"
 
 
 float USf_WeaponAnimMontageController::RunAnimation(FWeaponMontageEventPackage WeaponAnimationUpdateData) const

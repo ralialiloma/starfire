@@ -8,7 +8,7 @@
 #include "UObject/UnrealType.h"
 #include "Engine/DataTable.h"
 #include "UObject/SoftObjectPath.h"
-#include "Starfire/Character/Sf_Character.h"
+#include "Starfire/Character_FP/Sf_FP_Character.h"
 #include "Engine/EngineTypes.h" 
 #include "Sf_FunctionLibrary.generated.h"
 
@@ -22,7 +22,7 @@ enum  ESuccessState
 };
 #pragma endregion
 
-class ASf_Character;
+class ASf_FP_Character;
 
 DECLARE_LOG_CATEGORY_CLASS(Sf_FunctionLibrary_Log,Log, Log);
 UCLASS()
@@ -46,7 +46,7 @@ class STARFIRE_API USf_FunctionLibrary : public UBlueprintFunctionLibrary
 	static FName GetEnumAsName(int32 EnumValue, const bool RemoveEnumName = true);
 
 	UFUNCTION(BlueprintCallable,BlueprintPure, meta = (WorldContext = "WorldContext"))
-	static ASf_Character* GetSfPlayerpawn(const UObject* WorldContext);
+	static ASf_FP_Character* GetSfPlayerpawn(const UObject* WorldContext);
 
 	UFUNCTION(BlueprintCallable,BlueprintPure, meta = (WorldContext = "WorldContext"))
 	static FVector GetPlayerLocation(const UObject* WorldContext);

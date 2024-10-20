@@ -1,5 +1,6 @@
 #include "HSMConfigEditor.h"
-#include "Starfire/Character/Sf_Equipment.h"
+
+#include "Starfire/Sf_Bases/Components/Sf_Equipment.h"
 #include "StarfireEditor/Utility/EditorHelpers.h"
 #include "StarfireEditor/Utility/EnumMapEditorHelpers.h"
 
@@ -10,8 +11,8 @@ TSharedRef<IPropertyTypeCustomization> FHSMConfigEditor::MakeInstance()
 	return MakeShareable(new FHSMConfigEditor);
 }
 
-void FHSMConfigEditor::CustomizeHeader(TSharedRef<IPropertyHandle> PropertyHandle, FDetailWidgetRow& HeaderRow,
-	IPropertyTypeCustomizationUtils& CustomizationUtils)
+void FHSMConfigEditor::CustomizeHeader(const TSharedRef<IPropertyHandle> PropertyHandle, FDetailWidgetRow& HeaderRow,
+                                       IPropertyTypeCustomizationUtils& CustomizationUtils)
 {
 	EditorHelpers::DisplayDefaultHeader(PropertyHandle, HeaderRow);
 }
@@ -21,7 +22,7 @@ void FHSMConfigEditor::CustomizeChildren(TSharedRef<IPropertyHandle> PropertyHan
 {
 	TArray<TSharedPtr<IPropertyHandle>> EditedProperties {};
 
-	TSharedPtr<IPropertyHandle> EquipmentFlagHandle = PropertyHandle->GetChildHandle("EquipmentFlagMap", false);
+	const TSharedPtr<IPropertyHandle> EquipmentFlagHandle = PropertyHandle->GetChildHandle("EquipmentFlagMap", false);
 	EditedProperties.Add(EquipmentFlagHandle);
 	EnumMapEditorHelpers::DisplayFixedEnumMap<TEnumAsByte<EEquipmentFlags>, TSubclassOf<UBaseState>>(EquipmentFlagHandle, ChildBuilder);
 	
