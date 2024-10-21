@@ -49,8 +49,9 @@ bool UCF_Cover::IsInCoverState() const
 
 bool UCF_Cover::CanBeHitByPlayer(float HeightOffset) const
 {
-	FVector Start = GetOwnerLocation()+HeightOffset;
-	FVector End = USf_FunctionLibrary::GetPlayerLocation(this)+HeightOffset;
+	FVector AdditionalZHeight = FVector(0,0,HeightOffset);
+	FVector Start = GetOwnerLocation()+AdditionalZHeight;
+	FVector End = USf_FunctionLibrary::GetPlayerLocation(this);
 	FHitResult HitResult;
 	TArray<AActor*> ActorsToIgnore{};
 	bool ShowDebug = UDebugSubsystem::GetAIDebug(EDebugType::Visual);
