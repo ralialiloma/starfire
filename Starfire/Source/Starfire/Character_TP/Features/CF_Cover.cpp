@@ -6,33 +6,52 @@
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
 #include "Starfire/Utility/Debug/DebugSubsystem.h"
 
+void UCF_Cover::Initialize(ASf_TP_Character* Holder)
+{
+	Super::Initialize(Holder);
+	bIsInCoverState = false;
+}
+
 bool UCF_Cover::EnterCover()
 {
+	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, "Try Enter Cover");
+
+	
 	if (bIsInCoverState)
 	{
+		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, "Already in Cover State");
 		return true;
 	}
+
+	const bool bInHighCover = !CanBeHitByPlayer(/*MinCoverHeight*/120);
+	const bool bInLowCover = !CanBeHitByPlayer( 0/*MaxCrouchCoverHeight+0.001f*/);
 	
-	if (CanBeHitByPlayer(MinCoverHeight))
+	if (!bInHighCover && bInLowCover)
 	{
-		bIsInCoverState = false;
-		return false;
-	}
-		
-	if (CanBeHitByPlayer(MaxCrouchCoverHeight+0.001f))
-	{
-		GetOwningCharacter()->Crouch();
+		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, "Character is in low cover");
+		if (!GetOwningCharacter()->bIsCrouched)
+			GetOwningCharacter()->Crouch();
 		bIsInCoverState = true;
 		return true;
 	}
 
-	bIsInCoverState = true;
-	return true;
+	if (bInHighCover)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, "Character is in high cover");
+		bIsInCoverState = true;
+		return true;
+	}
+	
+	
+	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, "Failed to enter cover");
+	bIsInCoverState = false;
+	return false;
 }
 
 bool UCF_Cover::ExitCover()
 {
-	GetOwningCharacter()->UnCrouch();
+	if (GetOwningCharacter()->bIsCrouched)
+		GetOwningCharacter()->UnCrouch();
 	bIsInCoverState = false;
 	return true;
 }
@@ -49,7 +68,8 @@ bool UCF_Cover::IsInCoverState() const
 
 bool UCF_Cover::CanBeHitByPlayer(float HeightOffset) const
 {
-	FVector AdditionalZHeight = FVector(0,0,HeightOffset);
+	float CapHh = GetOwningCharacter()->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
+	FVector AdditionalZHeight = FVector(0,0,HeightOffset-CapHh);
 	FVector Start = GetOwnerLocation()+AdditionalZHeight;
 	FVector End = USf_FunctionLibrary::GetPlayerLocation(this);
 	FHitResult HitResult;
@@ -70,18 +90,15 @@ bool UCF_Cover::CanBeHitByPlayer(float HeightOffset) const
 		true,
 		FColor::Red,
 		FColor::Green,
-		ShowDebug?1:0
+		ShowDebug?5:0
 		);
 	
 	if (!HitResult.bBlockingHit)
-		return true;
+		return false;
 
 	AActor* HitActor = HitResult.GetActor();
-	if (!IsValid(HitActor))
-		return true;
+	if (!IsValid(HitActor) || !HitActor->IsA(ASf_FP_Character::StaticClass()))
+		return false;
 
-	if (!HitActor->IsA(ASf_FP_Character::StaticClass()))
-		return true;
-
-	return false;
+	return true;
 }

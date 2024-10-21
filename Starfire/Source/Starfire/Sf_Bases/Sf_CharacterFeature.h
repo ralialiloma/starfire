@@ -42,7 +42,7 @@ protected:
 	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "Character")
 	USf_TP_CharacterMovementComponent* GetOwningSfMovement();
 	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "Character")
-	ASf_TP_Character* GetOwningCharacter();
+	ASf_TP_Character* GetOwningCharacter() const;
 	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "Character")
 	AAIController* GetOwningAIController();
 

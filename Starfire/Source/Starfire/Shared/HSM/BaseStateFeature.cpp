@@ -13,6 +13,12 @@ DEFINE_LOG_CATEGORY_STATIC(SF_BaseStateFeature, Log, All);
 void UBaseStateFeature::Initialize(UStateCallstack* NewCallstack)
 {
 	Callstack = NewCallstack;
+	OwningCharacter = Cast<ASf_FP_Character>(Callstack->OwningCharacter) ;
+
+	if (!IsValid(OwningCharacter))
+	{
+		UE_LOG(SF_BaseStateFeature, Error, TEXT("Invalid Owning Character"));
+	}
 }
 
 void UBaseStateFeature::RunAction(ECallInput CallInput, const FStateModuleDataStruct& Data)
@@ -51,6 +57,16 @@ void UBaseStateFeature::RunAction(ECallInput CallInput, const FStateModuleDataSt
 void UBaseStateFeature::GetSupportedInputActions(TArray<UInputAction*> &OutSupportedInputActions)
 {
 	OutSupportedInputActions.Append(SupportedInputActions);
+}
+
+ASf_FP_Character* UBaseStateFeature::GetOwningCharacter() const
+{
+	return OwningCharacter;
+}
+
+AController* UBaseStateFeature::GetOwningPlayerController() const
+{
+	return OwningCharacter->GetController();
 }
 
 void UBaseStateFeature::ImportFeatureDefinition(FSoftObjectPath BaseStateFeatureDefDT)

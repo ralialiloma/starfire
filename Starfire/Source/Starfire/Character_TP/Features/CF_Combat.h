@@ -55,8 +55,15 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "EnemyFeature|Combat")
 	void StartReload();
+
+	UFUNCTION(BlueprintCallable, Category = "EnemyFeature|Combat")
+	bool InstantReload();
+	
 	UFUNCTION(BlueprintCallable, Category = "EnemyFeature|Combat")
 	void StopReload();
+
+	UFUNCTION(BlueprintCallable, Category = "EnemyFeature|Combat")
+	void DoIllegalReload();
 
 	UFUNCTION(BlueprintCallable, Category = "EnemyFeature|Combat")
 	bool Melee();

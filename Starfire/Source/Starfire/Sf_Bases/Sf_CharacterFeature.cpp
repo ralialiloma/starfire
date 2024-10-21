@@ -74,7 +74,7 @@ USf_Equipment* USf_CharacterFeature::GetOwningSfEquipment()
 	return OwningAIHolder->GetSfEquipment();
 }
 
-ASf_TP_Character* USf_CharacterFeature::GetOwningCharacter()
+ASf_TP_Character* USf_CharacterFeature::GetOwningCharacter() const
 {
 	return OwningAIHolder;
 }

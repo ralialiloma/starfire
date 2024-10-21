@@ -131,6 +131,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="WeaponBase")
 	bool Reload(float& OutMontageTime);
+
+	UFUNCTION(BlueprintCallable, Category="WeaponBase")
+	bool InstantReload();
+
 	bool Reload();
 
 	UFUNCTION(BlueprintCallable, Category="WeaponBase")

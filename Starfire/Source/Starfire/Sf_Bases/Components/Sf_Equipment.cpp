@@ -278,6 +278,14 @@ bool USf_Equipment::Reload(float &OutMontageTime)
 	return EquippedWeapon->Reload(OutMontageTime);
 }
 
+bool USf_Equipment::InstantReload()
+{
+	if (!IsEquipped())
+		return false;
+
+	return EquippedWeapon->InstantReload();
+}
+
 void USf_Equipment::StopReloading()
 {
 	if (!IsEquipped())

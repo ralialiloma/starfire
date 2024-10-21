@@ -27,7 +27,7 @@ bool UCF_Locomotion::MoveToLocation(F_SF_MoveRequest MoveRequest)
 	if (bLocationReserved)
 	{
 		ClearAllDelegates();
-		UE_LOG(LogTemp, Log, TEXT("Location already reserved"))
+		UE_LOG(EF_Locomotion, Log, TEXT("Location already reserved"))
 		return false;
 	}
 
@@ -47,8 +47,7 @@ bool UCF_Locomotion::MoveToLocation(F_SF_MoveRequest MoveRequest)
 		OnMoveFinished_CPP.Broadcast();
 		OnMoveFinished_BP.Broadcast();
 		StopMovement();
-		//UE_LOG(LogTemp, Log, TEXT("Already at goal"))
-		return false;
+		return true;
 	}
 
 	if (Result ==EPathFollowingRequestResult::Type::Failed)
@@ -56,7 +55,7 @@ bool UCF_Locomotion::MoveToLocation(F_SF_MoveRequest MoveRequest)
 		OnMoveFailed_BP.Broadcast();
 		OnMoveFailed_CPP.Broadcast();
 		StopMovement();
-		UE_LOG(LogTemp, Log, TEXT("Failed to reach location"))
+		UE_LOG(EF_Locomotion, Warning, TEXT("Failed path request"))
 		return false;
 	}
 	
@@ -114,6 +113,8 @@ void UCF_Locomotion::OnMoveCompleted(FAIRequestID RequestID, EPathFollowingResul
 		OnMoveFinished_BP.Broadcast();
 		return;
 	}
+
+	UE_LOG(EF_Locomotion, Error, TEXT("Move Failed"))
 	OnMoveFailed_BP.Broadcast();
 	OnMoveFailed_CPP.Broadcast();
 	ClearAllDelegates();

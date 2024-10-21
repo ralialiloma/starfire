@@ -228,12 +228,24 @@ void UCF_Combat::StartReload()
 
 }
 
+bool UCF_Combat::InstantReload()
+{
+	USf_Equipment* Equipment = GetOwningSfEquipment();
+	return Equipment->InstantReload();
+}
+
 void UCF_Combat::StopReload()
 {
 	USf_Equipment* Equipment = GetOwningSfEquipment();
 	Equipment->StopReloading();
 	OnReloadStopped_CPP.Broadcast();
 	OnReloadStopped_BP.Broadcast();
+}
+
+void UCF_Combat::DoIllegalReload()
+{
+	OnReloadFinish_BP.Broadcast();
+	OnReloadFinish_CPP.Broadcast();
 }
 
 bool UCF_Combat::Melee()

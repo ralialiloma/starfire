@@ -100,6 +100,8 @@ public:
 	bool Fire(EInputSignalType InputSignal, EFireType FireType, FHitResult& OutHitResult, EFireBlock& OutFireBlock);
 	UFUNCTION(BlueprintCallable)
 	bool Reload(float &OutMontageTime);
+	UFUNCTION(BlueprintCallable)
+	bool InstantReload();
 	bool Reload() const;
 	UFUNCTION(BlueprintCallable)
 	void StopReloading();

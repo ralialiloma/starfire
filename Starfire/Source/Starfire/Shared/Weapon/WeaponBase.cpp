@@ -417,6 +417,14 @@ bool AWeaponBase::Reload(float& OutMontageTime)
 	return true;
 }
 
+bool AWeaponBase::InstantReload()
+{
+	CurrentClip = WeaponConfig.MaxClipSize;
+	OnReloadFinish_BP.Broadcast();
+	OnReloadFinish_CPP.Broadcast();
+	return true;
+}
+
 bool AWeaponBase::IsReloading() const
 {
 	return GetWorld()->GetTimerManager().IsTimerActive(ReloadTimer);

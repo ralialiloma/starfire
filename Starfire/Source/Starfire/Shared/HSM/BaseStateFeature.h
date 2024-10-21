@@ -11,7 +11,7 @@
 
 class UBaseState;
 class UStateCallstack;
-
+class ASf_FP_Character;
 
 UCLASS(Abstract, Blueprintable)
 class STARFIRE_API UBaseStateFeature : public USf_Object
@@ -24,6 +24,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	TArray<UInputAction*> SupportedInputActions;
+private:
+	UPROPERTY()
+	ASf_FP_Character* OwningCharacter;
 	
 public:
 
@@ -47,6 +50,12 @@ public:
 	void RunAction(ECallInput CallInput, const FStateModuleDataStruct& Data);
 	
 	virtual void GetSupportedInputActions(TArray<UInputAction*> &OutSupportedInputActions);
+
+	UFUNCTION(BlueprintCallable)
+	 ASf_FP_Character* GetOwningCharacter() const;
+
+	UFUNCTION(BlueprintCallable)
+	AController* GetOwningPlayerController() const;
 
 private:
 	void ImportFeatureDefinition(FSoftObjectPath BaseStateFeatureDefDT);

@@ -9,6 +9,9 @@ class STARFIRE_API UCF_Cover : public USf_CharacterFeature
 {
 	GENERATED_BODY()
 
+public:
+	virtual void Initialize(ASf_TP_Character* Holder) override;
+	
 #pragma region Functions
 public:
 	UFUNCTION(BlueprintCallable, Category = "EnemyFeature|Cover")
