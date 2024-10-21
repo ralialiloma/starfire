@@ -15,36 +15,13 @@ ASf_TP_Character::ASf_TP_Character(const FObjectInitializer& ObjectInitializer):
 	PrimaryActorTick.bCanEverTick = true;
 
 	//Equipment
-	/*SfEquipmentComponent = CreateDefaultSubobject<USf_Equipment>(TEXT("SFEquip"));
-	SfEquipmentComponent->SetUsingAbsoluteLocation(false);
-	SfEquipmentComponent->SetUsingAbsoluteRotation(false);
-	SfEquipmentComponent->SetUsingAbsoluteScale(false);*/
 	SfEquipmentComponent->SetupAttachment(GetMesh(),TEXT("GripPoint"));
-
-	//Melee Transform
-	/*MeleeTransform = CreateDefaultSubobject<UBoxComponent>(TEXT("Melee Transform"));
-	MeleeTransform->SetUsingAbsoluteLocation(false);
-	MeleeTransform->SetUsingAbsoluteRotation(false);
-	MeleeTransform->SetUsingAbsoluteScale(false);
-	MeleeTransform->SetRelativeLocation(FVector(30,0,0));
-	MeleeTransform->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
-	MeleeTransform->ShapeColor = FColor::Purple;
-	MeleeTransform->SetLineThickness(1.0f);*/
-
+	
 	//WeaponAnimMontageController
 	WeaponAnimMontageController = CreateDefaultSubobject<USf_WeaponAnimMontageController_TP>(TEXT("WeaponAnimMontageController"));
-
-	//Damage Controller
-	//SfDamageController = CreateDefaultSubobject<USf_DamageController>(TEXT("SfDamageController"));
-
+	
 	//Movement Component
 	SFCharacterMovementComponent = Cast<USf_TP_CharacterMovementComponent>(GetCharacterMovement());;
-
-	//Pawn Sensing
-	PawnSensingComponent = CreateDefaultSubobject<UPawnSensingComponent>(TEXT("PawnSensingComponent"));
-
-	//Pawn Sensing
-	AIPerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerceptionComponent"));
 }
 
 void ASf_TP_Character::PreInitializeComponents()

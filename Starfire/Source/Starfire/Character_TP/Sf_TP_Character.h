@@ -46,11 +46,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Movement")
 	USf_TP_CharacterMovementComponent* SFCharacterMovementComponent;
 
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "AI")
-	UPawnSensingComponent* PawnSensingComponent;
-
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "AI")
-	UAIPerceptionComponent* AIPerceptionComponent;
 #pragma endregion
 
 #pragma region Features

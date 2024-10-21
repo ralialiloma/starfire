@@ -13,7 +13,7 @@ void USf_CharacterFeature::Initialize(ASf_TP_Character* Holder)
 
 	if (!IsValid(Controller))
 	{
-		UE_LOG(EnemyFeature, Error, TEXT("Invalid Controller"))
+		//UE_LOG(SfLog_CharacterFeature, Error, TEXT("Invalid Controller"))
 		return;
 	}
 	
@@ -21,7 +21,7 @@ void USf_CharacterFeature::Initialize(ASf_TP_Character* Holder)
 	if (!IsValid(OwningAIController))
 	{
 		UE_LOG(
-			EnemyFeature,
+			SfLog_CharacterFeature,
 			Error,
 			TEXT("Invalid type. Needs to be AIController but its %s instead"),
 			*Holder->GetController()->GetClass()->GetName())

@@ -12,7 +12,7 @@
 
 class ASf_TP_Character;
 
-DEFINE_LOG_CATEGORY_STATIC(EnemyFeature, Display, Display);
+DEFINE_LOG_CATEGORY_STATIC(SfLog_CharacterFeature, Display, Display);
 
 
 UCLASS(BlueprintType,Blueprintable)
