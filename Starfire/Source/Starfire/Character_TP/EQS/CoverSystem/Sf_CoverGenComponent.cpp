@@ -28,9 +28,9 @@ TArray<FVector> USf_CoverGenComponent::GetPeakLocations() const
 	return SavedPeakLocations;;
 }
 
-void USf_CoverGenComponent::FindCoverLocations(TArray<FVector>& OutCoverLocations, const float MinValue) const
+void USf_CoverGenComponent::UpdateCoverAndPeakLocations(const float MinValue)
 {
-	OutCoverLocations.Empty();
+	SavedCoverLocations.Empty();
 	if(!IsValid(CoverQueryInstance))
 		return;
 
@@ -41,8 +41,11 @@ void USf_CoverGenComponent::FindCoverLocations(TArray<FVector>& OutCoverLocation
 	const int ResultCount = QueryResult->Items.Num();
 	for (int i = 0; i < ResultCount; i++)
 	{
-		if (QueryResult->GetItemScore(i)>FMath::Max(0,MinValue))
-			OutCoverLocations.Add(QueryResult->GetItemAsLocation(i));
+		float ItemScore = QueryResult->GetItemScore(i);
+		if (ItemScore>FMath::Max(0,MinValue))
+			SavedCoverLocations.Add(QueryResult->GetItemAsLocation(i));
+		else if (FMath::IsNearlyEqual(ItemScore, 0.0f))
+			SavedPeakLocations.Add(QueryResult->GetItemAsLocation(i));
 	}
 
 }
@@ -58,7 +61,7 @@ void USf_CoverGenComponent::FindPeakLocations(TArray<FVector>& PeakLocations) co
 
 	for (int i= 0; i<QueryLocations.Num();i++)
 	{
-		if (CoverQueryInstance->GetItemScore(i)<0.2f)
+		if (CoverQueryInstance->GetItemScore(i)==0)
 		{
 			PeakLocations.Add(QueryLocations[i]);
 		}
@@ -120,10 +123,22 @@ void USf_CoverGenComponent::DebugCoverLocations() const
 	}
 }
 
+void USf_CoverGenComponent::DebugPeakLocations() const
+{
+	if (!IsValid(CoverQueryInstance))
+		return;
+
+	TArray<FVector> CoverLocations = GetPeakLocations();;
+
+	for (FVector Location: CoverLocations)
+	{
+		UKismetSystemLibrary::DrawDebugSphere(this,Location,40,6,FColor::Green,QueryUpdateRate,1);
+	}
+}
+
 void USf_CoverGenComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	
 }
 
 void USf_CoverGenComponent::DoRunQuery()
@@ -158,12 +173,13 @@ void USf_CoverGenComponent::OnQueryFinished(UEnvQueryInstanceBlueprintWrapper* Q
 		return;
 	
 	CoverQueryInstance = QueryInstance;
-	FindCoverLocations(SavedCoverLocations,0.1f);
+	UpdateCoverAndPeakLocations(0.2f);
 	FindPeakLocations(SavedPeakLocations);
 	
 	if (UDebugSubsystem::GetAIDebug(EDebugType::Visual))
 	{
 		DebugCoverLocations();
+		DebugPeakLocations();
 	}
 }
 

@@ -33,10 +33,11 @@ protected:
 	void GetQueryLocations(TArray<FVector>& QueryLocations) const;
 	const FEnvQueryResult* GetQueryResult() const;
 
-	void FindCoverLocations(TArray<FVector>& OutCoverLocations, float MinValue= 0.1f) const;
+	void UpdateCoverAndPeakLocations(float MinValue= 0.1f);
 	void FindPeakLocations(TArray<FVector>& PeakLocations) const;
 
 	void DebugCoverLocations() const;
+	void DebugPeakLocations() const;
 #pragma endregion
 
 
