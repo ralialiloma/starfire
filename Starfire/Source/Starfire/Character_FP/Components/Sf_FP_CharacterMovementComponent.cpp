@@ -105,6 +105,17 @@ bool USf_FP_CharacterMovementComponent::DoJump(bool bReplayingMoves)
 
 float USf_FP_CharacterMovementComponent::GetMaxSpeed() const
 {
+	if (MovementMode == MOVE_Walking)
+	{
+		if (IsCrouching())
+			return Crouch_MaxWalkSpeed;
+		
+		if (Safe_bWantsToSprint)
+			return Sprint_MaxWalkSpeed;
+
+		return Walk_MaxWalkSpeed;
+	}
+	
 	if (MovementMode != MOVE_Custom)
 		return Super::GetMaxSpeed();
 	
@@ -113,7 +124,7 @@ float USf_FP_CharacterMovementComponent::GetMaxSpeed() const
 		case CMOVE_WallRun:
 			return MaxWallRunSpeed;
 		case CMOVE_Mantle:
-			return Safe_bWantsToSprint ? Sprint_MaxWalkspeed : Walk_MaxWalkSpeed; 
+			return Safe_bWantsToSprint ? Sprint_MaxWalkSpeed : Walk_MaxWalkSpeed; 
 		default:
 				UE_LOG(SF_FP_CharacterMovement, Fatal, TEXT("Invalid Movement Mode"))
 				return -1.f;
@@ -172,18 +183,6 @@ void USf_FP_CharacterMovementComponent::UpdateCharacterStateAfterMovement(float 
 void USf_FP_CharacterMovementComponent::OnMovementUpdated(float DeltaSeconds, const FVector& OldLocation,const FVector& OldVelocity)
 {
 	Super::OnMovementUpdated(DeltaSeconds, OldLocation, OldVelocity);
-
-	if (MovementMode == MOVE_Walking)
-	{
-		if (Safe_bWantsToSprint)
-		{
-			MaxWalkSpeed = Sprint_MaxWalkspeed;
-		}
-		else
-		{
-			MaxWalkSpeed = Walk_MaxWalkSpeed;
-		}
-	}
 }
 
 void USf_FP_CharacterMovementComponent::PhysCustom(const float DeltaTime, const int32 Iterations)
@@ -503,13 +502,6 @@ bool USf_FP_CharacterMovementComponent::TryMantle()
 			break;
 		}
 	}
-
-	//Calculate Boost Spot
-	FVector IntersectionPoint = SurfaceHit.Location - MantleForward;
-	FVector PlayerSpherelessRoot = MantleGroundLocation + FVector::UpVector * CharacterOwner->GetCapsuleComponent()->GetScaledCapsuleRadius();
-
-	POINT(IntersectionPoint, FColor::Yellow)
-	POINT(PlayerSpherelessRoot, FColor::Silver);
 	
 	if (!SurfaceHit.IsValidBlockingHit() || (SurfaceHit.Normal | FVector::UpVector) < CosMaxSurfaceAngle)
 		return false;
@@ -547,44 +539,16 @@ void USf_FP_CharacterMovementComponent::PhysMantle(float deltaTime, int32 Iterat
 {
 	const FVector Direction = (MantleTargetLocation - MantleOriginLocation);
 	const FVector Movement = MantleStartingVelocity.ProjectOnTo(Direction);
-	const float Duration = FMath::Min(Direction.Length() / Sprint_MaxWalkspeed, MantleMaxDuration);
+	const float Duration = FMath::Min(Direction.Length() / Sprint_MaxWalkSpeed, MantleMaxDuration);
 	const float Alpha = ElapsedMantleTime / Duration;
-	
-	if (!MantleCurve)
-	{
-		UE_LOG(SF_FP_CharacterMovement, Error, TEXT("No Mantle curve found"));
-		CharacterOwner->SetActorLocation(FMath::Lerp(MantleOriginLocation, MantleTargetLocation, Alpha));
-	}
-	else
-	{
-		// float Start = 0;
-		// float End = 0;
-		// MantleCurve->GetTimeRange(Start, End);
-		// float MinCurveValue = MantleCurve->GetFloatValue(Start);
-		// float MaxCurveValue = MantleCurve->GetFloatValue(End);
-		// float CurveValue = ((MantleCurve->GetFloatValue(Start + Alpha * (End - Start)) - MinCurveValue) / (MaxCurveValue - MinCurveValue));
-		//
-		// float NewZ = FMath::Lerp(MantleOriginLocation.Z, MantleTargetLocation.Z, CurveValue);
-		// FVector NewXY = FMath::Lerp(FVector(MantleOriginLocation.X, MantleOriginLocation.Y, 0.0f), 
-		// 							FVector(MantleTargetLocation.X, MantleTargetLocation.Y, 0.0f), 
-		// 							Alpha);
-		//
-		// FVector NewLocation = FVector(NewXY.X, NewXY.Y, NewZ);
-		FVector NewLocation = FMath::Lerp(MantleOriginLocation, MantleTargetLocation, Alpha);
-		FVector CurrentVelocity = FMath::Lerp(MantleStartingVelocity, Sprint_MaxWalkspeed, Alpha);
 
-		
-		CharacterOwner->SetActorLocation(NewLocation);
-	}
+	CharacterOwner->SetActorLocation(FMath::Lerp(MantleOriginLocation, MantleTargetLocation, Alpha));
 
 	if (ElapsedMantleTime > Duration * 0.9f)
 	{
 		float MantleBoostDirectionBias = 1.f;
 		float MantleBoostVelocity = GetMaxSpeed() * GetLastInputVector().GetSafeNormal().Length();
 		Velocity = (GetPawnOwner()->GetControlRotation().Vector() + Direction.GetSafeNormal() * MantleBoostDirectionBias).GetSafeNormal() * MantleBoostVelocity;
-		// float Magnitude = MantleStartingVelocity.Length();
-		// if (Magnitude > MantleMinVelocityForBoost)
-			// Velocity = MantleStartingVelocity.ProjectOnTo(Direction.GetSafeNormal2D());
 		CAPSULE(GetActorLocation(),FColor::Blue)
 		
 		SetMovementMode(MOVE_Falling);

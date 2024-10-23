@@ -105,7 +105,9 @@ public:
 #pragma region Properties
 protected:
 	UPROPERTY(EditDefaultsOnly, Category="Character Movement: Walking", meta =(CustomConfig))
-	float Sprint_MaxWalkspeed = 400.0f;
+	float Crouch_MaxWalkSpeed = 100.0f;
+	UPROPERTY(EditDefaultsOnly, Category="Character Movement: Walking", meta =(CustomConfig))
+	float Sprint_MaxWalkSpeed = 400.0f;
 	UPROPERTY(EditDefaultsOnly, Category="Character Movement: Walking", meta =(CustomConfig))
 	float Walk_MaxWalkSpeed = 200.0f;
 private:
