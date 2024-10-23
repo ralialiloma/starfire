@@ -58,6 +58,9 @@ private:
 	TArray<FVector> SavedCoverLocations;
 	UPROPERTY()
 	TArray<FVector> SavedPeakLocations;
+
+	UPROPERTY()
+	TMap<FVector,FVector> SavedPeakCoverPair;
 #pragma endregion
 
 };

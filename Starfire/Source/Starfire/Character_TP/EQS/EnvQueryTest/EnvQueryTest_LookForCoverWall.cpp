@@ -66,9 +66,9 @@ void UEnvQueryTest_LookForCoverWall::RunTest(FEnvQueryInstance& QueryInstance) c
 
 		if (HitResult.bBlockingHit)
 		{
-			Score = (DistanceToCover - MinDistanceToCover) / MaxDistanceToCover;
+			Score = ((DistanceToCover - MinDistanceToCover) / MaxDistanceToCover)*0.9f +0.1f;
 			Score = 1 - FMath::Min(1.0f, Score);
-			Score = FMath::Clamp(Score,0.1f,1);
+			//Score = FMath::Clamp(Score,0.1f,1);
 		}
 
 		//FColor DebugColor = FColor(Score*255,0,0);

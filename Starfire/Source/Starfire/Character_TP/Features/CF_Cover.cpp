@@ -29,8 +29,7 @@ bool UCF_Cover::EnterCover()
 	if (!bInHighCover && bInLowCover)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, "Character is in low cover");
-		if (!GetOwningCharacter()->bIsCrouched)
-			GetOwningCharacter()->Crouch();
+		GetOwningCharacter()->GetSf_TP_CharacterMovement()->bWantsToCrouch = true;
 		bIsInCoverState = true;
 		return true;
 	}
@@ -51,7 +50,7 @@ bool UCF_Cover::EnterCover()
 bool UCF_Cover::ExitCover()
 {
 	if (GetOwningCharacter()->bIsCrouched)
-		GetOwningCharacter()->UnCrouch();
+		GetOwningCharacter()->GetSf_TP_CharacterMovement()->bWantsToCrouch = false;
 	bIsInCoverState = false;
 	return true;
 }

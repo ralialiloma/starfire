@@ -173,7 +173,7 @@ void USf_CoverGenComponent::OnQueryFinished(UEnvQueryInstanceBlueprintWrapper* Q
 		return;
 	
 	CoverQueryInstance = QueryInstance;
-	UpdateCoverAndPeakLocations(0.2f);
+	UpdateCoverAndPeakLocations(0.9f);
 	FindPeakLocations(SavedPeakLocations);
 	
 	if (UDebugSubsystem::GetAIDebug(EDebugType::Visual))
