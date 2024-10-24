@@ -7,7 +7,7 @@
 void UDebugSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
-
+	
 	//UE_LOG(LogTemp, Warning, TEXT("DEBUG SUBSYSTEM --- INIT"));
 }
 
@@ -18,63 +18,24 @@ void UDebugSubsystem::Deinitialize()
 	Super::Deinitialize();
 }
 
-UDebugSubsystem* UDebugSubsystem::Refresh()
+
+
+bool UDebugSubsystem::ShouldDebug(FGameplayTag DebugTag, EDebugType DebugType)
 {
-	const UDebugSettings* Settings = GetDefault<UDebugSettings>();
-
-	AllowDebug = Settings->AllowDebug;
-	AllowSound = Settings->AllowSound;
-	AIDebug = Settings->AIDebug;
-	WeaponDebug = Settings->WeaponDebug;
-	HSMDebug = Settings->HSMDebug;
-	MovementDebug = Settings->MovementDebug;
-
-	return this;
-}
-
-UDebugSubsystem* UDebugSubsystem::GetDebugSubsystem()
-{
-	return GEngine->GetEngineSubsystem<UDebugSubsystem>()->Refresh();
+	return GetDefault<UDebugSettings>()->ShouldDebug(DebugTag,DebugType);
 }
 
 bool UDebugSubsystem::GetAllowDebug()
 {
-	if (UDebugSubsystem* Subsystem = GetDebugSubsystem())
-		return Subsystem->AllowDebug;
-	return true;
+	return !GetDefault<UDebugSettings>()->bHideAllDebugs;
 }
 
 bool UDebugSubsystem::GetAllowSound()
 {
-	if (UDebugSubsystem* Subsystem = GetDebugSubsystem())
-		return Subsystem->AllowSound;
-	return true;
+  	return !GetDefault<UDebugSettings>()->bMuteGame;
 }
 
-bool UDebugSubsystem::GetAIDebug(TEnumAsByte<EDebugType> DebugType)
+bool UDebugSubsystem::GetMovementDebug(EDebugType DebugType)
 {
-	if (UDebugSubsystem* Subsystem = GetDebugSubsystem())
-		return Subsystem->AIDebug.GetDebugType(DebugType) && Subsystem->AllowDebug;
-	return true;
-}
-
-bool UDebugSubsystem::GetWeaponDebug(TEnumAsByte<EDebugType> DebugType)
-{
-	if (UDebugSubsystem* Subsystem = GetDebugSubsystem())
-		return Subsystem->WeaponDebug.GetDebugType(DebugType) && Subsystem->AllowDebug;
-	return true;
-}
-
-bool UDebugSubsystem::GetHSMDebug(TEnumAsByte<EDebugType> DebugType)
-{
-	if (UDebugSubsystem* Subsystem = GetDebugSubsystem())
-		return Subsystem->HSMDebug.GetDebugType(DebugType) && Subsystem->AllowDebug;
-	return true;
-}
-
-bool UDebugSubsystem::GetMovementDebug(TEnumAsByte<EDebugType> DebugType)
-{
-	if (UDebugSubsystem* Subsystem = GetDebugSubsystem())
-		return Subsystem->MovementDebug.GetDebugType(DebugType) && Subsystem->AllowDebug;
-	return true;
+	return ShouldDebug(Sf_GameplayTags::Debug::FP::Movement::Name,DebugType);
 }

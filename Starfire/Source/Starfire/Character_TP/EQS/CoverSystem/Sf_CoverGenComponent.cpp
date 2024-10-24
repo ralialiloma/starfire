@@ -112,6 +112,9 @@ const FEnvQueryResult* USf_CoverGenComponent::GetQueryResult() const
 
 void USf_CoverGenComponent::DebugCoverLocations() const
 {
+	if (!UDebugSubsystem::ShouldDebug(Sf_GameplayTags::Debug::TP::EQS::CoverLocation,EDebugType::Visual))
+		return;
+	
 	if (!IsValid(CoverQueryInstance))
 		return;
 
@@ -125,6 +128,9 @@ void USf_CoverGenComponent::DebugCoverLocations() const
 
 void USf_CoverGenComponent::DebugPeakLocations() const
 {
+	if (!UDebugSubsystem::ShouldDebug(Sf_GameplayTags::Debug::TP::EQS::PeakLocation,EDebugType::Visual))
+		return;
+	
 	if (!IsValid(CoverQueryInstance))
 		return;
 
@@ -176,11 +182,9 @@ void USf_CoverGenComponent::OnQueryFinished(UEnvQueryInstanceBlueprintWrapper* Q
 	UpdateCoverAndPeakLocations(0.9f);
 	FindPeakLocations(SavedPeakLocations);
 	
-	if (UDebugSubsystem::GetAIDebug(EDebugType::Visual))
-	{
-		DebugCoverLocations();
-		DebugPeakLocations();
-	}
+	DebugCoverLocations();
+	DebugPeakLocations();
+	
 }
 
 

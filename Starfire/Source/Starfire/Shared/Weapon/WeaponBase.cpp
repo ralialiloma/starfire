@@ -97,7 +97,7 @@ void AWeaponBase::FireTraces(FHitResult& OutHitResult)
 
 		//Debug
 		const EDrawDebugTrace::Type DebugType =
-			UDebugSubsystem::GetWeaponDebug(Visual) ? EDrawDebugTrace::ForDuration : EDrawDebugTrace::None;
+			UDebugSubsystem::ShouldDebug(Sf_GameplayTags::Debug::Weapon::Name,EDebugType::Visual) ? EDrawDebugTrace::ForDuration : EDrawDebugTrace::None;
 		FColor TraceColor = USf_FunctionLibrary::BoolToColor(bIsAiming);
 
 		//Ignore
@@ -200,7 +200,7 @@ void AWeaponBase::MeleeTraces()
 	FMeleeInfo MeleeInfo =  IWeaponOwner::Execute_GetMeleeInfo(WeaponOwner);
 	
 	//Draw Debug
-	if(UDebugSubsystem::GetWeaponDebug(EDebugType::Visual))
+	if(UDebugSubsystem::ShouldDebug(Sf_GameplayTags::Debug::Weapon::Name,EDebugType::Visual))
 	{
 		DrawDebugBox(
 			GetWorld(),
@@ -260,7 +260,7 @@ void AWeaponBase::ApplyMelee(AActor* ActorToApplyOn, FVector Start, FVector End,
 		WeaponConfig.TraceTypeQuery,
 		false,
 		TArray<AActor*>{this,WeaponOwner},
-		UDebugSubsystem::GetWeaponDebug(EDebugType::Visual)?EDrawDebugTrace::Persistent:EDrawDebugTrace::None,
+		UDebugSubsystem::ShouldDebug(Sf_GameplayTags::Debug::Weapon::Name,EDebugType::Visual)?EDrawDebugTrace::Persistent:EDrawDebugTrace::None,
 		HitResult,
 		true,
 		FLinearColor::Blue,

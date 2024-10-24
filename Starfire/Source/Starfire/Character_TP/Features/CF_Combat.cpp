@@ -29,7 +29,7 @@ bool UCF_Combat::OtherNPCWouldBeHit()
 	FVector End = ForwardVector*(WeaponRange+0.01f);
 	FHitResult HitResult;
 	TArray<AActor*> ActorsToIgnore{};
-	bool ShowDebug = UDebugSubsystem::GetAIDebug(EDebugType::Visual);
+	bool ShowDebug = UDebugSubsystem::ShouldDebug(Sf_GameplayTags::Debug::TP::CharacterFeatures::Combat,EDebugType::Visual); 
 
 	UKismetSystemLibrary::LineTraceSingleByProfile(
 		this,

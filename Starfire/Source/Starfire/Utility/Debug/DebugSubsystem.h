@@ -13,42 +13,37 @@ class STARFIRE_API UDebugSubsystem : public UEngineSubsystem
 	GENERATED_BODY()
 
 public:
-	
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
 
-	UDebugSubsystem* Refresh();
-	
+#pragma region Functions
 	static UDebugSubsystem* GetDebugSubsystem();
 	
-	UPROPERTY(BlueprintReadOnly)
-	bool AllowDebug = false;
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	static bool ShouldDebug(UPARAM(meta=(Categories="Debug"))FGameplayTag DebugTag, EDebugType DebugType);
 	UFUNCTION(BlueprintCallable, BlueprintPure,	meta = (WorldContext = "WorldContext"))
 	static bool GetAllowDebug();
-	
-	UPROPERTY(BlueprintReadOnly)
-	bool AllowSound = false;
 	UFUNCTION(BlueprintCallable, BlueprintPure,	meta = (WorldContext = "WorldContext"))
 	static bool GetAllowSound();
-
+	UFUNCTION(BlueprintCallable, BlueprintPure, meta = (WorldContext = "WorldContext"))
+	static bool GetMovementDebug(EDebugType DebugType);
+#pragma endregion
+	
+#pragma region Properties
+	UPROPERTY(BlueprintReadOnly)
+	bool AllowDebug = false;
+	UPROPERTY(BlueprintReadOnly)
+	bool AllowSound = false;
 	UPROPERTY(BlueprintReadOnly)
 	FDebugSettingData AIDebug;
-	UFUNCTION(BlueprintCallable, BlueprintPure, meta = (WorldContext = "WorldContext"))
-	static bool GetAIDebug(TEnumAsByte<EDebugType> DebugType);
-
 	UPROPERTY(BlueprintReadOnly)
 	FDebugSettingData WeaponDebug;
-	UFUNCTION(BlueprintCallable, BlueprintPure, meta = (WorldContext = "WorldContext"))
-	static bool GetWeaponDebug(TEnumAsByte<EDebugType> DebugType);
-
 	UPROPERTY(BlueprintReadOnly)
 	FDebugSettingData HSMDebug;
-	UFUNCTION(BlueprintCallable, BlueprintPure, meta = (WorldContext = "WorldContext"))
-	static bool GetHSMDebug(TEnumAsByte<EDebugType> DebugType);
-
 	UPROPERTY(BlueprintReadOnly)
 	FDebugSettingData MovementDebug;
-	UFUNCTION(BlueprintCallable, BlueprintPure, meta = (WorldContext = "WorldContext"))
-	static bool GetMovementDebug(TEnumAsByte<EDebugType> DebugType);
+#pragma endregion
+
+
 	
 };

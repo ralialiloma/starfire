@@ -73,7 +73,7 @@ bool UCF_Cover::CanBeHitByPlayer(float HeightOffset) const
 	FVector End = USf_FunctionLibrary::GetPlayerLocation(this);
 	FHitResult HitResult;
 	TArray<AActor*> ActorsToIgnore{};
-	bool ShowDebug = UDebugSubsystem::GetAIDebug(EDebugType::Visual);
+	bool ShowDebug = UDebugSubsystem::ShouldDebug(Sf_GameplayTags::Debug::TP::CharacterFeatures::Cover,EDebugType::Visual);
 
 	ETraceTypeQuery TraceType = UEngineTypes::ConvertToTraceType(EEC_BULLETTRACES);
 

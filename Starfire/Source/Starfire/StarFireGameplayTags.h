@@ -5,7 +5,49 @@ namespace Sf_GameplayTags
 {
 	STARFIRE_API	FGameplayTag FindTagByString(const FString& TagString, bool bMatchPartialString = false);
 	STARFIRE_API TArray<FGameplayTag> GetAllChildTags(const FGameplayTag& ParentTag);
-	
+
+	namespace Debug
+	{
+		STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+		STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Sound);
+		namespace TP
+		{
+			STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+			STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(MoveTargetLocation);
+			STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(MeleeRangeCheck);
+			namespace EQS
+			{
+				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(CoverLocation);
+				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(PeakLocation);
+			}
+
+			namespace CharacterFeatures
+			{
+				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Combat);
+				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cover);
+				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Locomotion);
+			}
+		}
+		namespace FP
+		{
+			STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+			namespace Movement
+			{
+				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+			}
+			namespace HSM
+			{
+				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+			}
+		}
+		namespace Weapon
+		{
+			STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+		}
+
+	}
 	namespace Animation
 	{
 		STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
@@ -20,13 +62,11 @@ namespace Sf_GameplayTags
 				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Aim);
 				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Equip);
 				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Melee);
-				
 			}	
 		}
 		namespace Character
 		{
 			STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
-	
 			namespace TP
 			{
 				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
@@ -47,7 +87,6 @@ namespace Sf_GameplayTags
 					STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Hip);
 					STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Aim);
 				}
-				
 				namespace AnimSequence
 				{
 					STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
@@ -57,7 +96,6 @@ namespace Sf_GameplayTags
 						STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Idle);
 						STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Aim);
 					}
-
 					namespace LowerBody
 					{
 						STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
@@ -67,7 +105,6 @@ namespace Sf_GameplayTags
 						STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(StandToCrouch);
 						STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(CrouchToStand);
 					}
-
 					namespace FullBody
 					{
 						STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
@@ -92,7 +129,6 @@ namespace Sf_GameplayTags
 					STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
 					STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Walk);
 				}
-				
 				namespace AnimSequence
 				{
 					STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);

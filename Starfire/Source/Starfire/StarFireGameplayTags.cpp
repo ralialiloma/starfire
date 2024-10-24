@@ -9,6 +9,46 @@
 
 namespace Sf_GameplayTags
 {
+	namespace Debug
+	{
+		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Debug", "")
+		namespace TP
+		{
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Debug.TP", "")
+			DEFINE_GAMEPLAY_TAG_AUTO(Debug.TP, MoveTargetLocation, "");
+			DEFINE_GAMEPLAY_TAG_AUTO(Debug.TP, MeleeRangeCheck, "");
+			namespace EQS
+			{
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Debug.TP.EQS", "")
+				DEFINE_GAMEPLAY_TAG_AUTO(Debug.TP.EQS, CoverLocation, "");
+				DEFINE_GAMEPLAY_TAG_AUTO(Debug.TP.EQS, PeakLocation, "");
+			}
+			namespace CharacterFeatures
+			{
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Debug.TP.CharacterFeatures", "")
+				DEFINE_GAMEPLAY_TAG_AUTO(Debug.TP.CharacterFeatures, Combat, "");
+				DEFINE_GAMEPLAY_TAG_AUTO(Debug.TP.CharacterFeatures, Cover, "");
+				DEFINE_GAMEPLAY_TAG_AUTO(Debug.TP.CharacterFeatures, Locomotion, "");
+			}
+		}
+		namespace FP
+		{
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Debug.FP", "")
+			namespace Movement
+			{
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Debug.FP.Movement", "")
+			}
+			namespace HSM
+			{
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Debug.FP.HSM", "")
+			}
+		}
+		namespace Weapon
+		{
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Debug.Weapon", "")
+		}
+
+	}
 	namespace Animation
 	{
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Animation", "")
@@ -74,7 +114,6 @@ namespace Sf_GameplayTags
 					}
 				}
 			}
-
 			namespace FP
 			{
 				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Animation.Character.FP", "");
@@ -92,7 +131,6 @@ namespace Sf_GameplayTags
 					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Animation.Character.FP.Blendspace", "");
 					DEFINE_GAMEPLAY_TAG_AUTO(Animation.Character.FP.Blendspace,Walk,"");
 				}
-				
 				namespace AnimSequence
 				{
 					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Animation.Character.FP.AnimSequence", "");

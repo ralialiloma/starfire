@@ -62,7 +62,7 @@ void USf_CharacterStateMachine::BeginPlay()
 void USf_CharacterStateMachine::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	if (UDebugSubsystem::GetDebugSubsystem()->HSMDebug.bPrint && IsValid(StateCallstack))
+	if (UDebugSubsystem::ShouldDebug(Sf_GameplayTags::Debug::FP::HSM::Name,EDebugType::Print) && IsValid(StateCallstack))
 	{
 		StateCallstack->DisplayAllActiveStates();
 	}
