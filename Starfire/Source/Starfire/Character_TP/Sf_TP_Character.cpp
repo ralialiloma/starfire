@@ -127,7 +127,7 @@ UAnimInstance* ASf_TP_Character::GetCharacterAnimInstance_Implementation() const
 	return GetMesh()->GetAnimInstance();
 }
 
-USf_WeaponAnimMontageController* ASf_TP_Character::GetAnimMontageController_Implementation() const
+USf_AnimDataController* ASf_TP_Character::GetAnimMontageController_Implementation() const
 {
 	return WeaponAnimMontageController;
 }

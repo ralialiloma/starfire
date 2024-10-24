@@ -19,6 +19,8 @@ USTRUCT(BlueprintType)
 struct STARFIRE_API FStateDefinition: public FTableRowBase
 {
 	GENERATED_BODY()
+
+	FStateDefinition();
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TSubclassOf<UBaseState> State;

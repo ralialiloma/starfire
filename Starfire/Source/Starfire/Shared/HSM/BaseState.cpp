@@ -99,6 +99,13 @@ void UBaseState::ImportStateDefinition(const FSoftObjectPath& StateDefintionDT)
 }
 
 
+FStateDefinition::FStateDefinition(): Priority(0)
+{
+	State = nullptr;
+	OwnedFeatures = TSet<TSubclassOf<UBaseStateFeature>> {};
+	Priority = 0;
+}
+
 void UBaseState::PostInitProperties()
 {
 	Super::PostInitProperties();

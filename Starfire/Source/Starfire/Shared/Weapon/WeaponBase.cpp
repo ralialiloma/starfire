@@ -7,7 +7,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Starfire/Animation/WeaponMontageEventPackage.h"
-#include "Starfire/Animation/WeaponAnimMontageController.h"
+#include "Starfire/Animation/Sf_AnimDataController.h"
 
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
 #include "Starfire/Utility/Debug/DebugSubsystem.h"
@@ -282,11 +282,11 @@ float AWeaponBase::ExecuteAnimationAndReturnAnimLength(EWeaponAnimationEventType
 
 	if (!IsValid(WeaponOwner))
 	{
-		UE_LOG(SF_Weapon, Warning, TEXT("Invalid Weapon Holder to get %s from"),*USf_WeaponAnimMontageController::StaticClass()->GetName())
+		UE_LOG(SF_Weapon, Warning, TEXT("Invalid Weapon Holder to get %s from"),*USf_AnimDataController::StaticClass()->GetName())
 		return 0;
 	}
 	
-	USf_WeaponAnimMontageController* AnimMontageController =  IWeaponOwner::Execute_GetAnimMontageController(WeaponOwner);
+	USf_AnimDataController* AnimMontageController =  IWeaponOwner::Execute_GetAnimMontageController(WeaponOwner);
 
 	if (!IsValid(AnimMontageController))
 	{
@@ -294,7 +294,7 @@ float AWeaponBase::ExecuteAnimationAndReturnAnimLength(EWeaponAnimationEventType
 			SF_Weapon,
 			Warning,
 			TEXT("Invalid %s Weapon Holder to broadcast animation event on montage on"),
-			*USf_WeaponAnimMontageController::StaticClass()->GetName())
+			*USf_AnimDataController::StaticClass()->GetName())
 		return 0;
 	}
 

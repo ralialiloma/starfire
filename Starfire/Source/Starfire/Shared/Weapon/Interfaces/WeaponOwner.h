@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Starfire/Animation/WeaponAnimMontageController.h"
+#include "Starfire/Animation/Sf_AnimDataController.h"
 #include "Starfire/Shared/Weapon/StructsAndEnums/MeleeInfo.h"
 #include "UObject/Interface.h"
 #include "WeaponOwner.generated.h"
@@ -24,7 +24,7 @@ public:
 	UAnimInstance* GetCharacterAnimInstance() const;
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "WeaponOwner")
-	USf_WeaponAnimMontageController* GetAnimMontageController() const;
+	USf_AnimDataController* GetAnimMontageController() const;
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "WeaponOwner")
 	FTransform GetFireTransform() const;

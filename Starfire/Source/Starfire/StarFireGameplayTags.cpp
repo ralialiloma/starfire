@@ -12,6 +12,19 @@ namespace Sf_GameplayTags
 	namespace Animation
 	{
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Animation", "")
+		namespace Weapon
+		{
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Animation.Weapon", "")
+			namespace Event
+			{
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Animation.Weapon.Event", "")
+				DEFINE_GAMEPLAY_TAG_AUTO(Animation.Weapon.Event, Fire, "");
+				DEFINE_GAMEPLAY_TAG_AUTO(Animation.Weapon.Event, Reload, "");
+				DEFINE_GAMEPLAY_TAG_AUTO(Animation.Weapon.Event, Aim, "");
+				DEFINE_GAMEPLAY_TAG_AUTO(Animation.Weapon.Event, Equip, "");
+				DEFINE_GAMEPLAY_TAG_AUTO(Animation.Weapon.Event, Melee, "");
+			}	
+		}
 		namespace Character
 		{
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Animation.Character", "")
@@ -61,10 +74,34 @@ namespace Sf_GameplayTags
 					}
 				}
 			}
-			}
+
 			namespace FP
 			{
-				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Animation.Character.FP", "")
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Animation.Character.FP", "");
+				namespace Montage
+				{
+					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Animation.Character.FP.Montage", "");
+					DEFINE_GAMEPLAY_TAG_AUTO(Animation.Character.FP.Montage,Fire,"");
+					DEFINE_GAMEPLAY_TAG_AUTO(Animation.Character.FP.Montage,Death,"");
+					DEFINE_GAMEPLAY_TAG_AUTO(Animation.Character.FP.Montage,Melee,"");
+					DEFINE_GAMEPLAY_TAG_AUTO(Animation.Character.FP.Montage,Reload,"");
+					DEFINE_GAMEPLAY_TAG_AUTO(Animation.Character.FP.Montage,Equip,"");
+				}
+				namespace Blendspace
+				{
+					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Animation.Character.FP.Blendspace", "");
+					DEFINE_GAMEPLAY_TAG_AUTO(Animation.Character.FP.Blendspace,Walk,"");
+				}
+				
+				namespace AnimSequence
+				{
+					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Animation.Character.FP.AnimSequence", "");
+					DEFINE_GAMEPLAY_TAG_AUTO(Animation.Character.FP.AnimSequence,Idle,"");
+					DEFINE_GAMEPLAY_TAG_AUTO(Animation.Character.FP.AnimSequence,Jump,"");
+					DEFINE_GAMEPLAY_TAG_AUTO(Animation.Character.FP.AnimSequence,Falling,"");
+					DEFINE_GAMEPLAY_TAG_AUTO(Animation.Character.FP.AnimSequence,Land,"");
+					}
+				}
 			}
 		}
 	
@@ -89,7 +126,6 @@ namespace Sf_GameplayTags
 				}
 			}
 		}
-
 		return Tag;
 	}
 

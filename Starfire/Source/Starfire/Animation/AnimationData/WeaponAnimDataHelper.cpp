@@ -1,18 +1,18 @@
 ﻿#include "WeaponAnimDataHelper.h"
 
 
-UAnimSequenceBase* UWeaponAnimDataHelper::GetAnimationAsset_FP(FWeaponAnimData_FP AnimData,
-															   EWeaponAnimationAssetType_FP AssetType)
+UAnimSequenceBase* UWeaponAnimDataHelper::GetAnimationSequence_FP(FWeaponAnimData_FP AnimData,
+															   FGameplayTag AssetType)
 {
-	UAnimSequenceBase* FoundSequence = nullptr;
-	UAnimSequenceBase** FoundSequencePtr = AnimData.AnimationAssets.Find(AssetType);
+	UAnimSequence* FoundSequence = nullptr;
+	UAnimSequence** FoundSequencePtr = AnimData.AnimationSequences.Find(AssetType);
 	if (FoundSequencePtr!=nullptr)
 		FoundSequence = *FoundSequencePtr;
 	return FoundSequence;
 }
 
 UAnimMontage* UWeaponAnimDataHelper::GetAnimationMontage_FP(FWeaponAnimData_FP AnimData,
-	EWeaponAnimationMontageType_FP AssetType)
+	FGameplayTag AssetType)
 {
 	UAnimMontage* FoundMontage = nullptr;
 	UAnimMontage** FoundSequencePtr = AnimData.AnimationMontages.Find(AssetType);
@@ -21,7 +21,7 @@ UAnimMontage* UWeaponAnimDataHelper::GetAnimationMontage_FP(FWeaponAnimData_FP A
 	return FoundMontage;
 }
 
-UBlendSpace* UWeaponAnimDataHelper::GetBlendspace_FP(FWeaponAnimData_FP AnimData, EWeaponBlendSpaceType_FP AssetType)
+UBlendSpace* UWeaponAnimDataHelper::GetBlendspace_FP(FWeaponAnimData_FP AnimData, FGameplayTag AssetType)
 {
 	UBlendSpace* FoundBlendspace = nullptr;
 	UBlendSpace** FoundBlendSpacePointer = AnimData.Blendspaces.Find(AssetType);

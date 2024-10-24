@@ -11,11 +11,6 @@ FWeaponAnimData_TP::FWeaponAnimData_TP()
 
 void FWeaponAnimData_TP::UpdateEntries()
 {
-	//USf_FunctionLibrary::ValidateAndUpdateEnumMap<EWeaponAnimationAssetType_UB_TP,UAnimSequenceBase*>(AnimationAssets_UB);
-
-	//const FGameplayTag DebugTag_TestVersion1 = Sf_GameplayTags::Animation::Character::TP::AnimSequence::UpperBody::Name;
-	
-	//FSf_GameplayTagUtil::GetAllChildTags(Sf_GameplayTags::Animation::Character::TP::AnimSequence::UpperBody::Name);
 	FSf_GameplayTagUtil::ValidateAndUpdateGameplayTagMap<UAnimSequence*>(
 		AnimationSequences_UB,
 		Sf_GameplayTags::Animation::Character::TP::AnimSequence::UpperBody::Name);

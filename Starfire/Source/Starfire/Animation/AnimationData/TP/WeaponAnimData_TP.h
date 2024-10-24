@@ -1,9 +1,5 @@
 ﻿#pragma once
 #include "GameplayTagContainer.h"
-#include "WeaponAnimationAssetType_FB_TP.h"
-#include "WeaponAnimationAssetType_LB_TP.h"
-#include "WeaponAnimationMontageType_TP.h"
-#include "WeaponBlendSpaceType_TP.h"
 #include "WeaponAnimData_TP.generated.h"
 
 USTRUCT(Blueprintable)
@@ -14,13 +10,6 @@ struct STARFIRE_API FWeaponAnimData_TP:public FTableRowBase
 	FWeaponAnimData_TP();
 
 	void UpdateEntries();
-
-	//UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ReadOnlyKeys,ForceInlineRow), Category = "Sequences")
-	//TMap<EWeaponAnimationAssetType_UB_TP ,UAnimSequenceBase*> AnimationAssets_UB;
-
-	//UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ReadOnlyKeys,ForceInlineRow), Category = "Sequences")
-	//UPROPERTY(BlueprintReadWrite,EditAnywhere, meta=(Categories="Animation.Character.TP.AnimSequence",ForceInlineRow),Category = "Sequences")
-	//TMap<FGameplayTag ,UAnimSequenceBase*> AnimationAssets_UB;
 	
 	TMap<FGameplayTag ,UAnimSequence*> GetAllSequences() const;
 	

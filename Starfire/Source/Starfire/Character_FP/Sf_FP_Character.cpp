@@ -131,7 +131,7 @@ ASf_FP_Character::ASf_FP_Character(const FObjectInitializer& ObjectInitializer)
 		CreateDefaultSubobject<USf_CharacterStateMachine>(TEXT("StateMachine"));
 
 	//Weapon Animation Receiver
-	WeaponAnimMontageController = CreateDefaultSubobject<USf_WeaponAnimMontageController_FP>(TEXT("WeaponAnimMontageController"));
+	WeaponAnimMontageController = CreateDefaultSubobject<USf_AnimDataController_FP>(TEXT("WeaponAnimMontageController"));
 
 	//AIPerceptionStimuliSourceComponent
 	AIPerceptionStimuliSourceComponent = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("AIPerceptionStimuliSourceComponent"));
@@ -224,7 +224,7 @@ FMeleeInfo ASf_FP_Character::GetMeleeInfo_Implementation() const
 	return MeleeInfo;
 }
 
-USf_WeaponAnimMontageController* ASf_FP_Character::GetAnimMontageController_Implementation() const
+USf_AnimDataController* ASf_FP_Character::GetAnimMontageController_Implementation() const
 {
 	return WeaponAnimMontageController;
 }

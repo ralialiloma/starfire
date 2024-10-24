@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "GameplayTagContainer.h"
 #include "WeaponAnimationAssetType_FP.h"
 #include "WeaponAnimationMontageType_FP.h"
 #include "WeaponBlendSpaceType_FP.h"
@@ -13,14 +14,14 @@ struct STARFIRE_API FWeaponAnimData_FP:public FTableRowBase
 
 	void UpdateEntries();
 
-	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ReadOnlyKeys,ForceInlineRow))
-	TMap<EWeaponAnimationAssetType_FP ,UAnimSequenceBase*> AnimationAssets;
+	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ReadOnlyKeys,ForceInlineRow), Category = "Sequences")
+	TMap<FGameplayTag ,UAnimSequence*> AnimationSequences;
 
-	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ReadOnlyKeys,ForceInlineRow))
-	TMap<EWeaponAnimationMontageType_FP, UAnimMontage*> AnimationMontages;
+	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ReadOnlyKeys,ForceInlineRow), Category = "Sequences")
+	TMap<FGameplayTag, UAnimMontage*> AnimationMontages;
 
-	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ReadOnlyKeys,ForceInlineRow))
-	TMap<EWeaponBlendSpaceType_FP, UBlendSpace*> Blendspaces;
+	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ReadOnlyKeys,ForceInlineRow), Category = "Sequences")
+	TMap<FGameplayTag, UBlendSpace*> Blendspaces;
 };
 
 

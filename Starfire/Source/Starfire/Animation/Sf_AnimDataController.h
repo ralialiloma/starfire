@@ -1,11 +1,11 @@
 ﻿#pragma once
 #include "WeaponMontageEventPackage.h"
-#include "WeaponAnimMontageController.generated.h"
+#include "Sf_AnimDataController.generated.h"
 
 DEFINE_LOG_CATEGORY_STATIC(SF_WeaponAnimationReceiver, Display, Display);
 
 UCLASS(BlueprintType,Abstract,ClassGroup=(Character), meta=(BlueprintSpawnableComponent))
-class USf_WeaponAnimMontageController: public UActorComponent
+class USf_AnimDataController: public UActorComponent
 {
 	GENERATED_BODY()
 	

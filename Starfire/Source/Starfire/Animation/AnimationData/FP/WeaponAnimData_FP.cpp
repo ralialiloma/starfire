@@ -1,6 +1,7 @@
 ﻿#include "WeaponAnimData_FP.h"
 
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
+#include "Starfire/Utility/Sf_GameplayTagUtil.h"
 
 FWeaponAnimData_FP::FWeaponAnimData_FP()
 {
@@ -9,9 +10,17 @@ FWeaponAnimData_FP::FWeaponAnimData_FP()
 
 void FWeaponAnimData_FP::UpdateEntries()
 {
-	USf_FunctionLibrary::ValidateAndUpdateEnumMap<EWeaponAnimationAssetType_FP,UAnimSequenceBase*>(AnimationAssets);
-	USf_FunctionLibrary::ValidateAndUpdateEnumMap<EWeaponAnimationMontageType_FP,UAnimMontage*>(AnimationMontages);
-	USf_FunctionLibrary::ValidateAndUpdateEnumMap<EWeaponBlendSpaceType_FP,UBlendSpace*>(Blendspaces);
+	FSf_GameplayTagUtil::ValidateAndUpdateGameplayTagMap<UAnimSequence*>(
+		AnimationSequences,
+		Sf_GameplayTags::Animation::Character::FP::AnimSequence::Name);
+	
+	FSf_GameplayTagUtil::ValidateAndUpdateGameplayTagMap<UAnimMontage*>(
+		AnimationMontages,
+		Sf_GameplayTags::Animation::Character::FP::Montage::Name);
+	
+	FSf_GameplayTagUtil::ValidateAndUpdateGameplayTagMap<UBlendSpace*>(
+		Blendspaces,
+		Sf_GameplayTags::Animation::Character::FP::Blendspace::Name);
 }
 
 UWeaponAnimationAsset_FP::UWeaponAnimationAsset_FP()

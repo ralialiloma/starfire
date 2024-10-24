@@ -1,14 +1,14 @@
-﻿#include "WeaponAnimMontageController.h"
+﻿#include "Sf_AnimDataController.h"
 #include "WeaponMontageEventPackage.h"
 #include "Starfire/Shared/Weapon/Interfaces/WeaponOwner.h"
 
 
-float USf_WeaponAnimMontageController::RunAnimation(FWeaponMontageEventPackage WeaponAnimationUpdateData) const
+float USf_AnimDataController::RunAnimation(FWeaponMontageEventPackage WeaponAnimationUpdateData) const
 {
 	return 0;
 }
 
-float USf_WeaponAnimMontageController::PlayMontage(UAnimMontage* MontageToPlay) const
+float USf_AnimDataController::PlayMontage(UAnimMontage* MontageToPlay) const
 {
 	AActor* WeaponOwner = GetOwner();
 	if (!IsValid(WeaponOwner))
@@ -55,7 +55,7 @@ float USf_WeaponAnimMontageController::PlayMontage(UAnimMontage* MontageToPlay) 
 		true);
 }
 
-void USf_WeaponAnimMontageController::StopMontage(UAnimMontage* MontageToStop, float BlendOutTime) const
+void USf_AnimDataController::StopMontage(UAnimMontage* MontageToStop, float BlendOutTime) const
 {
 
 	AActor* WeaponOwner = GetOwner();

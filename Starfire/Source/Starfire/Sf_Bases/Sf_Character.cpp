@@ -1,5 +1,6 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
-#include "Starfire/Character_TP/Sf_TP_Character.h"
+
+#include "Sf_Character.h"
 
 ASf_Character::ASf_Character(const FObjectInitializer& ObjectInitializer)
 {
@@ -38,7 +39,7 @@ FMeleeInfo ASf_Character::GetMeleeInfo_Implementation() const
 	return IWeaponOwner::GetMeleeInfo_Implementation();
 }
 
-USf_WeaponAnimMontageController* ASf_Character::GetAnimMontageController_Implementation() const
+USf_AnimDataController* ASf_Character::GetAnimMontageController_Implementation() const
 {
 	return IWeaponOwner::GetAnimMontageController_Implementation();
 }

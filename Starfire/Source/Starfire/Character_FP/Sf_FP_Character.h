@@ -3,9 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/WeaponAnimMontageController_FP.h"
+#include "Components/AnimDataController_FP.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
-#include "Starfire/Animation/WeaponAnimMontageController.h"
+#include "Starfire/Animation/Sf_AnimDataController.h"
 #include "Starfire/Sf_Bases/Sf_Character.h"
 #include "Starfire/Shared/HSM/SF_CharacterStateMachine.h"
 #include "Starfire/Shared/Weapon/StructsAndEnums/MeleeInfo.h"
@@ -83,7 +83,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "StateMachine")
 	USf_CharacterStateMachine* SfCharacterStateMachine;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Animation")
-	USf_WeaponAnimMontageController_FP* WeaponAnimMontageController;
+	USf_AnimDataController_FP* WeaponAnimMontageController;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "AI")
 	UAIPerceptionStimuliSourceComponent* AIPerceptionStimuliSourceComponent;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "AI")
@@ -113,7 +113,7 @@ public:
 	virtual UAnimInstance* GetCharacterAnimInstance_Implementation() const override;
 	virtual FTransform GetFireTransform_Implementation() const override;
 	virtual FMeleeInfo GetMeleeInfo_Implementation() const override;
-	virtual USf_WeaponAnimMontageController* GetAnimMontageController_Implementation() const override;
+	virtual USf_AnimDataController* GetAnimMontageController_Implementation() const override;
 
 #pragma endregion
 };
