@@ -10,11 +10,12 @@
 
 #pragma region StructsAndEnums
 UENUM(BlueprintType)
-enum ECustomMovementMode
+enum ECustomMovementMode : int
 {
 	CMOVE_None  UMETA(Hidden),
 	CMOVE_WallRun UMETA(DisplayName = "Wall Run"),
 	CMOVE_Mantle UMETA(DisplayName = "Mantle"),
+	CMOVE_Dash UMETA(DisplayName = "Dash"),
 };
 #pragma endregion
 
@@ -82,7 +83,7 @@ public:
 	
 	UPROPERTY(Transient)
 	ASf_FP_Character* SfCharacterOwner;
-	
+
 #pragma endregion
 	
 #pragma region Sprint
@@ -115,7 +116,6 @@ private:
 #pragma endregion
 	
 #pragma endregion
-
 	
 #pragma region WallRun
 	
@@ -155,7 +155,6 @@ protected:
 #pragma endregion
 	
 #pragma endregion
-
 	
 #pragma region Mantle
 	
@@ -204,5 +203,26 @@ private:
 
 #pragma endregion
 	
+#pragma region Dash
+	
+	bool TryDash() const;
+	bool PhysDash(float DeltaTime, int32 Iterations);
 
+protected:
+
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: Dash", meta =(CustomConfig, BitMask, BitmaskEnum = EMovementMode))
+	int32 DashRechargeStates = MOVE_NavWalking | MOVE_Walking;
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: Dash", meta =(CustomConfig, BitMask, BitmaskEnum = ECustomMovementMode))
+	int32 DashCustomRechargeStates = 3;
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: Dash", meta =(CustomConfig))
+	float MaxDashDuration = 0.3f;
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: Dash", meta =(CustomConfig))
+	float Dash_MaxWalkSpeed = 1200;
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: Dash", meta =(CustomConfig, ClampMin = 0))
+	int MaxDashes = 1;
+
+	int DashCount = 0;
+	float DashDuration = 0;
+
+#pragma endregion
 };

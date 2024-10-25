@@ -124,7 +124,9 @@ float USf_FP_CharacterMovementComponent::GetMaxSpeed() const
 		case CMOVE_WallRun:
 			return MaxWallRunSpeed;
 		case CMOVE_Mantle:
-			return Safe_bWantsToSprint ? Sprint_MaxWalkSpeed : Walk_MaxWalkSpeed; 
+			return Safe_bWantsToSprint ? Sprint_MaxWalkSpeed : Walk_MaxWalkSpeed;
+		case CMOVE_Dash:
+			return Dash_MaxWalkSpeed; 
 		default:
 				UE_LOG(SF_FP_CharacterMovement, Fatal, TEXT("Invalid Movement Mode"))
 				return -1.f;
@@ -138,6 +140,8 @@ float USf_FP_CharacterMovementComponent::GetMaxBrakingDeceleration() const
 	switch(CustomMovementMode)
 	{
 		case CMOVE_WallRun:
+		case CMOVE_Mantle:
+		case CMOVE_Dash:
 			return 0.f ;
 		default:
 			UE_LOG(SF_FP_CharacterMovement, Fatal, TEXT("Invalid Movement Mode"))
@@ -161,6 +165,13 @@ void USf_FP_CharacterMovementComponent::UpdateCharacterStateBeforeMovement(float
 			MantleStartingVelocity = Velocity;
 			StopMovementImmediately();
 			CharacterOwner->StopJumping();
+		}
+		else if (TryDash())
+		{
+			SetMovementMode(MOVE_Custom, CMOVE_Dash);
+			DashDuration = MaxDashDuration;
+			DashCount++;
+			SfCharacterOwner->bCustomJumpPressed = false;
 		}
 		else
 		{
@@ -197,6 +208,9 @@ void USf_FP_CharacterMovementComponent::PhysCustom(const float DeltaTime, const 
 		case CMOVE_Mantle:
 			PhysMantle(DeltaTime, Iterations);
 			break;
+		case CMOVE_Dash:
+			PhysDash(DeltaTime, Iterations);
+			break;
 		default:
 			UE_LOG(SF_FP_CharacterMovement, Fatal, TEXT("Invalid Movement Mode"))
 	}
@@ -211,6 +225,11 @@ void USf_FP_CharacterMovementComponent::SetMovementMode(EMovementMode NewMovemen
 		Super::SetMovementMode(NewMovementMode, NewCustomMode);
 		OnMovementModeChanged.Broadcast(PreviousMovementMode, MovementMode);
 	}
+
+	//Dash Recharge
+	if (NewMovementMode == DashRechargeStates || (NewMovementMode == MOVE_Custom && NewCustomMode == DashCustomRechargeStates))
+		DashCount = 0;
+	
 	Super::SetMovementMode(NewMovementMode, NewCustomMode);
 }
 
@@ -555,4 +574,52 @@ void USf_FP_CharacterMovementComponent::PhysMantle(float deltaTime, int32 Iterat
 	}
 	
 	ElapsedMantleTime += deltaTime;
+}
+
+bool USf_FP_CharacterMovementComponent::TryDash() const
+{
+	if (MovementMode != MOVE_Falling)
+		return false;
+	
+	return DashCount < MaxDashes;
+}
+
+bool USf_FP_CharacterMovementComponent::PhysDash(float DeltaTime, int32 Iterations)
+{
+	if (DeltaTime <= 0.0f)
+	{
+		SetMovementMode(MOVE_Falling);
+		return false;
+	}
+	
+	DashDuration -= DeltaTime;
+	if (DashDuration <= 0.0f)
+	{
+		SetMovementMode(MOVE_Falling);
+		Velocity = Velocity.GetSafeNormal() * GetMaxSpeed();
+		return false;
+	}
+	
+	FVector DashDirection = GetLastInputVector();
+	if (DashDirection.IsNearlyZero())
+		DashDirection = UpdatedComponent->GetForwardVector();
+
+	DashDirection.Normalize();
+	
+	float DashAlpha = DashDuration / MaxDashDuration;
+	float CurrentDashSpeed = FMath::Lerp(Sprint_MaxWalkSpeed, Dash_MaxWalkSpeed, DashAlpha);
+	
+	Velocity = DashDirection * CurrentDashSpeed;
+	
+	FVector DesiredMovement = Velocity * DeltaTime;
+	FHitResult Hit;
+	SafeMoveUpdatedComponent(DesiredMovement, UpdatedComponent->GetComponentQuat(), true, Hit);
+
+	if (Hit.IsValidBlockingHit())
+	{
+		HandleImpact(Hit, DeltaTime, DesiredMovement);
+		SlideAlongSurface(DesiredMovement, 1.0f - Hit.Time, Hit.Normal, Hit,false);
+	}
+
+	return true;
 }
