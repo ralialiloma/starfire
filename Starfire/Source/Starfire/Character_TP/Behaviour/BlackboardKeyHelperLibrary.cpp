@@ -160,6 +160,7 @@ void UBlackboardKeyHelperLibrary::ClearFloatValue(UBlackboardComponent* Blackboa
     BlackboardComp->ClearValue(KeyName);
 }
 
+
 void UBlackboardKeyHelperLibrary::ClearIntValue(UBlackboardComponent* BlackboardComp, EIntBlackboardKey IntBlackboardKey)
 {
     if (!IsValid(BlackboardComp))
@@ -215,4 +216,23 @@ void UBlackboardKeyHelperLibrary::ClearVectorValue(UBlackboardComponent* Blackbo
     }
     
     BlackboardComp->ClearValue(KeyName);
+}
+
+bool UBlackboardKeyHelperLibrary::IsSetVectorValue(UBlackboardComponent* BlackboardComp, ELocationBlackboardKey VectorBlackboardKey)
+{
+    if (!IsValid(BlackboardComp))
+    {
+        UE_LOG(SF_BlackboardKeyHelper, Error, TEXT("Cannot check set vector value for %s"), *USf_FunctionLibrary::GetEnumAsString<ELocationBlackboardKey>(VectorBlackboardKey));
+        return false;
+    }
+
+    const FName KeyName = USf_FunctionLibrary::GetEnumAsName<ELocationBlackboardKey>(VectorBlackboardKey);
+    const FBlackboard::FKey KeyID = BlackboardComp->GetKeyID(KeyName);
+    if (KeyID == FBlackboard::InvalidKey)
+    {
+        UE_LOG(SF_BlackboardKeyHelper, Error, TEXT("Blackboard key %s does not exist in %s"), *KeyName.ToString(), *BlackboardComp->GetName());
+        return false;
+    }
+
+    return BlackboardComp->IsVectorValueSet(KeyName);
 }

@@ -6,7 +6,7 @@
 #include "Starfire/Character_FP/Sf_FP_Character.h"
 #include "Starfire/Utility/Debug/DebugSubsystem.h"
 
-DEFINE_LOG_CATEGORY_STATIC(SF_CharacterStateMachine, Display, Display);
+
 
 USf_CharacterStateMachine::USf_CharacterStateMachine(const FObjectInitializer& ObjectInitializer): StateCallstack(nullptr),
 														StateDefinitionDT(nullptr),

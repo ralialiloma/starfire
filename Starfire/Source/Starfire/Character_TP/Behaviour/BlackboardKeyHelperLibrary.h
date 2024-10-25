@@ -86,4 +86,6 @@ public:
 	static FVector GetVectorValue(UBlackboardComponent* BlackboardComp, ELocationBlackboardKey ActorBlackboardKey);
 	UFUNCTION(BlueprintCallable, Category = "Blackboard|Clear")
 	static void ClearVectorValue(UBlackboardComponent* BlackboardComp, ELocationBlackboardKey ActorBlackboardKey);
+	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "Blackboard|IsSet")
+    static bool IsSetVectorValue(UBlackboardComponent* BlackboardComp, ELocationBlackboardKey VectorBlackboardKey);
 };

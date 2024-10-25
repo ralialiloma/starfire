@@ -31,7 +31,7 @@ void USf_DamageController::TickComponent(float DeltaTime, ELevelTick TickType, F
 }
 
 
-float USf_DamageController::ApplyDamage(float Damage,FVector HitLocation, FVector HitNormal,UPrimitiveComponent* HitComponent)
+float USf_DamageController::ApplyDamage(const float Damage,FVector HitLocation, FVector HitNormal,UPrimitiveComponent* HitComponent)
 {
 	if (CurrentHealth<=0)
 		return 0;

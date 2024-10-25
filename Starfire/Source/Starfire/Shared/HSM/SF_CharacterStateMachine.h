@@ -9,6 +9,7 @@
 
 class ASf_FP_Character;
 
+DEFINE_LOG_CATEGORY_STATIC(SF_CharacterStateMachine, Display, Display);
 
 UCLASS(Blueprintable, ClassGroup=(StateMachine), meta=(BlueprintSpawnableComponent) )
 class STARFIRE_API USf_CharacterStateMachine : public UActorComponent

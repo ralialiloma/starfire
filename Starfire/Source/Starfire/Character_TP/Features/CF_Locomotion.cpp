@@ -16,7 +16,7 @@ bool UCF_Locomotion::MoveToLocation(F_SF_MoveRequest MoveRequest)
 	bool bProjected = NavSys->ProjectPointToNavigation(
 		MoveRequest.Destination,           
 		ProjectedDestination,
-		FVector(1000, 1000, 1000));
+		FVector(MoveRequest.AcceptanceRadius, MoveRequest.AcceptanceRadius, MoveRequest.AcceptanceRadius));
 
 	FVector ProjectedDestinationLocation = ProjectedDestination.Location;
 	

@@ -31,7 +31,6 @@ public:
 	USf_Equipment* GetSfEquipment();
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	USf_TP_CharacterMovementComponent* GetSf_TP_CharacterMovement();
-
 	//Collision
 	FCollisionQueryParams GetIgnoreCharacterParams();
 	TArray<AActor*> GetIgnoreActors();
