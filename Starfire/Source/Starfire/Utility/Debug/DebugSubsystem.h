@@ -23,25 +23,8 @@ public:
 	static bool ShouldDebug(UPARAM(meta=(Categories="Debug"))FGameplayTag DebugTag, EDebugType DebugType);
 	UFUNCTION(BlueprintCallable, BlueprintPure,	meta = (WorldContext = "WorldContext"))
 	static bool GetAllowDebug();
-	UFUNCTION(BlueprintCallable, BlueprintPure,	meta = (WorldContext = "WorldContext"))
-	static bool GetAllowSound();
 	UFUNCTION(BlueprintCallable, BlueprintPure, meta = (WorldContext = "WorldContext"))
 	static bool GetMovementDebug(EDebugType DebugType);
-#pragma endregion
-	
-#pragma region Properties
-	UPROPERTY(BlueprintReadOnly)
-	bool AllowDebug = false;
-	UPROPERTY(BlueprintReadOnly)
-	bool AllowSound = false;
-	UPROPERTY(BlueprintReadOnly)
-	FDebugSettingData AIDebug;
-	UPROPERTY(BlueprintReadOnly)
-	FDebugSettingData WeaponDebug;
-	UPROPERTY(BlueprintReadOnly)
-	FDebugSettingData HSMDebug;
-	UPROPERTY(BlueprintReadOnly)
-	FDebugSettingData MovementDebug;
 #pragma endregion
 
 

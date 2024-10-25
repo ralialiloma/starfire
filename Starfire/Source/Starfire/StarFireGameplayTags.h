@@ -3,7 +3,7 @@
 
 namespace Sf_GameplayTags 
 {
-	STARFIRE_API	FGameplayTag FindTagByString(const FString& TagString, bool bMatchPartialString = false);
+	STARFIRE_API FGameplayTag FindTagByString(const FString& TagString, bool bMatchPartialString = false);
 	STARFIRE_API TArray<FGameplayTag> GetAllChildTags(const FGameplayTag& ParentTag);
 
 	namespace Debug

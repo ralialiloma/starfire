@@ -1,12 +1,13 @@
 ﻿#include "DebugSettings.h"
 
+#include "Starfire/Utility/Sf_FunctionLibrary.h"
+
 
 void UDebugSettings::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
-	USf_FunctionLibrary::ValidateAndUpdateEnumMap<EDebugType,FGameplayTagContainer>(TP);
-	USf_FunctionLibrary::ValidateAndUpdateEnumMap<EDebugType,FGameplayTagContainer>(Weapon);
-	USf_FunctionLibrary::ValidateAndUpdateEnumMap<EDebugType,FGameplayTagContainer>(FP);
+	USf_FunctionLibrary::ValidateAndUpdateEnumMap<EDebugType,FGameplayTagContainer>(ShownDebugs);
+		USf_FunctionLibrary::ValidateAndUpdateEnumMap<EDebugType,bool>(ShownDebugTypes);
 }
 
 TArray<FGameplayTag> UDebugSettings::GetAllDebugTags(const EDebugType DebugType) const
@@ -31,9 +32,28 @@ TArray<FGameplayTag> UDebugSettings::GetAllDebugTags(const EDebugType DebugType)
 	return AllTags;
 }
 
+bool UDebugSettings::ShouldShowDebugType (const EDebugType DebugTypeIn) const
+{
+	if (bHideAllDebugs)
+		return false;
+
+	if (!ShownDebugTypes.Contains(DebugTypeIn))
+		return true;
+
+	const bool* FoundDebugSettingPtr =  ShownDebugTypes.Find(DebugTypeIn);
+	if (FoundDebugSettingPtr == nullptr)
+		return true;
+
+	const bool FoundDebugSetting = *FoundDebugSettingPtr;
+	return FoundDebugSetting;
+}
+
 bool UDebugSettings::ShouldDebug(const FGameplayTag DebugTagIn, const EDebugType DebugTypeIn) const
 {
 	if(bHideAllDebugs)
+		return false;
+
+	if (!ShouldShowDebugType(DebugTypeIn))
 		return false;
 	
 	if (!DebugTagIn.MatchesTag(Sf_GameplayTags::Debug::Name))
@@ -48,7 +68,7 @@ bool UDebugSettings::ShouldDebug(const FGameplayTag DebugTagIn, const EDebugType
 	TArray<FGameplayTag> GameplayTagContainers = GetAllDebugTags(DebugTypeIn);
 	for (FGameplayTag TagInContainer: GameplayTagContainers)
 	{
-		if (TagInContainer.MatchesTagExact(DebugTagIn))
+		if (TagInContainer.MatchesTag(DebugTagIn))
 		{
 			return true;
 		}
@@ -58,5 +78,5 @@ bool UDebugSettings::ShouldDebug(const FGameplayTag DebugTagIn, const EDebugType
 
 TArray<TMap<EDebugType, FGameplayTagContainer>> UDebugSettings::GetAllGameplayTagContainers() const
 {
-	return {TP,Weapon,FP};
+	return {ShownDebugs};
 }

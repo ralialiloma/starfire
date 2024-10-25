@@ -14,11 +14,8 @@ void UDebugSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 void UDebugSubsystem::Deinitialize()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("DEBUG SUBSYSTEM --- DESTROY"));
-	
 	Super::Deinitialize();
 }
-
-
 
 bool UDebugSubsystem::ShouldDebug(FGameplayTag DebugTag, EDebugType DebugType)
 {
@@ -28,11 +25,6 @@ bool UDebugSubsystem::ShouldDebug(FGameplayTag DebugTag, EDebugType DebugType)
 bool UDebugSubsystem::GetAllowDebug()
 {
 	return !GetDefault<UDebugSettings>()->bHideAllDebugs;
-}
-
-bool UDebugSubsystem::GetAllowSound()
-{
-  	return !GetDefault<UDebugSettings>()->bMuteGame;
 }
 
 bool UDebugSubsystem::GetMovementDebug(EDebugType DebugType)
