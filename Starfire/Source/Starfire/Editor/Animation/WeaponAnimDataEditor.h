@@ -2,11 +2,11 @@
 
 #pragma once
 
+#if WITH_EDITOR
+
 #include "CoreMinimal.h"
 
-class IDetailGroup;
-
-class STARFIREEDITOR_API FHSMConfigEditor : public IPropertyTypeCustomization
+class STARFIRE_API FWeaponAnimDataEditor : public IPropertyTypeCustomization
 {
 public:
 
@@ -14,5 +14,7 @@ public:
 
 	virtual void CustomizeHeader(TSharedRef<IPropertyHandle> PropertyHandle, FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& CustomizationUtils) override;
 	virtual void CustomizeChildren(TSharedRef<IPropertyHandle> PropertyHandle, IDetailChildrenBuilder& ChildBuilder, IPropertyTypeCustomizationUtils& CustomizationUtils) override;
-	
+
 };
+
+#endif

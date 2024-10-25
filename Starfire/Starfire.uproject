@@ -14,11 +14,6 @@
 				"AIModule",
 				"DeveloperSettings"
 			]
-		},
-		{
-			"Name": "StarfireEditor",
-			"Type": "Editor",
-			"LoadingPhase": "Default"
 		}
 	],
 	"Plugins": [

@@ -1,4 +1,5 @@
 #include "Sf_CharacterEditor.h"
+#if WITH_EDITOR
 
 #include "DetailCategoryBuilder.h"
 #include "DetailLayoutBuilder.h"
@@ -61,3 +62,5 @@ void Sf_CharacterEditor::CustomizeDetails(IDetailLayoutBuilder& DetailBuilder)
 	];
 	
 }
+
+#endif

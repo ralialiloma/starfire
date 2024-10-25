@@ -5,6 +5,7 @@
 #include "IDetailChildrenBuilder.h"
 #include "IDetailGroup.h"
 #include "Starfire/Utility/CollectionHelper.h"
+#if WITH_EDITOR
 
 struct EnumMapEditorHelpers
 {
@@ -52,3 +53,5 @@ void EnumMapEditorHelpers::DisplayFixedEnumMap(TSharedPtr<IPropertyHandle> MapHa
 		}
 	}
 }
+
+#endif

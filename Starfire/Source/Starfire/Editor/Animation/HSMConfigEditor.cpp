@@ -1,8 +1,9 @@
 #include "HSMConfigEditor.h"
 
+#if WITH_EDITOR
 #include "Starfire/Sf_Bases/Components/Sf_Equipment.h"
-#include "StarfireEditor/Utility/EditorHelpers.h"
-#include "StarfireEditor/Utility/EnumMapEditorHelpers.h"
+#include "Starfire/Editor/Utility/EditorHelpers.h"
+#include "Starfire/Editor/Utility/EnumMapEditorHelpers.h"
 
 class UBaseState;
 
@@ -28,3 +29,4 @@ void FHSMConfigEditor::CustomizeChildren(TSharedRef<IPropertyHandle> PropertyHan
 	
 	EditorHelpers::DisplayDefaultChildren(PropertyHandle, ChildBuilder, EditedProperties);
 }
+#endif

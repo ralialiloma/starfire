@@ -2,11 +2,14 @@
 
 
 #include "WeaponAnimDataEditor.h"
+
+#if WITH_EDITOR
+
 #include "Starfire/Animation/AnimationData/FP/WeaponAnimationAssetType_FP.h"
 #include "Starfire/Animation/AnimationData/FP/WeaponAnimationMontageType_FP.h"
 #include "Starfire/Animation/AnimationData/FP/WeaponBlendSpaceType_FP.h"
-#include "StarfireEditor/Utility/EditorHelpers.h"
-#include "StarfireEditor/Utility/EnumMapEditorHelpers.h"
+#include "Starfire/Editor/Utility/EditorHelpers.h"
+#include "Starfire/Editor/Utility/EnumMapEditorHelpers.h"
 
 TSharedRef<IPropertyTypeCustomization> FWeaponAnimDataEditor::MakeInstance()
 {
@@ -38,3 +41,5 @@ void FWeaponAnimDataEditor::CustomizeChildren(TSharedRef<IPropertyHandle> Proper
 
 	EditorHelpers::DisplayDefaultChildren(PropertyHandle, ChildBuilder, EditedProperties);
 }
+
+#endif
