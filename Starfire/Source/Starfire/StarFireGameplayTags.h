@@ -36,6 +36,9 @@ namespace Sf_GameplayTags
 			namespace Movement
 			{
 				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Mantle);
+				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Wallrun);
+				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Dash);
 			}
 			namespace HSM
 			{

@@ -37,6 +37,9 @@ namespace Sf_GameplayTags
 			namespace Movement
 			{
 				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Debug.FP.Movement", "")
+				DEFINE_GAMEPLAY_TAG_AUTO(Debug.FP.Movement, Mantle, "");
+				DEFINE_GAMEPLAY_TAG_AUTO(Debug.FP.Movement, Wallrun, "");
+				DEFINE_GAMEPLAY_TAG_AUTO(Debug.FP.Movement, Dash, "");
 			}
 			namespace HSM
 			{

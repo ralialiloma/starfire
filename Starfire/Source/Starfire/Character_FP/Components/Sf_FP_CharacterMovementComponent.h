@@ -211,9 +211,9 @@ private:
 protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: Dash", meta =(CustomConfig, BitMask, BitmaskEnum = EMovementMode))
-	int32 DashRechargeStates = MOVE_NavWalking | MOVE_Walking;
+	int32 DashRechargeStates = (1 << MOVE_NavWalking) | (1 << MOVE_Walking);
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: Dash", meta =(CustomConfig, BitMask, BitmaskEnum = ECustomMovementMode))
-	int32 DashCustomRechargeStates = 3;
+	int32 DashCustomRechargeStates = (1 << CMOVE_WallRun);
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: Dash", meta =(CustomConfig))
 	float MaxDashDuration = 0.3f;
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: Dash", meta =(CustomConfig))
