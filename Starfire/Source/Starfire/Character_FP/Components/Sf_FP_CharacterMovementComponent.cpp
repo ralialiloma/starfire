@@ -6,6 +6,7 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/Character.h"
 #include "DrawDebugHelpers.h"
+#include "Starfire/Utility/Sf_FunctionLibrary.h"
 #include "Starfire/Utility/Debug/DebugSubsystem.h"
 
 #pragma region HelperMacros
@@ -170,6 +171,8 @@ void USf_FP_CharacterMovementComponent::UpdateCharacterStateBeforeMovement(float
 		{
 			SetMovementMode(MOVE_Custom, CMOVE_Dash);
 			DashDuration = MaxDashDuration;
+			FString DebugString = FString::Printf(TEXT("Doing Dash with DashCount %i and MaxDashCount %i"), DashCount, MaxDashes);
+			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, DebugString);
 			DashCount++;
 			SfCharacterOwner->bCustomJumpPressed = false;
 		}
@@ -227,8 +230,21 @@ void USf_FP_CharacterMovementComponent::SetMovementMode(EMovementMode NewMovemen
 	}
 
 	//Dash Recharge
-	if (NewMovementMode == DashRechargeStates || (NewMovementMode == MOVE_Custom && NewCustomMode == DashCustomRechargeStates))
+	if ((DashRechargeStates & (1 << NewMovementMode)) != 0 || (DashCustomRechargeStates & (1 << NewCustomMode)) != 0)
+	{
 		DashCount = 0;
+
+		//Debug Message
+		if (UDebugSubsystem::ShouldDebug(Sf_GameplayTags::Debug::FP::Movement::Dash,EDebugType::Print))
+		{
+			FString EnumName ="";
+			if (NewMovementMode == MOVE_Custom)
+				EnumName = StaticEnum<ECustomMovementMode>()->GetDisplayNameTextByValue(static_cast<int64>(NewCustomMode)).ToString();
+			else
+				EnumName =  USf_FunctionLibrary::GetEnumAsString<EMovementMode>(NewMovementMode);
+
+			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, "Resetting Dash because of new movement mode "+EnumName);}
+	}
 	
 	Super::SetMovementMode(NewMovementMode, NewCustomMode);
 }
