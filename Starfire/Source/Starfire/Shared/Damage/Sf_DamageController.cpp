@@ -16,7 +16,7 @@ void USf_DamageController::BeginPlay()
 	Super::BeginPlay();
 	CurrentHealth = MaxHealth;
 	CurrentArmor = MaxArmor;
-	//GetWorld()->GetTimerManager().SetTimer(PassiveHealTimer,[this]()->void{Heal(HealRatePerSecond);},1.0f,true);
+	GetWorld()->GetTimerManager().SetTimer(PassiveHealTimer,[this]()->void{Heal(HealRatePerSecond);},1.0f,true);
 }
 
 void USf_DamageController::InitializeComponent()
