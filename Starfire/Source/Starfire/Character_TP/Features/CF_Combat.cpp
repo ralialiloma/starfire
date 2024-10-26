@@ -8,6 +8,7 @@
 #include "Starfire/Utility/Debug/DebugSubsystem.h"
 
 
+
 bool UCF_Combat::OtherNPCWouldBeHit()
 {
 	ASf_TP_Character* OwningCharacter = GetOwningCharacter();
@@ -92,11 +93,15 @@ void UCF_Combat::StartFire(bool bScoped)
 {
 	if (bIsFiring)
 		return;
-
-	UE_LOG(LogTemp, Log, TEXT("I started firing"))
+	if (SHOULD_DEBUG(TP::CharacterFeatures::Combat,EDebugType::Log))
+		UE_LOG(LogTemp, Log, TEXT("%s started firing"), *GetOwningActor()->GetName())
+	if (SHOULD_DEBUG(TP::CharacterFeatures::Combat,EDebugType::Print))
+		GEngine->AddOnScreenDebugMessage(-1, 2,
+			FColor::Yellow,
+			FString::Printf( TEXT("%s started firing"),
+				*GetOwningActor()->GetName()));
 	bIsFiring = true;
 	GetOwningCharacter()->UnCrouch();
-	//GetOwningAIController()->SetFocalPoint(USf_FunctionLibrary::GetPlayerLocation(this));
 	GetOwningAIController()->SetFocus(USf_FunctionLibrary::GetSfPlayerpawn(this));
 	DoFire(EInputSignalType::InputSignal_Started,bScoped);
 	const float FireDelay = GetOwningSfEquipment()->GetWeaponConfig().FireDelay+0.01f;
@@ -130,38 +135,19 @@ void UCF_Combat::StopFire(FStopFireInfo StopFireInfo)
 {
 	if (bIsFiring == false)
 		return;
-
-	/*if (StopFireInfo.StopFireReason == EStopFireReason::FireBlock)
-	{
-		switch (StopFireInfo.FireBlock)
-		{
-		case EFireBlock::None:
-			break;
-		case EFireBlock::Reload:
-		case EFireBlock::EmptyClip:
-		case EFireBlock::NotEnoughAmmo:
-			SetBlackboardBoolValue(EBoolBlackboardKey::HasToReload,true);
-			break;
-		case EFireBlock::Jammed:
-			break;
-		case EFireBlock::FireCooldown:
-			break;
-		case EFireBlock::TriggerType:
-			break;
-		case EFireBlock::Error:
-			break;
-		case EFireBlock::NoWeapon:
-			break;
-		case EFireBlock::MeleeCooldown:
-			break;
-		default: ;
-		}
-	}*/
 	
 	bIsFiring = false;
 	FiredBullets = 0;
 	GetOwningAIController()->ClearFocus(EAIFocusPriority::Gameplay);
-	UE_LOG(LogTemp, Log, TEXT("Stopped Firing due to %s"),*StopFireInfo.ToString())
+
+	if (UDebugSubsystem::ShouldDebug(Sf_GameplayTags::Debug::TP::CharacterFeatures::Combat, EDebugType::Log))
+		UE_LOG(LogTemp, Log, TEXT("Stopped Firing due to %s"), *StopFireInfo.ToString());
+	if (UDebugSubsystem::ShouldDebug(Sf_GameplayTags::Debug::TP::CharacterFeatures::Combat, EDebugType::Print) && GEngine)
+		GEngine->AddOnScreenDebugMessage(
+			-1,
+			2,
+			FColor::Green,
+			FString::Printf(TEXT("Stopped Firing due to %s"), *StopFireInfo.ToString()));
 	OnFireStopped_CPP.Broadcast();
 	OnFireStopped_BP.Broadcast();
 }
@@ -178,7 +164,6 @@ void UCF_Combat::DoFire(EInputSignalType InputSignalType, bool bScoped)
 	
 	if (OtherNPCWouldBeHit(HitResult))
 	{
-		//UE_LOG(LogTemp, Log, TEXT("I hit another NPC"))
 		StopFire(FStopFireInfo(EStopFireReason::HitOtherNPC));
 		return;
 	}

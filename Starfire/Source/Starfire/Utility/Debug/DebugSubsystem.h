@@ -7,6 +7,10 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "DebugSubsystem.generated.h"
 
+#define SHOULD_DEBUG(Tag, DebugType) \
+(UDebugSubsystem::ShouldDebug(Sf_GameplayTags::Debug::Tag, DebugType))
+
+
 UCLASS()
 class STARFIRE_API UDebugSubsystem : public UEngineSubsystem
 {
@@ -21,6 +25,7 @@ public:
 	
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	static bool ShouldDebug(UPARAM(meta=(Categories="Debug"))FGameplayTag DebugTag, EDebugType DebugType);
+
 	UFUNCTION(BlueprintCallable, BlueprintPure,	meta = (WorldContext = "WorldContext"))
 	static bool GetAllowDebug();
 	UFUNCTION(BlueprintCallable, BlueprintPure, meta = (WorldContext = "WorldContext"))

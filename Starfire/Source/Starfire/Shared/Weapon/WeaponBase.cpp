@@ -71,11 +71,17 @@ bool AWeaponBase::Fire(const EInputSignalType InputSignal, EFireType FireType, F
 	StopReloading();
 	
 	if (!CanFire(InputSignal,FireType,OutFireBlock))
+	{
+		if (UDebugSubsystem::ShouldDebug(Sf_GameplayTags::Debug::Weapon::FireBlocks,EDebugType::Print))
+		{
+			const FString FireBlockString = USf_FunctionLibrary::GetEnumAsString<EFireBlock>(OutFireBlock);
+			GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Green, "Could not fire due to "+FireBlockString);
+		}
 		return false;
+	}
 	
 	DoFire(OutHitResult);
 	ApplyRecoil();
-
 	return true;
 }
 
@@ -366,7 +372,7 @@ bool AWeaponBase::IsAiming()
 void AWeaponBase::DoFire(FHitResult& OutHitResult)
 {
 	//Start Fire Delay
-	float CurrentFireDelay = WeaponConfig.FireDelay;
+	const float CurrentFireDelay = WeaponConfig.FireDelay;
 	if (CurrentFireDelay>0)
 	{
 		//Start Cooldown
@@ -382,12 +388,8 @@ void AWeaponBase::DoFire(FHitResult& OutHitResult)
 	//Shoot Traces
 	FireTraces(OutHitResult);
 
-	//todo callshoot event
-
 	//Play Shoot Montage
 	ExecuteAnimation(EWeaponAnimationEventType::Fire);
-	//PlayMontage(EWeaponAnimationMontageType_FP::PrimaryFire);
-	
 }
 
 bool AWeaponBase::Reload()

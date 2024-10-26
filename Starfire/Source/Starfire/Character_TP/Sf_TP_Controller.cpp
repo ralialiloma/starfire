@@ -28,6 +28,9 @@ void ASf_TP_Controller::SetPawn(APawn* InPawn)
 {
 	Super::SetPawn(InPawn);
 
+	if (!IsValid(GetWorld()))
+		return;
+	
 	if (!IsValid(InPawn))
 	{
 		UE_LOG(Sf_Log_TP_Controller, Error, TEXT("Missing Pawn"))

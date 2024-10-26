@@ -48,6 +48,7 @@ namespace Sf_GameplayTags
 		namespace Weapon
 		{
 			STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+			STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(FireBlocks);
 		}
 
 	}

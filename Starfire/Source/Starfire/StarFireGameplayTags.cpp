@@ -49,6 +49,7 @@ namespace Sf_GameplayTags
 		namespace Weapon
 		{
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Debug.Weapon", "")
+			DEFINE_GAMEPLAY_TAG_AUTO(Debug.Weapon, FireBlocks, "");
 		}
 
 	}

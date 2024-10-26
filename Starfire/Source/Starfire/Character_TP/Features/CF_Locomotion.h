@@ -29,6 +29,8 @@ struct F_SF_MoveRequest
 	UPROPERTY(BlueprintReadWrite)
 	float AcceptanceRadius;
 	UPROPERTY(BlueprintReadWrite)
+	float ProjectionRadius;
+	UPROPERTY(BlueprintReadWrite)
 	E_Sf_TP_LocomotionType LocomotionType;
 	UPROPERTY(BlueprintReadWrite)
 	TSubclassOf<UNavigationQueryFilter> FilterClass;

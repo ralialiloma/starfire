@@ -22,6 +22,7 @@ bool UDebugSubsystem::ShouldDebug(FGameplayTag DebugTag, EDebugType DebugType)
 	return GetDefault<UDebugSettings>()->ShouldDebug(DebugTag,DebugType);
 }
 
+
 bool UDebugSubsystem::GetAllowDebug()
 {
 	return !GetDefault<UDebugSettings>()->bHideAllDebugs;

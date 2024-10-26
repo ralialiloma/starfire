@@ -18,28 +18,38 @@ public:
 	bool EnterCover();
 
 	UFUNCTION(BlueprintCallable, Category = "EnemyFeature|Cover")
-	bool ExitCover();
-	
+	bool VerifyCover(FVector LocationToVerify);
+
 	UFUNCTION(BlueprintCallable, Category = "EnemyFeature|Cover")
-	bool CanBeHitByPlayer() const;
+	bool ExitCover();
+
+	UFUNCTION(BlueprintCallable, Category = "EnemyFeature|Cover")
+	bool IsInHighCoverState() const;
 
 	UFUNCTION(BlueprintCallable, Category = "EnemyFeature|Cover")
 	bool IsInCoverState() const;
 
+	UFUNCTION(BlueprintCallable, Category = "EnemyFeature|Cover")
+	bool IsInLowCoverState() const;
+
+
 private:
 	bool CanBeHitByPlayer(float HeightOffset) const;
+	bool CanBeHitByPlayer(FVector LocationToVerify) const;
 #pragma endregion
 	
 #pragma region Properties
 protected:
 	UPROPERTY(EditDefaultsOnly)
-	float MinCoverHeight = 40;
+	float MinCoverHeight = 120;
 
 	UPROPERTY(EditDefaultsOnly)
 	float MaxCrouchCoverHeight = 60;
 private:
 	UPROPERTY()
-	bool bIsInCoverState = false;
+	bool bIsInHighCoverState = false;
+	UPROPERTY()
+	bool bIsInLowCoverState = false;
 #pragma endregion
 
 
