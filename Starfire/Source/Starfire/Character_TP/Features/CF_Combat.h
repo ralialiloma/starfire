@@ -4,7 +4,7 @@
 #include "Starfire/Sf_Bases/Sf_Delegate.h"
 #include "CF_Combat.generated.h"
 
-DEFINE_LOG_CATEGORY_STATIC(EF_Fire, Display, Display);
+DEFINE_LOG_CATEGORY_STATIC(EF_Combat, Display, Display);
 
 #pragma region Structs And Enums
 UENUM(BlueprintType)

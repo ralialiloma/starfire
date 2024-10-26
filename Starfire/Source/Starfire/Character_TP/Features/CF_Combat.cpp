@@ -16,7 +16,7 @@ bool UCF_Combat::OtherNPCWouldBeHit()
 	if (!OwningCharacter->Implements<UWeaponOwner>())
 	{
 		UE_LOG(
-			EF_Fire, Error,
+			EF_Combat, Error,
 			TEXT("Character must implement %s to work with %s"),
 			*UWeaponOwner::StaticClass()->GetName(),
 			*StaticClass()->GetName())
@@ -94,7 +94,7 @@ void UCF_Combat::StartFire(bool bScoped)
 	if (bIsFiring)
 		return;
 	if (SHOULD_DEBUG(TP::CharacterFeatures::Combat,EDebugType::Log))
-		UE_LOG(LogTemp, Log, TEXT("%s started firing"), *GetOwningActor()->GetName())
+		UE_LOG(EF_Combat, Log, TEXT("%s started firing"), *GetOwningActor()->GetName())
 	if (SHOULD_DEBUG(TP::CharacterFeatures::Combat,EDebugType::Print))
 		GEngine->AddOnScreenDebugMessage(-1, 2,
 			FColor::Yellow,
@@ -105,7 +105,7 @@ void UCF_Combat::StartFire(bool bScoped)
 	GetOwningAIController()->SetFocus(USf_FunctionLibrary::GetSfPlayerpawn(this));
 	DoFire(EInputSignalType::InputSignal_Started,bScoped);
 	const float FireDelay = GetOwningSfEquipment()->GetWeaponConfig().FireDelay+0.01f;
-	UE_LOG(LogTemp, Log, TEXT("Starting timer with this rate %f"),FireDelay);
+	UE_LOG(EF_Combat, Log, TEXT("Starting timer with this rate %f"),FireDelay);
 
 	TWeakObjectPtr<UCF_Combat> WeakSelf = this;
 	FAsyncUtility::RunOnAnyThread<void>(WeakSelf,[bScoped,WeakSelf,FireDelay]()->void
@@ -133,21 +133,22 @@ void UCF_Combat::StopFire()
 
 void UCF_Combat::StopFire(FStopFireInfo StopFireInfo)
 {
-	if (bIsFiring == false)
+	if (!bIsFiring)
 		return;
 	
-	bIsFiring = false;
 	FiredBullets = 0;
 	GetOwningAIController()->ClearFocus(EAIFocusPriority::Gameplay);
 
 	if (UDebugSubsystem::ShouldDebug(Sf_GameplayTags::Debug::TP::CharacterFeatures::Combat, EDebugType::Log))
-		UE_LOG(LogTemp, Log, TEXT("Stopped Firing due to %s"), *StopFireInfo.ToString());
+		UE_LOG(EF_Combat, Log, TEXT("Stopped Firing due to %s"), *StopFireInfo.ToString());
 	if (UDebugSubsystem::ShouldDebug(Sf_GameplayTags::Debug::TP::CharacterFeatures::Combat, EDebugType::Print) && GEngine)
 		GEngine->AddOnScreenDebugMessage(
 			-1,
 			2,
 			FColor::Green,
 			FString::Printf(TEXT("Stopped Firing due to %s"), *StopFireInfo.ToString()));
+
+	bIsFiring = false;
 	OnFireStopped_CPP.Broadcast();
 	OnFireStopped_BP.Broadcast();
 }
