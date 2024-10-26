@@ -16,6 +16,7 @@ namespace Sf_GameplayTags
 		{
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Debug.TP", "")
 			DEFINE_GAMEPLAY_TAG_AUTO(Debug.TP, MoveTargetLocation, "");
+			DEFINE_GAMEPLAY_TAG_AUTO(Debug.TP,RandomRoamLocation,"");
 			DEFINE_GAMEPLAY_TAG_AUTO(Debug.TP, MeleeRangeCheck, "");
 			namespace EQS
 			{
