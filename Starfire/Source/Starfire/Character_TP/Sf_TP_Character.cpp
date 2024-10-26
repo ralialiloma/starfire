@@ -136,8 +136,10 @@ USf_AnimDataController* ASf_TP_Character::GetAnimMontageController_Implementatio
 
 FTransform ASf_TP_Character::GetFireTransform_Implementation() const
 {
-	if (SfEquipmentComponent->IsEquipped())
-		return SfEquipmentComponent->GetActiveWeapon()->GetMuzzleTransform();
+	//if (SfEquipmentComponent->IsEquipped())
+	//	return SfEquipmentComponent->GetActiveWeapon()->GetMuzzleTransform();
+
+	return FTransform(GetActorRotation(),GetActorLocation()+FVector(0,0,30),GetActorScale());
 	
 	return FTransform::Identity;
 }

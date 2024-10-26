@@ -103,24 +103,8 @@ ASf_FP_Character::ASf_FP_Character(const FObjectInitializer& ObjectInitializer)
 	FirstPersonMesh->SetupAttachment(FirstPersonCamera);
 	FirstPersonMesh->SetRelativeLocation(FVector(25,0,150));
 	
-	
-	//Equipment
-	/*SfEquipmentComponent = CreateDefaultSubobject<USf_Equipment>(TEXT("SFEquip"));
-	SfEquipmentComponent->SetUsingAbsoluteLocation(false);
-	SfEquipmentComponent->SetUsingAbsoluteRotation(false);
-	SfEquipmentComponent->SetUsingAbsoluteScale(false);*/
 	SfEquipmentComponent->SetupAttachment(FirstPersonMesh,TEXT("GripPoint"));
 	
-	//Weapon Transform
-	/*MeleeTransform = CreateDefaultSubobject<UBoxComponent>(TEXT("Melee Transform"));
-	MeleeTransform->SetUsingAbsoluteLocation(false);
-	MeleeTransform->SetUsingAbsoluteRotation(false);
-	MeleeTransform->SetUsingAbsoluteScale(false);
-	MeleeTransform->SetupAttachment(FirstPersonCamera);
-	MeleeTransform->SetRelativeLocation(FVector(30,0,0));
-	MeleeTransform->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
-	MeleeTransform->ShapeColor = FColor::Purple;
-	MeleeTransform->SetLineThickness(1.0f);*/
 
 	//Interact
 	InteractComponent = CreateDefaultSubobject<UInteractComponent>(TEXT("Interact"));
@@ -149,6 +133,12 @@ void ASf_FP_Character::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 	SFCharacterMovementComponent = Cast<USf_FP_CharacterMovementComponent>(GetCharacterMovement());
+	SfDamageController->OnZeroHealth_CPP.AddLambda(
+		[this]()->void
+		{
+			OnPawnDeath_CPP.Broadcast();
+			OnPawnDeath_BP.Broadcast();
+		});
 	//FConfigLoader::LoadConfigFile<ASf_FP_Character>(this,"SF_CharacterDefault");
 }
 

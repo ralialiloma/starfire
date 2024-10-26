@@ -16,6 +16,7 @@ void USf_DamageController::BeginPlay()
 	Super::BeginPlay();
 	CurrentHealth = MaxHealth;
 	CurrentArmor = MaxArmor;
+	//GetWorld()->GetTimerManager().SetTimer(PassiveHealTimer,[this]()->void{Heal(HealRatePerSecond);},1.0f,true);
 }
 
 void USf_DamageController::InitializeComponent()
@@ -40,7 +41,7 @@ float USf_DamageController::ApplyDamage(const float Damage,FVector HitLocation, 
 	const USf_Hitbox* Hitbox =  Cast<USf_Hitbox>(HitComponent);
 	if (!IsValid(Hitbox))
 		return 0;
-
+	
 	//Total Damage
 	float SafeCurrentArmor = FMath::Max(CurrentArmor,1);
 	float TotalDamage = (Damage/SafeCurrentArmor)*Hitbox->DamageMultiplier;
@@ -53,9 +54,28 @@ float USf_DamageController::ApplyDamage(const float Damage,FVector HitLocation, 
 
 	//Broadcast Death
 	if (CurrentHealth<=0)
-		OnZeroHealth.Broadcast();
-
+	{
+		OnZeroHealth_BP.Broadcast();
+		OnZeroHealth_CPP.Broadcast();
+	}
+	
 	return TotalDamage;
+}
+
+void USf_DamageController::Heal(const float AmountOfHeal, const bool bInternal)
+{
+	if (CurrentHealth<MaxHealth && AmountOfHeal>0 && !bInternal)
+	{
+		OnHeal_CPP.Broadcast();
+		OnHeal_BP.Broadcast();
+	}
+	
+	CurrentHealth = FMath::Min(CurrentHealth+AmountOfHeal,MaxHealth);
+}
+
+void USf_DamageController::RestoreHealth()
+{
+	CurrentHealth = MaxHealth;
 }
 
 

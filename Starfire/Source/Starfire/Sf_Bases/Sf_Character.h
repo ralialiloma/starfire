@@ -19,6 +19,7 @@ class STARFIRE_API ASf_Character : public ACharacter, public IWeaponOwner
 
 public:
 	ASf_Character(const FObjectInitializer& ObjectInitializer);
+	virtual void PostInitializeComponents() override;
 	
 #pragma region Functions
 public:

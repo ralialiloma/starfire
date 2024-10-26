@@ -479,9 +479,8 @@ int AWeaponBase::GetAmmoCount() const
 
 FTransform AWeaponBase::GetMuzzleTransform() const
 {
-	return SkeletalMesh->GetRelativeTransform();
+	return  SkeletalMesh->GetBoneTransform("Ammo");
 }
-
 void AWeaponBase::OnPickup(APawn* NewHolder)
 {
 	WeaponOwner = NewHolder;

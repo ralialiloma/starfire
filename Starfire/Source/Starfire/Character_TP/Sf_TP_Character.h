@@ -83,7 +83,6 @@ public:
 	virtual FTransform GetFireTransform_Implementation() const override;
 	virtual FMeleeInfo GetMeleeInfo_Implementation() const override;
 	virtual USf_AnimDataController* GetAnimMontageController_Implementation() const override;
-	
 #pragma endregion
 
 };

@@ -24,6 +24,11 @@ ASf_Character::ASf_Character(const FObjectInitializer& ObjectInitializer)
 	SfDamageController = CreateDefaultSubobject<USf_DamageController>(TEXT("SfDamageController"));
 }
 
+void ASf_Character::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+}
+
 UAnimInstance* ASf_Character::GetCharacterAnimInstance_Implementation() const
 {
 	return IWeaponOwner::GetCharacterAnimInstance_Implementation();
