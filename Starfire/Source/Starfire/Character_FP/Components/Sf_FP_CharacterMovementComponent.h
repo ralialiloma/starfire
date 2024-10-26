@@ -128,6 +128,7 @@ public:
 private:
 	bool TryWallRun();
 	void PhysWallRun(float deltaTime, int32 Iterations);
+	void JumpOffWall();
 #pragma endregion
 	
 #pragma region Properties
@@ -148,7 +149,10 @@ protected:
 	UCurveFloat* WallRunGravityScaleCurve = nullptr;
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun", meta =(CustomConfig))
 	float WallJumpOffForce = 300.f;
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun", meta =(CustomConfig,ClampMin=0, ClampMax=1))
+	float WallNormalJumpOffInfluence= 0.5f;
 
+private:
 	FVector2D WallNormal = FVector2D::ZeroVector;
 
 	bool Saved_bWallRunIsRight;

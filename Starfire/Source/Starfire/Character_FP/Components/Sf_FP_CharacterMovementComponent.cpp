@@ -6,6 +6,7 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/Character.h"
 #include "DrawDebugHelpers.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
 #include "Starfire/Utility/Debug/DebugSubsystem.h"
 
@@ -86,17 +87,7 @@ bool USf_FP_CharacterMovementComponent::DoJump(bool bReplayingMoves)
 	if (Super::DoJump(bReplayingMoves))
 	{
 		if (bWasWallRunning)
-		{
-			FVector Start = UpdatedComponent->GetComponentLocation();
-			FVector CastDelta = FVector(WallNormal.X, WallNormal.Y, 0) * CapRadius() * 2;
-			FVector End = Start - CastDelta;
-			FCollisionQueryParams Params = SfCharacterOwner->GetIgnoreCharacterParams();
-			FHitResult WallHit;
-			Saved_bWallRunIsRight = GetWorld()->LineTraceSingleByProfile(WallHit, Start, End, "BlockAll", Params);
-
-			//TODO: Make player jump in input direction
-			Velocity += WallHit.Normal * WallJumpOffForce;
-		}
+			JumpOffWall();
 		
 		return true;
 	}
@@ -473,6 +464,38 @@ void USf_FP_CharacterMovementComponent::PhysWallRun(float deltaTime, int32 Itera
 		SetMovementMode(MOVE_Falling);
 	}
 	
+}
+
+
+
+void USf_FP_CharacterMovementComponent::JumpOffWall()
+{
+	//WallNormal
+	FVector Start = UpdatedComponent->GetComponentLocation();
+	FVector CastDelta = FVector(WallNormal.X, WallNormal.Y, 0) * CapRadius() * 2;
+	FVector End = Start - CastDelta;
+	FCollisionQueryParams Params = SfCharacterOwner->GetIgnoreCharacterParams();
+	FHitResult WallHit;
+	Saved_bWallRunIsRight = GetWorld()->LineTraceSingleByProfile(WallHit, Start, End, "BlockAll", Params);
+
+	//Input
+	FVector InputDir = GetLastInputVector();
+	InputDir = FVector(InputDir.X,InputDir.Y,0);
+	
+	FVector WallJumpOffVector = FMath::Lerp(InputDir, WallHit.Normal,WallNormalJumpOffInfluence);
+	Velocity += WallJumpOffVector*WallJumpOffForce;
+	
+	if (SHOULD_DEBUG(FP::Movement::Wallrun,EDebugType::Visual))
+	{
+		UKismetSystemLibrary::DrawDebugArrow(
+		this,
+		GetActorLocation(),
+		GetActorLocation()+WallJumpOffVector*100,
+		100,
+		FColor::Red,
+		10,
+		2);
+	}
 }
 
 bool USf_FP_CharacterMovementComponent::TryMantle()
