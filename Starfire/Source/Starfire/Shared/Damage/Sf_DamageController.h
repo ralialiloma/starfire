@@ -54,6 +54,7 @@ public:
 	float GetCurrentArmor() const;
 private:
 	void SetHealth(float NewHealth);
+	void PassiveHeal(float DeltaSeconds);
 
 #pragma endregion
 
@@ -82,9 +83,11 @@ public:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "Damage Receiver", meta = (CustomConfig))
 	float MaxArmor = 50;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "Damage Receiver", meta = (CustomConfig))
-	bool bPassiveHealing = false;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "Damage Receiver",meta=(EditCondition="bPassiveHealing", EditConditionHides,CustomConfig))
-	float PassiveHealingRate = 5;
+	bool bEnablePassiveHealing = false;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "Damage Receiver",meta=(EditCondition="bEnablePassiveHealing", EditConditionHides,CustomConfig))
+	float PassiveHealingRatePerSecond = 5;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "Damage Receiver",meta=(EditCondition="bEnablePassiveHealing", EditConditionHides,CustomConfig))
+	float PassiveHealingStartAfterDamageInSeconds = 5;
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "Damage Receiver",meta = (Categories = "Gameplay.DamageType",CustomConfig))
 	FGameplayTagContainer SupportedDamageTypes = FGameplayTagContainer(Sf_GameplayTags::Gameplay::DamageType::Fire);
@@ -96,7 +99,10 @@ private:
 	float CurrentArmor = 0;
 
 	UPROPERTY()
-	FTimerHandle PassiveHealTimer;
+	bool bShouldPassiveHeal;
+
+	UPROPERTY()
+	FTimerHandle PassiveHealCooldown;
 
 #pragma endregion
 	

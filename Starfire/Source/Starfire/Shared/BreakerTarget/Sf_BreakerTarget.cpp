@@ -6,7 +6,7 @@ ASf_BreakerTarget::ASf_BreakerTarget(const FObjectInitializer& ObjectInitializer
 {
 	//Damage Controller
 	SfDamageController = CreateDefaultSubobject<USf_DamageController>(TEXT("SfDamageController"));
-	SfDamageController->bPassiveHealing = false;
+	SfDamageController->bEnablePassiveHealing = false;
 	SfDamageController->SupportedDamageTypes = FGameplayTagContainer(Sf_GameplayTags::Gameplay::DamageType::Explosion);
 	SfDamageController->bStartWithMaxHealth = false;
 

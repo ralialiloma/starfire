@@ -3,7 +3,7 @@
 
 #include "Sf_DamageController.h"
 
-USf_DamageController::USf_DamageController()
+USf_DamageController::USf_DamageController(): bShouldPassiveHeal(false)
 {
 	PrimaryComponentTick.bCanEverTick = true;
 	MaxHealth = 100;
@@ -15,23 +15,21 @@ void USf_DamageController::BeginPlay()
 {
 	Super::BeginPlay();
 	if (bStartWithMaxHealth)
-		SetHealth(MaxHealth);;
+		SetHealth(MaxHealth);
 	CurrentArmor = MaxArmor;
-	if (bPassiveHealing)
-		GetWorld()->GetTimerManager().SetTimer(PassiveHealTimer,[this]()->void{Heal(PassiveHealingRate);},1.0f,true);
+	bShouldPassiveHeal = bEnablePassiveHealing;
 }
 
 void USf_DamageController::InitializeComponent()
 {
 	Super::InitializeComponent();
-	if (bStartWithMaxHealth)
-		SetHealth(MaxHealth);;
 	CurrentArmor = MaxArmor;
 }
 
-void USf_DamageController::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void USf_DamageController::TickComponent(const float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	PassiveHeal(DeltaTime);
 }
 
 
@@ -57,8 +55,18 @@ float USf_DamageController::ApplyDamage(
 	float SafeCurrentArmor = FMath::Max(CurrentArmor,1);
 	float TotalDamage = (Damage/SafeCurrentArmor)*Hitbox->DamageMultiplier;
 
+	//Stop Passive Heal
+	bShouldPassiveHeal = false;
+	GetWorld()->GetTimerManager().PauseTimer(PassiveHealCooldown);
+	GetWorld()->GetTimerManager().ClearTimer(PassiveHealCooldown);
+	GetWorld()->GetTimerManager().SetTimer(
+		PassiveHealCooldown,
+		[this]()->void{bShouldPassiveHeal = bEnablePassiveHealing;},
+		PassiveHealingStartAfterDamageInSeconds,
+		false);
+
 	//Update CurrentHealth
-	SetHealth(FMath::Max(CurrentHealth-TotalDamage,0));
+	SetHealth(CurrentHealth-TotalDamage);
 
 	//Broadcast Damage Received
 	OnDamageReceived_CPP.Broadcast(CurrentHealth,TotalDamage,HitLocation,HitNormal);
@@ -69,9 +77,10 @@ float USf_DamageController::ApplyDamage(
 
 void USf_DamageController::Heal(const float AmountOfHeal, const bool bInternal)
 {
+	const float AbsoluteAmountOfHeal = +FMath::Abs(AmountOfHeal);
 	const bool bRequiredHealing = CurrentHealth<MaxHealth;
-	SetHealth(FMath::Min(CurrentHealth+AmountOfHeal,MaxHealth)) ;
-	if (bRequiredHealing && AmountOfHeal>0 && !bInternal)
+	SetHealth(FMath::Min(CurrentHealth+AbsoluteAmountOfHeal,MaxHealth));
+	if (bRequiredHealing && AbsoluteAmountOfHeal>0 && !bInternal)
 	{
 		OnHeal_CPP.Broadcast();
 		OnHeal_BP.Broadcast();
@@ -96,7 +105,12 @@ float USf_DamageController::GetCurrentHealth() const
 
 float USf_DamageController::GetCurrentHealthInPercent() const
 {
-	return CurrentHealth/MaxHealth;
+	if (MaxHealth>0)
+	{
+		return CurrentHealth/MaxHealth;
+	}
+
+	return 0;
 }
 
 float USf_DamageController::GetCurrentArmor() const
@@ -107,7 +121,7 @@ float USf_DamageController::GetCurrentArmor() const
 void USf_DamageController::SetHealth(const float NewHealth)
 {
 	const float OldHealth = CurrentHealth;
-	CurrentHealth = NewHealth;
+	CurrentHealth = FMath::Clamp(NewHealth, 0.0f, MaxHealth);
 
 	//Broadcast Health Change
 	if (!FMath::IsNearlyEqual(NewHealth, OldHealth, 0.01f))
@@ -128,6 +142,14 @@ void USf_DamageController::SetHealth(const float NewHealth)
 	{
 		OnZeroHealth_BP.Broadcast();
 		OnZeroHealth_CPP.Broadcast();
+	}
+}
+
+void USf_DamageController::PassiveHeal(const float DeltaSeconds)
+{
+	if (bShouldPassiveHeal && PassiveHealingRatePerSecond > 0.f)
+	{
+		Heal(PassiveHealingRatePerSecond*DeltaSeconds);
 	}
 }
 
