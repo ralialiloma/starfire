@@ -6,6 +6,17 @@ namespace Sf_GameplayTags
 	STARFIRE_API FGameplayTag FindTagByString(const FString& TagString, bool bMatchPartialString = false);
 	STARFIRE_API TArray<FGameplayTag> GetAllChildTags(const FGameplayTag& ParentTag);
 
+	namespace Gameplay
+	{
+		STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+		namespace DamageType
+		{
+			STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+			STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Fire);
+			STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Melee);
+			STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Explosion);
+		}
+	}
 	namespace Debug
 	{
 		STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);

@@ -48,7 +48,7 @@ void ASf_TP_Controller::SetPawn(APawn* InPawn)
 			*InPawn->GetClass()->GetName());
 		return;
 	}
-	TP_Character->GetSfDamageController()->OnDamageReceived.AddDynamic(this, &ASf_TP_Controller::OnReceiveDamage);
+	TP_Character->GetSfDamageController()->OnDamageReceived_BP.AddDynamic(this, &ASf_TP_Controller::OnReceiveDamage);
 }
 
 ASf_TP_Character* ASf_TP_Controller::GetTP_Character()

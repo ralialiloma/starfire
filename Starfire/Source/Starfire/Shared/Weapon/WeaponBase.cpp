@@ -134,11 +134,12 @@ void AWeaponBase::FireTraces(FHitResult& OutHitResult)
 		if (!OutHitResult.Component.IsValid())
 			continue;
 
-		DamageReceiver->ApplyDamage(
+		APPLY_DAMAGE(DamageReceiver,
 			WeaponConfig.Damage,
 			OutHitResult.Location,
 			OutHitResult.Normal,
-			OutHitResult.Component.Get());
+			OutHitResult.Component.Get(),
+			Fire);
 
 		//todo callHitEvent
 	}
@@ -273,11 +274,12 @@ void AWeaponBase::ApplyMelee(AActor* ActorToApplyOn, FVector Start, FVector End,
 		FLinearColor::Red);
 
 	//Apply Damage
-	DamageReceiver->ApplyDamage(
-		GetWeaponConfig().MeleeDamage,
-		HitResult.Location,
-		HitResult.Normal,
-		HitResult.Component.Get());
+	APPLY_DAMAGE(DamageReceiver,
+	GetWeaponConfig().MeleeDamage,
+	HitResult.Location,
+	HitResult.Normal,
+	HitResult.Component.Get(),
+	Melee);
 }
 
 

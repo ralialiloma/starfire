@@ -90,17 +90,14 @@ void UCF_Locomotion::ProcessLocomotionType(E_Sf_TP_LocomotionType LocomotionType
 	{
 		case E_Sf_TP_LocomotionType::Crouch:
 			MovementComponent->SprintReleased();
-			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, "Try to crouch");
 			MovementComponent->bWantsToCrouch = true;
 			break;
 		case E_Sf_TP_LocomotionType::Walk:
-			//MovementComponent->UnCrouch();
-			//MovementComponent->bWantsToCrouch = false;
+			MovementComponent->bWantsToCrouch = false;
 			MovementComponent->SprintReleased();
 			break;
 		case E_Sf_TP_LocomotionType::Sprint:
-			MovementComponent->bWantsToCrouch = false;
-			//MovementComponent->UnCrouch();
+			MovementComponent->bWantsToCrouch = false;;
 			MovementComponent->SprintPressed();
 				break;
 		case E_Sf_TP_LocomotionType::KeepCurrent:

@@ -65,7 +65,6 @@ protected:
 #pragma region Properties
 
 protected:
-	
 	//Components
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	USceneComponent* DefaultSceneRoot;
@@ -75,7 +74,6 @@ protected:
 	//Config
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Config")
 	FWeaponConfig WeaponConfig = FWeaponConfig();
-
 private:
 
 	//States

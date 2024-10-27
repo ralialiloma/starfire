@@ -3,12 +3,19 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "SF_Hitbox.h"
 #include "Components/ActorComponent.h"
+#include "Starfire/StarFireGameplayTags.h"
 #include "Starfire/Sf_Bases/Sf_Delegate.h"
 #include "Sf_DamageController.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FReceivedDamage , float, RemainingHealth, float, DamageReceived, FVector, HitLocation, FVector, HitNormal);
+#define APPLY_DAMAGE(DamageController, Damage, HitLocation, HitNormal, HitComponent, Type) \
+(DamageController->ApplyDamage(Damage,HitLocation,HitNormal,HitComponent,Sf_GameplayTags::Gameplay::DamageType::Type))
+
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FReceivedDamage_BP , float, RemainingHealth, float, DamageReceived, FVector, HitLocation, FVector, HitNormal);
+DECLARE_MULTICAST_DELEGATE_FourParams(FReceivedDamage_CPP , float, float, FVector, FVector);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent), Blueprintable)
 class STARFIRE_API USf_DamageController : public UActorComponent
@@ -24,7 +31,12 @@ public:
 #pragma region Functions
 public:
 	UFUNCTION(BlueprintCallable)
-	float ApplyDamage(float Damage, FVector HitLocation, FVector HitNormal, UPrimitiveComponent* HitComponent);
+	float ApplyDamage(
+		float Damage,
+		FVector HitLocation,
+		FVector HitNormal,
+		UPrimitiveComponent* HitComponent,
+		UPARAM(meta=(Categories="Gameplay.DamageType"))FGameplayTag DamageType );
 
 	UFUNCTION(BlueprintCallable)
 	void Heal(float AmountOfHeal, bool bInternal = false);
@@ -36,31 +48,46 @@ public:
 	float GetCurrentHealth() const;
 
 	UFUNCTION(BlueprintCallable)
+	float GetCurrentHealthInPercent() const;
+
+	UFUNCTION(BlueprintCallable)
 	float GetCurrentArmor() const;
+private:
+	void SetHealth(float NewHealth);
 
 #pragma endregion
 
 #pragma region Properties
 public:
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "Damage Receiver")
-	float MaxHealth= 100;
-
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "Damage Receiver")
-	float MaxArmor = 50;
-
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "Damage Receiver")
-	float HealRatePerSecond = 5;
-
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,BlueprintAssignable, Category = "Damage Receiver")
-	FReceivedDamage OnDamageReceived;
-
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,BlueprintAssignable, Category = "Damage Receiver")
+	UPROPERTY(BlueprintAssignable, Category = "Damage Receiver")
+	FReceivedDamage_BP OnDamageReceived_BP;
+	FReceivedDamage_CPP OnDamageReceived_CPP;
+	UPROPERTY(BlueprintReadOnly,BlueprintAssignable, Category = "Damage Receiver")
+	FSf_VoidDelegate_BP OnFullHealth_BP;
+	FSf_VoidDelegate_CPP OnFullHealth_CPP;
+	UPROPERTY(BlueprintReadOnly,BlueprintAssignable, Category = "Damage Receiver")
 	FSf_VoidDelegate_BP OnZeroHealth_BP;
 	FSf_VoidDelegate_CPP OnZeroHealth_CPP;
-
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,BlueprintAssignable, Category = "Damage Receiver")
+	UPROPERTY(BlueprintReadOnly,BlueprintAssignable, Category = "Damage Receiver")
 	FSf_VoidDelegate_BP OnHeal_BP;
 	FSf_VoidDelegate_CPP OnHeal_CPP;
+	UPROPERTY(BlueprintReadOnly,BlueprintAssignable, Category = "Damage Receiver")
+	FSf_VoidDelegate_BP OnHealthChanged_BP;
+	FSf_VoidDelegate_CPP OnHealthChanged_CPP;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "Damage Receiver", meta = (CustomConfig))
+	bool bStartWithMaxHealth= true;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "Damage Receiver", meta = (CustomConfig))
+	float MaxHealth= 100;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "Damage Receiver", meta = (CustomConfig))
+	float MaxArmor = 50;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "Damage Receiver", meta = (CustomConfig))
+	bool bPassiveHealing = false;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "Damage Receiver",meta=(EditCondition="bPassiveHealing", EditConditionHides,CustomConfig))
+	float PassiveHealingRate = 5;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "Damage Receiver",meta = (Categories = "Gameplay.DamageType",CustomConfig))
+	FGameplayTagContainer SupportedDamageTypes = FGameplayTagContainer(Sf_GameplayTags::Gameplay::DamageType::Fire);
 private:
 	UPROPERTY()
 	float CurrentHealth = 0;

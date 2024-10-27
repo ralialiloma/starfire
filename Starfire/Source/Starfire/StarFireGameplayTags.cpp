@@ -9,6 +9,17 @@
 
 namespace Sf_GameplayTags
 {
+	namespace Gameplay
+	{
+		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay", "")
+		namespace DamageType
+		{
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay.DamageType", "")
+			DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.DamageType,Melee,"");
+			DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.DamageType,Fire,"");
+			DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.DamageType,Explosion,"");
+		}
+	}
 	namespace Debug
 	{
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Debug", "")

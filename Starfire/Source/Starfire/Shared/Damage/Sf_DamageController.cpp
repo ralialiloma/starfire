@@ -14,15 +14,18 @@ USf_DamageController::USf_DamageController()
 void USf_DamageController::BeginPlay()
 {
 	Super::BeginPlay();
-	CurrentHealth = MaxHealth;
+	if (bStartWithMaxHealth)
+		SetHealth(MaxHealth);;
 	CurrentArmor = MaxArmor;
-	GetWorld()->GetTimerManager().SetTimer(PassiveHealTimer,[this]()->void{Heal(HealRatePerSecond);},1.0f,true);
+	if (bPassiveHealing)
+		GetWorld()->GetTimerManager().SetTimer(PassiveHealTimer,[this]()->void{Heal(PassiveHealingRate);},1.0f,true);
 }
 
 void USf_DamageController::InitializeComponent()
 {
 	Super::InitializeComponent();
-	CurrentHealth = MaxHealth;
+	if (bStartWithMaxHealth)
+		SetHealth(MaxHealth);;
 	CurrentArmor = MaxArmor;
 }
 
@@ -32,8 +35,16 @@ void USf_DamageController::TickComponent(float DeltaTime, ELevelTick TickType, F
 }
 
 
-float USf_DamageController::ApplyDamage(const float Damage,FVector HitLocation, FVector HitNormal,UPrimitiveComponent* HitComponent)
+float USf_DamageController::ApplyDamage(
+	const float Damage,
+	const FVector HitLocation,
+	const FVector HitNormal,
+	UPrimitiveComponent* HitComponent,
+	const FGameplayTag DamageType)
 {
+	if (!SupportedDamageTypes.HasTag(DamageType))
+		return 0;
+	
 	if (CurrentHealth<=0)
 		return 0;
 	
@@ -47,30 +58,29 @@ float USf_DamageController::ApplyDamage(const float Damage,FVector HitLocation, 
 	float TotalDamage = (Damage/SafeCurrentArmor)*Hitbox->DamageMultiplier;
 
 	//Update CurrentHealth
-	CurrentHealth = FMath::Max(CurrentHealth-TotalDamage,0);
+	SetHealth(FMath::Max(CurrentHealth-TotalDamage,0));
 
 	//Broadcast Damage Received
-	OnDamageReceived.Broadcast(CurrentHealth,TotalDamage,HitLocation,HitNormal);
-
-	//Broadcast Death
-	if (CurrentHealth<=0)
-	{
-		OnZeroHealth_BP.Broadcast();
-		OnZeroHealth_CPP.Broadcast();
-	}
+	OnDamageReceived_CPP.Broadcast(CurrentHealth,TotalDamage,HitLocation,HitNormal);
+	OnDamageReceived_BP.Broadcast(CurrentHealth,TotalDamage,HitLocation,HitNormal);
 	
 	return TotalDamage;
 }
 
 void USf_DamageController::Heal(const float AmountOfHeal, const bool bInternal)
 {
-	if (CurrentHealth<MaxHealth && AmountOfHeal>0 && !bInternal)
+	const bool bRequiredHealing = CurrentHealth<MaxHealth;
+	SetHealth(FMath::Min(CurrentHealth+AmountOfHeal,MaxHealth)) ;
+	if (bRequiredHealing && AmountOfHeal>0 && !bInternal)
 	{
 		OnHeal_CPP.Broadcast();
 		OnHeal_BP.Broadcast();
 	}
-	
-	CurrentHealth = FMath::Min(CurrentHealth+AmountOfHeal,MaxHealth);
+	if (CurrentHealth>=MaxHealth && !bInternal && bRequiredHealing)
+	{
+		OnFullHealth_BP.Broadcast();
+		OnFullHealth_CPP.Broadcast();
+	}
 }
 
 void USf_DamageController::RestoreHealth()
@@ -84,9 +94,41 @@ float USf_DamageController::GetCurrentHealth() const
 	return CurrentHealth;
 }
 
+float USf_DamageController::GetCurrentHealthInPercent() const
+{
+	return CurrentHealth/MaxHealth;
+}
+
 float USf_DamageController::GetCurrentArmor() const
 {
 	return CurrentArmor;
+}
+
+void USf_DamageController::SetHealth(const float NewHealth)
+{
+	const float OldHealth = CurrentHealth;
+	CurrentHealth = NewHealth;
+
+	//Broadcast Health Change
+	if (!FMath::IsNearlyEqual(NewHealth, OldHealth, 0.01f))
+	{
+		OnHealthChanged_CPP.Broadcast();
+		OnHealthChanged_BP.Broadcast();
+	}
+
+	//Broadcast Max Health
+	if (CurrentHealth>=MaxHealth && OldHealth<=MaxHealth)
+	{
+		OnFullHealth_BP.Broadcast();
+		OnFullHealth_CPP.Broadcast();
+	}
+
+	//Broadcast Death
+	if (CurrentHealth<=0)
+	{
+		OnZeroHealth_BP.Broadcast();
+		OnZeroHealth_CPP.Broadcast();
+	}
 }
 
 
