@@ -48,7 +48,7 @@ class STARFIRE_API UCF_Combat : public USf_CharacterFeature
 #pragma region Functions
 public:
 	UFUNCTION(BlueprintCallable, Category = "EnemyFeature|Combat")
-	void StartFire(bool bScoped);
+	bool StartFire(bool bScoped);
 
 	UFUNCTION(BlueprintCallable, Category = "EnemyFeature|Combat")
 	void StopFire();

@@ -89,10 +89,10 @@ FString FStopFireInfo::ToString()
 		return  FString::Printf(TEXT("StopFireReason: %s"), *StopFireReasonString);
 }
 
-void UCF_Combat::StartFire(bool bScoped)
+bool UCF_Combat::StartFire(bool bScoped)
 {
 	if (bIsFiring)
-		return;
+		return false;
 	if (SHOULD_DEBUG(TP::CharacterFeatures::Combat,EDebugType::Log))
 		UE_LOG(EF_Combat, Log, TEXT("%s started firing"), *GetOwningActor()->GetName())
 	if (SHOULD_DEBUG(TP::CharacterFeatures::Combat,EDebugType::Print))
@@ -124,6 +124,8 @@ void UCF_Combat::StartFire(bool bScoped)
 			FAsyncUtility::WaitForSeconds(FireDelay,WeakSelf,0.05f);
 		}
 	});
+
+	return true;
 }
 
 void UCF_Combat::StopFire()
