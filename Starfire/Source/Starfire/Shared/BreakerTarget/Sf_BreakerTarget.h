@@ -3,6 +3,10 @@
 #include "Starfire/Shared/Damage/Sf_DamageController.h"
 #include "Sf_BreakerTarget.generated.h"
 
+
+
+DECLARE_LOG_CATEGORY_EXTERN(LogBreakerTarget, Log, All);
+
 UCLASS(BlueprintType,Abstract,Blueprintable)
 class ASf_BreakerTarget: public AActor
 {
@@ -10,8 +14,8 @@ class ASf_BreakerTarget: public AActor
 public:
 	ASf_BreakerTarget(const FObjectInitializer& ObjectInitializer);
 	virtual void BeginPlay() override;
-	virtual void Tick(float DeltaSeconds) override;
 	virtual void PostInitializeComponents() override;
+	virtual void Tick(float DeltaSeconds) override;
 #pragma region Functions
 public:
 	UFUNCTION(BlueprintCallable)
@@ -19,7 +23,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	USf_DamageController* GetDamageController() const;
 private:
-	void DoProgress(float DeltaSeconds);
+	void DoProgress(float DeltaSeconds) const;
 	void OnDamageReceived(float ReceivedDamage);
 #pragma endregion
 #pragma region Properties
@@ -42,5 +46,7 @@ protected:
 	USf_DamageController* SfDamageController;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Damage")
 	USf_Hitbox* PrimaryHitbox;
+private:
+	FDelegateHandle DelHandle;
 #pragma endregion
 };

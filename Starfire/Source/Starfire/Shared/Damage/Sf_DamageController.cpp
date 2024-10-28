@@ -86,7 +86,7 @@ void USf_DamageController::Reset()
 
 void USf_DamageController::Heal(const float AmountOfHeal, const bool bInternal)
 {
-	const float AbsoluteAmountOfHeal = +FMath::Abs(AmountOfHeal);
+	const float AbsoluteAmountOfHeal = FMath::Abs(AmountOfHeal);
 	const bool bRequiredHealing = CurrentHealth<MaxHealth;
 	SetHealth(FMath::Min(CurrentHealth+AbsoluteAmountOfHeal,MaxHealth));
 	if (bRequiredHealing && AbsoluteAmountOfHeal>0 && !bInternal)
@@ -96,8 +96,8 @@ void USf_DamageController::Heal(const float AmountOfHeal, const bool bInternal)
 	}
 	if (CurrentHealth>=MaxHealth && !bInternal && bRequiredHealing)
 	{
-		OnFullHealth_BP.Broadcast();
 		OnFullHealth_CPP.Broadcast();
+		OnFullHealth_BP.Broadcast();
 	}
 }
 
@@ -128,7 +128,7 @@ void USf_DamageController::SetHealth(const float NewHealth)
 	CurrentHealth = FMath::Clamp(NewHealth, 0.0f, MaxHealth);
 
 	//Broadcast Health Change
-	if (!FMath::IsNearlyEqual(NewHealth, OldHealth, 0.01f))
+	if (!FMath::IsNearlyEqual(NewHealth, OldHealth, 0.001f))
 	{
 		OnHealthChanged_CPP.Broadcast();
 		OnHealthChanged_BP.Broadcast();
@@ -137,15 +137,15 @@ void USf_DamageController::SetHealth(const float NewHealth)
 	//Broadcast Max Health
 	if (CurrentHealth>=MaxHealth && OldHealth<=MaxHealth)
 	{
-		OnFullHealth_BP.Broadcast();
 		OnFullHealth_CPP.Broadcast();
+		OnFullHealth_BP.Broadcast();
 	}
 
 	//Broadcast Death
 	if (CurrentHealth<=0)
 	{
-		OnZeroHealth_BP.Broadcast();
 		OnZeroHealth_CPP.Broadcast();
+		OnZeroHealth_BP.Broadcast();
 	}
 }
 

@@ -2,8 +2,13 @@
 
 #include "Starfire/Shared/Damage/Sf_DamageController.h"
 
+DEFINE_LOG_CATEGORY(LogBreakerTarget);
+
 ASf_BreakerTarget::ASf_BreakerTarget(const FObjectInitializer& ObjectInitializer): ProgressionRatePerSecond(0.05)
 {
+	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bTickEvenWhenPaused = true;
+	
 	//Damage Controller
 	SfDamageController = CreateDefaultSubobject<USf_DamageController>(TEXT("SfDamageController"));
 	SfDamageController->bEnablePassiveHealing = false;
@@ -20,17 +25,35 @@ ASf_BreakerTarget::ASf_BreakerTarget(const FObjectInitializer& ObjectInitializer
 void ASf_BreakerTarget::BeginPlay()
 {
 	Super::BeginPlay();
-	SfDamageController->OnHealthChanged_CPP.AddLambda([this]()->void
-{
-	OnProgressChanged_CPP.Broadcast();
-	OnProgressChanged_BP.Broadcast();
-});
 
-	SfDamageController->OnFullHealth_CPP.AddLambda([this]()->void
+	TWeakObjectPtr<ASf_BreakerTarget> WeakSelf = this;
+	if (!IsValid(SfDamageController))
 	{
-		OnFullProgress_CPP.Broadcast();
-		OnFullProgress_BP.Broadcast();
+		UE_LOG(LogBreakerTarget, Error, TEXT("Invalid %s"),*USf_DamageController::StaticClass()->GetName())
+		return;
+	}
+	
+	DelHandle =  SfDamageController->OnHealthChanged_CPP.AddLambda([WeakSelf]()->void
+	{
+		if (!WeakSelf.IsValid())
+		{
+			return;
+		}
+		
+		WeakSelf->OnProgressChanged_CPP.Broadcast();
+		WeakSelf->OnProgressChanged_BP.Broadcast();
 	});
+
+	SfDamageController->OnFullHealth_CPP.AddLambda([WeakSelf]()->void
+	{
+		if (!WeakSelf.IsValid())
+		{
+			return;
+		}
+		
+		WeakSelf->OnFullProgress_CPP.Broadcast();
+		WeakSelf->OnFullProgress_BP.Broadcast();
+	});;
 }
 
 void ASf_BreakerTarget::Tick(const float DeltaSeconds)
@@ -42,7 +65,6 @@ void ASf_BreakerTarget::Tick(const float DeltaSeconds)
 void ASf_BreakerTarget::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-
 }
 
 float ASf_BreakerTarget::GetProgress() const
@@ -55,7 +77,7 @@ USf_DamageController* ASf_BreakerTarget::GetDamageController() const
 	return SfDamageController;
 }
 
-void ASf_BreakerTarget::DoProgress(const float DeltaSeconds)
+void ASf_BreakerTarget::DoProgress(const float DeltaSeconds) const
 {
 	SfDamageController->Heal(ProgressionRatePerSecond*DeltaSeconds);
 }
