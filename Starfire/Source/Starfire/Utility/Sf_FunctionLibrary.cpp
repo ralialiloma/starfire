@@ -12,15 +12,15 @@ EInputSignalType USf_FunctionLibrary::ConvertToInputSignalType(EInputSignalType 
 }
 
 
-ASf_FP_Character* USf_FunctionLibrary::GetSfPlayerpawn(const UObject* WorldContext)
+ASf_FP_Character* USf_FunctionLibrary::GetSfPlayerpawn(const UObject* WorldContextObject)
 {
-	if (!WorldContext)
+	if (!WorldContextObject)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Invalid WorldContext passed to GetSfPlayerpawn."));
+		UE_LOG(LogTemp, Warning, TEXT("Invalid WorldContextObject passed to GetSfPlayerpawn."));
 		return nullptr;
 	}
 
-	APawn* Pawn = UGameplayStatics::GetPlayerPawn(WorldContext, 0);
+	APawn* Pawn = UGameplayStatics::GetPlayerPawn(WorldContextObject, 0);
 	if (!Pawn)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("No player pawn found."));
@@ -36,15 +36,15 @@ ASf_FP_Character* USf_FunctionLibrary::GetSfPlayerpawn(const UObject* WorldConte
 	return SfCharacter;
 }
 
-FVector USf_FunctionLibrary::GetPlayerLocation(const UObject* WorldContext)
+FVector USf_FunctionLibrary::GetPlayerLocation(const UObject* WorldContextObject)
 {
-	if (!WorldContext)
+	if (!WorldContextObject)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Invalid WorldContext passed to GetPlayerLocation."));
+		UE_LOG(LogTemp, Warning, TEXT("Invalid WorldContextObject passed to GetPlayerLocation."));
 		return FVector::Zero();
 	}
 
-	APawn* Pawn = UGameplayStatics::GetPlayerPawn(WorldContext, 0);
+	APawn* Pawn = UGameplayStatics::GetPlayerPawn(WorldContextObject, 0);
 	if (!Pawn)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("No player pawn found."));

@@ -1,8 +1,10 @@
-﻿#include "EditorHelpers.h"
+﻿
+#if WITH_EDITOR
+#include "EditorHelpers.h"
 #include "DetailLayoutBuilder.h"
 #include "DetailWidgetRow.h"
 #include "IDetailChildrenBuilder.h"
-#if WITH_EDITOR
+
 
 void EditorHelpers::DisplayChildError(IDetailChildrenBuilder& ChildBuilder, const FString& Text)
 {

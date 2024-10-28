@@ -1,8 +1,5 @@
 ﻿#pragma once
 #include "GameplayTagContainer.h"
-#include "WeaponAnimationAssetType_FP.h"
-#include "WeaponAnimationMontageType_FP.h"
-#include "WeaponBlendSpaceType_FP.h"
 #include "WeaponAnimData_FP.generated.h"
 
 USTRUCT(Blueprintable)
@@ -36,7 +33,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FWeaponAnimData_FP WeaponAnimData;
 
+#if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+#endif
 	
 };
 

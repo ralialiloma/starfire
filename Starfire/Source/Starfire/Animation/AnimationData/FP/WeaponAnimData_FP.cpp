@@ -28,9 +28,11 @@ UWeaponAnimationAsset_FP::UWeaponAnimationAsset_FP()
 	WeaponAnimData.UpdateEntries();
 }
 
+#if WITH_EDITOR
 void UWeaponAnimationAsset_FP::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 	WeaponAnimData.UpdateEntries();
 }
+#endif
 

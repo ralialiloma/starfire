@@ -38,7 +38,9 @@ public:
 	
 	virtual void PostInitProperties() override;
 	virtual void PostInitializeComponents() override;
+#if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+#endif
 
 #pragma region Functions
 
@@ -94,17 +96,17 @@ protected:
 #pragma region Editor
 public:
 #if WITH_EDITOR
-
 	FReply OnSaveButtonClicked() const;
 	FReply OnLoadButtonClicked() const;
-	
 #endif
 
 	UPROPERTY(EditDefaultsOnly, meta = (GetOptions = "GetAllPropertiesWithoutCustomConfig"), Category = "CustomConfig")
 	TArray<FName> AdditionalConfigSavedProperties = {};
-
+#if WITH_EDITOR
 	UFUNCTION()
 	TArray<FName> GetAllPropertiesWithoutCustomConfig() const;
+#endif
+	
 	
 #pragma endregion
 

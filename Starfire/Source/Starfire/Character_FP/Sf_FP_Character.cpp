@@ -11,7 +11,7 @@
 #include "Starfire/Utility/ConfigLoader.h"
 
 DEFINE_LOG_CATEGORY_STATIC(SF_Character_Log, Display, Display);
-
+#if WITH_EDITOR
 TArray<FName> ASf_FP_Character::GetAllPropertiesWithoutCustomConfig() const
 {
 	TArray<FName> Returns;
@@ -71,6 +71,7 @@ FReply ASf_FP_Character::OnLoadButtonClicked() const
 	FConfigLoader::LoadConfigFile(GetClass()->GetDefaultObject<AActor>()->FindComponentByClass<USf_Equipment>(),"USf_Equipment");
 	return FReply::Handled();
 }
+#endif
 
 ASf_FP_Character::ASf_FP_Character(const FObjectInitializer& ObjectInitializer)
 	: Super(
@@ -142,10 +143,12 @@ void ASf_FP_Character::PostInitializeComponents()
 	//FConfigLoader::LoadConfigFile<ASf_FP_Character>(this,"SF_CharacterDefault");
 }
 
+#if WITH_EDITOR
 void ASf_FP_Character::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 }
+#endif
 
 FCollisionQueryParams ASf_FP_Character::GetIgnoreCharacterParams()
 {
@@ -156,15 +159,12 @@ FCollisionQueryParams ASf_FP_Character::GetIgnoreCharacterParams()
 	Params.AddIgnoredActors(CharacterChildren);
 	Params.AddIgnoredActor(this);
 	Params.AddIgnoredActor(SfEquipmentComponent->GetActiveWeapon());
-
 	return Params;
 }
 
-// Called when the game starts or when spawned
 void ASf_FP_Character::BeginPlay()
 {
 	Super::BeginPlay();
-	//LoadConfig();
 }
 
 void ASf_FP_Character::Jump()
@@ -182,13 +182,11 @@ void ASf_FP_Character::StopJumping()
 	bCustomJumpPressed = false;
 }
 
-// Called every frame
 void ASf_FP_Character::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
 
-// Called to bind functionality to input
 void ASf_FP_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);

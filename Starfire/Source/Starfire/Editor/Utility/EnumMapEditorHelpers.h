@@ -1,11 +1,12 @@
 ﻿#pragma once
+#if WITH_EDITOR
 #include "DetailLayoutBuilder.h"
 #include "DetailWidgetRow.h"
 #include "EditorHelpers.h"
 #include "IDetailChildrenBuilder.h"
 #include "IDetailGroup.h"
 #include "Starfire/Utility/CollectionHelper.h"
-#if WITH_EDITOR
+
 
 struct EnumMapEditorHelpers
 {

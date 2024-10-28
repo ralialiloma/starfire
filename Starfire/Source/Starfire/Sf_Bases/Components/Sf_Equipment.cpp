@@ -27,6 +27,7 @@ void USf_Equipment::InitializeComponent()
 	EquippedWeapon = nullptr;
 }
 
+#if WITH_EDITOR
 void USf_Equipment::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
@@ -40,6 +41,8 @@ void USf_Equipment::PostEditChangeProperty(FPropertyChangedEvent& PropertyChange
 		AttachToParentMesh();
 
 }
+#endif
+
 
 bool USf_Equipment::HasWeapon(AWeaponBase* WeaponBase) const
 {

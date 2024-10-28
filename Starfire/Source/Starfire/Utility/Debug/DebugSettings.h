@@ -13,7 +13,9 @@ class STARFIRE_API UDebugSettings : public UDeveloperSettings
 	GENERATED_BODY()
 
 public:
+#if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+#endif
 
 #pragma region Functions
 public:

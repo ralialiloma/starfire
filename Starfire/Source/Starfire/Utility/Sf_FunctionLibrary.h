@@ -45,11 +45,11 @@ class STARFIRE_API USf_FunctionLibrary : public UBlueprintFunctionLibrary
 	template <class EnumType>
 	static FName GetEnumAsName(int32 EnumValue, const bool RemoveEnumName = true);
 
-	UFUNCTION(BlueprintCallable,BlueprintPure, meta = (WorldContext = "WorldContext"))
-	static ASf_FP_Character* GetSfPlayerpawn(const UObject* WorldContext);
+	UFUNCTION(BlueprintCallable,BlueprintPure, meta = (WorldContext = "WorldContextObject"))
+	static ASf_FP_Character* GetSfPlayerpawn(const UObject* WorldContextObject);
 
-	UFUNCTION(BlueprintCallable,BlueprintPure, meta = (WorldContext = "WorldContext"))
-	static FVector GetPlayerLocation(const UObject* WorldContext);
+	UFUNCTION(BlueprintCallable,BlueprintPure, meta = (WorldContext = "WorldContextObject"))
+	static FVector GetPlayerLocation(const UObject* WorldContextObject);
 
 	template<typename RowType>
 	static TArray<RowType> GetRowDataFromDT(const FSoftObjectPath& DTPath);
@@ -85,7 +85,6 @@ class STARFIRE_API USf_FunctionLibrary : public UBlueprintFunctionLibrary
 
 	UFUNCTION(BlueprintCallable, Category="Collision", meta=(WorldContext="WorldContextObject", AutoCreateRefTerm="ActorsToIgnore", DisplayName="Box Overlap Actors"))
 	static bool BetterBoxOverlapActors(const UObject* WorldContextObject, const FVector BoxPos, const FRotator BoxRot, FVector BoxExtent, const TArray<TEnumAsByte<EObjectTypeQuery> > & ObjectTypes, UClass* ActorClassFilter, const TArray<AActor*>& ActorsToIgnore, TArray<class AActor*>& OutActors);
-
 
 	UFUNCTION(BlueprintCallable, Category="Collision", meta=(WorldContext="WorldContextObject", AutoCreateRefTerm="ActorsToIgnore", DisplayName="Box Overlap Components"))
 	static bool BetterBoxOverlapComponents(const UObject* WorldContextObject, const FVector BoxPos, const FRotator BoxRot, FVector Extent, const TArray<TEnumAsByte<EObjectTypeQuery> > & ObjectTypes, UClass* ComponentClassFilter, const TArray<AActor*>& ActorsToIgnore, TArray<class UPrimitiveComponent*>& OutComponents);

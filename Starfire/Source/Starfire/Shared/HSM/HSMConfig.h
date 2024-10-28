@@ -42,7 +42,9 @@ public:
 	void Refresh();
 
 public:
+#if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+#endif
 };
 
 

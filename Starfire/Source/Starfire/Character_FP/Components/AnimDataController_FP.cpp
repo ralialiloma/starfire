@@ -1,9 +1,7 @@
 ﻿#include "AnimDataController_FP.h"
 
 #include "Starfire/Animation/AnimationData/WeaponAnimDataHelper.h"
-#include "Starfire/Animation/AnimationData/FP/WeaponAnimationMontageType_FP.h"
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
-#include "Starfire/Utility/Sf_GameplayTagUtil.h"
 
 
 void USf_AnimDataController_FP::InitializeComponent()
@@ -11,12 +9,14 @@ void USf_AnimDataController_FP::InitializeComponent()
 	Super::InitializeComponent();
 }
 
+#if WITH_EDITOR
 void USf_AnimDataController_FP::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 	USf_FunctionLibrary::ValidateAndUpdateEnumMap<EWeaponAnimationEventType,FGameplayTag>(
 		AnimationMontageMappings);
 }
+#endif
 
 float USf_AnimDataController_FP::RunAnimation(FWeaponMontageEventPackage WeaponAnimationUpdateData) const
 {

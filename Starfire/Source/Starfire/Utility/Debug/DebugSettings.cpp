@@ -3,12 +3,14 @@
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
 
 
+#if WITH_EDITOR
 void UDebugSettings::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 	USf_FunctionLibrary::ValidateAndUpdateEnumMap<EDebugType,FGameplayTagContainer>(ShownDebugs);
 		USf_FunctionLibrary::ValidateAndUpdateEnumMap<EDebugType,bool>(ShownDebugTypes);
 }
+#endif
 
 TArray<FGameplayTag> UDebugSettings::GetAllDebugTags(const EDebugType DebugType) const
 {

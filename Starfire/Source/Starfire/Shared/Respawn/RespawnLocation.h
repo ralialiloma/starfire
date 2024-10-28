@@ -22,7 +22,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	static ARespawnLocation* GetClosestSpawnLocation(UObject* WorldContextObject);
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"))
 	static FTransform GetClosestRespawnTransform(UObject* WorldContextObject);
 #pragma endregion
 	

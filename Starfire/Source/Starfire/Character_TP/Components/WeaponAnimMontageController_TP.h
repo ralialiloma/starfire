@@ -11,7 +11,9 @@ class USf_WeaponAnimMontageController_TP: public USf_AnimDataController
 	
 public:
 	virtual void InitializeComponent() override;
+#if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+#endif
 
 	virtual float RunAnimation(FWeaponMontageEventPackage WeaponAnimationUpdateData) const override ;
 

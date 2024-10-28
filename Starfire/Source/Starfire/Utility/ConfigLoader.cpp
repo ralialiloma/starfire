@@ -1,5 +1,7 @@
+
 #include "ConfigLoader.h"
 
+#if WITH_EDITOR
 void FConfigLoader::LoadConfigFile(UObject* ObjectToLoad, FString Name, TArray<FName> AdditionalProperties)
 {
 	FString CustomConfigFilePath = GetConfigFilePath(Name);
@@ -70,3 +72,4 @@ FString FConfigLoader::GetConfigFilePath(FString Name)
 	FPaths::MakeStandardFilename(Path);
 	return FConfigCacheIni::NormalizeConfigIniPath(Path);
 }
+#endif

@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include "Starfire/Animation/Sf_AnimDataController.h"
-#include "Starfire/Animation/AnimationData/FP/WeaponAnimationMontageType_FP.h"
 #include "AnimDataController_FP.generated.h"
 
 DEFINE_LOG_CATEGORY_STATIC(Sf_WeaponAnimMontageController_FP, Display, Display);
@@ -12,7 +11,9 @@ class USf_AnimDataController_FP: public USf_AnimDataController
 	
 public:
 	virtual void InitializeComponent() override;
+#if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+#endif
 
 	virtual float RunAnimation(FWeaponMontageEventPackage WeaponAnimationUpdateData) const override ;
 

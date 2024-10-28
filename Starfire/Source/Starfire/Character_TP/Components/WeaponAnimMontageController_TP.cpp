@@ -10,11 +10,13 @@ void USf_WeaponAnimMontageController_TP::InitializeComponent()
 	Super::InitializeComponent();
 }
 
+#if WITH_EDITOR
 void USf_WeaponAnimMontageController_TP::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 	USf_FunctionLibrary::ValidateAndUpdateEnumMap<EWeaponAnimationEventType,FGameplayTag>(AnimationStartMappings);
 }
+#endif
 
 float USf_WeaponAnimMontageController_TP::RunAnimation(FWeaponMontageEventPackage WeaponAnimationUpdateData) const
 {

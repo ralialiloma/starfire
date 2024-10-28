@@ -1,13 +1,13 @@
 #pragma once
 #include "ConfigLoader.generated.h"
-
 DECLARE_LOG_CATEGORY_CLASS(Sf_ConfigLoaderLog, Log, All);
 
 USTRUCT()
 struct FConfigLoader
 {
 	GENERATED_BODY()
-	
+
+#if WITH_EDITOR
 	template <class T>
 	static void LoadConfigFile(T* ObjectToLoad, FString Name, TArray<FName> AdditionalProperties = {});
 	static void LoadConfigFile(UObject* ObjectToLoad, FString Name, TArray<FName> AdditionalProperties = {});
@@ -26,9 +26,10 @@ struct FConfigLoader
 private:
 	static FString GetSectionName(FString Name);
 	static FString GetConfigFilePath(FString Name);
+#endif
 };
 
-
+#if WITH_EDITOR
 	template <typename T>
 	void FConfigLoader::LoadConfigFile(T* ObjectToLoad, FString Name, TArray<FName> AdditionalProperties)
 	{
@@ -205,6 +206,7 @@ private:
 	template <class T>
 	void FConfigLoader::SaveProperty(FProperty* Property, T* ObjectToSave, FString Name, FString CustomConfigFilePath, bool& SuccessfulSave)
 	{
+
 		FString PropertyName = Property->GetName();
 		FString SectionName = GetSectionName(Name);
 
@@ -275,5 +277,4 @@ private:
 		
 		SuccessfulSave = false;
 	}
-
-
+#endif
