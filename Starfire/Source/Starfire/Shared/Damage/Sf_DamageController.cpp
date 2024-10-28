@@ -75,6 +75,15 @@ float USf_DamageController::ApplyDamage(
 	return TotalDamage;
 }
 
+void USf_DamageController::Reset()
+{
+	GetWorld()->GetTimerManager().PauseTimer(PassiveHealCooldown);
+	GetWorld()->GetTimerManager().ClearTimer(PassiveHealCooldown);
+	bShouldPassiveHeal = bEnablePassiveHealing;
+	CurrentArmor = MaxArmor;
+	CurrentHealth = bStartWithMaxHealth?MaxHealth:0;
+}
+
 void USf_DamageController::Heal(const float AmountOfHeal, const bool bInternal)
 {
 	const float AbsoluteAmountOfHeal = +FMath::Abs(AmountOfHeal);
@@ -90,11 +99,6 @@ void USf_DamageController::Heal(const float AmountOfHeal, const bool bInternal)
 		OnFullHealth_BP.Broadcast();
 		OnFullHealth_CPP.Broadcast();
 	}
-}
-
-void USf_DamageController::RestoreHealth()
-{
-	CurrentHealth = MaxHealth;
 }
 
 

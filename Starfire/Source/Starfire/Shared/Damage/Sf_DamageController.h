@@ -37,19 +37,14 @@ public:
 		FVector HitNormal,
 		UPrimitiveComponent* HitComponent,
 		UPARAM(meta=(Categories="Gameplay.DamageType"))FGameplayTag DamageType );
-
+	UFUNCTION(BlueprintCallable)
+	void Reset();
 	UFUNCTION(BlueprintCallable)
 	void Heal(float AmountOfHeal, bool bInternal = false);
-
-	UFUNCTION(BlueprintCallable)
-	void RestoreHealth();
-
 	UFUNCTION(BlueprintCallable)
 	float GetCurrentHealth() const;
-
 	UFUNCTION(BlueprintCallable)
 	float GetCurrentHealthInPercent() const;
-
 	UFUNCTION(BlueprintCallable)
 	float GetCurrentArmor() const;
 private:
