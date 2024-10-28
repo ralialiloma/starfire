@@ -9,24 +9,10 @@ struct STARFIRE_API FStateModuleDataStruct: public FTableRowBase
 {
 	GENERATED_BODY()
 
-	FStateModuleDataStruct():
-	ActionValue_1(false),
-	ActionValue_2(0),
-	ElapsedSeconds(0),
-	TriggeredSeconds(0),
-	InputSignal()
-	{
-	}
+	FStateModuleDataStruct();
 
-	FStateModuleDataStruct(ACharacter* InCharacter):
-	ActionValue_1(false),
-	ActionValue_2(0),
-	ElapsedSeconds(0),
-	TriggeredSeconds(0),
-	InputSignal()
-	{
-	}
-	
+	FStateModuleDataStruct(ACharacter* InCharacter);
+
 	UPROPERTY(BlueprintReadWrite)
 	bool ActionValue_1;
 

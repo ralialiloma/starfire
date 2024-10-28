@@ -23,6 +23,7 @@ USTRUCT(BlueprintType)
 struct F_SF_MoveRequest
 {
 	GENERATED_BODY()
+	
 
 	UPROPERTY(BlueprintReadWrite)
 	FVector Destination;
@@ -37,9 +38,9 @@ struct F_SF_MoveRequest
 
 	F_SF_MoveRequest()
 		: Destination(FVector::ZeroVector)
-		, AcceptanceRadius(100.f)
-		, LocomotionType(E_Sf_TP_LocomotionType::Walk)
-		, FilterClass(nullptr)
+		  , AcceptanceRadius(100.f)
+		  , ProjectionRadius(0), LocomotionType(E_Sf_TP_LocomotionType::Walk)
+		  , FilterClass(nullptr)
 	{
 	}
 };
