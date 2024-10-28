@@ -189,7 +189,7 @@ void UCF_Combat::StartReload()
 	
 	//On Reload Finish
 	AWeaponBase* ActiveWeapon = Equipment->GetActiveWeapon();
-	FDelegateHandle OnReloadFinishHandle =  ActiveWeapon->OnReloadFinish_CPP.AddLambda([this,ActiveWeapon,OnReloadFinishHandle]()->void
+	OnReloadFinishHandle = ActiveWeapon->OnReloadFinish_CPP.AddLambda([this,ActiveWeapon]()->void
 	{
 		if (IsValid(ActiveWeapon))
 			ActiveWeapon->OnReloadFinish_CPP.Remove(OnReloadFinishHandle);
@@ -198,7 +198,7 @@ void UCF_Combat::StartReload()
 	});
 
 	//On Reload Stopped
-	FDelegateHandle OnReloadStoppedHandle =  ActiveWeapon->OnReloadStopped_CPP.AddLambda([this,ActiveWeapon,OnReloadStoppedHandle]()->void
+	OnReloadStoppedHandle = ActiveWeapon->OnReloadStopped_CPP.AddLambda([this,ActiveWeapon]()->void
 	{
 		if (IsValid(ActiveWeapon))
 			ActiveWeapon->OnReloadStopped_CPP.Remove(OnReloadStoppedHandle);

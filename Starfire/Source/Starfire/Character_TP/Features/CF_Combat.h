@@ -89,7 +89,8 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FSf_VoidDelegate_BP OnFireStopped_BP;
 
-
+	FDelegateHandle OnReloadFinishHandle = FDelegateHandle();
+	FDelegateHandle OnReloadStoppedHandle = FDelegateHandle();
 
 private:
 	bool bIsFiring;
