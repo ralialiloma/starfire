@@ -5,7 +5,7 @@ Streamline - DLSS
 >The focus of this guide is on using Streamline to integrate DLSS into an application.  For more information about DLSS itself, please visit the [NVIDIA Developer DLSS Page](https://developer.nvidia.com/rtx/dlss)
 >For information on user interface considerations when using the DLSS plugin, please see the ["RTX UI Developer Guidelines.pdf"](<RTX UI Developer Guidelines.pdf>) document included with this SDK.
 
-Version 2.4.0
+Version 2.4.15
 =======
 
 ### 1.0 INITIALIZE AND SHUTDOWN
@@ -36,7 +36,7 @@ if(SL_FAILED(res, slInit(pref)))
 }
 ```
 
-For more details please see [preferences](ProgrammingGuide.md#221-preferences)
+For more details please see [preferences](ProgrammingGuide.md#222-preferences)
 
 Call `slShutdown()` before destroying dxgi/d3d11/d3d12/vk instances, devices and other components in your engine.
 
@@ -212,7 +212,7 @@ if(SL_FAILED(result, slSetConstants(consts, *frameToken, myViewport))) // consta
     // Handle error, check logs
 }
 ```
-For more details please see [common constants](ProgrammingGuide.md#251-common-constants)
+For more details please see [common constants](ProgrammingGuide.md#2101-common-constants)
 
 ### 7.0 ADD DLSS TO THE RENDERING PIPELINE
 
@@ -243,7 +243,7 @@ else
 ```
 
 > **IMPORTANT:**
-> Plase note that **host is responsible for restoring the command buffer(list) state** after calling `slEvaluate`. For more details on which states are affected please see [restore pipeline section](./ProgrammingGuideManualHooking.md#80-restoring-command-listbuffer-state)
+> Plase note that **host is responsible for restoring the command buffer(list) state** after calling `slEvaluate`. For more details on which states are affected please see [restore pipeline section](./ProgrammingGuideManualHooking.md#70-restoring-command-listbuffer-state)
 
 ### 8.0 MULTIPLE VIEWPORTS
 
@@ -333,3 +333,4 @@ If the DLSS output does not look right please check the following:
 * Make sure that jitter offset values are in pixel space
 * `NVSDK_NGX_Parameter_FreeMemOnRelease` is replaced with `slFreeResources`
 * `NVSDK_NGX_DLSS_Feature_Flags_MVLowRes` is handled automatically based on tagged motion vector buffer's size and extent.
+

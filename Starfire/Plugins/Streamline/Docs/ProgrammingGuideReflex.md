@@ -5,7 +5,7 @@ Streamline - Reflex
 >The focus of this guide is on using Streamline to integrate Reflex into an application.  For more information about Reflex itself, please visit the [NVIDIA Developer Reflex Page](https://developer.nvidia.com/performance-rendering-tools/reflex)
 >For information on user interface considerations when using this plugin, please see the ["RTX UI Developer Guidelines.pdf"][1] document included with this SDK.
 
-Version 2.4.0
+Version 2.4.15
 =======
 
 Here is an overview list of sub-features in the Reflex plugin:
@@ -29,30 +29,26 @@ Additionally, [PCL Stats](ProgrammingGuidePCL.md):
 Call `slInit` as early as possible (before any dxgi/d3d11/d3d12 APIs are invoked)
 
 ```cpp
-
-#include <sl.h>
-#include <sl_reflex.h>
-
 sl::Preferences pref{};
 pref.showConsole = true; // for debugging, set to false in production
-pref.logLevel = sl::eLogLevelDefault;
+pref.logLevel = sl::LogLevel::eDefault;
 pref.pathsToPlugins = {}; // change this if Streamline plugins are not located next to the executable
 pref.numPathsToPlugins = 0; // change this if Streamline plugins are not located next to the executable
 pref.pathToLogsAndData = {}; // change this to enable logging to a file
 pref.logMessageCallback = myLogMessageCallback; // highly recommended to track warning/error messages in your callback
 pref.applicationId = myId; // Provided by NVDA, required if using NGX components (DLSS 2/3)
-pref.engineType = myEngine; // If using UE or Unity
+pref.engine = myEngine; // If using UE or Unity
 pref.engineVersion = myEngineVersion; // Optional version
 pref.projectId = myProjectId; // Optional project id
 if(SL_FAILED(res, slInit(pref)))
 {
-    // Handle error, check the logs
-    if(res == sl::Result::eErrorDriverOutOfDate) { /* inform user */}
-    // and so on ...
+	// Handle error, check the logs
+	if(res == sl::Result::eErrorDriverOutOfDate) { /* inform user */}
+	// and so on ...
 }
 ```
 
-For more details please see [preferences](ProgrammingGuide.md#221-preferences)
+For more details please see [preferences](ProgrammingGuide.md#222-preferences)
 
 Call `slShutdown()` before destroying dxgi/d3d11/d3d12/vk instances, devices and other components in your engine.
 
@@ -209,13 +205,13 @@ Existing Reflex integrations can be easily converted to use SL Reflex by followi
 * Remove NVAPI from your application
 * Remove `reflexstats.h` from your application
 * There is no longer any need to provide a native D3D/VK device when making Reflex calls - SL takes care of that, hence making the integrations easier
-* `NvAPI_D3D_SetSleepMode` is replaced with [set reflex options](#40-set-reflex-constants)
-* `NvAPI_D3D_GetSleepStatus` is replaced with [get reflex state](#30-check-reflex-settings-and-capabilities) - see `sl::ReflexState::lowLatencyAvailable`
-* `NvAPI_D3D_GetLatency` is replaced with [get reflex state](#30-check-reflex-settings-and-capabilities) - see `sl::ReflexReport`
+* `NvAPI_D3D_SetSleepMode` is replaced with [set reflex options](#40-set-reflex-options)
+* `NvAPI_D3D_GetSleepStatus` is replaced with [get reflex state](#30-check-reflex-state-and-capabilities) - see `sl::ReflexState::lowLatencyAvailable`
+* `NvAPI_D3D_GetLatency` is replaced with [get reflex state](#30-check-reflex-state-and-capabilities) - see `sl::ReflexReport`
 * `NvAPI_D3D_SetLatencyMarker` is replaced with `slPCLSetMarker`
 * `NvAPI_D3D_Sleep` is replaced with `slReflexSleep`
 * `NVSTATS*` calls are handled automatically by SL Reflex plugin and are GPU agnostic
-* `NVSTATS_IS_PING_MSG_ID` is replaced with [get reflex options](#30-check-reflex-settings-and-capabilities) - see `sl::ReflexOptions::statsWindowMessage`
+* `NVSTATS_IS_PING_MSG_ID` is replaced with [get reflex state](#30-check-reflex-state-and-capabilities) - see `sl::ReflexOptions::statsWindowMessage`
 
 ### 8.0 NVIDIA REFLEX QA CHECKLIST
 
@@ -367,3 +363,4 @@ GPU Start/End Time | Timestamp | Start = GPU rendering starts; End = GPU renderi
 > All durations and timestamps should be non-zero. Start timestamps must be less than end values (I.e., start must come before end).
 
 [1]: <RTX UI Developer Guidelines.pdf>
+

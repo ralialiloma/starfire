@@ -92,6 +92,7 @@ inline const char* getResultAsStr(Result v)
         SL_CASE_STR(Result::eErrorFeatureMissingDependency);
         SL_CASE_STR(Result::eErrorFeatureManagerInvalidState);
         SL_CASE_STR(Result::eErrorInvalidState);
+        SL_CASE_STR(Result::eWarnOutOfVRAM);
     };
     return "Unknown";
 }
@@ -262,6 +263,7 @@ inline const char* getFeatureAsStr(Feature f)
         SL_CASE_STR(kFeatureCommon);
         SL_CASE_STR(kFeatureDLSS_RR);
         SL_CASE_STR(kFeatureDeepDVC);
+        SL_CASE_STR(kFeatureDirectSR);
     }
     return "Unknown";
 }
@@ -283,6 +285,7 @@ inline const char* getFeatureFilenameAsStrNoSL(Feature f)
         case kFeatureImGUI: return "imgui";
         case kFeatureCommon: return "common";
         case kFeatureDLSS_RR: return "dlss_d";
+        case kFeatureDirectSR: return "directsr";
         default: return "Unknown";
     }
 }
@@ -309,6 +312,7 @@ inline const char* getResourceTypeAsStr(ResourceType v)
         SL_CASE_STR(ResourceType::eCommandPool);
         SL_CASE_STR(ResourceType::eFence);
         SL_CASE_STR(ResourceType::eSwapchain);
+        SL_CASE_STR(ResourceType::eHostFence);
     };
     return "Unknown";
 }

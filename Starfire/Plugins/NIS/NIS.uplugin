@@ -17,26 +17,17 @@
 		{
 			"Name": "NISCore",
 			"Type": "Runtime",
-			"LoadingPhase": "PostEngineInit",
-			"PlatformAllowList": [
-				"Win64"
-			]
+			"LoadingPhase": "PostEngineInit"
 		},
 		{
 			"Name": "NISShaders",
 			"Type": "Runtime",
-			"LoadingPhase": "PostConfigInit",
-			"PlatformAllowList": [
-				"Win64"
-			]
+			"LoadingPhase": "PostConfigInit"
 		},
 		{
 			"Name": "NISBlueprint",
 			"Type": "Runtime",
-			"LoadingPhase": "PostConfigInit",
-			"PlatformAllowList": [
-				"Win64"
-			]
+			"LoadingPhase": "PostConfigInit"
 		}
 	]
 }
