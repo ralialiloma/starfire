@@ -141,7 +141,7 @@ FTransform ASf_TP_Character::GetFireTransform_Implementation() const
 
 	return FTransform(GetActorRotation(),GetActorLocation()+FVector(0,0,30),GetActorScale());
 	
-	return FTransform::Identity;
+	//return FTransform::Identity;
 }
 
 FMeleeInfo ASf_TP_Character::GetMeleeInfo_Implementation() const
