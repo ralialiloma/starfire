@@ -1,6 +1,9 @@
+// Copyright Phoenix Dawn Development LLC. All Rights Reserved.
+
 #pragma once
 
 #include "CoreMinimal.h"
+#include "EnhancedInputComponent.h"
 #include "UObject/ObjectMacros.h"
 #include "UObject/UObjectGlobals.h"
 #include "InputCoreTypes.h"
@@ -8,7 +11,6 @@
 #include "Components/SceneComponent.h"
 #include "Components/WidgetComponent.h"
 #include "GenericPlatform/GenericApplication.h"
-#include "Layout/WidgetPath.h"
 #include "InteractComponent.generated.h"
 
 #pragma region Enums and Structs
@@ -139,7 +141,7 @@ struct FInteractableData
 	AActor* HitActor;
 	
 	UPROPERTY(BlueprintReadOnly)
-	UActorComponent* HitComponent;
+	UPrimitiveComponent* HitComponent;
 
 	UPROPERTY(BlueprintReadOnly)
 	FWidgetHitData WidgetHitData;
@@ -219,6 +221,11 @@ struct FInteractableData
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHighlightTypeChange, EInteractTraceHitType, HitType);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FHighlightChangeSignature, AActor*, HighlightedActor, UInteractComponent*, InteractComponent, APawn*, TriggeringPawn);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FHighlightComponentChangeSignature, UPrimitiveComponent*, InteractedComponent, UInteractComponent*, InteractComponent, APawn*, TriggeringPawn);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FInteractChangeSignature, AActor*, InteractedActor, UInteractComponent*, InteractComponent, APawn*, TriggeringPawn);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FInteractChangeFloatSignature, AActor*, InteractedActor, UInteractComponent*, InteractComponent, APawn*, TriggeringPawn, float, TriggeringSeconds);
+
 #pragma endregion
 
 UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
@@ -228,13 +235,44 @@ class STARFIRE_API UInteractComponent : public USceneComponent
 
 public:
 
+#pragma region Delegates
 	UPROPERTY(BlueprintAssignable, Category = "Interact|Highlight")
 	FHighlightTypeChange OnHighlightTypeChange;
+
+	UPROPERTY(BlueprintAssignable)
+	FHighlightChangeSignature OnActorHighlightChange;
+	UPROPERTY(BlueprintAssignable)
+	FHighlightComponentChangeSignature OnComponentHighlightChange;
+
+	UPROPERTY(BlueprintAssignable)
+	FInteractChangeSignature OnPrimaryInteractStartEvent;
+	UPROPERTY(BlueprintAssignable)
+	FInteractChangeFloatSignature OnPrimaryInteractTickEvent;
+	UPROPERTY(BlueprintAssignable)
+	FInteractChangeFloatSignature OnPrimaryInteractEndEvent;
+	UPROPERTY(BlueprintAssignable)
+	FInteractChangeFloatSignature OnPrimaryInteractHoldTickEvent;
+	UPROPERTY(BlueprintAssignable)
+	FInteractChangeSignature OnPrimaryInteractHoldEvent;
+
+	UPROPERTY(BlueprintAssignable)
+	FInteractChangeSignature OnSecondaryInteractStartEvent;
+	UPROPERTY(BlueprintAssignable)
+	FInteractChangeFloatSignature OnSecondaryInteractTickEvent;
+	UPROPERTY(BlueprintAssignable)
+	FInteractChangeFloatSignature OnSecondaryInteractEndEvent;
+	UPROPERTY(BlueprintAssignable)
+	FInteractChangeFloatSignature OnSecondaryInteractHoldTickEvent;
+	UPROPERTY(BlueprintAssignable)
+	FInteractChangeSignature OnSecondaryInteractHoldEvent;
+#pragma endregion
 	
 	//Ctor
 	UInteractComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 	//ActorComponent interface
+	virtual void Activate(bool bReset = false) override;
+	virtual void Deactivate() override;
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	virtual void BeginPlay() override;
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
@@ -243,6 +281,8 @@ public:
 	void EnableInteract();
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void DisableInteract();
+	UFUNCTION(BlueprintCallable, BlueprintPure, meta = (ExpandBoolAsExecs = ReturnValue))
+	bool IsEnabled();
 
 	//Interact Logic
 	void InteractLogic();
@@ -264,30 +304,51 @@ public:
 
 	//Primary Interact
 	UFUNCTION(BlueprintCallable)
-	void PrimaryInteractLogic(const EInteractMoment InteractMoment,const float TriggerTime);
-	bool CanPrimaryInteract(const EInteractMoment InteractMoment);
-	void TriggerPrimaryInteractEvents(const EInteractMoment InteractMoment, const float TriggerTime);
-	void TriggerPrimaryInteractEventsOnObject(UObject* Target,const EInteractMoment InteractMoment,const float TriggerTime);
+	void PrimaryInteractLogic(EInteractMoment InteractMoment, float TriggerTime);
+	bool CanPrimaryInteract(EInteractMoment InteractMoment);
+	void TriggerPrimaryInteractEvents(EInteractMoment InteractMoment, float TriggerTime);
+	void TriggerPrimaryInteractEventsOnObject(UObject* Target, EInteractMoment InteractMoment, float TriggerTime);
+	void TriggerPrimaryInteractEventsLocal(AActor* Target, EInteractMoment InteractMoment, float TriggerTime);
 	void InteractPointer(const EInteractMoment InteractMoment, bool Primary);
 
 	//Secondary Interact
 	UFUNCTION(BlueprintCallable)
-	void SecondaryInteractLogic(const EInteractMoment InteractMoment,const float TriggerTime);
-	bool CanSecondaryInteract(const EInteractMoment InteractMoment);
-	void TriggerSecondaryInteractEvents(const EInteractMoment InteractMoment, const float TriggerTime);
-	void TriggerSecondaryInteractEventsOnObject(UObject* Target,const EInteractMoment InteractMoment,const float TriggerTime);
+	void SecondaryInteractLogic(EInteractMoment InteractMoment, float TriggerTime);
+	bool CanSecondaryInteract(EInteractMoment InteractMoment);
+	void TriggerSecondaryInteractEvents(EInteractMoment InteractMoment, float TriggerTime);
+	void TriggerSecondaryInteractEventsOnObject(UObject* Target, EInteractMoment InteractMoment, float TriggerTime);
+	void TriggerSecondaryInteractEventsLocal(AActor* Target, EInteractMoment InteractMoment, float TriggerTime);
 
 	//Helpers
 	bool CanInteractWithWidget();
 	static void ConvertKeyToCharCode(const FKey& Key, bool& bHasKeyCode, uint32& KeyCode, bool& bHasCharCode, uint32& CharCode);
 	void GetRelatedComponentsToIgnoreInAutomaticHitTesting(TArray<UPrimitiveComponent*>& IgnorePrimitives) const;
-	FInteractableData GetContextData(const TEnumAsByte<EInteractMoment> Moment) const;
+	FInteractableData GetContextData(const EInteractMoment Moment) const;
 	bool IsInteractType(EInteractTriggerType InteractType, bool AndNone = true);
+	
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	FHitResult GetLastHitResult();
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	UPrimitiveComponent* GetHitComponent() const;
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	EInteractTriggerType GetCurrentInteractType() const;
 
 	//Global Helpers
-	bool ExceededHold() const;
+	bool HasExceededHold() const;
+	bool GetShouldTrace() const;
+
+	//Additional Functionality
+	UFUNCTION(BlueprintCallable)
+	void FreezeInteract();
+	UFUNCTION(BlueprintCallable)
+	void UnFreezeInteract();
+
+	UFUNCTION(BlueprintCallable)
+	void SwitchInteractSource(EInteractionSource NewInteractSource);
+
+	//Not Fully Built Out (Just a Concept)
+	bool RegisterInteract(int32& TriggerID);
+	bool UnRegisterInteract(UMETA(Ref) int32& TriggerID);
 
 #pragma region Widget Input
 	
@@ -318,9 +379,15 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Interaction")
 	bool bEnabled = true;
+
+	UPROPERTY(BlueprintReadOnly, Category="Interaction")
+	bool bFrozen = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Interaction")
+	bool bRequireLocalPawn = true;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Interaction")
-	float InteractRange = 200;
+	float InteractRange = 500;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Interaction")
 	float InteractTraceRadius = 10;
@@ -336,6 +403,11 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Interaction")
 	TEnumAsByte<ETraceTypeQuery> TraceChannel;
+
+	UPROPERTY(BlueprintReadOnly, Category="Interaction", meta=(ClampMin = "0", ExposeOnSpawn = true))
+	int32 VirtualUserIndex = 0;
+	static int VirtualUserIndexCount;
+	static bool CountScrub;
 	
 	UPROPERTY(BlueprintReadOnly, Category="Interaction", meta=(ClampMin = "0", UIMin = "0", UIMax = "9", ExposeOnSpawn = true))
 	int32 PointerIndex = 0;
@@ -351,6 +423,8 @@ protected:
 	FInteractableData ActiveInteractable;
 	UPROPERTY(BlueprintReadOnly)
 	EInteractTriggerType ActiveInteractType = EInteractTriggerType::None;
+	UPROPERTY(BlueprintReadOnly)
+	int32 OtherTriggerID = -1;
 	UPROPERTY(BlueprintReadOnly)
 	float ElapsedTriggerTime = 0;
 	UPROPERTY(BlueprintReadOnly)
@@ -371,12 +445,40 @@ protected:
 	
 #pragma  endregion
 
+#pragma region AutomaticInputBinding
+
+public:
+	
+	UFUNCTION(BlueprintCallable)
+	void SetPrimaryInteractInput(UInputAction* NewInputAction);
+
+	UFUNCTION()
+	void PrimaryInputActionStart(const FInputActionInstance& ActionInstance);
+	UFUNCTION()
+	void PrimaryInputActionTick(const FInputActionInstance& ActionInstance);
+	UFUNCTION()
+	void PrimaryInputActionEnd(const FInputActionInstance& ActionInstance);
+
+protected:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Interaction")
+	UInputAction* PrimaryInteractInputAction = nullptr;
+
+private:
+
+	//Bindings
+	TArray<FInputBindingHandle> PrimaryBindings {};
+
+#pragma endregion
+
 #pragma region Helpers
+protected:
 	
 	UFUNCTION(BlueprintCallable, meta = (ExpandEnumAsExecs = "InMoment"), Category = "Interact|Conversion")
 	static EInteractMoment ConvertToInteractMoment(EInteractMoment InMoment);
 	
 #pragma region Debug
+
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Interaction|Debugging")
 	bool bShowDebug = false;

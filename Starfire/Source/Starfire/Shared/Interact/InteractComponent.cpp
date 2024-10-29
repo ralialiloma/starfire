@@ -1,12 +1,19 @@
+// Copyright Phoenix Dawn Development LLC. All Rights Reserved.
+
+
 #include "InteractComponent.h"
+#include "EnhancedInputComponent.h"
 #include "InteractInterfaces.h"
 #include "Components/WidgetComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
-
-//TODO: Fix parent space interact
+#include "Net/UnrealNetwork.h"
 
 #define LOCTEXT_NAMESPACE "Interact"
+
+int UInteractComponent::VirtualUserIndexCount = 0;
+bool UInteractComponent::CountScrub = true;
+
 UInteractComponent::UInteractComponent(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -14,6 +21,41 @@ UInteractComponent::UInteractComponent(const FObjectInitializer& ObjectInitializ
 	PrimaryComponentTick.bTickEvenWhenPaused = true;
 	TraceChannel = UEngineTypes::ConvertToTraceType(ECC_Visibility);
 	bAutoActivate = true;
+}
+
+void UInteractComponent::Activate(bool bReset)
+{
+	Super::Activate(bReset);
+
+	if (GetOwner()->HasAuthority())
+	{
+		VirtualUserIndex = VirtualUserIndexCount;
+		VirtualUserIndexCount = (VirtualUserIndexCount + 1) % 8;
+	}
+	
+	// Only create another user in a real world. FindOrCreateVirtualUser changes focus
+	if (FSlateApplication::IsInitialized() && !GetWorld()->IsPreviewWorld())
+	{
+		if (!VirtualWidgetUser.IsValid())
+		{
+			VirtualWidgetUser = FSlateApplication::Get().FindOrCreateVirtualUser(VirtualUserIndex);
+		}
+	}
+}
+void UInteractComponent::Deactivate()
+{
+	Super::Deactivate();
+
+	VirtualUserIndexCount--;
+	
+	if (FSlateApplication::IsInitialized())
+	{
+		if (VirtualWidgetUser.IsValid())
+		{
+			FSlateApplication::Get().UnregisterUser(VirtualWidgetUser->GetUserIndex());
+			VirtualWidgetUser.Reset();
+		}
+	}
 }
 
 void UInteractComponent::BeginPlay()
@@ -25,7 +67,19 @@ void UInteractComponent::BeginPlay()
 
 void UInteractComponent::Initialize_Implementation()
 {
-	SetComponentTickEnabled(true);
+	if (bRequireLocalPawn)
+	{
+		if (OwningPawn->IsLocallyControlled())
+		{
+			EnableInteract();
+			SetComponentTickEnabled(true);
+		}
+		else
+		{
+			DisableInteract();
+			SetComponentTickEnabled(false);
+		}
+	}
 }
 
 void UInteractComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -45,12 +99,15 @@ void UInteractComponent::DisableInteract_Implementation()
 	bEnabled = false;
 }
 
+bool UInteractComponent::IsEnabled()
+{
+	return bEnabled;
+}
+
 void UInteractComponent::InteractLogic()
 {
-	if (!bEnabled)
-	{
+	if (!GetShouldTrace())
 		return;
-	}
 
 	FInteractTraceResult HitResult;
 	FInteractableData NewInteract = GetNewInteractable(HitResult);
@@ -61,25 +118,25 @@ void UInteractComponent::InteractLogic()
 
 	switch (CurrentInteractable.GetDifference(NewInteract))
 	{
-	case FInteractableData::Same:
-		break;
-	case FInteractableData::DifferentActor:
-		UnhighlightActorLogic();
-		HighlightActorLogic(NewInteract);
-		break;
-	case FInteractableData::DifferentComponent:
-		UnhighlightComponentLogic();
-		HighlightComponentLogic(NewInteract);
-		break;
-	case FInteractableData::DifferentType:
-		if (CurrentInteractable.HitType == Pinpoint)
-		{
+		case FInteractableData::Same:
+			break;
+		case FInteractableData::DifferentActor:
+			UnhighlightActorLogic();
+			HighlightActorLogic(NewInteract);
+			break;
+		case FInteractableData::DifferentComponent:
 			UnhighlightComponentLogic();
 			HighlightComponentLogic(NewInteract);
-		}
-		CurrentInteractable.HitType = NewInteract.HitType;
-		OnHighlightTypeChange.Broadcast(CurrentInteractable.HitType);
-		break;
+			break;
+		case FInteractableData::DifferentType:
+			if (CurrentInteractable.HitType == Pinpoint)
+			{
+				UnhighlightComponentLogic();
+				HighlightComponentLogic(NewInteract);
+			}
+			CurrentInteractable.HitType = NewInteract.HitType;
+			OnHighlightTypeChange.Broadcast(CurrentInteractable.HitType);
+			break;
 	}
 
 	if (PreviousWidgetHitData.HitWidgetComponent || CurrentInteractable.WidgetHitData.HitWidgetComponent)
@@ -351,6 +408,7 @@ void UInteractComponent::HighlightActorLogic(const FInteractableData& NewHighlig
 		TriggerHighlightEvents(CurrentInteractable.HitActor, true, CurrentInteractable.IsPinpoint());
 		HighlightComponentLogic(CurrentInteractable);
 		OnHighlightTypeChange.Broadcast(CurrentInteractable.HitType);
+		OnActorHighlightChange.Broadcast(CurrentInteractable.HitActor, this, OwningPawn);
 	}
 }
 void UInteractComponent::UnhighlightActorLogic()
@@ -361,16 +419,17 @@ void UInteractComponent::UnhighlightActorLogic()
 
 		if (ActiveInteractType == EInteractTriggerType::Primary)
 		{
-			PrimaryInteractLogic(End,ElapsedTriggerTime);
+			PrimaryInteractLogic(EInteractMoment::End,ElapsedTriggerTime);
 		}
 		if (ActiveInteractType == EInteractTriggerType::Secondary)
 		{
-			SecondaryInteractLogic(End,ElapsedTriggerTime);
+			SecondaryInteractLogic(EInteractMoment::End,ElapsedTriggerTime);
 		}
 		
 		UnhighlightComponentLogic();
 		TriggerHighlightEvents(CurrentInteractable.HitActor, false);
 		OnHighlightTypeChange.Broadcast(EInteractTraceHitType::NoHit);
+		OnActorHighlightChange.Broadcast(nullptr, this, OwningPawn);
 		
 		CurrentInteractable = {};
 	}
@@ -383,6 +442,7 @@ void UInteractComponent::HighlightComponentLogic(const FInteractableData& NewHig
 		CurrentInteractable.HitType = NewHighlight.HitType;
 		TriggerHighlightEvents(CurrentInteractable.HitComponent, true, CurrentInteractable.IsPinpoint());
 		OnHighlightTypeChange.Broadcast(CurrentInteractable.HitType);
+		OnComponentHighlightChange.Broadcast(NewHighlight.HitComponent, this, OwningPawn);
 	}
 }
 void UInteractComponent::UnhighlightComponentLogic()
@@ -392,6 +452,7 @@ void UInteractComponent::UnhighlightComponentLogic()
 		TriggerHighlightEvents(CurrentInteractable.HitComponent, false);
 		CurrentInteractable.HitComponent = nullptr;
 		OnHighlightTypeChange.Broadcast(CurrentInteractable.HitType);
+		OnComponentHighlightChange.Broadcast(nullptr, this, OwningPawn);
 	}
 }
 
@@ -441,7 +502,7 @@ bool UInteractComponent::CanPrimaryInteract(const EInteractMoment InteractMoment
 	return true;
 }
 
-void UInteractComponent::PrimaryInteractLogic(const EInteractMoment InteractMoment,const float TriggerTime)
+void UInteractComponent::PrimaryInteractLogic(const EInteractMoment InteractMoment, const float TriggerTime)
 {
 	if (!CanPrimaryInteract(InteractMoment))
 	{
@@ -450,7 +511,7 @@ void UInteractComponent::PrimaryInteractLogic(const EInteractMoment InteractMome
 	
 	ElapsedTriggerTime = TriggerTime;
 
-	if (InteractMoment == Start)
+	if (InteractMoment == EInteractMoment::Start && !bFrozen)
 	{
 		ActiveInteractable = CurrentInteractable;
 		ActiveInteractType = EInteractTriggerType::Primary;
@@ -458,8 +519,8 @@ void UInteractComponent::PrimaryInteractLogic(const EInteractMoment InteractMome
 	}
 
 	TriggerPrimaryInteractEvents(InteractMoment, TriggerTime);
-
-	if (InteractMoment == End)
+	
+	if (InteractMoment == EInteractMoment::End && !bFrozen)
 	{
 		ActiveInteractable = {};
 		ActiveInteractType = EInteractTriggerType::None;
@@ -469,29 +530,36 @@ void UInteractComponent::PrimaryInteractLogic(const EInteractMoment InteractMome
 void UInteractComponent::TriggerPrimaryInteractEvents(const EInteractMoment InteractMoment, const float TriggerTime)
 {
 	const FInteractableData Interactable = ActiveInteractable;
-	
+
+	TriggerPrimaryInteractEventsLocal(Interactable.HitActor, InteractMoment, TriggerTime);
 	TriggerPrimaryInteractEventsOnObject(Interactable.HitActor, InteractMoment, TriggerTime);
-	if (Interactable.HitComponent)
-		TriggerPrimaryInteractEventsOnObject(Interactable.HitComponent, InteractMoment, TriggerTime);
-	
+	TriggerPrimaryInteractEventsOnObject(Interactable.HitComponent, InteractMoment, TriggerTime);
+
 	if (InteractMoment != EInteractMoment::Tick && Interactable.HitType == Widget)
+	{
 		InteractPointer(InteractMoment, true);
+	}
+
+	if (HasExceededHold())
+	{
+		TriggeredHold = true;
+	}
 }
 
-void UInteractComponent::TriggerPrimaryInteractEventsOnObject(UObject* Target,const EInteractMoment InteractMoment, const float TriggerTime)
+void UInteractComponent::TriggerPrimaryInteractEventsOnObject(UObject* Target, const EInteractMoment InteractMoment, const float TriggerTime)
 {
-	if (!Target->Implements<UPrimaryInteract>())
+	if (!Target || !Target->Implements<UPrimaryInteract>())
 		return;
 
 	if (IPrimaryInteract::Execute_InteractDisabled(Target))
 		return;
 
 	//Debug
-	FName Key = static_cast<FName>(Target->GetName()+UEnum::GetValueAsString(InteractMoment));
+	// FName Key = static_cast<FName>(Target->GetName()+UEnum::GetValueAsString(InteractMoment) + (bServer ? "Server" : "Client"));
 
 	switch (InteractMoment)
 	{
-	case Start:
+	case EInteractMoment::Start:
 		IPrimaryInteract::Execute_OnInteractStart(Target, this, OwningPawn);
 		break;
 	case EInteractMoment::Tick:
@@ -502,15 +570,43 @@ void UInteractComponent::TriggerPrimaryInteractEventsOnObject(UObject* Target,co
 			float HoldAlpha = FMath::Clamp(TriggerTime/HoldTime,0,1);
 			IPrimaryInteract::Execute_OnInteractHoldTick(Target, this, OwningPawn, HoldAlpha);
 			
-			if (HoldAlpha >= 1)
-			{
+			if (HasExceededHold())
 				IPrimaryInteract::Execute_OnInteractHold(Target, this, OwningPawn);
-				TriggeredHold = true;
-			}
 		}
 		break;
-	case End:
+	case EInteractMoment::End:
 		IPrimaryInteract::Execute_OnInteractEnd(Target, this, OwningPawn, TriggerTime);
+		break;
+	}
+}
+
+void UInteractComponent::TriggerPrimaryInteractEventsLocal(AActor* Target, const EInteractMoment InteractMoment, const float TriggerTime)
+{
+	if (!Target)
+		return;
+	
+	if (Target->Implements<UPrimaryInteract>() && IPrimaryInteract::Execute_InteractDisabled(Target))
+		return;
+
+	switch (InteractMoment)
+	{
+	case EInteractMoment::Start:
+		OnPrimaryInteractStartEvent.Broadcast(Cast<AActor>(Target), this, OwningPawn);
+		break;
+	case EInteractMoment::Tick:
+		OnPrimaryInteractTickEvent.Broadcast(Cast<AActor>(Target), this, OwningPawn, TriggerTime);
+
+		if (!TriggeredHold)
+		{
+			float HoldAlpha = FMath::Clamp(TriggerTime/HoldTime,0,1);
+			OnPrimaryInteractHoldTickEvent.Broadcast(Cast<AActor>(Target), this, OwningPawn, TriggerTime);
+			
+			if (HasExceededHold())
+				OnPrimaryInteractHoldEvent.Broadcast(Cast<AActor>(Target), this, OwningPawn);
+		}
+		break;
+	case EInteractMoment::End:
+		OnPrimaryInteractEndEvent.Broadcast(Cast<AActor>(Target), this, OwningPawn, TriggerTime);
 		break;
 	}
 }
@@ -519,7 +615,7 @@ void UInteractComponent::InteractPointer(EInteractMoment InteractMoment, bool Pr
 {
 	FKey PrimaryPointer = Primary ? EKeys::LeftMouseButton : EKeys::RightMouseButton;
 
-	if (InteractMoment == Start)
+	if (InteractMoment == EInteractMoment::Start)
 	{
 		if (!CanInteractWithWidget())
 		{
@@ -583,7 +679,7 @@ void UInteractComponent::InteractPointer(EInteractMoment InteractMoment, bool Pr
 		}
 		FReply Reply = FSlateApplication::Get().RoutePointerDownEvent(WidgetPathUnderFinger, PointerEvent);
 	}
-	else if (InteractMoment == End)
+	else if (InteractMoment == EInteractMoment::End)
 	{
 		if ( !CanInteractWithWidget() )
 		{
@@ -646,15 +742,19 @@ void UInteractComponent::InteractPointer(EInteractMoment InteractMoment, bool Pr
 		}
 		
 		FReply Reply = FSlateApplication::Get().RoutePointerUpEvent(WidgetPathUnderFinger, PointerEvent);
-		
-		FWidgetPath EmptyWidgetPath;
-		FSlateApplication::Get().RoutePointerMoveEvent(EmptyWidgetPath, PointerEvent, false);
+
+		if (!OwningPawn->IsLocallyControlled() && OwningPawn->HasAuthority())
+		{
+			FWidgetPath EmptyWidgetPath;
+			FSlateApplication::Get().RoutePointerMoveEvent(EmptyWidgetPath, PointerEvent, false);
+		}
 
 		FSlateApplication::Get().RoutePointerUpEvent(WidgetPathUnderFinger, PointerEvent);
 	}
 }
 
-void UInteractComponent::SecondaryInteractLogic(const EInteractMoment InteractMoment, const float TriggerTime)
+void UInteractComponent::SecondaryInteractLogic(const EInteractMoment InteractMoment,
+                                                const float TriggerTime)
 {
 	if (!CanSecondaryInteract(InteractMoment))
 	{
@@ -663,7 +763,7 @@ void UInteractComponent::SecondaryInteractLogic(const EInteractMoment InteractMo
 	
 	ElapsedTriggerTime = TriggerTime;
 
-	if (InteractMoment == Start)
+	if (InteractMoment == EInteractMoment::Start)
 	{
 		ActiveInteractable = CurrentInteractable;
 		ActiveInteractType = EInteractTriggerType::Secondary;
@@ -672,7 +772,7 @@ void UInteractComponent::SecondaryInteractLogic(const EInteractMoment InteractMo
 
 	TriggerSecondaryInteractEvents(InteractMoment, TriggerTime);
 
-	if (InteractMoment == End)
+	if (InteractMoment == EInteractMoment::End)
 	{
 		ActiveInteractable = {};
 		ActiveInteractType = EInteractTriggerType::None;
@@ -710,53 +810,91 @@ bool UInteractComponent::CanSecondaryInteract(const EInteractMoment InteractMome
 	return true;
 }
 
-void UInteractComponent::TriggerSecondaryInteractEvents(const EInteractMoment InteractMoment, const float TriggerTime)
+void UInteractComponent::TriggerSecondaryInteractEvents(const EInteractMoment InteractMoment,
+                                                        const float TriggerTime)
 {
 	const FInteractableData Interactable = ActiveInteractable;
 	
+	TriggerSecondaryInteractEventsLocal(Interactable.HitActor, InteractMoment, TriggerTime);
 	TriggerSecondaryInteractEventsOnObject(Interactable.HitActor, InteractMoment, TriggerTime);
-	if (Interactable.HitComponent)
-		TriggerSecondaryInteractEventsOnObject(Interactable.HitComponent, InteractMoment, TriggerTime);
-		
+	TriggerSecondaryInteractEventsOnObject(Interactable.HitComponent, InteractMoment, TriggerTime);
+	
 	if (InteractMoment != EInteractMoment::Tick && Interactable.HitType == Widget)
+	{
 		InteractPointer(InteractMoment, false);
+	}
+
+	if (HasExceededHold())
+	{
+		TriggeredHold = true;
+	}
 }
 
-void UInteractComponent::TriggerSecondaryInteractEventsOnObject(UObject* Target, const EInteractMoment InteractMoment, const float TriggerTime)
+void UInteractComponent::TriggerSecondaryInteractEventsOnObject(UObject* Target, const EInteractMoment InteractMoment,
+                                                                const float TriggerTime)
 {
-	if (!Target->Implements<USecondaryInteract>())
+	if (!Target || !Target->Implements<USecondaryInteract>())
 		return;
 	
 	if (ISecondaryInteract::Execute_SecondaryInteractDisabled(Target))
 		return;
 	
 	//Debug
-	FName Key = static_cast<FName>(Target->GetName()+UEnum::GetValueAsString(InteractMoment));
-	DebugString("Secondary Interact " + UEnum::GetValueAsString(InteractMoment) + ": " + Target->GetName(), Key);
+	// FName Key = static_cast<FName>(Target->GetName()+UEnum::GetValueAsString(InteractMoment) + (bServer ? "Server" : "Client"));
+	// DebugString("Secondary Interact " + UEnum::GetValueAsString(InteractMoment) + ": " + Target->GetName(), Key);
 
 	switch (InteractMoment)
 	{
-	case Start:
-		ISecondaryInteract::Execute_OnSecondaryInteractStart(Target, this, OwningPawn);
-		break;
-	case EInteractMoment::Tick:
-		ISecondaryInteract::Execute_OnSecondaryInteractTick(Target, this, OwningPawn, TriggerTime);
-		
-		if (!TriggeredHold)
-		{
-			float HoldAlpha = FMath::Clamp(TriggerTime/HoldTime,0,1);
-			ISecondaryInteract::Execute_OnSecondaryInteractHoldTick(Target, this, OwningPawn, HoldAlpha);
+		case EInteractMoment::Start:
+			ISecondaryInteract::Execute_OnSecondaryInteractStart(Target, this, OwningPawn);
+			break;
+		case EInteractMoment::Tick:
+			ISecondaryInteract::Execute_OnSecondaryInteractTick(Target, this, OwningPawn, TriggerTime);
 			
-			if (HoldAlpha >= 1)
+			if (!TriggeredHold)
 			{
-				ISecondaryInteract::Execute_OnSecondaryInteractHold(Target, this, OwningPawn);
-				TriggeredHold = true;
+				float HoldAlpha = FMath::Clamp(TriggerTime/HoldTime,0,1);
+				ISecondaryInteract::Execute_OnSecondaryInteractHoldTick(Target, this, OwningPawn, HoldAlpha);
+				
+				if (HoldAlpha >= 1)
+					ISecondaryInteract::Execute_OnSecondaryInteractHold(Target, this, OwningPawn);
 			}
-		}
-		break;
-	case End:
-		ISecondaryInteract::Execute_OnSecondaryInteractEnd(Target, this, OwningPawn, TriggerTime);
-		break;
+			break;
+		case EInteractMoment::End:
+			ISecondaryInteract::Execute_OnSecondaryInteractEnd(Target, this, OwningPawn, TriggerTime);
+			break;
+	}
+}
+
+void UInteractComponent::TriggerSecondaryInteractEventsLocal(AActor* Target, const EInteractMoment InteractMoment,
+                                                             const float TriggerTime)
+{
+	if (!Target)
+		return;
+	
+	if (Target->Implements<USecondaryInteract>() && ISecondaryInteract::Execute_SecondaryInteractDisabled(Target))
+		return;
+
+	switch (InteractMoment)
+	{
+		case EInteractMoment::Start:
+			OnSecondaryInteractStartEvent.Broadcast(Cast<AActor>(Target), this, OwningPawn);
+			break;
+		case EInteractMoment::Tick:
+			OnSecondaryInteractTickEvent.Broadcast(Cast<AActor>(Target), this, OwningPawn, TriggerTime);
+
+			if (!TriggeredHold)
+			{
+				float HoldAlpha = FMath::Clamp(TriggerTime/HoldTime,0,1);
+				OnSecondaryInteractHoldTickEvent.Broadcast(Cast<AActor>(Target), this, OwningPawn, TriggerTime);
+				
+				if (HasExceededHold())
+					OnSecondaryInteractHoldEvent.Broadcast(Cast<AActor>(Target), this, OwningPawn);
+			}
+			break;
+		case EInteractMoment::End:
+			OnSecondaryInteractEndEvent.Broadcast(Cast<AActor>(Target), this, OwningPawn, TriggerTime);
+			break;
 	}
 }
 
@@ -788,9 +926,9 @@ void UInteractComponent::GetRelatedComponentsToIgnoreInAutomaticHitTesting(TArra
 	}
 }
 
-FInteractableData UInteractComponent::GetContextData(const TEnumAsByte<EInteractMoment> Moment) const
+FInteractableData UInteractComponent::GetContextData(const EInteractMoment Moment) const
 {
-	if (Moment == Start)
+	if (Moment == EInteractMoment::Start)
 	{
 		return  CurrentInteractable;
 	}
@@ -811,6 +949,16 @@ FHitResult UInteractComponent::GetLastHitResult()
 	return  CurrentHitResult;
 }
 
+UPrimitiveComponent* UInteractComponent::GetHitComponent() const
+{
+	return CurrentHitResult.GetComponent();
+}
+
+EInteractTriggerType UInteractComponent::GetCurrentInteractType() const
+{
+	return ActiveInteractType;
+}
+
 #pragma region WidgetInteraction
 bool UInteractComponent::CanInteractWithWidget()
 {
@@ -829,9 +977,89 @@ void UInteractComponent::ClearHighlight()
 	UnhighlightActorLogic();
 }
 
-bool UInteractComponent::ExceededHold() const
+bool UInteractComponent::HasExceededHold() const
 {
 	return ElapsedTriggerTime > HoldTime;
+}
+
+bool UInteractComponent::GetShouldTrace() const
+{
+	return bEnabled && !bFrozen;
+}
+
+void UInteractComponent::FreezeInteract()
+{
+	bFrozen = true;
+}
+
+void UInteractComponent::UnFreezeInteract()
+{
+	bFrozen = false;
+}
+
+void UInteractComponent::SwitchInteractSource(EInteractionSource NewInteractSource)
+{
+	InteractSource = NewInteractSource;
+}
+
+void UInteractComponent::SetPrimaryInteractInput(UInputAction* NewInputAction)
+{
+	if (!NewInputAction || !OwningPawn)
+		return;
+
+	if (APlayerController* PlayerController = Cast<APlayerController>(OwningPawn->GetController()))
+	{
+		if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerController->InputComponent))
+		{
+			for (auto& Binding : PrimaryBindings)
+				EnhancedInputComponent->RemoveBinding(Binding);
+			PrimaryBindings.Empty();
+			
+			PrimaryBindings.Add(EnhancedInputComponent->BindAction(NewInputAction, ETriggerEvent::Started, this, &UInteractComponent::PrimaryInputActionStart));
+			PrimaryBindings.Add(EnhancedInputComponent->BindAction(NewInputAction, ETriggerEvent::Triggered, this, &UInteractComponent::PrimaryInputActionTick));
+			PrimaryBindings.Add(EnhancedInputComponent->BindAction(NewInputAction, ETriggerEvent::Completed, this, &UInteractComponent::PrimaryInputActionEnd));
+
+			PrimaryInteractInputAction = NewInputAction;
+		}
+	}
+}
+
+void UInteractComponent::PrimaryInputActionStart(const FInputActionInstance& ActionInstance)
+{
+	PrimaryInteractLogic(EInteractMoment::Start, 0);
+}
+
+void UInteractComponent::PrimaryInputActionTick(const FInputActionInstance& ActionInstance)
+{
+	PrimaryInteractLogic(EInteractMoment::Tick, ActionInstance.GetTriggeredTime());
+}
+
+void UInteractComponent::PrimaryInputActionEnd(const FInputActionInstance& ActionInstance)
+{
+	PrimaryInteractLogic(EInteractMoment::End, ActionInstance.GetTriggeredTime());
+}
+
+bool UInteractComponent::RegisterInteract(int32& TriggerID)
+{
+	if (!IsInteractType(EInteractTriggerType::None))
+	{
+		TriggerID = -1;
+		return false;
+	}
+
+	ActiveInteractType = EInteractTriggerType::Other;
+	OtherTriggerID = TriggerID = FMath::Rand();
+	return true;
+}
+
+bool UInteractComponent::UnRegisterInteract(int32& TriggerID)
+{
+	if (OtherTriggerID == -1 || OtherTriggerID != TriggerID)
+		return false;
+
+	ActiveInteractType = EInteractTriggerType::None;
+	OtherTriggerID = TriggerID = -1;
+	return true;
 }
 
 bool UInteractComponent::PressKey(FKey Key, bool bRepeat)
