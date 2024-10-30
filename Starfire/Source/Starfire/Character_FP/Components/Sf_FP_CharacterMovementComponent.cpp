@@ -8,15 +8,25 @@
 #include "DrawDebugHelpers.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
-#include "Starfire/Utility/Debug/DebugSubsystem.h"
+#include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
 
 #pragma region HelperMacros
 #if 1
-float MacroDuration = 20.f;
-#define PRINT(x)  if (UDebugSubsystem::GetMovementDebug(EDebugType::Print)) GEngine->AddOnScreenDebugMessage(-1, MacroDuration ? MacroDuration : -1.f, FColor::Yellow, x); if (UDebugSubsystem::GetMovementDebug(EDebugType::Log)) UE_LOG(SF_FP_CharacterMovement, Log, TEXT("%s"), *x);
-#define POINT(x, c) if (UDebugSubsystem::GetMovementDebug(EDebugType::Visual)) DrawDebugPoint(GetWorld(), x, 10, c, !MacroDuration, MacroDuration);
-#define LINE(x1, x2, c) if (UDebugSubsystem::GetMovementDebug(EDebugType::Visual)) DrawDebugLine(GetWorld(), x1, x2, c, !MacroDuration, MacroDuration);
-#define CAPSULE(x, c) if (UDebugSubsystem::GetMovementDebug(EDebugType::Visual)) DrawDebugCapsule(GetWorld(), x, CharacterOwner->GetCapsuleComponent()->GetScaledCapsuleHalfHeight(), CharacterOwner->GetCapsuleComponent()->GetScaledCapsuleRadius(), FQuat::Identity, c, !MacroDuration, MacroDuration);
+float MacroDuration = 5.f;
+#define PRINT(x)  \
+	if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::FP::Movement::Name, EDebugType::Print)) \
+		GEngine->AddOnScreenDebugMessage(-1, MacroDuration ? MacroDuration : -1.f, FColor::Yellow, x); \
+	if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::FP::Movement::Name,EDebugType::Log)) \
+		UE_LOG(SF_FP_CharacterMovement, Log, TEXT("%s"), *x);
+#define POINT(x, c)  \
+	if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::FP::Movement::Name, EDebugType::Visual)) \
+		DrawDebugPoint(GetWorld(), x, 10, c, !MacroDuration, MacroDuration);
+#define LINE(x1, x2, c) \
+	if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::FP::Movement::Name, EDebugType::Visual)) \
+		DrawDebugLine(GetWorld(), x1, x2, c, !MacroDuration, MacroDuration);
+#define CAPSULE(x, c) \
+	if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::FP::Movement::Name, EDebugType::Visual)) \
+		DrawDebugCapsule(GetWorld(), x, CharacterOwner->GetCapsuleComponent()->GetScaledCapsuleHalfHeight(), CharacterOwner->GetCapsuleComponent()->GetScaledCapsuleRadius(), FQuat::Identity, c, !MacroDuration, MacroDuration);
 #else
 #define SLOG(x)
 #define POINT(x, c)
@@ -226,7 +236,7 @@ void USf_FP_CharacterMovementComponent::SetMovementMode(EMovementMode NewMovemen
 		DashCount = 0;
 
 		//Debug Message
-		if (UDebugSubsystem::ShouldDebug(Sf_GameplayTags::Debug::FP::Movement::Dash,EDebugType::Print))
+		if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::FP::Movement::Dash,EDebugType::Print))
 		{
 			FString EnumName ="";
 			if (NewMovementMode == MOVE_Custom)
@@ -498,9 +508,14 @@ void USf_FP_CharacterMovementComponent::JumpOffWall()
 	}
 }
 
+bool USf_FP_CharacterMovementComponent::CanMantle() const
+{
+	return (IsMovementMode(MOVE_Walking) && !IsCrouching() || IsMovementMode(MOVE_Falling) || IsCustomMovementMode(CMOVE_Dash));
+}
+
 bool USf_FP_CharacterMovementComponent::TryMantle()
 {
-	if (!(IsMovementMode(MOVE_Walking) && !IsCrouching() || IsMovementMode(MOVE_Falling)))
+	if (!CanMantle())
 	{
 		PRINT("Can't Mantle.");
 		return false;

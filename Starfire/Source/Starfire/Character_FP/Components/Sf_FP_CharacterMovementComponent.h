@@ -164,6 +164,7 @@ private:
 	
 #pragma region Functions
 	//Mantle
+	bool CanMantle() const;
 	bool TryMantle();
 	void PhysMantle(float deltaTime, int32 Iterations);
 #pragma endregion

@@ -4,7 +4,7 @@
 #include "Starfire/Character_TP/Sf_TP_Character.h"
 #include "Starfire/Utility/CollisionData.h"
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
-#include "Starfire/Utility/Debug/DebugSubsystem.h"
+#include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
 
 void UCF_Cover::Initialize(ASf_TP_Character* Holder)
 {
@@ -23,7 +23,7 @@ bool UCF_Cover::EnterCover()
 	const bool bInHighCover = !CanBeHitByPlayer(MinCoverHeight);
 	if (bInHighCover)
 	{
-		if (UDebugSubsystem::ShouldDebug(Sf_GameplayTags::Debug::TP::CharacterFeatures::Cover,EDebugType::Print))
+		if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::TP::CharacterFeatures::Cover,EDebugType::Print))
 			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Green, "Character is in high cover");
 		bIsInHighCoverState = true;
 		bIsInLowCoverState = false;
@@ -33,7 +33,7 @@ bool UCF_Cover::EnterCover()
 	const bool bInLowCover = !CanBeHitByPlayer(MaxCrouchCoverHeight+0.001f);
 	if (bInLowCover)
 	{
-		if (UDebugSubsystem::ShouldDebug(Sf_GameplayTags::Debug::TP::CharacterFeatures::Cover,EDebugType::Print))
+		if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::TP::CharacterFeatures::Cover,EDebugType::Print))
 			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Green, "Character is in low cover");
 		GetOwningCharacter()->GetSf_TP_CharacterMovement()->bWantsToCrouch = true;
 		bIsInLowCoverState = true;
@@ -41,7 +41,7 @@ bool UCF_Cover::EnterCover()
 		return true;
 	}
 
-	if (UDebugSubsystem::ShouldDebug(Sf_GameplayTags::Debug::TP::CharacterFeatures::Cover,EDebugType::Print))
+	if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::TP::CharacterFeatures::Cover,EDebugType::Print))
 		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, "Failed to enter cover");
 	ExitCover();
 	bIsInHighCoverState = false;
@@ -97,7 +97,7 @@ bool UCF_Cover::CanBeHitByPlayer(FVector LocationToVerify) const
 	FVector End = USf_FunctionLibrary::GetPlayerLocation(this);
 	FHitResult HitResult;
 	TArray<AActor*> ActorsToIgnore{};
-	bool ShowDebug = UDebugSubsystem::ShouldDebug(Sf_GameplayTags::Debug::TP::CharacterFeatures::Cover,EDebugType::Visual);
+	bool ShowDebug = UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::TP::CharacterFeatures::Cover,EDebugType::Visual);
 
 	ETraceTypeQuery TraceType = UEngineTypes::ConvertToTraceType(EEC_BULLETTRACES);
 

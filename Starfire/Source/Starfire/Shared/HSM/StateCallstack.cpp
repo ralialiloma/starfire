@@ -3,7 +3,7 @@
 
 #include "StateCallstack.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "Starfire/Utility/Debug/DebugSubsystem.h"
+#include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
 #include "VisualLogger/VisualLoggerTypes.h"
 
 
@@ -56,7 +56,7 @@ bool UStateCallstack::TryAddState(TSubclassOf<UBaseState> BaseStateClass)
 	
 	RunActiveStateFeatures(CreatedState,Enter, Data);
 
-	if (UDebugSubsystem::ShouldDebug(Sf_GameplayTags::Debug::FP::HSM::Name,EDebugType::Log))
+	if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::FP::HSM::Name,EDebugType::Log))
 		UE_LOG(SF_StateCallStack, Log, TEXT("Added New State %s"),*BaseStateClass->GetName())
 
 	return true;
@@ -133,7 +133,7 @@ bool UStateCallstack::TryRemoveState(TSubclassOf<UBaseState> BaseStateClass)
 		if (State->IsA(BaseStateClass))
 		{
 			ActiveStatesByPriority.Remove(State);
-			if (UDebugSubsystem::ShouldDebug(Sf_GameplayTags::Debug::FP::HSM::Name,EDebugType::Log))
+			if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::FP::HSM::Name,EDebugType::Log))
 				UE_LOG(SF_StateCallStack, Log, TEXT("Removed State %s"),*BaseStateClass->GetName())
 			//CurrentActiveFeatures = GetAllActiveFeatures();
 			NotifyFeatures();
@@ -213,7 +213,7 @@ void UStateCallstack::RunCallStackByInputAction(UInputAction* InputAction, ECall
 			UClass* SuperClass =  Feature->GetClass()->GetSuperClass();
 			RunCallStackByFeature(SuperClass,CallInput,Data);
 
-			if (UDebugSubsystem::ShouldDebug(Sf_GameplayTags::Debug::FP::HSM::Name,EDebugType::Log))
+			if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::FP::HSM::Name,EDebugType::Log))
 				UE_LOG(SF_StateCallStack,Log , TEXT("Run Feature %s"),*SuperClass->GetName())
 		}
 	}

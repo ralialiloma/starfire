@@ -4,13 +4,13 @@
 #include "SF_CharacterStateMachine.h"
 #include "GameFramework/Character.h"
 #include "Starfire/Character_FP/Sf_FP_Character.h"
-#include "Starfire/Utility/Debug/DebugSubsystem.h"
+#include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
 
 
 
 USf_CharacterStateMachine::USf_CharacterStateMachine(const FObjectInitializer& ObjectInitializer): StateCallstack(nullptr),
-														StateDefinitionDT(nullptr),
-                                                        OwningCharacter(nullptr)
+                                                                                                   StateDefinitionDT(nullptr),
+                                                                                                   OwningCharacter(nullptr)
 {
 	PrimaryComponentTick.bCanEverTick = false;
 	bWantsInitializeComponent  = true;
@@ -62,7 +62,7 @@ void USf_CharacterStateMachine::BeginPlay()
 void USf_CharacterStateMachine::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	if (UDebugSubsystem::ShouldDebug(Sf_GameplayTags::Debug::FP::HSM::Name,EDebugType::Print) && IsValid(StateCallstack))
+	if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::FP::HSM::Name,EDebugType::Print) && IsValid(StateCallstack))
 	{
 		StateCallstack->DisplayAllActiveStates();
 	}

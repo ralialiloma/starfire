@@ -10,7 +10,7 @@
 #include "Starfire/Animation/Sf_AnimDataController.h"
 
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
-#include "Starfire/Utility/Debug/DebugSubsystem.h"
+#include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
 
 
 AWeaponBase::AWeaponBase(const FObjectInitializer& ObjectInitializer)
@@ -72,7 +72,7 @@ bool AWeaponBase::Fire(const EInputSignalType InputSignal, EFireType FireType, F
 	
 	if (!CanFire(InputSignal,FireType,OutFireBlock))
 	{
-		if (UDebugSubsystem::ShouldDebug(Sf_GameplayTags::Debug::Weapon::FireBlocks,EDebugType::Print))
+		if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::Weapon::FireBlocks,EDebugType::Print))
 		{
 			const FString FireBlockString = USf_FunctionLibrary::GetEnumAsString<EFireBlock>(OutFireBlock);
 			GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Green, "Could not fire due to "+FireBlockString);
@@ -103,7 +103,7 @@ void AWeaponBase::FireTraces(FHitResult& OutHitResult)
 
 		//Debug
 		const EDrawDebugTrace::Type DebugType =
-			UDebugSubsystem::ShouldDebug(Sf_GameplayTags::Debug::Weapon::Name,EDebugType::Visual) ? EDrawDebugTrace::ForDuration : EDrawDebugTrace::None;
+			UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::Weapon::Name,EDebugType::Visual) ? EDrawDebugTrace::ForDuration : EDrawDebugTrace::None;
 		FColor TraceColor = USf_FunctionLibrary::BoolToColor(bIsAiming);
 
 		//Ignore
@@ -207,7 +207,7 @@ void AWeaponBase::MeleeTraces()
 	FMeleeInfo MeleeInfo =  IWeaponOwner::Execute_GetMeleeInfo(WeaponOwner);
 	
 	//Draw Debug
-	if(UDebugSubsystem::ShouldDebug(Sf_GameplayTags::Debug::Weapon::Name,EDebugType::Visual))
+	if(UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::Weapon::Name,EDebugType::Visual))
 	{
 		DrawDebugBox(
 			GetWorld(),
@@ -267,7 +267,7 @@ void AWeaponBase::ApplyMelee(AActor* ActorToApplyOn, FVector Start, FVector End,
 		WeaponConfig.TraceTypeQuery,
 		false,
 		TArray<AActor*>{this,WeaponOwner},
-		UDebugSubsystem::ShouldDebug(Sf_GameplayTags::Debug::Weapon::Name,EDebugType::Visual)?EDrawDebugTrace::Persistent:EDrawDebugTrace::None,
+		UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::Weapon::Name,EDebugType::Visual)?EDrawDebugTrace::Persistent:EDrawDebugTrace::None,
 		HitResult,
 		true,
 		FLinearColor::Blue,

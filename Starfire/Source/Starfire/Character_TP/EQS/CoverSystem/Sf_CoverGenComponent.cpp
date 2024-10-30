@@ -4,7 +4,7 @@
 #include "EnvironmentQuery/EnvQueryManager.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Starfire/Utility/AsyncUtility.h"
-#include "Starfire/Utility/Debug/DebugSubsystem.h"
+#include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
 
 
 USf_CoverGenComponent::USf_CoverGenComponent(): CoverEnvQuery(nullptr), CoverQueryInstance(nullptr)
@@ -112,7 +112,7 @@ const FEnvQueryResult* USf_CoverGenComponent::GetQueryResult() const
 
 void USf_CoverGenComponent::DebugCoverLocations() const
 {
-	if (!UDebugSubsystem::ShouldDebug(Sf_GameplayTags::Debug::TP::EQS::CoverLocation,EDebugType::Visual))
+	if (!UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::TP::EQS::CoverLocation,EDebugType::Visual))
 		return;
 	
 	if (!IsValid(CoverQueryInstance))
@@ -128,7 +128,7 @@ void USf_CoverGenComponent::DebugCoverLocations() const
 
 void USf_CoverGenComponent::DebugPeakLocations() const
 {
-	if (!UDebugSubsystem::ShouldDebug(Sf_GameplayTags::Debug::TP::EQS::PeakLocation,EDebugType::Visual))
+	if (!UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::TP::EQS::PeakLocation,EDebugType::Visual))
 		return;
 	
 	if (!IsValid(CoverQueryInstance))

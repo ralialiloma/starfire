@@ -5,7 +5,7 @@
 #include "Starfire/Shared/Weapon/StructsAndEnums/WeaponConfig.h"
 #include "Starfire/Utility/AsyncUtility.h"
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
-#include "Starfire/Utility/Debug/DebugSubsystem.h"
+#include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
 
 
 
@@ -30,7 +30,7 @@ bool UCF_Combat::OtherNPCWouldBeHit()
 	FVector End = ForwardVector*(WeaponRange+0.01f);
 	FHitResult HitResult;
 	TArray<AActor*> ActorsToIgnore{};
-	bool ShowDebug = UDebugSubsystem::ShouldDebug(Sf_GameplayTags::Debug::TP::CharacterFeatures::Combat,EDebugType::Visual); 
+	bool ShowDebug = UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::TP::CharacterFeatures::Combat,EDebugType::Visual); 
 
 	UKismetSystemLibrary::LineTraceSingleByProfile(
 		this,
@@ -141,9 +141,9 @@ void UCF_Combat::StopFire(FStopFireInfo StopFireInfo)
 	FiredBullets = 0;
 	GetOwningAIController()->ClearFocus(EAIFocusPriority::Gameplay);
 
-	if (UDebugSubsystem::ShouldDebug(Sf_GameplayTags::Debug::TP::CharacterFeatures::Combat, EDebugType::Log))
+	if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::TP::CharacterFeatures::Combat, EDebugType::Log))
 		UE_LOG(EF_Combat, Log, TEXT("Stopped Firing due to %s"), *StopFireInfo.ToString());
-	if (UDebugSubsystem::ShouldDebug(Sf_GameplayTags::Debug::TP::CharacterFeatures::Combat, EDebugType::Print) && GEngine)
+	if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::TP::CharacterFeatures::Combat, EDebugType::Print) && GEngine)
 		GEngine->AddOnScreenDebugMessage(
 			-1,
 			2,
