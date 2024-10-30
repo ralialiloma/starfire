@@ -17,17 +17,20 @@
 		{
 			"Name": "NISCore",
 			"Type": "Runtime",
-			"LoadingPhase": "PostEngineInit"
+			"LoadingPhase": "PostEngineInit",
+			"BlacklistPlatforms": ["Mac"]
 		},
 		{
 			"Name": "NISShaders",
 			"Type": "Runtime",
-			"LoadingPhase": "PostConfigInit"
+			"LoadingPhase": "PostConfigInit",
+			"BlacklistPlatforms": ["Mac"]
 		},
 		{
 			"Name": "NISBlueprint",
 			"Type": "Runtime",
-			"LoadingPhase": "PostConfigInit"
+			"LoadingPhase": "PostConfigInit",
+			"BlacklistPlatforms": ["Mac"]
 		}
 	]
 }
