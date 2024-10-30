@@ -489,6 +489,7 @@ void AWeaponBase::OnPickup(APawn* NewHolder)
 	SkeletalMesh->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
 	SkeletalMesh->SetSimulatePhysics(false);
 	SkeletalMesh->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	SkeletalMesh->SetRelativeTransform(FTransform());
 	UE_LOG(SF_Weapon, Log, TEXT("Picked up %s"),*GetClass()->GetName())
 }
 

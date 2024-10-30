@@ -19,6 +19,12 @@ namespace Sf_GameplayTags
 			DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.DamageType,Fire,"");
 			DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.DamageType,Explosion,"");
 		}
+		namespace ItemType
+		{
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay.ItemType", "")
+			DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ItemType,Environment,"");
+			DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ItemType,Enemy,"");
+		}
 	}
 	namespace Debug
 	{
@@ -62,6 +68,10 @@ namespace Sf_GameplayTags
 		{
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Debug.Weapon", "")
 			DEFINE_GAMEPLAY_TAG_AUTO(Debug.Weapon, FireBlocks, "");
+		}
+		namespace Interactables
+		{
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Debug.Interactables", "")
 		}
 
 	}
