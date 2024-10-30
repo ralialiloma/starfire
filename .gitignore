@@ -57,6 +57,7 @@ Starfire/Plugins/*/Binaries/*
 
 # Builds
 Build/*
+Builds/*
 
 # Whitelist PakBlacklist-<BuildConfiguration>.txt files
 !Build/*/
@@ -96,3 +97,5 @@ Starfire/DerivedDataCache/*
 /dataSources/
 /dataSources.local.xml
 **/.idea
+Starfire/Build/Windows/FileOpenOrder/CookerOpenOrder.log
+Starfire/Build/Windows/FileOpenOrder/EditorOpenOrder.log
