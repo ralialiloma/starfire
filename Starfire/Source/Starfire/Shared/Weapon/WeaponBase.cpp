@@ -93,56 +93,65 @@ void AWeaponBase::FireTraces(FHitResult& OutHitResult)
 		UE_LOG(SF_Weapon, Warning, TEXT("Invalid BulletsPerShot value: %d"), WeaponConfig.BulletsPerShot);
 		return;
 	}
-
-	const FTransform FireTransform = IWeaponOwner::Execute_GetFireTransform(WeaponOwner); 
+	
 	for (int i= 0; i<BulletsPerShot;i++)
 	{
-		//Trace Points
-		FVector Start,End;
-		GetTracePoints(FireTransform,Start,End);
-
-		//Debug
-		const EDrawDebugTrace::Type DebugType =
-			UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::Weapon::Name,EDebugType::Visual) ? EDrawDebugTrace::ForDuration : EDrawDebugTrace::None;
-		FColor TraceColor = USf_FunctionLibrary::BoolToColor(bIsAiming);
-
-		//Ignore
-		TArray<AActor*> ActorsToIgnore = TArray<AActor*>{WeaponOwner,this};
-
-		//Line Trace
-		UKismetSystemLibrary::LineTraceSingle(
-			this,
-			Start,
-			End,
-			WeaponConfig.TraceTypeQuery,
-			false,
-			ActorsToIgnore,
-			DebugType,
-			OutHitResult,
-			true,
-			TraceColor,
-			FColor::Yellow,
-			3.f);
-		
-		if (!OutHitResult.bBlockingHit)
-			continue;
-		
-		USf_DamageController* DamageReceiver = OutHitResult.GetActor()->GetComponentByClass<USf_DamageController>();
-		if (DamageReceiver==nullptr)
-			continue;
-
-		if (!OutHitResult.Component.IsValid())
-			continue;
-
-		APPLY_DAMAGE(DamageReceiver,
-			WeaponConfig.Damage,
-			OutHitResult.Location,
-			OutHitResult.Normal,
-			OutHitResult.Component.Get(),
-			Fire);
-
+		TraceALongFireTransform(OutHitResult);
+		ApplyDamage(OutHitResult);
 		//todo callHitEvent
 	}
+}
+
+void AWeaponBase::TraceALongFireTransform(FHitResult OutHitResult)
+{
+	
+	//Trace Points
+	FVector Start,End;
+	const FTransform FireTransform = IWeaponOwner::Execute_GetFireTransform(WeaponOwner); 
+	GetTracePoints(FireTransform,Start,End);
+
+	//Debug
+	const EDrawDebugTrace::Type DebugType =
+		UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::Weapon::Name,EDebugType::Visual) ? EDrawDebugTrace::ForDuration : EDrawDebugTrace::None;
+	FColor TraceColor = USf_FunctionLibrary::BoolToColor(bIsAiming);
+
+	//Ignore
+	TArray<AActor*> ActorsToIgnore = TArray<AActor*>{WeaponOwner,this};
+
+	//Line Trace
+	UKismetSystemLibrary::LineTraceSingle(
+		this,
+		Start,
+		End,
+		WeaponConfig.TraceTypeQuery,
+		false,
+		ActorsToIgnore,
+		DebugType,
+		OutHitResult,
+		true,
+		TraceColor,
+		FColor::Yellow,
+		3.f);
+}
+
+void AWeaponBase::ApplyDamage(const FHitResult& InHitResult) const
+{
+	if (!InHitResult.bBlockingHit)
+		return;;
+		
+	USf_DamageController* DamageReceiver = InHitResult.GetActor()->GetComponentByClass<USf_DamageController>();
+	if (DamageReceiver==nullptr)
+		return;;
+
+	if (!InHitResult.Component.IsValid())
+		return;;
+
+	APPLY_DAMAGE(DamageReceiver,
+		WeaponConfig.Damage,
+		InHitResult.Location,
+		InHitResult.Normal,
+		InHitResult.Component.Get(),
+		Fire);
 }
 
 void AWeaponBase::ApplyRecoil(float Modifier) const
@@ -167,12 +176,17 @@ void AWeaponBase::ApplyRecoil(float Modifier) const
 
 void AWeaponBase::AimDownSight()
 {
+	if (!CanAim())
+		return;
+	
 	ExecuteAnimation(EWeaponAnimationEventType::Aim,true);
 	bIsAiming = true;
 }
 
 void AWeaponBase::StopAiming()
 {
+	if (!CanAim())
+		return;
 	ExecuteAnimation(EWeaponAnimationEventType::Aim,false);
 	bIsAiming = false;
 }
@@ -370,6 +384,11 @@ bool AWeaponBase::IsAiming()
 	return bIsAiming;
 }
 
+bool AWeaponBase::CanAim()
+{
+	return true;
+}
+
 
 void AWeaponBase::DoFire(FHitResult& OutHitResult)
 {
@@ -400,9 +419,14 @@ bool AWeaponBase::Reload()
 	return Reload(MontageTime);
 }
 
+bool AWeaponBase::CanReload()
+{
+	return !IsReloading();
+}
+
 bool AWeaponBase::Reload(float& OutMontageTime)
 {
-	if (IsReloading())
+	if (!CanReload())
 		return false;
 	
 	//float MontageTime = PlayMontage(EWeaponAnimationMontageType_FP::Reload);
@@ -483,9 +507,10 @@ FTransform AWeaponBase::GetMuzzleTransform() const
 {
 	return  SkeletalMesh->GetBoneTransform("Ammo");
 }
-void AWeaponBase::OnPickup(APawn* NewHolder)
+void AWeaponBase::OnPickup(USf_Equipment* NewHolder)
 {
-	WeaponOwner = NewHolder;
+	OwningEquipmentComponent = NewHolder;
+	WeaponOwner = OwningEquipmentComponent->GetOwner<APawn>();
 	SkeletalMesh->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
 	SkeletalMesh->SetSimulatePhysics(false);
 	SkeletalMesh->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
@@ -512,6 +537,15 @@ void AWeaponBase::OnUnequip()
 {
 	UE_LOG(SF_Weapon, Log, TEXT("Unequipped %s"),*GetClass()->GetName())
 }
+
+bool AWeaponBase::IsActionAllowed(const FGameplayTag ActionType) const
+{
+	if (!ForbiddenActions.Contains(ActionType))
+		return true;
+	
+	return false;
+}
+
 
 bool AWeaponBase::CanFire(const EInputSignalType InputSignal, EFireType FireType,EFireBlock& OutBlock)
 {
@@ -564,7 +598,12 @@ APawn* AWeaponBase::GetWeaponOwner() const
 	return WeaponOwner;
 }
 
-void AWeaponBase::SetWeaponActive(bool Active)
+USf_Equipment* AWeaponBase::GetOwningSfEquipmentComp() const
+{
+	return OwningEquipmentComponent;
+}
+
+void AWeaponBase::SetWeaponActive(const bool Active, AWeaponBase* OtherWeapon)
 {
 	SetActorEnableCollision(Active);
 	SetActorHiddenInGame(!Active);

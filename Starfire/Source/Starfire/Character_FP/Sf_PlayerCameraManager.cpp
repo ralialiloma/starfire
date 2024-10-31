@@ -22,13 +22,6 @@ void ASF_PlayerCameraManager::UpdateViewTarget(FTViewTarget& OutVT, float DeltaT
 		UE_LOG(SF_PlayerCameraManager, Warning, TEXT("Invalid SF_CharactermovementComponent"))
 		return;
 	}
-
-	USf_Equipment* SFEquipmentComp = SfCharacter->GetSfEquipmentComponent();
-	if (!IsValid(SfCharacterMovementComponent))
-	{
-		UE_LOG(SF_PlayerCameraManager, Warning, TEXT("Invalid SF_CharactermovementComponent"))
-		return;
-	}
 	
 
 	//Update View Target Rotation
@@ -37,6 +30,12 @@ void ASF_PlayerCameraManager::UpdateViewTarget(FTViewTarget& OutVT, float DeltaT
 
 	//Update Aim
 
+	USf_Equipment* SFEquipmentComp = SfCharacter->GetSfEquipmentComponent();
+	if (!IsValid(SfCharacterMovementComponent))
+	{
+		UE_LOG(SF_PlayerCameraManager, Warning, TEXT("Invalid SF_CharactermovementComponent"))
+		return;
+	}
 	//FOV
 	float CurrentFOV = GetFOVAngle();
 	float TargetFOV = SFEquipmentComp->IsAiming()?ADSFieldOfView:DefaultFieldOfView;

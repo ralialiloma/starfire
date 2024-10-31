@@ -150,7 +150,7 @@ void ASf_FP_Character::PostEditChangeProperty(FPropertyChangedEvent& PropertyCha
 }
 #endif
 
-FCollisionQueryParams ASf_FP_Character::GetIgnoreCharacterParams()
+FCollisionQueryParams ASf_FP_Character::GetIgnoreCharacterParams() const
 {
 	FCollisionQueryParams Params;
 

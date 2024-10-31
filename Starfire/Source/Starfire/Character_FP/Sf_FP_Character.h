@@ -45,7 +45,7 @@ public:
 #pragma region Functions
 
 public:
-	FCollisionQueryParams GetIgnoreCharacterParams();
+	FCollisionQueryParams GetIgnoreCharacterParams() const;
 
 #pragma endregion
 

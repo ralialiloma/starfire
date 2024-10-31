@@ -18,7 +18,7 @@ void USf_AnimDataController_FP::PostEditChangeProperty(FPropertyChangedEvent& Pr
 }
 #endif
 
-float USf_AnimDataController_FP::RunAnimation(FWeaponMontageEventPackage WeaponAnimationUpdateData) const
+float USf_AnimDataController_FP::RunAnimation(const FWeaponMontageEventPackage WeaponAnimationUpdateData) const
 {
 	const EWeaponAnimationEventType EventType = WeaponAnimationUpdateData.AnimationEventType;
 	const FGameplayTag* MontageType  =  AnimationMontageMappings.Find(EventType);

@@ -91,6 +91,24 @@ AWeaponBase* USf_Equipment::GetActiveWeapon() const
 	return EquippedWeapon;
 }
 
+AWeaponBase* USf_Equipment::GetWeaponByClass(TSubclassOf<AWeaponBase> WeaponClass)
+{
+	AWeaponBase** FoundWeapon =  OwnedWeapons.FindByPredicate([WeaponClass](AWeaponBase* Weapon)->bool
+	{
+		return Weapon->GetClass() == WeaponClass;
+	} );
+
+	if (FoundWeapon==nullptr)
+	{
+		return nullptr;
+	}
+	else
+	{
+		return *FoundWeapon;
+	}
+	
+}
+
 int USf_Equipment::GetActiveSlot() const
 {
 	int Slot = 0;
@@ -100,6 +118,9 @@ int USf_Equipment::GetActiveSlot() const
 
 void USf_Equipment::AddWeapon(AWeaponBase* WeaponToAdd, const bool Equip, int &Slot)
 {
+	if (!CanAddWeapon(WeaponToAdd))
+		return;
+	
 	//If Weapon Is Already Owned
 	int FoundWeaponIndex = -1;
 	if (GetSlotByWeapon(WeaponToAdd,FoundWeaponIndex))
@@ -109,15 +130,9 @@ void USf_Equipment::AddWeapon(AWeaponBase* WeaponToAdd, const bool Equip, int &S
 		return;
 	}
 
-	if (!IsValid(WeaponToAdd))
-	{
-		UE_LOG(EquipmentComponent, Error, TEXT("The Weapon you're trying to equip is invalid"));
-		return;
-	}
-
 	//Add Weapon To List
 	Slot = OwnedWeapons.Add(WeaponToAdd);
-	WeaponToAdd->OnPickup(GetOwner<APawn>());
+	WeaponToAdd->OnPickup(this);
 
 	//Attach Weapon
 	FAttachmentTransformRules AttachRules = FAttachmentTransformRules (
@@ -130,13 +145,13 @@ void USf_Equipment::AddWeapon(AWeaponBase* WeaponToAdd, const bool Equip, int &S
 	if (Equip)
 		EquipWeaponByReference(WeaponToAdd);
 	else
-		SetWeaponActive(WeaponToAdd, false);
+		SetWeaponActive(WeaponToAdd, EquippedWeapon, false);
 }
 
-void USf_Equipment::AddWeaponByClass(TSubclassOf<AWeaponBase> WeaponClassToAdd, bool Equip, int& Index)
+void USf_Equipment::AddWeaponByClass(const TSubclassOf<AWeaponBase> WeaponClassToAdd, const bool Equip, int& Index)
 {
 	UWorld* World = GetWorld();
-	if (!World)
+	if (World == nullptr)
 	{
 		UE_LOG(EquipmentComponent, Error, TEXT("GetWorld returned nullptr"));
 		return;
@@ -152,9 +167,46 @@ void USf_Equipment::AddWeaponByClass(TSubclassOf<AWeaponBase> WeaponClassToAdd, 
 	AddWeapon(WeaponBase, Equip, Index);
 }
 
+bool USf_Equipment::CanAddWeapon(AWeaponBase* WeaponToAdd) const
+{
+	if (!CanAddWeapons())
+	{
+		return false;
+	}
+	
+	if (!IsValid(WeaponToAdd))
+	{
+		UE_LOG(EquipmentComponent, Error, TEXT("The Weapon you're trying to equip is invalid"));
+		return false;
+	}
+	return true;
+}
+
+bool USf_Equipment::CanAddWeapons() const
+{
+	return IS_ACTION_ALLOWED(EquippedWeapon,AddWeapon);
+}
+
+bool USf_Equipment::CanRemoveWeapon(AWeaponBase* WeaponToRemove) const
+{
+	if (!CanRemoveWeapons())
+		return false;
+	
+	if (!HasWeapon(WeaponToRemove))
+		return false;
+
+	return true;
+}
+
+bool USf_Equipment::CanRemoveWeapons() const
+{
+	return IS_ACTION_ALLOWED(EquippedWeapon,RemoveWeapon);
+}
+
+
 bool USf_Equipment::RemoveWeapon(AWeaponBase* WeaponToRemove)
 {
-	if (!HasWeapon(WeaponToRemove))
+	if (!CanRemoveWeapon(WeaponToRemove))
 		return false;
 	
 	OwnedWeapons.Remove(WeaponToRemove);
@@ -179,6 +231,9 @@ bool USf_Equipment::RemoveWeaponActiveWeapon()
 
 bool USf_Equipment::RemoveWeaponByClass(TSubclassOf<AWeaponBase> WeaponClassToRemove)
 {
+	if (!CanRemoveWeapons())
+		return false;
+
 	AWeaponBase* WeaponToRemove = nullptr;
 	for (auto Weapon : OwnedWeapons)
 	{
@@ -195,10 +250,13 @@ bool USf_Equipment::RemoveWeaponByClass(TSubclassOf<AWeaponBase> WeaponClassToRe
 	return RemoveWeapon(WeaponToRemove);
 }
 
-void USf_Equipment::CycleWeapons(ENavigationDirectionType Direction)
+bool USf_Equipment::CycleWeapons(const ENavigationDirectionType Direction)
 {
+	if (!bAllowCycling)
+		return false;
+	
 	if (OwnedWeapons.Num() <= 0)
-		return;
+		return false;
 	
 	int CurrentSlot = INDEX_NONE;
 	int NextSlot = INDEX_NONE;
@@ -218,16 +276,21 @@ void USf_Equipment::CycleWeapons(ENavigationDirectionType Direction)
 		NextSlot = 0;
 	}
 
-	EquipWeaponBySlot(NextSlot);
+	return EquipWeaponBySlot(NextSlot);
 }
 
 bool USf_Equipment::EquipWeaponByReference(AWeaponBase* Weapon)
 {
-	return ActivateWeapon(Weapon);
+	if (CanEquipWeapon(Weapon))
+		return ActivateWeapon(Weapon);
+	return false;
 }
 
 bool USf_Equipment::EquipWeaponBySlot(int Slot)
 {
+	if (!CanEquipWeapons())
+		return false;
+	
 	AWeaponBase* Weapon = nullptr;
 	if (GetWeaponBySlot(Slot, Weapon))
 		return ActivateWeapon(Weapon);
@@ -236,20 +299,49 @@ bool USf_Equipment::EquipWeaponBySlot(int Slot)
 	return false;
 }
 
+bool USf_Equipment::CanEquipWeapon(const AWeaponBase* WeaponToEquip) const
+{
+	if (!CanEquipWeapons())
+		return false;
+
+	if (!IsValid(WeaponToEquip))
+		return false;
+	
+	return  true;
+}
+
+bool USf_Equipment::CanEquipWeapons() const
+{
+	return IS_ACTION_ALLOWED(EquippedWeapon,EquipWeapon);
+}
+
+bool USf_Equipment::CanUnequipWeapon() const
+{
+	return IS_ACTION_ALLOWED(EquippedWeapon,UnequipWeapon);
+}
+
 bool USf_Equipment::UnequipWeapon(bool HideWeapon)
 {
+	if (!CanUnequipWeapon())
+		return false;
+	
 	if (!IsValid(EquippedWeapon))
 		return false;
 
 	AWeaponBase* OldWeapon = EquippedWeapon;
 	EquippedWeapon->OnUnequip();
 	if (HideWeapon)
-		SetWeaponActive(EquippedWeapon, false);
+		SetWeaponActive(EquippedWeapon, nullptr, false);
 	
 	EquippedWeapon = nullptr;
 	OnWeaponChange.Broadcast(nullptr, OldWeapon);
 
 	return true;
+}
+
+bool USf_Equipment::CanActivateWeapons() const
+{
+	return IS_ACTION_ALLOWED(EquippedWeapon,ActivateWeapon);
 }
 
 bool USf_Equipment::Fire(EInputSignalType InputSignal, EFireType FireType, FHitResult& OutHitResult, EFireBlock& OutFireBlock)
@@ -422,29 +514,41 @@ bool USf_Equipment::GetWeaponBySlot(int Index, AWeaponBase*& OutWeaponBase) cons
 	return true;
 }
 
-void USf_Equipment::SetWeaponActive(AWeaponBase* Weapon, bool Active)
+void USf_Equipment::SetWeaponActive(AWeaponBase* Weapon,AWeaponBase* OtherWeapon, const bool Active)
 {
 	if (!HasWeapon(Weapon))
 		return;
 
-	Weapon->SetWeaponActive(Active);
+	Weapon->SetWeaponActive(Active, OtherWeapon);
 }
 
 bool USf_Equipment::ActivateWeapon(AWeaponBase* Weapon)
 {
-	if (!HasWeapon(Weapon))
+	if (!CanActivateWeapons())
+	{
 		return false;
-
+	}
+	
+	if (!IsValid(Weapon))
+	{
+		return false;
+	}
+	
+	if (!HasWeapon(Weapon))
+	{
+		return false;
+	}
+		
 	AWeaponBase* OldWeapon = EquippedWeapon;
 	if (OldWeapon)
 	{
 		OldWeapon->OnUnequip();
-		SetWeaponActive(OldWeapon, false);
+		SetWeaponActive(OldWeapon, Weapon, false);
 	}
 	
 	EquippedWeapon = Weapon;
 	EquippedWeapon->OnEquip();
-	SetWeaponActive(EquippedWeapon, true);
+	SetWeaponActive(EquippedWeapon, OldWeapon,true);
 
 	OnWeaponChange.Broadcast(EquippedWeapon, OldWeapon);
 	return true;

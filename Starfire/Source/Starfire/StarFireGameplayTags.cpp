@@ -25,6 +25,20 @@ namespace Sf_GameplayTags
 			DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ItemType,Environment,"");
 			DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ItemType,Enemy,"");
 		}
+		namespace Weapon
+		{
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay.Weapon", "")
+			STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+			namespace Action
+			{
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay.Weapon.Action", "")
+				DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.Weapon.Action, ActivateWeapon, "");
+				DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.Weapon.Action, AddWeapon, "");
+				DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.Weapon.Action, RemoveWeapon, "");
+				DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.Weapon.Action, EquipWeapon, "");
+				DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.Weapon.Action, UnequipWeapon, "");
+			}
+		}
 	}
 	namespace Debug
 	{

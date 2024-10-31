@@ -50,12 +50,13 @@ public:
 
 #pragma region Functions
 public:
-
 	//Gets
 	UFUNCTION(BlueprintCallable)
 	bool HasWeapon(AWeaponBase* WeaponBase) const;
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	AWeaponBase* GetActiveWeapon() const;
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	AWeaponBase* GetWeaponByClass(TSubclassOf<AWeaponBase> WeaponClass);
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	int GetActiveSlot() const;
 	UFUNCTION(BlueprintCallable, BlueprintPure)
@@ -82,6 +83,17 @@ public:
 	void AddWeapon(AWeaponBase* WeaponToAdd, bool Equip, int& Slot);
 	UFUNCTION(BlueprintCallable)
 	void AddWeaponByClass(TSubclassOf<AWeaponBase> WeaponClassToAdd, bool Equip, int& Index);
+
+	UFUNCTION(BlueprintCallable)
+	bool CanAddWeapon(AWeaponBase* WeaponToAdd) const;
+
+	UFUNCTION(BlueprintCallable)
+	bool CanAddWeapons() const;
+
+	UFUNCTION(BlueprintCallable)
+	bool CanRemoveWeapon(AWeaponBase* WeaponToRemove) const;
+	UFUNCTION(BlueprintCallable)
+	bool CanRemoveWeapons() const;
 	UFUNCTION(BlueprintCallable)
 	bool RemoveWeapon(AWeaponBase* WeaponToRemove);
 	UFUNCTION(BlueprintCallable)
@@ -89,13 +101,25 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool RemoveWeaponByClass(TSubclassOf<AWeaponBase> WeaponClassToRemove);
 	UFUNCTION(BlueprintCallable)
-	void CycleWeapons(ENavigationDirectionType Direction);
+	bool CycleWeapons(ENavigationDirectionType Direction);
+
 	UFUNCTION(BlueprintCallable)
 	bool EquipWeaponByReference(AWeaponBase* Weapon);
 	UFUNCTION(BlueprintCallable)
 	bool EquipWeaponBySlot(int Slot);
+	UFUNCTION(BlueprintCallable,BlueprintPure)
+	bool CanEquipWeapon(const AWeaponBase* WeaponToEquip)const;
+	UFUNCTION(BlueprintCallable,BlueprintPure)
+	bool CanEquipWeapons()const;
+	UFUNCTION(BlueprintCallable)
+	bool CanUnequipWeapon() const;
 	UFUNCTION(BlueprintCallable)
     bool UnequipWeapon(bool HideWeapon = true);
+
+	UFUNCTION(BlueprintCallable)
+	bool CanActivateWeapons() const;
+	UFUNCTION(BlueprintCallable)
+	bool ActivateWeapon(AWeaponBase* Weapon);
 
 	//Actions
 	UFUNCTION(BlueprintCallable)
@@ -123,22 +147,21 @@ public:
 	bool CheckFlagForState(EEquipmentFlags EquipmentFlag, int StateToCheck) const;
 
 protected:
+
+	UFUNCTION(BlueprintCallable)
+	void SetWeaponActive(AWeaponBase* Weapon, AWeaponBase* OtherWeapon, const bool Active);
 	
 	UFUNCTION(BlueprintCallable)
 	bool GetSlotByWeapon(AWeaponBase* WeaponBase, int& OutIndex) const;
 	UFUNCTION(BlueprintCallable)
 	bool GetWeaponBySlot(int Index, AWeaponBase*& OutWeaponBase) const;
+	
 
-	UFUNCTION(BlueprintCallable)
-	void SetWeaponActive(AWeaponBase* Weapon, bool Active);
-	UFUNCTION(BlueprintCallable)
-	bool ActivateWeapon(AWeaponBase* Weapon);
 	
 #pragma endregion
 
 #pragma region Properties
 public:
-
 	UPROPERTY(BlueprintAssignable, Category = "Equipment|Events")
 	FOnEquipmentStateChange OnEquipmentFlagsChange;
 
@@ -146,22 +169,23 @@ public:
 	FOnWeaponChange OnWeaponChange;
 
 protected:
+	UPROPERTY(BlueprintReadOnly,EditInstanceOnly)
+	bool bAllowCycling = false;
+
 	UPROPERTY()
 	TArray<AWeaponBase*> OwnedWeapons;
 	UPROPERTY()
 	AWeaponBase* EquippedWeapon;
-	
 	UPROPERTY()
 	int CurrentEquipmentFlags;
+
 
 #pragma endregion
 
 #pragma region Attachment
 protected:
-	//Attachment
 	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly , Category = "Sockets",meta=(GetOptions="GetWeaponAttachmentSocketOptions"))
 	FName WeaponAttachmentSocket;
-
 private:
 	UFUNCTION()
 	TArray<FName> GetWeaponAttachmentSocketOptions() const;

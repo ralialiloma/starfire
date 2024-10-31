@@ -14,7 +14,11 @@
 #include "WeaponBase.generated.h"
 
 
+class USf_Equipment;
 DEFINE_LOG_CATEGORY_STATIC(SF_Weapon, Display, Display);
+
+#define IS_ACTION_ALLOWED(WeaponBase, ActionType) \
+((WeaponBase) ? (WeaponBase)->IsActionAllowed(Sf_GameplayTags::Gameplay::Weapon::Action::ActionType) : true)
 
 
 UCLASS(BlueprintType)
@@ -33,7 +37,6 @@ public:
 
 #pragma region Functions
 public:
-
 	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
 	int GetAmmoCount() const;
 	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
@@ -42,25 +45,29 @@ public:
 	FWeaponConfig GetWeaponConfig() const;
 	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
 	APawn* GetWeaponOwner() const;
+	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
+	USf_Equipment* GetOwningSfEquipmentComp() const;
 	
 	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
-	void SetWeaponActive(bool Active);
+	virtual void SetWeaponActive(const bool Active, AWeaponBase* OtherWeapon);
 	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
-	void OnPickup(APawn* NewHolder);
+	virtual void OnPickup(USf_Equipment* NewHolder);
 	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
-	void OnDrop();
+	virtual void OnDrop();
 	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
-	void OnEquip();
+	virtual  void OnEquip();
 	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
-	void OnUnequip();
+	virtual void OnUnequip();
+
+	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
+	virtual bool IsActionAllowed(UPARAM(meta=(Categories="Gameplay.Weapon.Action"))FGameplayTag ActionType) const;
 
 protected:
-
 	//Animation
 	float ExecuteAnimationAndReturnAnimLength(EWeaponAnimationEventType WeaponAnimationEventType, bool bIsStarting = true) const;
 	void ExecuteAnimation(EWeaponAnimationEventType WeaponAnimationEventType, bool bIsStarting = true) const;
-	
 #pragma endregion
+
 
 #pragma region Properties
 
@@ -74,8 +81,11 @@ protected:
 	//Config
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Config")
 	FWeaponConfig WeaponConfig = FWeaponConfig();
-private:
 
+	UPROPERTY(meta=(Categories="Gameplay.Weapon.Action"))
+	TSet<FGameplayTag> ForbiddenActions;
+
+private:
 	//States
 	UPROPERTY()
 	bool bIsAiming =false;
@@ -96,12 +106,15 @@ private:
 	UPROPERTY()
 	APawn* WeaponOwner = nullptr;
 
+	UPROPERTY()
+	USf_Equipment* OwningEquipmentComponent = nullptr;
+
 #pragma endregion
 
 #pragma region Fire
 public:
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "WeaponBase")
-	bool CanFire(EInputSignalType InputSignal, EFireType FireType, EFireBlock& OutBlock);
+	virtual bool CanFire(EInputSignalType InputSignal, EFireType FireType, EFireBlock& OutBlock);
 	UFUNCTION(BlueprintCallable,Category="WeaponBase")
 	bool IsOnFireCooldown();
 	UFUNCTION(BlueprintCallable,Category="WeaponBase")
@@ -114,10 +127,11 @@ protected:
 	void GetTracePoints(const FTransform& InFireTransform, FVector& OutStart, FVector& OutEnd) const;
 	bool CheckInputSignalType(EInputSignalType InputSignalType);
 	
-	void DoFire(FHitResult& OutHitResult);
+	virtual void DoFire(FHitResult& OutHitResult);
 	void FireTraces(FHitResult& OutHitResult);
+	void TraceALongFireTransform(FHitResult OutHitResult);
+	virtual void ApplyDamage (const FHitResult& InHitResult) const;
 	void ApplyRecoil(float Modifier = 1) const;
-	
 #pragma endregion
 
 #pragma region Reload
@@ -134,6 +148,9 @@ public:
 	bool InstantReload();
 
 	bool Reload();
+
+	UFUNCTION(BlueprintCallable, Category="WeaponBase")
+	virtual bool CanReload();
 
 	UFUNCTION(BlueprintCallable, Category="WeaponBase")
 	void StopReloading();
@@ -163,6 +180,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category="WeaponBase")
 	bool IsAiming();
 
+
+	UFUNCTION(BlueprintCallable, Category="WeaponBase")
+	virtual  bool CanAim();
+		
 	UFUNCTION(BlueprintCallable, Category="WeaponBase")
 	void AimDownSight();
 	UFUNCTION(BlueprintCallable, Category="WeaponBase")
@@ -176,7 +197,7 @@ public:
 	UFUNCTION(BlueprintCallable,Category="WeaponBase")
 	bool IsOnMeleeCooldown();
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category="WeaponBase")
-	bool CanMelee();
+	virtual bool CanMelee();
 
 	UFUNCTION(BlueprintCallable, Category="WeaponBase")
 	bool Melee();
