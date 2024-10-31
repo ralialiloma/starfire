@@ -50,6 +50,9 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
 	virtual void SetWeaponActive(const bool Active, AWeaponBase* OtherWeapon);
+
+	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
+	virtual void SetNewHolder(USf_Equipment* NewHolder);
 	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
 	virtual void OnPickup(USf_Equipment* NewHolder);
 	UFUNCTION(BlueprintCallable, Category = "WeaponBase")

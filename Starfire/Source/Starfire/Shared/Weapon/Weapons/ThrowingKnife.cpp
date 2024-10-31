@@ -5,13 +5,35 @@
 #include "Starfire/Shared/Weapon/Interfaces/WeaponOwner.h"
 #include "Starfire/Utility/AsyncUtility.h"
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
+#include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
 
-AThrowingKnife::AThrowingKnife(const FObjectInitializer& ObjectInitializer) : AWeaponBase(ObjectInitializer) 
+AThrowingKnife::AThrowingKnife(const FObjectInitializer& ObjectInitializer) : AWeaponBase(ObjectInitializer)
 {
 	PrimaryActorTick.bCanEverTick = true;
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 	ProjectileMovementComponent->bAutoActivate = false;
+	
+	RootComponent->Mobility = EComponentMobility::Type::Movable;
+	RootComponent->SetUsingAbsoluteLocation(false);
+	RootComponent->SetUsingAbsoluteRotation(false);
+	RootComponent->SetUsingAbsoluteScale(false);
+
+	KnifeTip = CreateDefaultSubobject<USphereComponent>(TEXT("KnifeTip"));
+	KnifeTip->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
+	KnifeTip->Mobility = EComponentMobility::Type::Movable;
+	KnifeTip->SetUsingAbsoluteLocation(false);
+	KnifeTip->SetUsingAbsoluteRotation(false);
+	KnifeTip->SetUsingAbsoluteScale(false);
+	KnifeTip->SetSphereRadius(10);
+	KnifeTip->ShapeColor = FColor::Purple;
+	KnifeTip->SetupAttachment(SkeletalMesh);
+	
+	RootComponent->Mobility = EComponentMobility::Type::Movable;
+	RootComponent->SetUsingAbsoluteLocation(false);
+	RootComponent->SetUsingAbsoluteRotation(false);
+	RootComponent->SetUsingAbsoluteScale(false);
 }
+
 
 void AThrowingKnife::Tick(float DeltaSeconds)
 {
@@ -19,11 +41,13 @@ void AThrowingKnife::Tick(float DeltaSeconds)
 
 	if (!bInAir)
 		return;
-
-	const FVector Start = GetActorLocation();
+	
+	const FVector Start = SkeletalMesh->GetComponentLocation();
 	FVector VelocityDir = ProjectileMovementComponent->Velocity;
 	VelocityDir.Normalize();
 	const FVector End = Start + VelocityDir*WeaponLength;
+
+	//const FVector PredictedEnd = End + VelocityDir*WeaponLength;
 
 	FHitResult HitResult;
 	const TArray<AActor*> IgnoredActors = TArray<AActor*>{this,OldOwner};
@@ -38,8 +62,8 @@ void AThrowingKnife::Tick(float DeltaSeconds)
 		EDrawDebugTrace::Persistent,
 		HitResult,
 		true,
-		FColor::Green,
-		FColor::Yellow,
+		FColor::Red,
+		FColor::Blue,
 		10.f);
 
 	if (HitResult.bBlockingHit)
@@ -51,6 +75,7 @@ void AThrowingKnife::Tick(float DeltaSeconds)
 		bInAir = false;
 		ProjectileMovementComponent->StopMovementImmediately();
 		ProjectileMovementComponent->ProjectileGravityScale = 0;
+		SetActorEnableCollision(ECollisionEnabled::Type::NoCollision);
 
 		ApplyDamage(HitResult);
 	}
@@ -115,6 +140,14 @@ bool AThrowingKnife::CanAim()
 	return false;
 }
 
+void AThrowingKnife::OnPickup(USf_Equipment* Equipment)
+{
+	SkeletalMesh->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
+	SkeletalMesh->SetSimulatePhysics(false);
+	SkeletalMesh->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	UE_LOG(SF_Weapon, Log, TEXT("Picked up %s"),*GetClass()->GetName())
+}
+
 
 void AThrowingKnife::Throw()
 {
@@ -151,7 +184,7 @@ FVector AThrowingKnife::GetAimLocation()
 		WeaponConfig.TraceTypeQuery,
 		false,
 		IgnoredActors,
-		EDrawDebugTrace::Persistent,
+		SHOULD_DEBUG(Weapon::Name,EDebugType::Visual)?EDrawDebugTrace::ForDuration:EDrawDebugTrace::None ,
 		HitResult,
 		true,
 		FColor::Green,

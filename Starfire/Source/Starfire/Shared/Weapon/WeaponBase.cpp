@@ -27,11 +27,6 @@ AWeaponBase::AWeaponBase(const FObjectInitializer& ObjectInitializer)
 	SkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMesh"));
 	SkeletalMesh->SetupAttachment(DefaultSceneRoot);
 
-	// Set the relative transform of the SkeletalMesh so it can be modified in the blueprint
-	SkeletalMesh->SetRelativeLocation(FVector::ZeroVector);
-	SkeletalMesh->SetRelativeRotation(FRotator::ZeroRotator);
-	SkeletalMesh->SetRelativeScale3D(FVector(1.0f));
-
 	// Ensure the SkeletalMesh uses relative transforms so offsets can be set in the blueprint
 	SkeletalMesh->SetUsingAbsoluteLocation(false);
 	SkeletalMesh->SetUsingAbsoluteRotation(false);
@@ -509,8 +504,6 @@ FTransform AWeaponBase::GetMuzzleTransform() const
 }
 void AWeaponBase::OnPickup(USf_Equipment* NewHolder)
 {
-	OwningEquipmentComponent = NewHolder;
-	WeaponOwner = OwningEquipmentComponent->GetOwner<APawn>();
 	SkeletalMesh->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
 	SkeletalMesh->SetSimulatePhysics(false);
 	SkeletalMesh->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
@@ -607,6 +600,12 @@ void AWeaponBase::SetWeaponActive(const bool Active, AWeaponBase* OtherWeapon)
 {
 	SetActorEnableCollision(Active);
 	SetActorHiddenInGame(!Active);
+}
+
+void AWeaponBase::SetNewHolder(USf_Equipment* NewHolder)
+{
+	OwningEquipmentComponent = NewHolder;
+	WeaponOwner = OwningEquipmentComponent->GetOwner<APawn>();
 }
 
 

@@ -132,6 +132,7 @@ void USf_Equipment::AddWeapon(AWeaponBase* WeaponToAdd, const bool Equip, int &S
 
 	//Add Weapon To List
 	Slot = OwnedWeapons.Add(WeaponToAdd);
+	WeaponToAdd->SetNewHolder(this);
 	WeaponToAdd->OnPickup(this);
 
 	//Attach Weapon

@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Starfire/Shared/Weapon/WeaponBase.h"
 #include "ThrowingKnife.generated.h"
@@ -15,10 +16,12 @@ public:
 	virtual void OnEquip() override;
 	virtual void SetWeaponActive(const bool Active, AWeaponBase* PreviousWeapon) override;
 
+	
 	virtual bool CanFire(EInputSignalType InputSignal, EFireType FireType, EFireBlock& OutBlock) override;
 	virtual bool CanMelee() override;
 	virtual bool CanReload() override;
 	virtual bool CanAim() override;
+	virtual void OnPickup(USf_Equipment* Equipment) override;
 #pragma region Functions
 public:
 	void Throw();
@@ -35,6 +38,10 @@ public:
 protected:
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
 	UProjectileMovementComponent* ProjectileMovementComponent;
+
+
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	USphereComponent* KnifeTip;
 private:
 	UPROPERTY()
 	bool bInAir = false;
