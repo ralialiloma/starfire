@@ -141,12 +141,8 @@ void AWeaponBase::ApplyDamage(const FHitResult& InHitResult) const
 	if (!InHitResult.Component.IsValid())
 		return;;
 
-	APPLY_DAMAGE(DamageReceiver,
-		WeaponConfig.Damage,
-		InHitResult.Location,
-		InHitResult.Normal,
-		InHitResult.Component.Get(),
-		Fire);
+	DamageReceiver->ApplyDamage(WeaponConfig.Damage,InHitResult.Location,InHitResult.Normal,InHitResult.Component.Get(),
+		WeaponConfig.DamageType);
 }
 
 void AWeaponBase::ApplyRecoil(float Modifier) const

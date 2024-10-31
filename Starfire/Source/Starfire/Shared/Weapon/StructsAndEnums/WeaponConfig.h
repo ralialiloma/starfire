@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "Starfire/StarFireGameplayTags.h"
 #include "Starfire/Animation/AnimationData/FP/WeaponAnimData_FP.h"
 #include "Starfire/Animation/AnimationData/TP/WeaponAnimData_TP.h"
 #include "Starfire/Utility/InputSignalType.h"
@@ -91,6 +92,9 @@ public:
 	bool bInfiniteAmmo = false;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Other")
 	TEnumAsByte<ETraceTypeQuery>  TraceTypeQuery = TraceTypeQuery2;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Other", meta=(Categories="Gameplay.DamageType"))
+	FGameplayTag DamageType = Sf_GameplayTags::Gameplay::DamageType::Fire;
 
 	//Animation
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Animation")
