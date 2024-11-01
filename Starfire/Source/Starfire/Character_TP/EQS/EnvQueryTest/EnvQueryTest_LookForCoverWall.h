@@ -38,5 +38,12 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category=WallCover)
 	float MinDistanceToCover = 20.f;
+
+	UPROPERTY(EditDefaultsOnly, Category=WallCover)
+	float HideFromHalfHeight = 60.f;
+
+
+private:
+	void DoLineTrace(const FVector& Start, const FVector& End, const TArray<AActor*>& IgnoredActors, FHitResult& OutHitResult) const;
 	
 };

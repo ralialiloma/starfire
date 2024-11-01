@@ -106,8 +106,10 @@ void AWeaponBase::TraceALongFireTransform(FHitResult& OutHitResult)
 	GetTracePoints(FireTransform,Start,End);
 
 	//Debug
+	bool bShouldDebug = UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::Weapon::Name,EDebugType::Visual) ;
 	const EDrawDebugTrace::Type DebugType =
-		UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::Weapon::Name,EDebugType::Visual) ? EDrawDebugTrace::ForDuration : EDrawDebugTrace::None;
+		bShouldDebug? EDrawDebugTrace::ForDuration : EDrawDebugTrace::None;
+	
 	FColor TraceColor = USf_FunctionLibrary::BoolToColor(bIsAiming);
 
 	//Ignore

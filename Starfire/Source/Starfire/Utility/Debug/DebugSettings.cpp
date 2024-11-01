@@ -62,20 +62,15 @@ bool UDebugSettings::ShouldDebug(const FGameplayTag DebugTagIn, const EDebugType
 	{
 		UE_LOG(
 			LogTemp,
-			Error,
+			Warning,
 			TEXT("Only Allowed To Use Subtags of %s for this function"),*Sf_GameplayTags::Debug::Name.GetTag().GetTagName().ToString())
 		return false;
 	}
 
-	TArray<FGameplayTag> GameplayTagContainers = GetAllDebugTags(DebugTypeIn);
-	for (FGameplayTag TagInContainer: GameplayTagContainers)
-	{
-		if (TagInContainer.MatchesTag(DebugTagIn))
-		{
-			return true;
-		}
-	}
-	return false;
+	const TArray<FGameplayTag> GameplayTagContainers = GetAllDebugTags(DebugTypeIn);
+	return GameplayTagContainers.ContainsByPredicate([&](const FGameplayTag& TagInContainer) {
+		return TagInContainer.MatchesTag(DebugTagIn);
+	});
 }
 
 TArray<TMap<EDebugType, FGameplayTagContainer>> UDebugSettings::GetAllGameplayTagContainers() const

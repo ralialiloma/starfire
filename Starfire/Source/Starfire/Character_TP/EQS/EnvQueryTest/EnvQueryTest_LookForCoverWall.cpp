@@ -2,8 +2,11 @@
 
 
 #include "EnvQueryTest_LookForCoverWall.h"
+
+#include "Components/CapsuleComponent.h"
 #include "EnvironmentQuery/Contexts/EnvQueryContext_Querier.h"
 #include "EnvironmentQuery/Items/EnvQueryItemType_VectorBase.h"
+#include "GameFramework/Character.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 UEnvQueryTest_LookForCoverWall::UEnvQueryTest_LookForCoverWall(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -16,7 +19,7 @@ UEnvQueryTest_LookForCoverWall::UEnvQueryTest_LookForCoverWall(const FObjectInit
 
 void UEnvQueryTest_LookForCoverWall::RunTest(FEnvQueryInstance& QueryInstance) const
 {
-	UObject* QueryOwner = QueryInstance.Owner.Get();
+	const UObject* QueryOwner = QueryInstance.Owner.Get();
 	FloatValueMin.BindData(QueryOwner, QueryInstance.QueryID);
 	float MinThresholdValue = FloatValueMin.GetValue();
 	FloatValueMax.BindData(QueryOwner, QueryInstance.QueryID);
@@ -28,7 +31,13 @@ void UEnvQueryTest_LookForCoverWall::RunTest(FEnvQueryInstance& QueryInstance) c
 	{
 		return;
 	}
-	FVector LocationToHideFrom = HideFromCtx[0];
+
+	if (HideFromCtx.Num()<=0)
+		return;
+
+	
+	const FVector CenterLocationToHideFrom = HideFromCtx[0];
+	const FVector UpperLocationToHideFrom = CenterLocationToHideFrom+HideFromHalfHeight;
 
 	//Check if ignored Ctx is valid
 	TArray<AActor*>  IgnoreCtx;
@@ -46,29 +55,19 @@ void UEnvQueryTest_LookForCoverWall::RunTest(FEnvQueryInstance& QueryInstance) c
 	{
 		//Check Distance To Next Cover
 		const FVector Location = GetItemLocation(QueryInstance,Iterator.GetIndex());
-		FHitResult HitResult;
-		UKismetSystemLibrary::LineTraceSingle(
-			this,
-			Location,
-			LocationToHideFrom,
-			TraceTypeQuery,
-			false,
-			IgnoredActors,
-			DebugDrawTraceType,
-			HitResult,
-			true,
-			FLinearColor::Blue,
-			FLinearColor::Red,
-			1.0f);
+		FHitResult CenterHitResult;
+		DoLineTrace(Location,CenterLocationToHideFrom,IgnoredActors,CenterHitResult);
 
-		float DistanceToCover = HitResult.Distance;
+		FHitResult UpperHitResult;
+		DoLineTrace(Location,UpperLocationToHideFrom,IgnoredActors,UpperHitResult);
+
+		const float DistanceToCover = CenterHitResult.Distance;
 		float Score = 0;
 
-		if (HitResult.bBlockingHit)
+		if (CenterHitResult.bBlockingHit && UpperHitResult.bBlockingHit)
 		{
 			Score = ((DistanceToCover - MinDistanceToCover) / MaxDistanceToCover)*0.9f +0.1f;
 			Score = 1 - FMath::Min(1.0f, Score);
-			//Score = FMath::Clamp(Score,0.1f,1);
 		}
 
 		//FColor DebugColor = FColor(Score*255,0,0);
@@ -86,4 +85,21 @@ FText UEnvQueryTest_LookForCoverWall::GetDescriptionTitle() const
 FText UEnvQueryTest_LookForCoverWall::GetDescriptionDetails() const
 {
 	return DescribeFloatTestParams();
+}
+
+void UEnvQueryTest_LookForCoverWall::DoLineTrace(const FVector& Start, const FVector& End, const TArray<AActor*>& IgnoredActors,FHitResult& OutHitResult) const
+{
+	UKismetSystemLibrary::LineTraceSingle(
+			this,
+			Start,
+			End,
+			TraceTypeQuery,
+			false,
+			IgnoredActors,
+			DebugDrawTraceType,
+			OutHitResult,
+			true,
+			FLinearColor::Blue,
+			FLinearColor::Red,
+			1.0f);
 }

@@ -4,7 +4,7 @@
 #include "DebugFunctionLibrary.h"
 #include "DebugSettings.h"
 
-bool UDebugFunctionLibrary::ShouldDebug(FGameplayTag DebugTag, EDebugType DebugType)
+bool UDebugFunctionLibrary::ShouldDebug(const FGameplayTag DebugTag, const EDebugType DebugType)
 {
 	return GetDefault<UDebugSettings>() && GetDefault<UDebugSettings>()->ShouldDebug(DebugTag,DebugType);
 }
