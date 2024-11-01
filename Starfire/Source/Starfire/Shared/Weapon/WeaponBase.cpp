@@ -97,7 +97,7 @@ void AWeaponBase::FireTraces(FHitResult& OutHitResult)
 	}
 }
 
-void AWeaponBase::TraceALongFireTransform(FHitResult OutHitResult)
+void AWeaponBase::TraceALongFireTransform(FHitResult& OutHitResult)
 {
 	
 	//Trace Points
@@ -132,7 +132,7 @@ void AWeaponBase::TraceALongFireTransform(FHitResult OutHitResult)
 void AWeaponBase::ApplyDamage(const FHitResult& InHitResult) const
 {
 	if (!InHitResult.bBlockingHit)
-		return;;
+		return;
 		
 	USf_DamageController* DamageReceiver = InHitResult.GetActor()->GetComponentByClass<USf_DamageController>();
 	if (DamageReceiver==nullptr)
@@ -140,7 +140,7 @@ void AWeaponBase::ApplyDamage(const FHitResult& InHitResult) const
 
 	if (!InHitResult.Component.IsValid())
 		return;;
-
+	
 	DamageReceiver->ApplyDamage(WeaponConfig.Damage,InHitResult.Location,InHitResult.Normal,InHitResult.Component.Get(),
 		WeaponConfig.DamageType);
 }

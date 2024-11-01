@@ -132,7 +132,7 @@ protected:
 	
 	virtual void DoFire(FHitResult& OutHitResult);
 	void FireTraces(FHitResult& OutHitResult);
-	void TraceALongFireTransform(FHitResult OutHitResult);
+	void TraceALongFireTransform(FHitResult& OutHitResult);
 	virtual void ApplyDamage (const FHitResult& InHitResult) const;
 	void ApplyRecoil(float Modifier = 1) const;
 #pragma endregion
