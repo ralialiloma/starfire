@@ -126,6 +126,13 @@ public:
 	UFUNCTION(BlueprintPure)
 	bool WallRunningIsRight() const { return  Saved_bWallRunIsRight; }
 private:
+
+	float GetVectorAngleFrom(FVector Vector, FVector Control = FVector::UpVector) const;
+	float GetVectorAngleOn(FVector Vector, FVector Forward, FVector Plane = FVector::UpVector) const;
+	bool CheckWallSteepness(FVector Normal) const;
+	FHitResult CheckForWall(FVector2D WallNormal, float ForwardOffset = 0) const;
+	FHitResult CheckFromPlayer(const FVector& CastDelta, const FVector& Offset = FVector::Zero()) const;
+	
 	bool TryWallRun();
 	void PhysWallRun(float deltaTime, int32 Iterations);
 	void JumpOffWall();
@@ -133,29 +140,40 @@ private:
 	
 #pragma region Properties
 protected:
-	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun", meta =(CustomConfig))
+	
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun", meta =(CustomConfig, InlineEditConditionToggle))
+	bool HasMinWallRunSpeed = false;
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun", meta =(CustomConfig, EditCondition = "HasMinWallRunSpeed"))
 	float MinWallRunSpeed = 200.0f;
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun", meta =(CustomConfig))
 	float MaxWallRunSpeed = 800.0f;
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun", meta =(CustomConfig))
-	float MaxVerticalWallRunSpeed = 200.0f;
-	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun", meta =(CustomConfig))
-	float WallRunPullAwayAngle = 75;
-	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun", meta =(CustomConfig))
-	float WallAttractionForce = 200.0f;
+	float MaxVerticalWallRunSpeed = 50.0f;
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun", meta =(CustomConfig, InlineEditConditionToggle))
+	bool HasWallPullAwayAngle = false;
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun", meta =(CustomConfig, EditCondition = "HasWallPullAwayAngle"))
+	float WallRunPullAwayAngle = 150;
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun", meta =(CustomConfig))
 	float MinWallRunHeight = 50.f;
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun", meta =(CustomConfig))
-	UCurveFloat* WallRunGravityScaleCurve = nullptr;
+	float MaxWallRunSteepnessDeviation = 25.f;
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun", meta =(CustomConfig))
+	UCurveFloat* WallRunGravityScaleCurve = nullptr;
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun|Jump", meta =(CustomConfig))
+	bool JumpTowardsPlayerForward = true;
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun|Jump", meta =(CustomConfig, EditConditionHides = "!JumpTowardsPlayerForward"))
 	float WallJumpOffForce = 300.f;
-	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun", meta =(CustomConfig,ClampMin=0, ClampMax=1))
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun|Jump", meta =(CustomConfig,ClampMin=0, ClampMax=1, EditConditionHides = "!JumpTowardsPlayerForward"))
 	float WallNormalJumpOffInfluence= 0.5f;
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun|Jump", meta =(CustomConfig,ClampMin=0, ClampMax=1, EditConditionHides = "JumpTowardsPlayerForward"))
+	float WallJumpForceMultiplier= 0.8f;
+
+	// UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun", meta =(CustomConfig))
+	// float WallAttractionForce = 200.0f;
 
 private:
-	FVector2D WallNormal = FVector2D::ZeroVector;
-
-	bool Saved_bWallRunIsRight;
+	FVector2D PreviousWallNormal = FVector2D::ZeroVector;
+	bool Saved_bWallRunIsRight = true;
 #pragma endregion
 	
 #pragma endregion
