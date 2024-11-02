@@ -51,6 +51,7 @@ namespace Sf_GameplayTags
 				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
 				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(CoverLocation);
 				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(PeakLocation);
+				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TetherPointGen);
 			}
 
 			namespace CharacterFeatures

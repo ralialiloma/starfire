@@ -54,6 +54,7 @@ namespace Sf_GameplayTags
 				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Debug.TP.EQS", "")
 				DEFINE_GAMEPLAY_TAG_AUTO(Debug.TP.EQS, CoverLocation, "");
 				DEFINE_GAMEPLAY_TAG_AUTO(Debug.TP.EQS, PeakLocation, "");
+				DEFINE_GAMEPLAY_TAG_AUTO(Debug.TP.EQS, TetherPointGen, "");
 			}
 			namespace CharacterFeatures
 			{

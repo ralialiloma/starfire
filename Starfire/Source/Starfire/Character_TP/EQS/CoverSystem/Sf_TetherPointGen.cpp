@@ -5,8 +5,10 @@
 #include "NavigationSystem.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Starfire/Character_TP/Sf_TP_Character.h"
 #include "Starfire/Utility/AsyncUtility.h"
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
+#include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
 
 
 UTetherPoint::UTetherPoint(): CenterLocation(FVector::ZeroVector),
@@ -162,6 +164,48 @@ TArray<FVector> ASf_TetherPointGen::GetCoverLocations(float MinScore) const
 	return CoverLocations;
 }
 
+bool ASf_TetherPointGen::VerifyCover(FVector LocationToVerify, float Extent, const float MinScore) const
+{
+	float Distance;
+	FVector FoundCoverLoc;
+	bool bFoundLocation;
+	GetClosestCoverTo(LocationToVerify,MinScore,Distance,FoundCoverLoc,bFoundLocation);
+	
+	if (!bFoundLocation)
+		return false;
+
+	if (Distance<=Extent)
+		return true;
+
+	return false;
+}
+
+void ASf_TetherPointGen::GetClosestCoverTo(
+	const FVector Location,
+	const float MinScore,
+	float& OutDistance,
+	FVector& ClosestCoverLocation,
+	bool& bFound) const
+{
+	OutDistance = 0;
+	ClosestCoverLocation = FVector::ZeroVector;
+	bFound = false;
+
+	TArray<FVector> CoverLocations =  GetCoverLocations(MinScore);
+	if (CoverLocations.Num()<=0)
+		return;
+
+	CoverLocations.Sort([Location](const FVector& A, const FVector& B)
+	{
+		return FVector::DistSquared(Location, A) < FVector::DistSquared(Location, B);
+	});
+
+
+	OutDistance =  FVector::Dist(Location, CoverLocations[0]);
+	ClosestCoverLocation = CoverLocations[0];
+	bFound = true;
+}
+
 TArray<FVector> ASf_TetherPointGen::GetPeakLocations(const float MaxScore) const
 {
 	TArray<FVector> CoverLocations{};
@@ -181,7 +225,11 @@ void ASf_TetherPointGen::UpdateTetherPoints()
 		return;
 	
 	const FVector PlayerLocation = USf_FunctionLibrary::GetPlayerLocation(this);
-	const TArray<AActor*> IgnoredActors = TArray<AActor*>{this,USf_FunctionLibrary::GetSfPlayerpawn(this)};
+
+	TArray<AActor*> IgnoredActors = TArray<AActor*>{this,USf_FunctionLibrary::GetSfPlayerpawn(this)};
+	TArray<AActor*> TPCharacters{};
+	UGameplayStatics::GetAllActorsOfClass(this,ASf_TP_Character::StaticClass(),TPCharacters);
+	IgnoredActors.Append(TPCharacters);
 
 	int AmountOfTetherPointsToProcess = TetherPointsToProcess.Num();
 	TArray<UTetherPoint*> LocalTetherPointsToProcess = TetherPointsToProcess;
@@ -189,7 +237,9 @@ void ASf_TetherPointGen::UpdateTetherPoints()
 	{
 		LocalTetherPointsToProcess[i]->UpdateScore(PlayerLocation, this, IgnoredActors, TraceTypeQuery);
 		TetherPointsToProcess.Remove(LocalTetherPointsToProcess[i]);
-		
+
+		if (SHOULD_DEBUG(TP::EQS::TetherPointGen,EDebugType::Visual))
+		{
 			if (LocalTetherPointsToProcess[i]->Score>0.5f &&  LocalTetherPointsToProcess[i]->DistanceToWall < MaxWallDistance)
 			{
 				DrawDebugSphere(GetWorld(), LocalTetherPointsToProcess[i]->CenterLocation, Scale / 2.0f, 6, FColor::Green, false,1);
@@ -198,6 +248,8 @@ void ASf_TetherPointGen::UpdateTetherPoints()
 			{
 				DrawDebugSphere(GetWorld(), LocalTetherPointsToProcess[i]->CenterLocation, Scale / 2.0f, 6, FColor::Red, false,1);
 			}
+		}
+			
 	}
 	
 }

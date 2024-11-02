@@ -60,6 +60,7 @@ void ASf_TP_Controller::HandlePerception(AActor* Actor, FAIStimulus Stimulus)
 {
 	const TSubclassOf<UAISense> SenseType =  UAIPerceptionSystem::GetSenseClassForStimulus(this,Stimulus);
 	
+	
 	if (SenseType->IsChildOf(UAISense_Sight::StaticClass()))
 		HandleSightPerception(Stimulus);
 	else if (SenseType->IsChildOf(UAISense_Hearing::StaticClass()))
@@ -118,6 +119,7 @@ void ASf_TP_Controller::HandleDamagePerception(const FAIStimulus& Stimulus)
 
 void ASf_TP_Controller::HandlePerceptionForgotten(AActor* Actor)
 {
+	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, "Forgot player");
 	UBlackboardComponent* BlackboardComponent = GetBlackboardComponent();
 	UBlackboardKeyHelperLibrary::ClearVectorValue(BlackboardComponent,ELocationBlackboardKey::LastPlayerLocation);
 }

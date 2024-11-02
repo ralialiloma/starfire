@@ -59,10 +59,16 @@ public:
 public:
 	void GeneratePoints();
 
-	UFUNCTION(Blueprintable)
+	UFUNCTION(BlueprintCallable)
 	TArray<FVector> GetCoverLocations(float MinScore = 0.5f) const;
+
+	UFUNCTION(BlueprintCallable)
+	bool VerifyCover(FVector LocationToVerify, float Extent, const float MinScore = 0.5f) const;
+
+	UFUNCTION(BlueprintCallable)
+	void GetClosestCoverTo(const FVector Location, const float MinScore, float& OutDistance, FVector& ClosestCoverLocation, bool& bFound) const;
 	
-	UFUNCTION(Blueprintable)
+	UFUNCTION(BlueprintCallable)
 	TArray<FVector> GetPeakLocations(float MaxScore = 0.1f) const;
 private:
 	void UpdateTetherPoints();
@@ -74,40 +80,37 @@ private:
 #pragma region Properties
 public:
 protected:
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	TArray<UTetherPoint*> AllTetherPoints;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	TArray<UTetherPoint*> TetherPointsToProcess;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly)
 	float Scale = 300.f;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly)
 	FVector Size = FVector(30,30,9);
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly)
 	float TetherScale = 50.f;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly)
 	FVector TetherPointSize = FVector(2,2,2);
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly)
 	int AmountOfUpdatedTetherPointsPerFrame = 10;
 
-	UPROPERTY(BlueprintReadOnly,EditAnywhere)
+	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly)
 	TEnumAsByte<ETraceTypeQuery>  TraceTypeQuery;
 
-	UPROPERTY(BlueprintReadOnly,EditAnywhere)
+	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly)
 	TArray<TEnumAsByte<EObjectTypeQuery>>  ObjectTypeQuery;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly)
 	float VerticalOffset = 50;
 
-	UPROPERTY()
-	float OtherUpdateRateInSecdonds = 2;
-
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly)
 	float PlayerUpdateRateInSeconds = 1;
 
 
