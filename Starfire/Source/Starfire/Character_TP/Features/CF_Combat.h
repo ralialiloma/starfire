@@ -67,6 +67,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "EnemyFeature|Combat")
 	bool Melee();
+
 private:
 	void StopFire(FStopFireInfo StopFireInfo);
 	void DoFire(EInputSignalType InputSignalType, bool bScoped);

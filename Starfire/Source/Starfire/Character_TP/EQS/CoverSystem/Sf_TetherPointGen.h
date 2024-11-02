@@ -59,6 +59,8 @@ public:
 public:
 	void GeneratePoints();
 
+	static ASf_TetherPointGen* Get(const UObject* WorldContextObject);
+
 	UFUNCTION(BlueprintCallable)
 	TArray<FVector> GetCoverLocations(float MinScore = 0.5f) const;
 

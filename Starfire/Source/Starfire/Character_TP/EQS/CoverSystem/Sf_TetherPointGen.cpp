@@ -101,6 +101,15 @@ void UTetherPoint::UpdateScore(const FVector& PlayerLocation, const UObject* Wor
 	Score = static_cast<float>(CoveredPoints)/ static_cast<float>(NumSurroundingPoints) ;
 }
 
+ASf_TetherPointGen* ASf_TetherPointGen::Get(const UObject* WorldContextObject)
+{
+	TArray<AActor*> Actors{};
+	UGameplayStatics::GetAllActorsOfClass(WorldContextObject,ASf_TetherPointGen::StaticClass(),Actors);
+	if (Actors.Num()<=0)
+		return  nullptr;
+	return Cast<ASf_TetherPointGen>(Actors[0]);
+}
+
 ASf_TetherPointGen::ASf_TetherPointGen(): TraceTypeQuery()
 {
 	PrimaryActorTick.bCanEverTick = true;
