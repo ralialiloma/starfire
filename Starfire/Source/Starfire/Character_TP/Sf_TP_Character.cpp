@@ -139,7 +139,7 @@ FTransform ASf_TP_Character::GetFireTransform_Implementation() const
 	//if (SfEquipmentComponent->IsEquipped())
 	//	return SfEquipmentComponent->GetActiveWeapon()->GetMuzzleTransform();
 
-	return FTransform(GetActorRotation(),GetActorLocation()+FVector(0,0,30),GetActorScale());
+	return FTransform(GetControlRotation(),GetActorLocation()+FVector(0,0,30),GetActorScale());
 	
 	//return FTransform::Identity;
 }
