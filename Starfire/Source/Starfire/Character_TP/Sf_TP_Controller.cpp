@@ -78,8 +78,11 @@ void ASf_TP_Controller::HandlePerception(AActor* Actor, FAIStimulus Stimulus)
 void ASf_TP_Controller::HandleSightPerception(const FAIStimulus& Stimulus)
 {
 	UBlackboardComponent* BlackboardComponent = GetBlackboardComponent();
-	UBlackboardKeyHelperLibrary::SetBoolValue(BlackboardComponent,EBoolBlackboardKey::SensedPlayer,Stimulus.WasSuccessfullySensed());
-	UBlackboardKeyHelperLibrary::SetVectorValue(BlackboardComponent,ELocationBlackboardKey::LastPlayerLocation,Stimulus.StimulusLocation);
+	if (Stimulus.WasSuccessfullySensed())
+	{
+		UBlackboardKeyHelperLibrary::SetBoolValue(BlackboardComponent,EBoolBlackboardKey::SensedPlayer,true);
+		UBlackboardKeyHelperLibrary::SetVectorValue(BlackboardComponent,ELocationBlackboardKey::LastPlayerLocation,Stimulus.StimulusLocation);
+	}
 
 	if (!Stimulus.WasSuccessfullySensed())
 		return;
@@ -92,35 +95,48 @@ void ASf_TP_Controller::HandleSightPerception(const FAIStimulus& Stimulus)
 void ASf_TP_Controller::HandleHearingPerception(const FAIStimulus& Stimulus)
 {
 	UBlackboardComponent* BlackboardComponent = GetBlackboardComponent();
-	UBlackboardKeyHelperLibrary::SetBoolValue(BlackboardComponent,EBoolBlackboardKey::SensedPlayer,Stimulus.WasSuccessfullySensed());
-	UBlackboardKeyHelperLibrary::SetVectorValue(BlackboardComponent,ELocationBlackboardKey::LastPlayerLocation,Stimulus.StimulusLocation);
+	if (Stimulus.WasSuccessfullySensed())
+	{
+		UBlackboardKeyHelperLibrary::SetBoolValue(BlackboardComponent,EBoolBlackboardKey::SensedPlayer,true);
+		UBlackboardKeyHelperLibrary::SetVectorValue(BlackboardComponent,ELocationBlackboardKey::LastPlayerLocation,Stimulus.StimulusLocation);
+	}
 }
 
 void ASf_TP_Controller::HandleTouchPerception(const FAIStimulus& Stimulus)
 {
 	UBlackboardComponent* BlackboardComponent = GetBlackboardComponent();
-	UBlackboardKeyHelperLibrary::SetBoolValue(BlackboardComponent,EBoolBlackboardKey::SensedPlayer,Stimulus.WasSuccessfullySensed());
-	UBlackboardKeyHelperLibrary::SetVectorValue(BlackboardComponent,ELocationBlackboardKey::LastPlayerLocation,Stimulus.StimulusLocation);
+	if (Stimulus.WasSuccessfullySensed())
+	{
+		UBlackboardKeyHelperLibrary::SetBoolValue(BlackboardComponent,EBoolBlackboardKey::SensedPlayer,true);
+		UBlackboardKeyHelperLibrary::SetVectorValue(BlackboardComponent,ELocationBlackboardKey::LastPlayerLocation,Stimulus.StimulusLocation);
+	}
 }
 
 void ASf_TP_Controller::HandlePredictionPerception(const FAIStimulus& Stimulus)
 {
 	UBlackboardComponent* BlackboardComponent = GetBlackboardComponent();
-	UBlackboardKeyHelperLibrary::SetBoolValue(BlackboardComponent,EBoolBlackboardKey::SensedPlayer,Stimulus.WasSuccessfullySensed());
-	UBlackboardKeyHelperLibrary::SetVectorValue(BlackboardComponent,ELocationBlackboardKey::LastPlayerLocation,Stimulus.StimulusLocation);
+	if (Stimulus.WasSuccessfullySensed())
+	{
+		UBlackboardKeyHelperLibrary::SetBoolValue(BlackboardComponent,EBoolBlackboardKey::SensedPlayer,true);
+		UBlackboardKeyHelperLibrary::SetVectorValue(BlackboardComponent,ELocationBlackboardKey::LastPlayerLocation,Stimulus.StimulusLocation);
+	}
 }
 
 void ASf_TP_Controller::HandleDamagePerception(const FAIStimulus& Stimulus)
 {
 	UBlackboardComponent* BlackboardComponent = GetBlackboardComponent();
-	UBlackboardKeyHelperLibrary::SetBoolValue(BlackboardComponent,EBoolBlackboardKey::SensedPlayer,Stimulus.WasSuccessfullySensed());
-	UBlackboardKeyHelperLibrary::SetVectorValue(BlackboardComponent,ELocationBlackboardKey::LastPlayerLocation,Stimulus.StimulusLocation);
+	if (Stimulus.WasSuccessfullySensed())
+	{
+		UBlackboardKeyHelperLibrary::SetBoolValue(BlackboardComponent,EBoolBlackboardKey::SensedPlayer,true);
+		UBlackboardKeyHelperLibrary::SetVectorValue(BlackboardComponent,ELocationBlackboardKey::LastPlayerLocation,Stimulus.StimulusLocation);
+	}
 }
 
 void ASf_TP_Controller::HandlePerceptionForgotten(AActor* Actor)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, "Forgot player");
 	UBlackboardComponent* BlackboardComponent = GetBlackboardComponent();
+	UBlackboardKeyHelperLibrary::SetBoolValue(BlackboardComponent,EBoolBlackboardKey::SensedPlayer,false);
 	UBlackboardKeyHelperLibrary::ClearVectorValue(BlackboardComponent,ELocationBlackboardKey::LastPlayerLocation);
 }
 
