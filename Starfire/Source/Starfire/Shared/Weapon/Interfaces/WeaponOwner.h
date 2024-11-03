@@ -24,7 +24,7 @@ public:
 	UAnimInstance* GetCharacterAnimInstance() const;
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "WeaponOwner")
-	USf_AnimDataController* GetAnimMontageController() const;
+	UAnimNotify_GameplayTag* GetAnimMontageController() const;
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "WeaponOwner")
 	FTransform GetFireTransform() const;

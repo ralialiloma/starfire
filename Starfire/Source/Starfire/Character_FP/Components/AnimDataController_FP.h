@@ -5,7 +5,7 @@
 DEFINE_LOG_CATEGORY_STATIC(Sf_WeaponAnimMontageController_FP, Display, Display);
 
 UCLASS(BlueprintType,ClassGroup=(Character), meta=(BlueprintSpawnableComponent))
-class USf_AnimDataController_FP: public USf_AnimDataController
+class USf_AnimDataController_FP: public UAnimNotify_GameplayTag
 {
 	GENERATED_BODY()
 	

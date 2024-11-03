@@ -44,7 +44,7 @@ FMeleeInfo ASf_Character::GetMeleeInfo_Implementation() const
 	return IWeaponOwner::GetMeleeInfo_Implementation();
 }
 
-USf_AnimDataController* ASf_Character::GetAnimMontageController_Implementation() const
+UAnimNotify_GameplayTag* ASf_Character::GetAnimMontageController_Implementation() const
 {
 	return IWeaponOwner::GetAnimMontageController_Implementation();
 }

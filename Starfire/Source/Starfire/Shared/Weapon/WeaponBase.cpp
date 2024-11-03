@@ -297,11 +297,11 @@ float AWeaponBase::ExecuteAnimationAndReturnAnimLength(EWeaponAnimationEventType
 
 	if (!IsValid(WeaponOwner))
 	{
-		UE_LOG(SF_Weapon, Warning, TEXT("Invalid Weapon Holder to get %s from"),*USf_AnimDataController::StaticClass()->GetName())
+		UE_LOG(SF_Weapon, Warning, TEXT("Invalid Weapon Holder to get %s from"),*UAnimNotify_GameplayTag::StaticClass()->GetName())
 		return 0;
 	}
 	
-	USf_AnimDataController* AnimMontageController =  IWeaponOwner::Execute_GetAnimMontageController(WeaponOwner);
+	UAnimNotify_GameplayTag* AnimMontageController =  IWeaponOwner::Execute_GetAnimMontageController(WeaponOwner);
 
 	if (!IsValid(AnimMontageController))
 	{
@@ -309,7 +309,7 @@ float AWeaponBase::ExecuteAnimationAndReturnAnimLength(EWeaponAnimationEventType
 			SF_Weapon,
 			Warning,
 			TEXT("Invalid %s Weapon Holder to broadcast animation event on montage on"),
-			*USf_AnimDataController::StaticClass()->GetName())
+			*UAnimNotify_GameplayTag::StaticClass()->GetName())
 		return 0;
 	}
 

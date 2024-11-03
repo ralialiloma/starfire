@@ -1,18 +1,12 @@
 ﻿#pragma once
-#include "WeaponMontageEventPackage.h"
-#include "Sf_AnimDataController.generated.h"
+#include "UAnimNotify_GameplayTag.generated.h"
 
 DEFINE_LOG_CATEGORY_STATIC(SF_WeaponAnimationReceiver, Display, Display);
 
 UCLASS(BlueprintType,Abstract,ClassGroup=(Character), meta=(BlueprintSpawnableComponent))
-class UAnimNotify_GameplayTag: public UActorComponent
+class UAnimNotify_GameplayTag: public UAnimNotify
 {
 	GENERATED_BODY()
-	
-public:
-
-	UFUNCTION(BlueprintCallable,Blueprintable)
-	virtual float RunAnimation(FWeaponMontageEventPackage WeaponAnimationUpdateData) const;
 
 protected:
 	UFUNCTION(BlueprintCallable,Blueprintable)

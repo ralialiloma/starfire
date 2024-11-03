@@ -129,7 +129,7 @@ UAnimInstance* ASf_TP_Character::GetCharacterAnimInstance_Implementation() const
 	return GetMesh()->GetAnimInstance();
 }
 
-USf_AnimDataController* ASf_TP_Character::GetAnimMontageController_Implementation() const
+UAnimNotify_GameplayTag* ASf_TP_Character::GetAnimMontageController_Implementation() const
 {
 	return WeaponAnimMontageController;
 }

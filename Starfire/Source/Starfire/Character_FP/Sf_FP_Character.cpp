@@ -212,7 +212,7 @@ FMeleeInfo ASf_FP_Character::GetMeleeInfo_Implementation() const
 	return MeleeInfo;
 }
 
-USf_AnimDataController* ASf_FP_Character::GetAnimMontageController_Implementation() const
+UAnimNotify_GameplayTag* ASf_FP_Character::GetAnimMontageController_Implementation() const
 {
 	return WeaponAnimMontageController;
 }
