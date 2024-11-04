@@ -1,11 +1,11 @@
 ﻿#pragma once
-#include "Starfire/Animation/Sf_AnimDataController.h"
+#include "Starfire/Animation/Sf_AnimHelper.h"
 #include "WeaponAnimMontageController_TP.generated.h"
 
 DEFINE_LOG_CATEGORY_STATIC(Sf_WeaponAnimMontageController_TP, Display, Display);
 
 UCLASS(BlueprintType,ClassGroup=(Character), meta=(BlueprintSpawnableComponent))
-class USf_WeaponAnimMontageController_TP: public UAnimNotify_GameplayTag
+class USf_WeaponAnimMontageController_TP: public USf_AnimHelper
 {
 	GENERATED_BODY()
 	

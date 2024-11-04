@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/AnimDataController_FP.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
-#include "Starfire/Animation/Sf_AnimDataController.h"
+#include "Starfire/Animation/Sf_AnimHelper.h"
 #include "Starfire/Sf_Bases/Sf_Character.h"
 #include "Starfire/Shared/HSM/SF_CharacterStateMachine.h"
 #include "Starfire/Shared/Weapon/StructsAndEnums/MeleeInfo.h"
@@ -115,7 +115,6 @@ public:
 	virtual UAnimInstance* GetCharacterAnimInstance_Implementation() const override;
 	virtual FTransform GetFireTransform_Implementation() const override;
 	virtual FMeleeInfo GetMeleeInfo_Implementation() const override;
-	virtual UAnimNotify_GameplayTag* GetAnimMontageController_Implementation() const override;
-
+	virtual USf_AnimHelper* GetAnimDataHelper_Implementation() const override;
 #pragma endregion
 };

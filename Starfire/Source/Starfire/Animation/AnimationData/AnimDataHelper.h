@@ -1,11 +1,11 @@
 ﻿#pragma once
 #include "FP/WeaponAnimData_FP.h"
 #include "TP/WeaponAnimData_TP.h"
-#include "WeaponAnimDataHelper.generated.h"
+#include "AnimDataHelper.generated.h"
 
 
 UCLASS()
-class STARFIRE_API UWeaponAnimDataHelper : public UBlueprintFunctionLibrary
+class STARFIRE_API UAnimDataHelper : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 

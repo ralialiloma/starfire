@@ -44,10 +44,11 @@ FMeleeInfo ASf_Character::GetMeleeInfo_Implementation() const
 	return IWeaponOwner::GetMeleeInfo_Implementation();
 }
 
-UAnimNotify_GameplayTag* ASf_Character::GetAnimMontageController_Implementation() const
+USf_AnimHelper* ASf_Character::GetAnimDataHelper_Implementation() const
 {
-	return IWeaponOwner::GetAnimMontageController_Implementation();
+	return IWeaponOwner::GetAnimDataHelper_Implementation();
 }
+
 
 void ASf_Character::PawnDeath_Implementation()
 {

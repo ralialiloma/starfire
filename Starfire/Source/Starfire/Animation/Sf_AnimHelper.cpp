@@ -1,31 +1,37 @@
-﻿#include "Sf_AnimDataController.h"
+﻿#include "Sf_AnimHelper.h"
 #include "WeaponMontageEventPackage.h"
 #include "Starfire/Shared/Weapon/Interfaces/WeaponOwner.h"
 
 
-float UAnimNotify_GameplayTag::RunAnimation(FWeaponMontageEventPackage WeaponAnimationUpdateData) const
+float USf_AnimHelper::RunAnimation(FWeaponMontageEventPackage WeaponAnimationUpdateData) const
 {
 	return 0;
 }
 
-float UAnimNotify_GameplayTag::PlayMontage(UAnimMontage* MontageToPlay) const
+void USf_AnimHelper::OnAnimNotifyEvent(FGameplayTag Tag)
 {
-	AActor* WeaponOwner = GetOwner();
+	AnimNotifyEvent_CPP.Broadcast(Tag);
+	AnimNotifyEvent_BP.Broadcast(Tag);
+}
+
+float USf_AnimHelper::PlayMontage(UAnimMontage* MontageToPlay) const
+{
+	const AActor* WeaponOwner = GetOwner();
 	if (!IsValid(WeaponOwner))
 	{
-		UE_LOG(SF_WeaponAnimationReceiver, Warning, TEXT("Invalid Weapon Owner to play montage on"))
+		UE_LOG(SF_AnimHelper, Warning, TEXT("Invalid Weapon Owner to play montage on"))
 		return 0;
 	}
 	
 	if (!IsValid(MontageToPlay))
 	{
-		UE_LOG(SF_WeaponAnimationReceiver, Warning, TEXT("Invalid Montage to play"))
+		UE_LOG(SF_AnimHelper, Warning, TEXT("Invalid Montage to play"))
 		return 0;
 	}
 
 	if (!(WeaponOwner->Implements<UWeaponOwner>()))
 	{
-		UE_LOG(SF_WeaponAnimationReceiver,
+		UE_LOG(SF_AnimHelper,
 				Warning,
 				TEXT("Actor Requires %s interface to play montage"),
 			   *UWeaponOwner::StaticClass()->GetName())
@@ -36,12 +42,12 @@ float UAnimNotify_GameplayTag::PlayMontage(UAnimMontage* MontageToPlay) const
 
 	if (!IsValid(AnimInstance))
 	{
-		UE_LOG(SF_WeaponAnimationReceiver, Warning, TEXT("Invalid AnimInstance"))
+		UE_LOG(SF_AnimHelper, Warning, TEXT("Invalid AnimInstance"))
 		return 0;
 	}
 
 	UE_LOG(
-		SF_WeaponAnimationReceiver,
+		SF_AnimHelper,
 		Log,
 		TEXT("Playing Montage %s on %s "),
 		*MontageToPlay->GetName(),
@@ -55,25 +61,25 @@ float UAnimNotify_GameplayTag::PlayMontage(UAnimMontage* MontageToPlay) const
 		true);
 }
 
-void UAnimNotify_GameplayTag::StopMontage(UAnimMontage* MontageToStop, float BlendOutTime) const
+void USf_AnimHelper::StopMontage(UAnimMontage* MontageToStop, float BlendOutTime) const
 {
 
 	AActor* WeaponOwner = GetOwner();
 	if (!IsValid(WeaponOwner))
 	{
-		UE_LOG(SF_WeaponAnimationReceiver, Warning, TEXT("Invalid Weapon Holder to stop montage on"))
+		UE_LOG(SF_AnimHelper, Warning, TEXT("Invalid Weapon Holder to stop montage on"))
 		return;
 	}
 	
 	if (!IsValid(MontageToStop))
 	{
-		UE_LOG(SF_WeaponAnimationReceiver, Warning, TEXT("Invalid Montage to stop"))
+		UE_LOG(SF_AnimHelper, Warning, TEXT("Invalid Montage to stop"))
 		return;
 	}
 
 	if (!WeaponOwner->Implements<UWeaponOwner>())
 	{
-		UE_LOG(SF_WeaponAnimationReceiver,
+		UE_LOG(SF_AnimHelper,
 				Warning,
 				TEXT("Actor Requires %s interface to stop montage on "),
 			   *UWeaponOwner::StaticClass()->GetName())
@@ -84,7 +90,7 @@ void UAnimNotify_GameplayTag::StopMontage(UAnimMontage* MontageToStop, float Ble
 
 	if (!IsValid(AnimInstance))
 	{
-		UE_LOG(SF_WeaponAnimationReceiver, Warning, TEXT("Invalid AnimInstance To Stop Montage"))
+		UE_LOG(SF_AnimHelper, Warning, TEXT("Invalid AnimInstance To Stop Montage"))
 		return;
 	}
 
@@ -95,7 +101,7 @@ void UAnimNotify_GameplayTag::StopMontage(UAnimMontage* MontageToStop, float Ble
 	AnimInstance->Montage_Stop(BlendOutTime,MontageToStop);
 	
 	UE_LOG(
-		SF_WeaponAnimationReceiver,
+		SF_AnimHelper,
 		Log,
 		TEXT("Stoping Montage %s on %s "),
 		*MontageToStop->GetName(),

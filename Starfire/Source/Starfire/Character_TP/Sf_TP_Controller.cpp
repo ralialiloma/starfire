@@ -8,6 +8,7 @@
 #include "Perception/AISense_Sight.h"
 #include "Perception/AISense_Touch.h"
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
+#include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
 
 DEFINE_LOG_CATEGORY_STATIC(Sf_Log_TP_Controller, Display, Display);
 
@@ -60,7 +61,6 @@ void ASf_TP_Controller::HandlePerception(AActor* Actor, FAIStimulus Stimulus)
 {
 	const TSubclassOf<UAISense> SenseType =  UAIPerceptionSystem::GetSenseClassForStimulus(this,Stimulus);
 	
-	
 	if (SenseType->IsChildOf(UAISense_Sight::StaticClass()))
 		HandleSightPerception(Stimulus);
 	else if (SenseType->IsChildOf(UAISense_Hearing::StaticClass()))
@@ -72,7 +72,8 @@ void ASf_TP_Controller::HandlePerception(AActor* Actor, FAIStimulus Stimulus)
 	else if (SenseType->IsChildOf(UAISense_Damage::StaticClass()))
 		HandleTouchPerception(Stimulus);
 
-	
+	if (Stimulus.WasSuccessfullySensed())
+		SF_PRINT_TO_SCREEN(-1,2,FColor::Red,TEXT("Successfully Sensed Player"),TP::Controller)
 }
 
 void ASf_TP_Controller::HandleSightPerception(const FAIStimulus& Stimulus)
@@ -134,7 +135,7 @@ void ASf_TP_Controller::HandleDamagePerception(const FAIStimulus& Stimulus)
 
 void ASf_TP_Controller::HandlePerceptionForgotten(AActor* Actor)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, "Forgot player");
+	SF_PRINT_TO_SCREEN(-1,2,FColor::Red,TEXT("Forgot Player"),TP::Controller)
 	UBlackboardComponent* BlackboardComponent = GetBlackboardComponent();
 	UBlackboardKeyHelperLibrary::SetBoolValue(BlackboardComponent,EBoolBlackboardKey::SensedPlayer,false);
 	UBlackboardKeyHelperLibrary::ClearVectorValue(BlackboardComponent,ELocationBlackboardKey::LastPlayerLocation);

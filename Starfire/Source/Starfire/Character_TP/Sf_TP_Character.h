@@ -82,7 +82,7 @@ public:
 	virtual UAnimInstance* GetCharacterAnimInstance_Implementation() const override;
 	virtual FTransform GetFireTransform_Implementation() const override;
 	virtual FMeleeInfo GetMeleeInfo_Implementation() const override;
-	virtual UAnimNotify_GameplayTag* GetAnimMontageController_Implementation() const override;
+	virtual USf_AnimHelper* GetAnimDataHelper_Implementation() const override;
 #pragma endregion
 
 };

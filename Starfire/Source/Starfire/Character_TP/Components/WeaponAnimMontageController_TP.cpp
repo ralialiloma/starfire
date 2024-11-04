@@ -1,6 +1,6 @@
 ﻿#include "WeaponAnimMontageController_TP.h"
 
-#include "Starfire/Animation/AnimationData/WeaponAnimDataHelper.h"
+#include "Starfire/Animation/AnimationData/AnimDataHelper.h"
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
 #include "Starfire/Utility/Sf_GameplayTagUtil.h"
 
@@ -46,7 +46,7 @@ float USf_WeaponAnimMontageController_TP::RunAnimation(FWeaponMontageEventPackag
 
 float USf_WeaponAnimMontageController_TP::PlayFPMontage(FWeaponAnimData_TP AnimData_TP,FGameplayTag MontageType) const
 {
-	UAnimMontage* AnimMontage =  UWeaponAnimDataHelper::GetAnimationMontage_TP(AnimData_TP,MontageType);
+	UAnimMontage* AnimMontage =  UAnimDataHelper::GetAnimationMontage_TP(AnimData_TP,MontageType);
 	if (!IsValid(AnimMontage))
 	{
 		UE_LOG(Sf_WeaponAnimMontageController_FP, Warning, TEXT("Could not find montage to play for %s"),*MontageType.GetTagName().ToString())
@@ -58,7 +58,7 @@ float USf_WeaponAnimMontageController_TP::PlayFPMontage(FWeaponAnimData_TP AnimD
 
 void USf_WeaponAnimMontageController_TP::StopFPMontage(FWeaponAnimData_TP AnimData_FP, FGameplayTag MontageType) const
 {
-	UAnimMontage* AnimMontage =  UWeaponAnimDataHelper::GetAnimationMontage_TP(AnimData_FP,MontageType);
+	UAnimMontage* AnimMontage =  UAnimDataHelper::GetAnimationMontage_TP(AnimData_FP,MontageType);
 	if (!IsValid(AnimMontage))
 	{
 		UE_LOG(Sf_WeaponAnimMontageController_FP, Warning, TEXT("Could not find montage to stop for %s"),*MontageType.GetTagName().ToString())
