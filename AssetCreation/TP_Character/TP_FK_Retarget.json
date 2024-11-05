@@ -17,13 +17,13 @@
             "shoulder.l"
         ],
         "leftUpperArm": [
-            "upper_arm_fk.l"
+            "upper_arm_ik.l"
         ],
         "leftLowerArm": [
             "forearm_fk.l"
         ],
         "leftHand": [
-            "hand_fk.l"
+            "hand_ik.l"
         ],
         "neck": [
             "neck"
@@ -35,13 +35,13 @@
             "shoulder.r"
         ],
         "rightUpperArm": [
-            "upper_arm_fk.r"
+            "upper_arm_ik.r"
         ],
         "rightLowerArm": [
             "forearm_fk.r"
         ],
         "rightHand": [
-            "hand_fk.r"
+            "hand_ik.r"
         ],
         "leftUpLeg": [
             "thigh_ik.l"
@@ -181,6 +181,10 @@
         ],
         "rightIndexDistal": [
             "f_index.03.r"
+        ],
+        "custom_bone_ball_l": [
+            "ball_l",
+            "toe_fk.l"
         ]
     },
     "shapes": {}
