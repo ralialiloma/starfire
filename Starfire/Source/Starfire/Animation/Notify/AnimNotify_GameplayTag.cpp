@@ -14,7 +14,7 @@ FString UAnimNotify_Gameplaytag::GetNotifyName_Implementation() const
 	return FString::Printf(TEXT("Notfiy Tag:[%s]"),*GameplayTag.GetTagName().ToString()); 
 }
 
-void UAnimNotify_Gameplaytag::Notify(const USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
+void UAnimNotify_Gameplaytag::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
 {
 	if (!GetWorld())
 		return;
