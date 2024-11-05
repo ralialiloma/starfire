@@ -35,12 +35,18 @@ struct F_SF_MoveRequest
 	E_Sf_TP_LocomotionType LocomotionType;
 	UPROPERTY(BlueprintReadWrite)
 	TSubclassOf<UNavigationQueryFilter> FilterClass;
+	UPROPERTY(BlueprintReadWrite)
+	AActor* TargetActor;
+	UPROPERTY(BlueprintReadWrite)
+	bool bMoveToActor;
 
 	F_SF_MoveRequest()
 		: Destination(FVector::ZeroVector)
 		  , AcceptanceRadius(100.f)
 		  , ProjectionRadius(0), LocomotionType(E_Sf_TP_LocomotionType::Walk)
 		  , FilterClass(nullptr)
+			,TargetActor(nullptr)
+			,	bMoveToActor(false)
 	{
 	}
 };
@@ -61,6 +67,8 @@ public:
 	bool MoveToLocation(F_SF_MoveRequest MoveRequest);
 	UFUNCTION(BlueprintCallable, Category = "EnemyFeature|Locomotion")
 	void StopMovement();
+	UFUNCTION(BlueprintCallable, Category = "EnemyFeature|Locomotion")
+	void FinishMovement();
 private:
 	void ProcessLocomotionType(E_Sf_TP_LocomotionType LocomotionType);
 	UFUNCTION()

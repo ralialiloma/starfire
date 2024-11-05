@@ -6,37 +6,59 @@
 #include "Starfire/Character_TP/EQS/NavigationTargetSubsystem.h"
 
 
-bool UCF_Locomotion::MoveToLocation(F_SF_MoveRequest MoveRequest)
+bool UCF_Locomotion::MoveToLocation(const F_SF_MoveRequest MoveRequest)
 {
 	UNavigationTargetSubsystem* NavTargetSys = GetWorld()->GetGameInstance()->GetSubsystem<UNavigationTargetSubsystem>();
 
-	FNavLocation ProjectedDestination;
-	UNavigationSystemV1* NavSys = UNavigationSystemV1::GetCurrent(GetWorld());
-	
-	bool bProjected = NavSys->ProjectPointToNavigation(
-		MoveRequest.Destination,           
-		ProjectedDestination,
-		FVector(MoveRequest.ProjectionRadius, MoveRequest.ProjectionRadius, MoveRequest.ProjectionRadius));
-
-	if (!bProjected)
-	{
-		return false;
-	}
-
-	FVector ProjectedDestinationLocation = ProjectedDestination.Location;
 	
 	AAIController* OwningController = GetOwningAIController();
+	FVector ProjectedDestinationLocation;
+	EPathFollowingRequestResult::Type Result;
 
-	NavTargetSys->UnregisterReservedCover(LastDestination);
-	const bool bLocationReserved =  NavTargetSys->LocationInReservedCover(ProjectedDestinationLocation);
-	if (bLocationReserved)
+	if(MoveRequest.bMoveToActor)
 	{
-		ClearAllDelegates();
-		UE_LOG(EF_Locomotion, Log, TEXT("Location already reserved"))
-		return false;
+		if(!IsValid(MoveRequest.TargetActor))
+		{
+			UE_LOG(EF_Locomotion, Error, TEXT("Target Actor is invalid"))
+			return false;
+		}
+		
+		Result =  OwningController->MoveToActor(
+			MoveRequest.TargetActor,
+			MoveRequest.AcceptanceRadius,
+			true,
+			true,
+			true,
+			MoveRequest.FilterClass,
+			true
+		);
 	}
+	else
+	{
+		FNavLocation ProjectedDestination;
+		UNavigationSystemV1* NavSys = UNavigationSystemV1::GetCurrent(GetWorld());
+	
+		bool bProjected = NavSys->ProjectPointToNavigation(
+			MoveRequest.Destination,           
+			ProjectedDestination,
+			FVector(MoveRequest.ProjectionRadius, MoveRequest.ProjectionRadius, MoveRequest.ProjectionRadius));
 
-	EPathFollowingRequestResult::Type Result =  OwningController->MoveToLocation(
+		if (!bProjected)
+		{
+			return false;
+		}
+		ProjectedDestinationLocation = ProjectedDestination.Location;
+
+		NavTargetSys->UnregisterReservedCover(LastDestination);
+		const bool bLocationReserved =  NavTargetSys->LocationInReservedCover(ProjectedDestinationLocation);
+		if (bLocationReserved)
+		{
+			ClearAllDelegates();
+			UE_LOG(EF_Locomotion, Log, TEXT("Location already reserved"))
+			return false;
+		}
+		
+		Result =  OwningController->MoveToLocation(
 		ProjectedDestinationLocation,
 		MoveRequest.AcceptanceRadius,
 		true,
@@ -46,6 +68,8 @@ bool UCF_Locomotion::MoveToLocation(F_SF_MoveRequest MoveRequest)
 		MoveRequest.FilterClass,
 		true
 		);
+	}
+	
 
 	if (Result ==EPathFollowingRequestResult::Type::AlreadyAtGoal)
 	{
@@ -64,8 +88,17 @@ bool UCF_Locomotion::MoveToLocation(F_SF_MoveRequest MoveRequest)
 		return false;
 	}
 	
-	NavTargetSys->RegisterReservedCover(ProjectedDestinationLocation);
-	LastDestination = ProjectedDestinationLocation;
+	if (!MoveRequest.bMoveToActor)
+	{
+		NavTargetSys->RegisterReservedCover(ProjectedDestinationLocation);
+		LastDestination = ProjectedDestinationLocation;
+	}
+	else if (MoveRequest.TargetActor)
+	{
+		LastDestination = MoveRequest.TargetActor->GetActorLocation();
+	}
+
+	
 	ProcessLocomotionType(MoveRequest.LocomotionType);
 	OwningController->ReceiveMoveCompleted.AddDynamic(this, &UCF_Locomotion::OnMoveCompleted);
 	return true;
@@ -79,6 +112,19 @@ void UCF_Locomotion::StopMovement()
 	OwningController->ReceiveMoveCompleted.RemoveDynamic(this, &UCF_Locomotion::OnMoveCompleted);
 	UNavigationTargetSubsystem* NavTargetSys = GetWorld()->GetGameInstance()->GetSubsystem<UNavigationTargetSubsystem>();
 	NavTargetSys->UnregisterReservedCover(LastDestination);
+	ClearAllDelegates();
+}
+
+void UCF_Locomotion::FinishMovement()
+{
+	AAIController* OwningController = GetOwningAIController();
+	OwningController->StopMovement();
+	OwningController->ReceiveMoveCompleted.RemoveDynamic(this, &UCF_Locomotion::OnMoveCompleted);
+	UNavigationTargetSubsystem* NavTargetSys = GetWorld()->GetGameInstance()->GetSubsystem<UNavigationTargetSubsystem>();
+	NavTargetSys->UnregisterReservedCover(LastDestination);
+	
+	OnMoveFinished_CPP.Broadcast();
+	OnMoveFinished_BP.Broadcast();
 	ClearAllDelegates();
 }
 
