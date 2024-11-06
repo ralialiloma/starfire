@@ -4,18 +4,18 @@
 #include "GameplayTagContainer.h"
 #include "Starfire/StarFireGameplayTags.h"
 #include "Starfire/Shared/Interact/InteractInterfaces.h"
-#include "Collectable.generated.h"
+#include "Resource.generated.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(SFCollectable, Log, All);
 
 UCLASS(Blueprintable)
-class STARFIRE_API ACollectable : public AActor, public IPrimaryInteract, public IHighlightInterface
+class STARFIRE_API AResource : public AActor, public IPrimaryInteract, public IHighlightInterface
 {
 	GENERATED_BODY()
 	
 public:
 	
-	ACollectable();
+	AResource();
 
 	virtual void OnInteractStart_Implementation(UInteractComponent* InteractComponent, APawn* TriggeringPawn) override;
 
@@ -30,7 +30,7 @@ protected:
 	bool AutoDestroyOnPickup = true;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "ItemSettings")
 	UAnimMontage* PickupMontage = nullptr;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "ItemSettings", meta = (Categories="Gameplay.ItemType"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "ItemSettings", meta = (Categories="Gameplay.Resource"))
 	FGameplayTag ItemTag;
 
 	//Components

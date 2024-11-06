@@ -27,7 +27,9 @@ if (SHOULD_DEBUG(DebugTag, EDebugType::Print))                                  
 	}                                                                             \
 }
 
-
+#define SF_SIMPLE_DEBUG(LogType, LogCategory, Color, Text, DebugTag) \
+	SF_LOG(LogType, LogCategory, Text, DebugTag) \
+	SF_PRINT_TO_SCREEN(-1, 4, Color, Text, DebugTag)
 
 UCLASS()
 class STARFIRE_API UDebugFunctionLibrary : public UBlueprintFunctionLibrary

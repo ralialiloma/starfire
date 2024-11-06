@@ -16,11 +16,12 @@ namespace Sf_GameplayTags
 			STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Melee);
 			STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Explosion);
 		}
-		namespace ItemType
+		namespace Resource
 		{
 			STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
 			STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Environment);
 			STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy);
+			STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(ObjectiveItem);
 		}
 		namespace Weapon
 		{
@@ -88,6 +89,10 @@ namespace Sf_GameplayTags
 		{
 			STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
 		}
+		namespace Inventory
+        {
+        	STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+        }
 
 
 	}

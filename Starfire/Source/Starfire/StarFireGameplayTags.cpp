@@ -19,11 +19,13 @@ namespace Sf_GameplayTags
 			DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.DamageType,Fire,"");
 			DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.DamageType,Explosion,"");
 		}
-		namespace ItemType
+		namespace Resource
 		{
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay.ItemType", "")
-			DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ItemType,Environment,"");
-			DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ItemType,Enemy,"");
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay.Resource", "")
+			DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.Resource,Environment,"");
+			DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.Resource,Enemy,"");
+			DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.Resource,ObjectiveItem,"");
+
 		}
 		namespace Weapon
 		{
@@ -89,6 +91,10 @@ namespace Sf_GameplayTags
 		namespace Interactables
 		{
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Debug.Interactables", "")
+		}
+		namespace Inventory
+		{
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Debug.Inventory", "");
 		}
 
 	}
