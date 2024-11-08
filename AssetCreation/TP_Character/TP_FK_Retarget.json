@@ -79,18 +79,6 @@
             "spine_01",
             "spine_fk"
         ],
-        "custom_bone_spine_02": [
-            "spine_02",
-            "spine_fk"
-        ],
-        "custom_bone_spine_03": [
-            "spine_03",
-            "spine_fk.001"
-        ],
-        "custom_bone_spine_04": [
-            "spine_04",
-            "spine_fk.002"
-        ],
         "custom_bone_spine_05": [
             "spine_05",
             "spine_fk.003"
@@ -185,6 +173,27 @@
         "custom_bone_ball_l": [
             "ball_l",
             "toe_fk.l"
+        ],
+        "custom_bone_spine_02": [
+            "spine_02",
+            "spine_fk"
+        ],
+        "custom_bone_spine_03": [
+            "spine_03",
+            "spine_fk.001"
+        ],
+        "custom_bone_spine_04": [
+            "spine_04",
+            "spine_fk.002"
+        ],
+        "rightThumbProximal": [
+            "thumb.01.r"
+        ],
+        "rightThumbMedial": [
+            "thumb.02.r"
+        ],
+        "rightThumbDistal": [
+            "thumb.03.r"
         ]
     },
     "shapes": {}
