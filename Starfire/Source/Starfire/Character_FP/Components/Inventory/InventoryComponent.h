@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
+#include "ResourceCraftingDefinition.h"
 #include "InventoryComponent.generated.h"
 
 class UResourceCraftingDefinition;
@@ -16,7 +17,7 @@ class STARFIRE_API UInventoryComponent : public UActorComponent
 public:
 
 	UFUNCTION(BlueprintCallable)
-	void AddResource(FGameplayTag ItemTag, int Quantity);
+	int AddResource(FGameplayTag ItemTag, int Quantity);
 
 	UFUNCTION(BlueprintCallable)
 	bool HasQuantity(FGameplayTag ItemTag, int Quantity);
@@ -29,6 +30,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	int CraftItems(FGameplayTag ItemTag, int Quantity, bool CraftMax = true);
+
+	UFUNCTION(BlueprintCallable)
+	int GetItemMaxStack(FGameplayTag ItemTag);
 	
 protected:
 
@@ -37,5 +41,8 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly)
 	UResourceCraftingDefinition* CraftingDefinitions;
+
+	UPROPERTY(EditAnywhere)
+	TArray<FItemQuantityDefinition> MaxStacks;
 
 };

@@ -5,17 +5,32 @@
 
 DEFINE_LOG_CATEGORY(LogInventoryComponent);
 
-void UInventoryComponent::AddResource(FGameplayTag ItemTag, int Quantity)
+int UInventoryComponent::AddResource(FGameplayTag ItemTag, int Quantity)
 {
 	if (!ItemTag.IsValid())
-		return;
+		return Quantity;
 	
 	Quantity = FMath::Max(0, Quantity);
+	int ReturnQuantity = 0;
 	int& ItemQuantity = ResourceMap.FindOrAdd(ItemTag);
-	ItemQuantity += Quantity;
+	
+	int NewItemQuantity = ItemQuantity + Quantity;
+	int MaxItemStack = GetItemMaxStack(ItemTag);
+	if (NewItemQuantity < MaxItemStack)
+	{
+		ItemQuantity = NewItemQuantity;
+	}
+	else
+	{
+		ItemQuantity = MaxItemStack;
+		ReturnQuantity = NewItemQuantity - MaxItemStack;
+	}
+		
 
-	FString DebugString("Added " + FString::FromInt(Quantity) + " of Item: " + ItemTag.ToString());
+	FString DebugString("Added " + FString::FromInt(Quantity - ReturnQuantity) + " of Item: " + ItemTag.ToString());
 	SF_SIMPLE_DEBUG(LogInventoryComponent, Log, FColor::White, *DebugString, Inventory::Name);
+
+	return ReturnQuantity;
 }
 
 bool UInventoryComponent::HasQuantity(FGameplayTag ItemTag, int Quantity)
@@ -43,6 +58,21 @@ bool UInventoryComponent::ConsumeResource(FGameplayTag ItemTag, int Quantity)
 	FString DebugString("Consumed " + FString::FromInt(Quantity) + " of Item: " + ItemTag.ToString());
 	SF_SIMPLE_DEBUG(LogInventoryComponent, Log, FColor::White, *DebugString, Inventory::Name);
 	return true;
+}
+
+int UInventoryComponent::GetItemMaxStack(FGameplayTag ItemTag)
+{
+	FItemQuantityDefinition* ItemQuantityDefinition = MaxStacks.FindByPredicate(
+	[ItemTag](const FItemQuantityDefinition& ItemQuantity){
+		if (ItemTag.IsValid() && ItemTag.MatchesTag(ItemQuantity.ItemTag))
+			return true;
+		return false;
+	});
+
+	if (ItemQuantityDefinition)
+		return ItemQuantityDefinition->Quantity;
+
+	return -1;
 }
 
 bool UInventoryComponent::CraftItem_Implementation(FGameplayTag ItemTag)
