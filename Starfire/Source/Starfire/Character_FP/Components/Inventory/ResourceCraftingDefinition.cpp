@@ -19,3 +19,18 @@ FCraftingData UResourceCraftingDefinition::GetCraftingData(FGameplayTag ItemTag)
 
 	return *Data;
 }
+
+int UResourceCraftingDefinition::GetMaxStack(FGameplayTag ItemTag)
+{
+	FItemQuantityDefinition* ItemQuantityDefinition = MaxStackData.FindByPredicate(
+	[ItemTag](const FItemQuantityDefinition& ItemQuantity){
+		if (ItemTag.IsValid() && ItemTag.MatchesTag(ItemQuantity.ItemTag))
+			return true;
+		return false;
+	});
+
+	if (ItemQuantityDefinition)
+		return ItemQuantityDefinition->Quantity;
+
+	return -1;
+}

@@ -17,7 +17,7 @@ class STARFIRE_API UInventoryComponent : public UActorComponent
 public:
 
 	UFUNCTION(BlueprintCallable)
-	int AddResource(FGameplayTag ItemTag, int Quantity);
+	int AddResource(FGameplayTag ItemTag, int AddQuantity);
 
 	UFUNCTION(BlueprintCallable)
 	bool HasQuantity(FGameplayTag ItemTag, int Quantity);
@@ -41,8 +41,4 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly)
 	UResourceCraftingDefinition* CraftingDefinitions;
-
-	UPROPERTY(EditAnywhere)
-	TArray<FItemQuantityDefinition> MaxStacks;
-
 };

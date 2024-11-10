@@ -44,7 +44,13 @@ public:
 	UFUNCTION(BlueprintCallable)
 	FCraftingData GetCraftingData(FGameplayTag ItemTag);
 
+	UFUNCTION(BlueprintCallable)
+	int GetMaxStack(FGameplayTag ItemTag);
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TArray<FCraftingData> CraftingData {};
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    TArray<FItemQuantityDefinition> MaxStackData {};
 };
