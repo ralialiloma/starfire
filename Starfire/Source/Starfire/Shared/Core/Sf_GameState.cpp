@@ -18,6 +18,7 @@ bool ASf_GameState::SetCheckpoint(ACheckPoint* NewCheckpoint)
 	FTransform OldTransform = SavedCheckPointTransform;
 	CurrentCheckPoint = NewCheckpoint;
 	SavedCheckPointTransform = CurrentCheckPoint->GetTransform();
+	bHasCheckPointed = true;
 	OnCheckPointChange.Broadcast(SavedCheckPointTransform, OldTransform);
 	return true;
 }

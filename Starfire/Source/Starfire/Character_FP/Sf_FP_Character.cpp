@@ -5,7 +5,9 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/Sf_FP_CharacterMovementComponent.h"
+#include "GameFramework/PlayerStart.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Starfire/Character_TP/EQS/CoverSystem/Sf_CoverGenComponent.h"
 #include "Starfire/Shared/Core/Sf_GameState.h"
 #include "Starfire/Shared/Interact/InteractComponent.h"
@@ -224,13 +226,28 @@ void ASf_FP_Character::Respawn()
 
 	if (ASf_GameState* GameState = GetWorld()->GetGameState<ASf_GameState>())
 	{
-		FTransform SpawnTransform;
-		if (GameState->GetLastCheckpointTransform(SpawnTransform))
+		FTransform SpawnTransform = FTransform();
+		
+		if (!GameState->GetLastCheckpointTransform(SpawnTransform))
 		{
-			GetController<APlayerController>()->SetControlRotation(SpawnTransform.Rotator());
-			SetActorTransform(SpawnTransform);
+			TArray<AActor*> OutActors;
+			UGameplayStatics::GetAllActorsOfClass(this, APlayerStart::StaticClass(), OutActors);
+			
+			float ClosestDistance = MAX_FLT;
+			for (AActor* FoundActor : OutActors)
+			{
+				float CurrentDistance = FVector::Dist(GetActorLocation(), FoundActor->GetActorLocation());
+
+				if (CurrentDistance < ClosestDistance)
+				{
+					ClosestDistance = CurrentDistance;
+					SpawnTransform = FoundActor->GetTransform();
+				}
+			}
 		}
 
+		GetController<APlayerController>()->SetControlRotation(SpawnTransform.Rotator());
+		SetActorTransform(SpawnTransform);
 		GetSfDamageController()->Reset();
 	}
 }
