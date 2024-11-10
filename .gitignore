@@ -99,3 +99,6 @@ Starfire/DerivedDataCache/*
 **/.idea
 Starfire/Build/Windows/FileOpenOrder/CookerOpenOrder.log
 Starfire/Build/Windows/FileOpenOrder/EditorOpenOrder.log
+
+#Blender Backups
+*.blend1
