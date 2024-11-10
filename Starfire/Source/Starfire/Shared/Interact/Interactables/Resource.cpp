@@ -50,4 +50,20 @@ void AResource::OnInteractStart_Implementation(UInteractComponent* InteractCompo
 
 void AResource::OnCollect_Implementation(FVector CollectLocation, APawn* TriggeringPawn)
 {
+	OnCollectDelegate.Broadcast(this);
+}
+
+UStaticMesh* AResource::GetStaticMeshAsset() const
+{
+	return Mesh->GetStaticMesh();
+}
+
+FVector AResource::GetMeshScaling() const
+{
+	return Mesh->GetRelativeScale3D();
+}
+
+FGameplayTag AResource::GetItemTag() const
+{
+	return ItemTag;
 }

@@ -8,12 +8,16 @@
 
 DECLARE_LOG_CATEGORY_EXTERN(SFCollectable, Log, All);
 
-UCLASS(Blueprintable)
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCollect, AResource*, Resource);
+
+UCLASS(Blueprintable, Abstract)
 class STARFIRE_API AResource : public AActor, public IPrimaryInteract, public IHighlightInterface
 {
 	GENERATED_BODY()
 	
 public:
+	UPROPERTY(BlueprintAssignable)
+	FCollect OnCollectDelegate;
 	
 	AResource();
 
@@ -21,6 +25,13 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent)
 	void OnCollect(FVector CollectLocation, APawn* TriggeringPawn);
+
+	UFUNCTION(BlueprintCallable)
+	UStaticMesh* GetStaticMeshAsset() const;
+	UFUNCTION(BlueprintCallable)
+	FVector GetMeshScaling() const;
+	UFUNCTION(BlueprintCallable)
+	FGameplayTag GetItemTag() const;
 	
 protected:
 
