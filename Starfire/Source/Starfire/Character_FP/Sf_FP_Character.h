@@ -117,4 +117,11 @@ public:
 	virtual FMeleeInfo GetMeleeInfo_Implementation() const override;
 	virtual USf_AnimHelper* GetAnimDataHelper_Implementation() const override;
 #pragma endregion
+
+#pragma region Reset
+public:
+	UFUNCTION(BlueprintCallable)
+	void Respawn();
+
+#pragma endregion
 };

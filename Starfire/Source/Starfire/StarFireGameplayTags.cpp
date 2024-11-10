@@ -19,6 +19,13 @@ namespace Sf_GameplayTags
 			DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.DamageType,Fire,"");
 			DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.DamageType,Explosion,"");
 		}
+		namespace PlayState
+		{
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay.PlayState", "")
+			DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.PlayState,Tutorial,"");
+			DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.PlayState,Arena,"");
+			DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.PlayState,End,"");
+		}
 		namespace Resource
 		{
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay.Resource", "")
@@ -95,6 +102,11 @@ namespace Sf_GameplayTags
 		namespace Inventory
 		{
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Debug.Inventory", "");
+		}
+		namespace Core
+		{
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Debug.Core", "");
+			DEFINE_GAMEPLAY_TAG_AUTO(Debug.Core, GameState, "");
 		}
 
 	}

@@ -7,6 +7,7 @@
 #include "Components/Sf_FP_CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Starfire/Character_TP/EQS/CoverSystem/Sf_CoverGenComponent.h"
+#include "Starfire/Shared/Core/Sf_GameState.h"
 #include "Starfire/Shared/Interact/InteractComponent.h"
 #include "Starfire/Utility/ConfigLoader.h"
 
@@ -217,6 +218,19 @@ USf_AnimHelper* ASf_FP_Character::GetAnimDataHelper_Implementation() const
 	return WeaponAnimMontageController;
 }
 
+void ASf_FP_Character::Respawn()
+{
+	GetMovementComponent()->StopMovementImmediately();
 
+	if (ASf_GameState* GameState = GetWorld()->GetGameState<ASf_GameState>())
+	{
+		FTransform SpawnTransform;
+		if (GameState->GetLastCheckpointTransform(SpawnTransform))
+		{
+			GetController<APlayerController>()->SetControlRotation(SpawnTransform.Rotator());
+			SetActorTransform(SpawnTransform);
+		}
 
-
+		GetSfDamageController()->Reset();
+	}
+}

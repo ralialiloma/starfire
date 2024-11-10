@@ -1,5 +1,6 @@
 ﻿#include "Sf_BreakerTarget.h"
 
+#include "Starfire/Shared/Core/Sf_GameState.h"
 #include "Starfire/Shared/Damage/Sf_DamageController.h"
 
 DEFINE_LOG_CATEGORY(LogBreakerTarget);
@@ -25,6 +26,8 @@ ASf_BreakerTarget::ASf_BreakerTarget(const FObjectInitializer& ObjectInitializer
 void ASf_BreakerTarget::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	GameState = GetWorld()->GetGameState<ASf_GameState>();
 
 	TWeakObjectPtr<ASf_BreakerTarget> WeakSelf = this;
 	if (!IsValid(SfDamageController))
@@ -53,13 +56,38 @@ void ASf_BreakerTarget::BeginPlay()
 		
 		WeakSelf->OnFullProgress_CPP.Broadcast();
 		WeakSelf->OnFullProgress_BP.Broadcast();
-	});;
+
+		if (WeakSelf.IsValid() && WeakSelf.Get()->GameState)
+		{
+			WeakSelf.Get()->GameState->EndGame(false);
+		}
+	});
+
+	SfDamageController->OnZeroHealth_CPP.AddLambda([WeakSelf]()->void
+	{
+		if (!WeakSelf.IsValid())
+		{
+			return;
+		}
+		
+		WeakSelf->OnZeroProgress_BP.Broadcast();
+		WeakSelf->OnZeroProgress_CPP.Broadcast();
+
+		if (WeakSelf.IsValid() && WeakSelf.Get()->GameState)
+		{
+			WeakSelf.Get()->GameState->EndGame(true);
+		}
+	});
 }
 
 void ASf_BreakerTarget::Tick(const float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-	DoProgress(DeltaSeconds);
+
+	if (GameState && GameState->IsInPlayState(Sf_GameplayTags::Gameplay::PlayState::Arena))
+	{
+		DoProgress(DeltaSeconds);
+	}
 }
 
 void ASf_BreakerTarget::PostInitializeComponents()
@@ -81,4 +109,3 @@ void ASf_BreakerTarget::DoProgress(const float DeltaSeconds) const
 {
 	SfDamageController->Heal(ProgressionRatePerSecond*DeltaSeconds);
 }
-

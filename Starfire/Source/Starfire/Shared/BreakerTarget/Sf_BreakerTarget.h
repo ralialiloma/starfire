@@ -4,7 +4,7 @@
 #include "Sf_BreakerTarget.generated.h"
 
 
-
+class ASf_GameState;
 DECLARE_LOG_CATEGORY_EXTERN(LogBreakerTarget, Log, All);
 
 UCLASS(BlueprintType,Abstract,Blueprintable)
@@ -24,7 +24,6 @@ public:
 	USf_DamageController* GetDamageController() const;
 private:
 	void DoProgress(float DeltaSeconds) const;
-	void OnDamageReceived(float ReceivedDamage);
 #pragma endregion
 #pragma region Properties
 public:
@@ -36,6 +35,10 @@ public:
 	FSf_VoidDelegate_BP OnFullProgress_BP;
 	FSf_VoidDelegate_CPP OnFullProgress_CPP;
 
+	UPROPERTY(BlueprintAssignable)
+	FSf_VoidDelegate_BP OnZeroProgress_BP;
+	FSf_VoidDelegate_CPP OnZeroProgress_CPP;
+
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Damage")
 	float ProgressionRatePerSecond = 2;
 
@@ -46,6 +49,8 @@ protected:
 	USf_DamageController* SfDamageController;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Damage")
 	USf_Hitbox* PrimaryHitbox;
+
+	TObjectPtr<ASf_GameState> GameState = nullptr;
 private:
 	FDelegateHandle DelHandle;
 #pragma endregion
