@@ -16,23 +16,26 @@ class STARFIRE_API UInventoryComponent : public UActorComponent
 
 public:
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, meta = (Categories = "Gameplay.Resource"))
 	int AddResource(FGameplayTag ItemTag, int AddQuantity);
 
-	UFUNCTION(BlueprintCallable)
-	bool HasQuantity(FGameplayTag ItemTag, int Quantity);
+	UFUNCTION(BlueprintCallable, meta = (Categories = "Gameplay.Resource"))
+	bool HasQuantity(FGameplayTag ItemTag, int Quantity) const;
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, meta = (Categories = "Gameplay.Resource"))
+	int GetQuantity(FGameplayTag ItemTag) const;
+
+	UFUNCTION(BlueprintCallable, meta = (Categories = "Gameplay.Resource"))
 	bool ConsumeResource(FGameplayTag ItemTag, int Quantity);
 
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, meta = (Categories = "Gameplay.Resource"))
 	bool CraftItem(FGameplayTag ItemTag);
 
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, meta = (Categories = "Gameplay.Resource"))
 	int CraftItems(FGameplayTag ItemTag, int Quantity, bool CraftMax = true);
 
-	UFUNCTION(BlueprintCallable)
-	int GetItemMaxStack(FGameplayTag ItemTag);
+	UFUNCTION(BlueprintCallable, meta = (Categories = "Gameplay.Resource"))
+	int GetItemMaxStack(FGameplayTag ItemTag) const;
 	
 protected:
 

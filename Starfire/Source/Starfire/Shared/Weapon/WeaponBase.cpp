@@ -465,9 +465,6 @@ void AWeaponBase::StopReloading()
 	ExecuteAnimation(EWeaponAnimationEventType::Reload,false);
 }
 
-
-
-
 bool AWeaponBase::Melee()
 {
 	if (!CanMelee())
@@ -502,8 +499,8 @@ FTransform AWeaponBase::GetMuzzleTransform() const
 }
 void AWeaponBase::OnPickup(USf_Equipment* NewHolder)
 {
-	SkeletalMesh->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
 	SkeletalMesh->SetSimulatePhysics(false);
+	SkeletalMesh->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
 	SkeletalMesh->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 	SkeletalMesh->SetRelativeTransform(FTransform());
 	UE_LOG(SF_Weapon, Log, TEXT("Picked up %s"),*GetClass()->GetName())
@@ -605,5 +602,3 @@ void AWeaponBase::SetNewHolder(USf_Equipment* NewHolder)
 	OwningEquipmentComponent = NewHolder;
 	WeaponOwner = OwningEquipmentComponent->GetOwner<APawn>();
 }
-
-

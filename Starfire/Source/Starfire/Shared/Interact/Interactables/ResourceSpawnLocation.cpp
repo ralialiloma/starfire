@@ -20,7 +20,7 @@ void AResourceSpawnLocation::OnConstruction(const FTransform& Transform)
 		UStaticMesh* Mesh = DisplayResourceClass->GetDefaultObject<AResource>()->GetStaticMeshAsset();
 		FVector Scale = DisplayResourceClass->GetDefaultObject<AResource>()->GetMeshScaling();
 		MeshComponent->SetStaticMesh(Mesh);
-		MeshComponent->SetRelativeScale3D(Scale);
+		RootComponent->SetRelativeScale3D(Scale);
 	}
 #endif
 	

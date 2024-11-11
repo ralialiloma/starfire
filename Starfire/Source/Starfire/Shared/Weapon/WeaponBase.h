@@ -71,7 +71,6 @@ protected:
 	void ExecuteAnimation(EWeaponAnimationEventType WeaponAnimationEventType, bool bIsStarting = true) const;
 #pragma endregion
 
-
 #pragma region Properties
 
 protected:

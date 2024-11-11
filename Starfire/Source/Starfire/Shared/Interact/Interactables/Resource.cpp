@@ -29,16 +29,26 @@ void AResource::OnInteractStart_Implementation(UInteractComponent* InteractCompo
 			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, "Collectable item has invalid item tag {" + ItemTag.ToString() + "}");
 	}
 
-	if (UInventoryComponent* Inventory = TriggeringPawn->GetComponentByClass<UInventoryComponent>())
-		Inventory->AddResource(ItemTag, CollectAmount);
-
-	Cast<ASf_FP_Character>(TriggeringPawn)->GetFirstPersonMesh()->GetAnimInstance()->Montage_Play(PickupMontage);
+	UInventoryComponent* Inventory = TriggeringPawn->GetComponentByClass<UInventoryComponent>();
+	if (!Inventory)
+		return;
+	
+	int RemainingCollections = Inventory->AddResource(ItemTag, CollectAmount);
+	if (RemainingCollections == CollectAmount)
+		return;
 
 	if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::Interactables::Name, EDebugType::Log))
 		UE_LOG(SFCollectable, Log, TEXT("Collecting Collectable."));
 	if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::Interactables::Name, EDebugType::Print))
 		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, "Collecting Collectable.");
 
+
+	if (RemainingCollections >= 1)
+	{
+		CollectAmount = RemainingCollections;
+		return;
+	}
+	
 	OnCollect(InteractComponent->GetLastHitResult().Location, TriggeringPawn);
 	bHasBeenCollected = true;
 	

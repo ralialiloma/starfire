@@ -16,7 +16,7 @@ int UInventoryComponent::AddResource(FGameplayTag ItemTag, int AddQuantity)
 	
 	int NewItemQuantity = ItemQuantity + AddQuantity;
 	int MaxItemStack = GetItemMaxStack(ItemTag);
-	if (MaxItemStack <= 0 && NewItemQuantity < MaxItemStack)
+	if (MaxItemStack <= 0 || NewItemQuantity < MaxItemStack)
 	{
 		ItemQuantity = NewItemQuantity;
 	}
@@ -33,17 +33,21 @@ int UInventoryComponent::AddResource(FGameplayTag ItemTag, int AddQuantity)
 	return ReturnQuantity;
 }
 
-bool UInventoryComponent::HasQuantity(FGameplayTag ItemTag, int Quantity)
+bool UInventoryComponent::HasQuantity(FGameplayTag ItemTag, int Quantity) const
+{
+	return GetQuantity(ItemTag) >= Quantity;
+}
+
+int UInventoryComponent::GetQuantity(FGameplayTag ItemTag) const
 {
 	if (!ItemTag.IsValid())
-		return false;
+		return 0;
 	
-	if (int* ItemQuantity = ResourceMap.Find(ItemTag))
+	if (const int* ItemQuantity = ResourceMap.Find(ItemTag))
 	{
-		if (Quantity <= *ItemQuantity)
-			return true;
+		return *ItemQuantity;
 	}
-	return false;
+	return 0;
 }
 
 bool UInventoryComponent::ConsumeResource(FGameplayTag ItemTag, int Quantity)
@@ -60,7 +64,7 @@ bool UInventoryComponent::ConsumeResource(FGameplayTag ItemTag, int Quantity)
 	return true;
 }
 
-int UInventoryComponent::GetItemMaxStack(FGameplayTag ItemTag)
+int UInventoryComponent::GetItemMaxStack(FGameplayTag ItemTag) const
 {
 	if (!CraftingDefinitions)
 	{

@@ -70,11 +70,6 @@ void UResourceSpawner::SpawnResourceRandom()
 void UResourceSpawner::OnTrackedItemCollected(AResource* Item)
 {
 	check(Item);
-	for (auto Element : OccupiedTransforms)
-	{
-		FString Debug = Element.GetItemPtr() ? Element.GetItemPtr()->GetName() : "NULL";
-		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, Debug);
-	}
 	FResourceSpawn* Spawn = OccupiedTransforms.FindByPredicate([Item](const FResourceSpawn& Spawn)
 	{
 		return Item == Spawn.GetItemPtr();
