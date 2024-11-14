@@ -68,8 +68,6 @@ public:
 	FORCEINLINE UInteractComponent* GetInteractComponent() const{return InteractComponent;};
 	UFUNCTION(BlueprintPure,Category = "Character")
 	FORCEINLINE USf_CharacterStateMachine* GetCharacterStateMachine() const{return SfCharacterStateMachine;};
-	UFUNCTION(BlueprintPure,Category = "Character")
-	FORCEINLINE USf_CoverGenComponent* GetCoverGenComponent() const{return SfCoverGenComponent;};
 	
 protected:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Movement")
@@ -88,8 +86,6 @@ protected:
 	USf_AnimDataController_FP* WeaponAnimMontageController;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "AI")
 	UAIPerceptionStimuliSourceComponent* AIPerceptionStimuliSourceComponent;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "AI")
-	USf_CoverGenComponent* SfCoverGenComponent;
 	
 #pragma endregion
 

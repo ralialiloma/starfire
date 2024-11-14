@@ -68,8 +68,14 @@ public:
 	bool VerifyCover(FVector LocationToVerify, float Extent, const float MinScore = 0.5f) const;
 
 	UFUNCTION(BlueprintCallable)
+	bool VerifyPeak(FVector LocationToVerify, float Extent, const float MaxScore = 0.1f) const;
+
+	UFUNCTION(BlueprintCallable)
 	void GetClosestCoverTo(const FVector Location, const float MinScore, float& OutDistance, FVector& ClosestCoverLocation, bool& bFound) const;
-	
+
+	UFUNCTION(BlueprintCallable) 
+	void GetClosestPeakTo(FVector Location, float MaxScore, float& OutDistance, FVector& ClosestCoverLocation, bool& bFound) const;
+
 	UFUNCTION(BlueprintCallable)
 	TArray<FVector> GetPeakLocations(float MaxScore = 0.1f) const;
 private:

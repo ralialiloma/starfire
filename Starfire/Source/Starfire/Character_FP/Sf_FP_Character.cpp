@@ -8,7 +8,6 @@
 #include "GameFramework/PlayerStart.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
-#include "Starfire/Character_TP/EQS/CoverSystem/Sf_CoverGenComponent.h"
 #include "Starfire/Shared/Core/Sf_GameState.h"
 #include "Starfire/Shared/Interact/InteractComponent.h"
 #include "Starfire/Utility/ConfigLoader.h"
@@ -123,9 +122,6 @@ ASf_FP_Character::ASf_FP_Character(const FObjectInitializer& ObjectInitializer)
 
 	//AIPerceptionStimuliSourceComponent
 	AIPerceptionStimuliSourceComponent = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("AIPerceptionStimuliSourceComponent"));
-
-	//CoverGenComponent
-	SfCoverGenComponent = CreateDefaultSubobject<USf_CoverGenComponent>(TEXT("CoverGenComponent"));
 }
 
 void ASf_FP_Character::PostInitProperties()

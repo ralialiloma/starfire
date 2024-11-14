@@ -3,6 +3,7 @@
 
 #include "CollisionDebugDrawingPublic.h"
 #include "NavigationSystem.h"
+#include "Sf_TetherPointSubsystem.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Starfire/Character_TP/Sf_TP_Character.h"
@@ -118,6 +119,8 @@ ASf_TetherPointGen::ASf_TetherPointGen(): TraceTypeQuery()
 void ASf_TetherPointGen::BeginPlay()
 {
 	Super::BeginPlay();
+
+	GetGameInstance()->GetSubsystem<USf_TetherPointSubsystem>()->RegisterTetherPointGen(this);
 	GeneratePoints();
 	
 	GetWorld()->GetTimerManager().SetTimer(CloseToPlayerTethers,[this]()->void{AddCloseToPlayerTetherPointsToProcess();},PlayerUpdateRateInSeconds,true);
@@ -189,6 +192,22 @@ bool ASf_TetherPointGen::VerifyCover(FVector LocationToVerify, float Extent, con
 	return false;
 }
 
+bool ASf_TetherPointGen::VerifyPeak(const FVector LocationToVerify, const float Extent, const float MaxScore) const
+{
+	float Distance;
+	FVector FoundCoverLoc;
+	bool bFoundLocation;
+	GetClosestPeakTo(LocationToVerify,MaxScore,Distance,FoundCoverLoc,bFoundLocation);
+	
+	if (!bFoundLocation)
+		return false;
+
+	if (Distance<=Extent)
+		return true;
+
+	return false;
+}
+
 void ASf_TetherPointGen::GetClosestCoverTo(
 	const FVector Location,
 	const float MinScore,
@@ -201,6 +220,32 @@ void ASf_TetherPointGen::GetClosestCoverTo(
 	bFound = false;
 
 	TArray<FVector> CoverLocations =  GetCoverLocations(MinScore);
+	if (CoverLocations.Num()<=0)
+		return;
+
+	CoverLocations.Sort([Location](const FVector& A, const FVector& B)
+	{
+		return FVector::DistSquared(Location, A) < FVector::DistSquared(Location, B);
+	});
+
+
+	OutDistance =  FVector::Dist(Location, CoverLocations[0]);
+	ClosestCoverLocation = CoverLocations[0];
+	bFound = true;
+}
+
+void ASf_TetherPointGen::GetClosestPeakTo(
+	const FVector Location,
+	const float MaxScore,
+	float& OutDistance,
+	FVector& ClosestCoverLocation,
+	bool& bFound) const
+{
+	OutDistance = 0;
+	ClosestCoverLocation = FVector::ZeroVector;
+	bFound = false;
+
+	TArray<FVector> CoverLocations =  GetPeakLocations(MaxScore);
 	if (CoverLocations.Num()<=0)
 		return;
 
