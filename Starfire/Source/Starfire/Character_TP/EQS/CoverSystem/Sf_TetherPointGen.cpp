@@ -163,7 +163,7 @@ void ASf_TetherPointGen::GeneratePoints()
 
 
 
-TArray<FVector> ASf_TetherPointGen::GetCoverLocations(float MinScore) const
+TArray<FVector> ASf_TetherPointGen::GetCoverLocations(const float MinScore) const
 {
 	TArray<FVector> CoverLocations{};
 	for (const UTetherPoint* Point: AllTetherPoints)
@@ -176,7 +176,13 @@ TArray<FVector> ASf_TetherPointGen::GetCoverLocations(float MinScore) const
 	return CoverLocations;
 }
 
-bool ASf_TetherPointGen::VerifyCover(FVector LocationToVerify, float Extent, const float MinScore) const
+TArray<UTetherPoint*> ASf_TetherPointGen::GetAllTetherPoints()
+{
+	return  AllTetherPoints;
+}
+
+
+bool ASf_TetherPointGen::VerifyCover(const FVector LocationToVerify, const float Extent, const float MinScore) const
 {
 	float Distance;
 	FVector FoundCoverLoc;

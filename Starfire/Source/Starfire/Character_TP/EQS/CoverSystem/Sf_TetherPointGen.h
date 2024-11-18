@@ -64,6 +64,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	TArray<FVector> GetCoverLocations(float MinScore = 0.5f) const;
 
+	TArray<UTetherPoint*>  GetAllTetherPoints();
+
 	UFUNCTION(BlueprintCallable)
 	bool VerifyCover(FVector LocationToVerify, float Extent, const float MinScore = 0.5f) const;
 
