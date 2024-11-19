@@ -100,6 +100,8 @@ protected:
 	
 };
 
+struct FResourceVein;
+
 UCLASS(Blueprintable, meta = (BlueprintSpawnableComponent))
 class STARFIRE_API UResourceSpawner : public UManagerComponent
 {
@@ -108,18 +110,18 @@ class STARFIRE_API UResourceSpawner : public UManagerComponent
 public:
 	virtual void StartGame() override;
 	
-	void SpawnResourceRandom();
+	void SpawnResourceVeinRandom(bool QueueNewVein = true);
 
 	UFUNCTION()
-	void OnTrackedItemCollected(AResource* Item);
+	void OnVeinEmpty(int VeinID);
 	
-	void QueueSpawnCooldowns(const FResourceSpawn& Spawn);
-	void QueueNewResource();
+	void QueueSpawnCooldowns(const FResourceVein& Spawn);
+	void QueueNewResourceVein();
 
 protected:
 
 	UFUNCTION()
-	TArray<FResourceSpawn> GetViableResourceTransforms() const;
+	TArray<int> GetViableResourceVeinIndexes() const;
 
 protected:
 
@@ -128,7 +130,9 @@ protected:
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
 	float SpawnDelay = 10;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
-	int MaxSpawned = 3;
+	int MaxSpawnedVeins = 5;
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	int SpawnedPerVein = 3;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
 	bool StartWithMax = true;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
@@ -137,13 +141,51 @@ protected:
 
 
 	UPROPERTY()
-	TArray<FResourceSpawn> EmptyResourceTransforms {};
+	TArray<FResourceVein> EmptyResourceVeins {};
 	UPROPERTY()
-	TArray<FResourceSpawn> OccupiedTransforms {};
+	TArray<FResourceVein> OccupiedVeins {};
 
 	UPROPERTY()
-	TArray<FResourceSpawn> CooldownTransforms {};
+	TArray<FResourceVein> CooldownVeins {};
 	UPROPERTY()
-	FTimerHandle SpawnItemTimerHandle;
+	FTimerHandle SpawnVeinTimerHandle;
 
+};
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FVeinEmpty, uint8 /*VeinID*/)
+
+USTRUCT(BlueprintType)
+struct FResourceVein
+{
+	GENERATED_BODY()
+
+	FResourceVein() {  }
+	FResourceVein(uint8 InVeinID, const TArray<FResourceSpawn>& InVeins)
+	{
+		VeinID = InVeinID;
+		Spawns = InVeins;
+	}
+
+public:
+
+	FVeinEmpty OnVeinEmpty;
+
+	uint8 GetNumOccupiedSpawns() const;
+	uint8 GetVeinID() const;
+	
+	bool AddResource(AResource* Resource);
+	bool AddSpawn(FResourceSpawn* Spawn);
+
+protected:
+	
+	TArray<int> GetViableSpawnIndexes();
+
+	void OnResourceCollected(AResource* Resource);
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	uint8 VeinID = 0;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TArray<FResourceSpawn> Spawns;
+	
 };
