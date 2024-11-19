@@ -1,6 +1,7 @@
 #include "Sf_TP_Controller.h"
 
 #include "Behaviour/BlackboardKeyHelperLibrary.h"
+#include "Navigation/CrowdFollowingComponent.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISense_Damage.h"
 #include "Perception/AISense_Hearing.h"
@@ -12,7 +13,8 @@
 
 DEFINE_LOG_CATEGORY_STATIC(Sf_Log_TP_Controller, Display, Display);
 
-ASf_TP_Controller::ASf_TP_Controller(const FObjectInitializer& ObjectInitializer)
+ASf_TP_Controller::ASf_TP_Controller(const FObjectInitializer& ObjectInitializer):
+Super(ObjectInitializer.SetDefaultSubobjectClass<UCrowdFollowingComponent>(TEXT("PathFollowingComponent")))
 {
 	//AI Perception
 	AIPerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerceptionComponent"));
