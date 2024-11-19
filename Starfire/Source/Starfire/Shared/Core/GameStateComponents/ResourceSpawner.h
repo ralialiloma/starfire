@@ -100,7 +100,48 @@ protected:
 	
 };
 
-struct FResourceVein;
+DECLARE_MULTICAST_DELEGATE_OneParam(FVeinEmpty, uint8 /*VeinID*/)
+
+USTRUCT(BlueprintType)
+struct FResourceVein
+{
+	GENERATED_BODY()
+
+	FResourceVein() {  }
+	FResourceVein(uint8 InVeinID, const TArray<FResourceSpawn>& InVeins)
+	{
+		VeinID = InVeinID;
+		Spawns = InVeins;
+	}
+
+public:
+
+	FVeinEmpty OnVeinEmpty;
+
+	uint8 GetNumOccupiedSpawns() const;
+	uint8 GetVeinID() const;
+	
+	bool AddResource(AResource* Resource);
+	bool AddSpawn(FResourceSpawn Spawn);
+
+	bool operator==(const FResourceVein& Other) const
+	{
+		return VeinID == Other.VeinID;
+	}
+
+protected:
+	
+	TArray<int> GetViableSpawnIndexes();
+
+	void OnResourceCollected(AResource* Resource);
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	uint8 VeinID = 0;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TArray<FResourceSpawn> Spawns {};
+	
+};
 
 UCLASS(Blueprintable, meta = (BlueprintSpawnableComponent))
 class STARFIRE_API UResourceSpawner : public UManagerComponent
@@ -111,9 +152,10 @@ public:
 	virtual void StartGame() override;
 	
 	void SpawnResourceVeinRandom(bool QueueNewVein = true);
+	void SpawnResourceVeinRelay();
 
 	UFUNCTION()
-	void OnVeinEmpty(int VeinID);
+	void OnVeinEmpty(uint8 VeinID);
 	
 	void QueueSpawnCooldowns(const FResourceVein& Spawn);
 	void QueueNewResourceVein();
@@ -150,42 +192,4 @@ protected:
 	UPROPERTY()
 	FTimerHandle SpawnVeinTimerHandle;
 
-};
-
-DECLARE_MULTICAST_DELEGATE_OneParam(FVeinEmpty, uint8 /*VeinID*/)
-
-USTRUCT(BlueprintType)
-struct FResourceVein
-{
-	GENERATED_BODY()
-
-	FResourceVein() {  }
-	FResourceVein(uint8 InVeinID, const TArray<FResourceSpawn>& InVeins)
-	{
-		VeinID = InVeinID;
-		Spawns = InVeins;
-	}
-
-public:
-
-	FVeinEmpty OnVeinEmpty;
-
-	uint8 GetNumOccupiedSpawns() const;
-	uint8 GetVeinID() const;
-	
-	bool AddResource(AResource* Resource);
-	bool AddSpawn(FResourceSpawn* Spawn);
-
-protected:
-	
-	TArray<int> GetViableSpawnIndexes();
-
-	void OnResourceCollected(AResource* Resource);
-	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	uint8 VeinID = 0;
-	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TArray<FResourceSpawn> Spawns;
-	
 };

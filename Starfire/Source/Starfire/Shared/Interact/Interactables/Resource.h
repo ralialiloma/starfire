@@ -20,7 +20,6 @@ class STARFIRE_API AResource : public AActor, public IPrimaryInteract, public IH
 public:
 	UPROPERTY(BlueprintAssignable)
 	FCollect_BP OnCollectDelegate_BP;
-	UPROPERTY(BlueprintAssignable)
 	FCollect_CPP OnCollectDelegate_CPP;
 	
 	AResource();

@@ -22,6 +22,9 @@ uint8 FResourceVein::GetVeinID() const
 
 void FResourceVein::OnResourceCollected(AResource* Resource)
 {
+	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, "Resouces Collected");
+
+	
 	FResourceSpawn* Spawn = Spawns.FindByPredicate([Resource](const FResourceSpawn& Spawn)
 	{
 		return Resource == Spawn.GetItemPtr();
@@ -53,11 +56,15 @@ bool FResourceVein::AddResource(AResource* Resource)
 
 bool FResourceVein::AddSpawn(FResourceSpawn Spawn)
 {
-	
+	Spawns.Add(Spawn);
+	return true;
 }
 
 TArray<int> FResourceVein::GetViableSpawnIndexes()
 {
+	if (Spawns.Num() <= 0)
+		return TArray<int>();
+	
 	TArray<int> ReturnSpawns {};
 	for (int i = 0; i < Spawns.Num(); ++i)
 	{
@@ -96,7 +103,11 @@ void UResourceSpawner::StartGame()
 		if (Vein)
 			Vein->AddSpawn(ResourceSpawnLocation);
 		else
-			EmptyResourceVeins.Add(FResourceVein(ResourceSpawnLocation->GetVeinGroup(), { ResourceSpawnLocation }));
+		{
+			FResourceVein NewVein = FResourceVein(ResourceSpawnLocation->GetVeinGroup(), { ResourceSpawnLocation });
+			int Index = EmptyResourceVeins.Add(NewVein);
+			EmptyResourceVeins[Index].OnVeinEmpty.AddUObject(this, &UResourceSpawner::OnVeinEmpty);
+		}
 		
 		ResourceSpawnLocation->Destroy();
 	}
@@ -132,7 +143,8 @@ void UResourceSpawner::SpawnResourceVeinRandom(bool QueueNewVein)
 	for (int i = 0; i < SpawnedPerVein; ++i)
 	{
 		AResource* Resource = GetWorld()->SpawnActor<AResource>(ResourceClass, FTransform());
-		Spawn.AddResource(Resource);
+		if (!Spawn.AddResource(Resource))
+			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, "Somthing Went Wrong Resource Spawner");
 	}
 	
 	OccupiedVeins.Add(Spawn);
@@ -141,19 +153,24 @@ void UResourceSpawner::SpawnResourceVeinRandom(bool QueueNewVein)
 		QueueNewResourceVein();
 }
 
-void UResourceSpawner::OnVeinEmpty(int VeinID)
+void UResourceSpawner::SpawnResourceVeinRelay()
 {
+	SpawnResourceVeinRandom();
+}
+
+void UResourceSpawner::OnVeinEmpty(uint8 VeinID)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, FString::FromInt(VeinID) + " Vein is empty");
+
 	check(VeinID);
 	FResourceVein* Spawn = OccupiedVeins.FindByPredicate([VeinID](const FResourceVein& Spawn)
 	{
-		return VeinID->GetResourceVeinGroup() == Spawn.VeinID;
+		return VeinID == Spawn.GetVeinID();
 	});
 	check(Spawn);
 
-	FResourceVein ResourceVein = *Spawn;
-	ResourceVein.Spawns
+	FResourceVein& ResourceVein = *Spawn;
 	OccupiedVeins.Remove(ResourceVein);
-	ResourceVein.ClearItem();
 	EmptyResourceVeins.Add(ResourceVein);
 	QueueSpawnCooldowns(ResourceVein);
 	QueueNewResourceVein();
@@ -175,7 +192,7 @@ void UResourceSpawner::QueueNewResourceVein()
 	else
 	{
 		if (!SpawnVeinTimerHandle.IsValid())
-			GetWorld()->GetTimerManager().SetTimer(SpawnVeinTimerHandle, this, &UResourceSpawner::SpawnResourceVeinRandom, SpawnDelay);
+			GetWorld()->GetTimerManager().SetTimer(SpawnVeinTimerHandle, this, &UResourceSpawner::SpawnResourceVeinRelay, SpawnDelay);
 	}
 }
 
