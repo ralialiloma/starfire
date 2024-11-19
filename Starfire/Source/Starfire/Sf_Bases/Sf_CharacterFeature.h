@@ -15,7 +15,7 @@ class ASf_TP_Character;
 DEFINE_LOG_CATEGORY_STATIC(SfLog_CharacterFeature, Display, Display);
 
 
-UCLASS(BlueprintType,Blueprintable)
+UCLASS(BlueprintType,Blueprintable,DefaultToInstanced,EditInlineNew,Abstract)
 class STARFIRE_API USf_CharacterFeature : public USf_Object
 {
 	GENERATED_BODY()
@@ -24,7 +24,8 @@ class STARFIRE_API USf_CharacterFeature : public USf_Object
 #pragma region Functions
 public:
 	virtual void Initialize(ASf_TP_Character* Holder);
-	virtual void OnTick();
+	virtual void OnBeginPlay();
+	virtual void OnTick(float OnTick);
 protected:
 	UFUNCTION(BlueprintCallable, Category = "Blackboard|Setters")
 	void SetBlackboardFloatValue(EFloatBlackboardKey FloatBlackboardKey, float Value);
@@ -37,7 +38,6 @@ protected:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "EnemyFeatures", meta = (DeterminesOutputType = "Class"))
 	USf_CharacterFeature* GetFeatureByClass(TSubclassOf<USf_CharacterFeature> Class);
-	
 	
 	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "Character")
 	USf_TP_CharacterMovementComponent* GetOwningSfMovement();

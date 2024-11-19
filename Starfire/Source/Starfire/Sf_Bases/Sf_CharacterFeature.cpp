@@ -8,6 +8,9 @@
 
 void USf_CharacterFeature::Initialize(ASf_TP_Character* Holder)
 {
+	if (!GetWorld())
+		return;
+	
 	OwningAIHolder = Holder;
 	AController* Controller = Holder->GetController();
 
@@ -28,8 +31,12 @@ void USf_CharacterFeature::Initialize(ASf_TP_Character* Holder)
 	}
 }
 
+void USf_CharacterFeature::OnBeginPlay()
+{
+}
 
-void USf_CharacterFeature::OnTick()
+
+void USf_CharacterFeature::OnTick(float OnTick)
 {
 }
 

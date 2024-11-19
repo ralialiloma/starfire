@@ -6,7 +6,15 @@
 void USf_Object::PostInitProperties()
 {
     UObject::PostInitProperties();
-    if (GetWorld())
+
+#if WITH_EDITOR
+    if (GIsEditor)
+    {
+        return;
+     }
+#endif
+    
+    if (GetWorld() )
     {
         OnConstruct();
     }

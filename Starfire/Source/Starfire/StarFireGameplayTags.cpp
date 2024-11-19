@@ -58,6 +58,7 @@ namespace Sf_GameplayTags
 			DEFINE_GAMEPLAY_TAG_AUTO(Debug.TP, Controller, "");
 			DEFINE_GAMEPLAY_TAG_AUTO(Debug.TP, Pawn, "");
 			DEFINE_GAMEPLAY_TAG_AUTO(Debug.TP, MoveTargetLocation, "");
+			DEFINE_GAMEPLAY_TAG_AUTO(Debug.TP, DynamicMoveTarget, "");
 			DEFINE_GAMEPLAY_TAG_AUTO(Debug.TP,RandomRoamLocation,"");
 			DEFINE_GAMEPLAY_TAG_AUTO(Debug.TP, MeleeRangeCheck, "");
 			namespace EQS

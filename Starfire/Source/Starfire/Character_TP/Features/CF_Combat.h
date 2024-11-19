@@ -39,8 +39,7 @@ public:
 };
 #pragma endregion
 
-
-UCLASS(BlueprintType,Blueprintable,DefaultToInstanced,EditInlineNew)
+UCLASS()
 class STARFIRE_API UCF_Combat : public USf_CharacterFeature
 {
 	GENERATED_BODY()

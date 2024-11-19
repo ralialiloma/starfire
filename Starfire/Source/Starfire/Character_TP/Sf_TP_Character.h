@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "Components/WeaponAnimMontageController_TP.h"
 #include "Starfire/Sf_Bases/Sf_CharacterFeature.h"
-#include "Perception/PawnSensingComponent.h"
 #include "Starfire/Sf_Bases/Sf_Character.h"
 #include "Sf_TP_Character.generated.h"
 
@@ -50,11 +49,8 @@ protected:
 #pragma region Features
 	
 #pragma region Properties
-public:
-	UPROPERTY(BlueprintReadOnly,EditAnywhere)
-	TSet<TSubclassOf<USf_CharacterFeature>> StartFeatures;
-private:
-	UPROPERTY()
+protected:
+	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly,Instanced)
 	TSet<USf_CharacterFeature*> Features;
 
 #pragma endregion
@@ -68,7 +64,7 @@ public:
 	FeatureType* GetFeatureByClass();
 
 	UFUNCTION(BlueprintCallable, Category = "EnemyFeatures")
-	bool TryAddFeature(TSubclassOf<USf_CharacterFeature>& FeatureType);
+	bool TryAddFeature(TSubclassOf<USf_CharacterFeature>& FeatureType, bool bInitFeature = true);
 private:
 	void ImportStartFeatures();
 	TSet<TSubclassOf<USf_CharacterFeature>> GetAllStartFeatures() const;
