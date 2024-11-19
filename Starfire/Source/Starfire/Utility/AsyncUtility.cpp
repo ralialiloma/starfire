@@ -197,7 +197,7 @@ TFuture<ULevelStreamingDynamic*> FAsyncUtility::TryStreamLevel(const FString& Na
 					StreamLevel(Name, InteriorLevel, Location, Rotation, WorldContextObject, bSetInvisible,
 				                                                                 MaxLevelWaitTime);
 				FString DebugName = "Waiting For Level To Spawn";
-				FAsyncUtility::Wait(StreamLevelFuture,WorldContextObject,0.01f,5,DebugName);
+				FAsyncUtility::Wait(StreamLevelFuture,WorldContextObject,0.01f,MaxLevelWaitTime,DebugName);
 				if(!StreamLevelFuture.IsValid())
 					continue;
 				LevelStreamingDynamic = StreamLevelFuture.Get();

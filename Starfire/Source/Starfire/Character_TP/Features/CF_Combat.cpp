@@ -90,8 +90,9 @@ FString FStopFireInfo::ToString()
 		return  FString::Printf(TEXT("StopFireReason: %s"), *StopFireReasonString);
 }
 
-bool UCF_Combat::StartFire(bool bScoped)
+bool UCF_Combat::StartFire(bool bScoped, bool bInClearFocusAfterFiring)
 {
+	bCLearFocusAfterFiring = bInClearFocusAfterFiring;
 	if (bIsFiring)
 		return false;
 	if (SHOULD_DEBUG(TP::CharacterFeatures::Combat,EDebugType::Log))
@@ -140,7 +141,9 @@ void UCF_Combat::StopFire(FStopFireInfo StopFireInfo)
 		return;
 	
 	FiredBullets = 0;
-	GetOwningAIController()->ClearFocus(EAIFocusPriority::Gameplay);
+
+	if (bCLearFocusAfterFiring)
+		GetOwningAIController()->ClearFocus(EAIFocusPriority::Gameplay);
 
 	if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::TP::CharacterFeatures::Combat, EDebugType::Log))
 		UE_LOG(EF_Combat, Log, TEXT("Stopped Firing due to %s"), *StopFireInfo.ToString());

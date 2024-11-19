@@ -10,7 +10,9 @@ class STARFIRE_API USf_TPT_Score : public USf_TetherPointTest
 
 #pragma region Functions
 public:
-	virtual TArray<UTetherPoint*> GetTetherPoints(AActor* OwningActor, UTetherPoint* CurrentTetherPoint, TArray<UTetherPoint*> TetherPoints) override;
+	virtual TArray<TWeakObjectPtr<UTetherPoint>> GetTetherPointsBlocking(TWeakObjectPtr<AActor>,
+	                                                                     TWeakObjectPtr<UTetherPoint> CurrentTetherPoint,
+	                                                                     TArray<TWeakObjectPtr<UTetherPoint>> TetherPoints) override;
 #pragma endregion
 	
 #pragma region Properties
@@ -21,6 +23,4 @@ public:
 	UPROPERTY(EditAnywhere)
 	float MaxScore = 1;
 #pragma endregion
-
-
 };

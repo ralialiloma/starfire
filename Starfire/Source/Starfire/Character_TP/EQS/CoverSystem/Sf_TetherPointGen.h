@@ -29,7 +29,7 @@ public:
 	TArray<FVector> SurroundingPoints;
 
 	UPROPERTY()
-	float Score;
+	float CoverPotential;
 
 	UPROPERTY()
 	float DistanceToWall = 0;
@@ -79,11 +79,17 @@ public:
 	void GetClosestPeakTo(FVector Location, float MaxScore, float& OutDistance, FVector& ClosestCoverLocation, bool& bFound) const;
 
 	UFUNCTION(BlueprintCallable)
-	TArray<FVector> GetPeakLocations(float MaxScore = 0.1f) const;
+	TArray<FVector> GetPeakLocationsInRange(float MaxScore = 0.1f) const;
+
+	UFUNCTION(BlueprintCallable)
+	TArray<FVector> GetPeakLocationsInRadius(const float MaxScore, const FVector& Location, float Radius) const;
+
+	UFUNCTION(BlueprintCallable)
+	TArray<UTetherPoint*> GetTetherPointsAroundPlayer() const;
+	
 private:
 	void UpdateTetherPoints();
 	void AddCloseToPlayerTetherPointsToProcess();
-	TArray<UTetherPoint*> GetTetherPointsAroundPlayer() const;
 #pragma endregion
 
 

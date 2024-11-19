@@ -14,7 +14,7 @@
 
 UTetherPoint::UTetherPoint(): CenterLocation(FVector::ZeroVector),
                               VerticalOffset(0.0f),
-                              Score(0.0f),
+                              CoverPotential(0.0f),
                               Scale(1.0f),
                               Size(FVector::ZeroVector)
 {
@@ -24,7 +24,7 @@ bool UTetherPoint::operator==(const UTetherPoint& Other) const
 {
 	return CenterLocation.Equals(Other.CenterLocation) &&
 		FMath::IsNearlyEqual(VerticalOffset, Other.VerticalOffset) &&
-		Score == Other.Score &&
+		CoverPotential == Other.CoverPotential &&
 		Scale == Other.Scale &&
 		Size == Other.Size &&
 		SurroundingPoints == Other.SurroundingPoints;
@@ -70,7 +70,7 @@ void UTetherPoint::UpdateScore(const FVector& PlayerLocation, const UObject* Wor
 	const int NumSurroundingPoints = SurroundingPoints.Num();
 	if (NumSurroundingPoints<=0)
 	{
-		Score = 0;
+		CoverPotential = 0;
 		return;
 	}
 		
@@ -99,7 +99,7 @@ void UTetherPoint::UpdateScore(const FVector& PlayerLocation, const UObject* Wor
 		DistanceToWall =  HitResult.Distance;
 	}
 	
-	Score = static_cast<float>(CoveredPoints)/ static_cast<float>(NumSurroundingPoints) ;
+	CoverPotential = static_cast<float>(CoveredPoints)/ static_cast<float>(NumSurroundingPoints) ;
 }
 
 ASf_TetherPointGen* ASf_TetherPointGen::Get(const UObject* WorldContextObject)
@@ -149,7 +149,7 @@ void ASf_TetherPointGen::GeneratePoints()
 					continue;
 				
 				UTetherPoint* TetherPoint = NewObject<UTetherPoint>(this);
-				TetherPoint->Score = 0;
+				TetherPoint->CoverPotential = 0;
 				TetherPoint->CenterLocation = ProjectedNavCenterLocation.Location;
 				TetherPoint->Scale =   TetherScale;
 				TetherPoint->Size = TetherPointSize;
@@ -168,7 +168,7 @@ TArray<FVector> ASf_TetherPointGen::GetCoverLocations(const float MinScore) cons
 	TArray<FVector> CoverLocations{};
 	for (const UTetherPoint* Point: AllTetherPoints)
 	{
-		if (Point->Score>MinScore &&  Point->DistanceToWall < MaxWallDistance)
+		if (Point->CoverPotential>MinScore &&  Point->DistanceToWall < MaxWallDistance)
 		{
 			CoverLocations.Add(Point->CenterLocation);
 		}
@@ -251,7 +251,7 @@ void ASf_TetherPointGen::GetClosestPeakTo(
 	ClosestCoverLocation = FVector::ZeroVector;
 	bFound = false;
 
-	TArray<FVector> CoverLocations =  GetPeakLocations(MaxScore);
+	TArray<FVector> CoverLocations =  GetPeakLocationsInRange(MaxScore);
 	if (CoverLocations.Num()<=0)
 		return;
 
@@ -266,12 +266,25 @@ void ASf_TetherPointGen::GetClosestPeakTo(
 	bFound = true;
 }
 
-TArray<FVector> ASf_TetherPointGen::GetPeakLocations(const float MaxScore) const
+TArray<FVector> ASf_TetherPointGen::GetPeakLocationsInRadius(const float MaxScore, const FVector& Location, float Radius) const
 {
 	TArray<FVector> CoverLocations{};
 	for (const UTetherPoint* Point: AllTetherPoints)
 	{
-		if (Point->Score<MaxScore)
+		if (Point->CoverPotential<MaxScore &&  FVector::Distance(Location, Point->CenterLocation)<=Radius)
+		{
+			CoverLocations.Add(Point->CenterLocation);
+		}
+	}
+	return CoverLocations;
+}
+
+TArray<FVector> ASf_TetherPointGen::GetPeakLocationsInRange(const float MaxScore) const
+{
+	TArray<FVector> CoverLocations{};
+	for (const UTetherPoint* Point: AllTetherPoints)
+	{
+		if (Point->CoverPotential<MaxScore)
 		{
 			CoverLocations.Add(Point->CenterLocation);
 		}
@@ -300,13 +313,12 @@ void ASf_TetherPointGen::UpdateTetherPoints()
 
 		if (SHOULD_DEBUG(TP::EQS::TetherPointGen,EDebugType::Visual))
 		{
-			if (LocalTetherPointsToProcess[i]->Score>0.5f &&  LocalTetherPointsToProcess[i]->DistanceToWall < MaxWallDistance)
+			FLinearColor InterpolatedColor = FLinearColor::LerpUsingHSV(FColor::Red, FColor::Green, LocalTetherPointsToProcess[i]->CoverPotential);
+			FColor DrawColor = InterpolatedColor.ToFColor(true);
+			
+			if (LocalTetherPointsToProcess[i]->DistanceToWall < MaxWallDistance)
 			{
-				DrawDebugSphere(GetWorld(), LocalTetherPointsToProcess[i]->CenterLocation, Scale / 2.0f, 6, FColor::Green, false,1);
-			}
-			else
-			{
-				DrawDebugSphere(GetWorld(), LocalTetherPointsToProcess[i]->CenterLocation, Scale / 2.0f, 6, FColor::Red, false,1);
+				DrawDebugSphere(GetWorld(), LocalTetherPointsToProcess[i]->CenterLocation, Scale / 2.0f, 6, DrawColor, false,1);
 			}
 		}
 			
@@ -326,7 +338,7 @@ void ASf_TetherPointGen::AddCloseToPlayerTetherPointsToProcess()
 
 TArray<UTetherPoint*> ASf_TetherPointGen::GetTetherPointsAroundPlayer() const
 {
-	FVector PlayerLocation = USf_FunctionLibrary::GetPlayerLocation(this);
+	const FVector PlayerLocation = USf_FunctionLibrary::GetPlayerLocation(this);
 
 	TArray<UTetherPoint*> TetherPointsAroundPlayer{};
 	for (UTetherPoint* TetherPoint: AllTetherPoints)

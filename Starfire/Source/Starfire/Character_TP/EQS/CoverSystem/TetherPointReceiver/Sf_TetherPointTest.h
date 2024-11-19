@@ -12,14 +12,16 @@ class STARFIRE_API USf_TetherPointTest : public UObject
 public:
 	
 	UFUNCTION()
-	virtual TArray<UTetherPoint*> GetTetherPoints(AActor* OwningActor, UTetherPoint* CurrentTetherPoint, TArray<UTetherPoint*> TetherPoints);
-
-private:
+	virtual TArray<TWeakObjectPtr<UTetherPoint>> GetTetherPointsBlocking(TWeakObjectPtr<AActor> OwningActor,
+	                                                                     TWeakObjectPtr<UTetherPoint> CurrentTetherPoint,
+	                                                                     TArray<TWeakObjectPtr<UTetherPoint>> TetherPoints);
+protected:
+	void FinishExecute();
 #pragma endregion
 	
 #pragma region Properties
-public:
-
+private:
+	bool bFinishedExecute = false;
 #pragma endregion
 
 

@@ -2,10 +2,12 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "Sf_TetherPointTest.h"
+#include "Starfire/Character_TP/Behaviour/BlackboardKeyHelperLibrary.h"
 #include "Starfire/Character_TP/EQS/CoverSystem/Sf_TetherPointGen.h"
 #include "UObject/Interface.h"
 #include "Sf_TetherPointReceiver.generated.h"
-UCLASS()
+
+UCLASS(ClassGroup=(AI), meta=(BlueprintSpawnableComponent))
 class USf_TetherPointReceiver : public UActorComponent
 {
 	GENERATED_BODY()
@@ -19,20 +21,27 @@ public:
 	UTetherPoint* GetActiveTetherPoint() const;
 	
 protected:
-	UFUNCTION()
-	void Update();
-	UFUNCTION()
-	TArray<UTetherPoint*> RunTests(const TArray<UTetherPoint*>& AllTetherPoints);
+	void RunUpdateLoop();
+	TFuture<void> Update();
+	TFuture<TArray<TWeakObjectPtr<UTetherPoint>>> RunTests_Async(const TArray<TWeakObjectPtr<UTetherPoint>>& AllTetherPoints);
 	UFUNCTION()
 	bool NeedsUpdate();
+	UFUNCTION()
+	void UpdateTetherPoint(UTetherPoint* NewTetherPoint);
+	TFuture<TArray<TWeakObjectPtr<UTetherPoint>>> ImportTetherPoints();
 #pragma endregion
 
 #pragma region Properties
 protected:
-	UPROPERTY(Instanced, EditDefaultsOnly)
+	UPROPERTY(Instanced, EditDefaultsOnly, Category = "EQS")
 	TArray<USf_TetherPointTest*> Tests;
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY()
+	TArray<TWeakObjectPtr<USf_TetherPointTest>> WeakTests;
+	
+	UPROPERTY(EditDefaultsOnly,Category = "EQS")
 	float UpdateRateInSeconds = 1;
+	UPROPERTY(EditDefaultsOnly,Category = "EQS")
+	ELocationBlackboardKey LocationToUpdate;
 	
 	FTimerHandle UpdateProcess;
 	UPROPERTY()

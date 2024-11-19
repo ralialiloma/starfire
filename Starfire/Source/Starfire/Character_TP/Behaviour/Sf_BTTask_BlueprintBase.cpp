@@ -42,6 +42,8 @@ AAIController* USf_BTTask_BlueprintBase::GetOwningAIController() const
 
 UBlackboardComponent* USf_BTTask_BlueprintBase::GetOwningBlackboard() const
 {
+	if (!GetOwningAIController())
+		return nullptr;
 	return GetOwningAIController()->GetBlackboardComponent();
 }
 

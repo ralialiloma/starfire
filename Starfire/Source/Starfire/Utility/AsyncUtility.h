@@ -39,7 +39,6 @@ public:
 	 * @param MaxWaitTime
 	 * @param Debug
 	 * @param DebugName
-	 * @param LogCategory
 	 */
 	template<typename Result>
 	static void Wait(
@@ -449,7 +448,16 @@ TFuture<ResultType> FAsyncUtility::RunOnAnyThread(TWeakObjectPtr<UObject> WorldC
 					Promise.SetValue(ResultType{});
 				return;
 			}
-        	
+
+			if (!InFunction)
+			{
+				if constexpr (std::is_void_v<ResultType>)
+					Promise.SetValue(); 
+				else
+					Promise.SetValue(ResultType{});
+				return;
+			}
+			
 			if constexpr (std::is_void_v<ResultType>)
 			{
 				InFunction();

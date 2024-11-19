@@ -19,11 +19,12 @@ bool USf_TPT_ExcludeReservedLocations::IsLocationReservedTarget(const FVector& C
 	return  CoverGen->LocationInReservedCover(CoverLocation,RadiusToCheck);
 }
 
-TArray<UTetherPoint*> USf_TPT_ExcludeReservedLocations::GetTetherPoints(AActor* OwningActor, UTetherPoint* CurrentTetherPoint,
-	TArray<UTetherPoint*> TetherPoints)
+TArray<TWeakObjectPtr<UTetherPoint>> USf_TPT_ExcludeReservedLocations::GetTetherPointsBlocking(TWeakObjectPtr<AActor>,
+                                                                                               TWeakObjectPtr<UTetherPoint> CurrentTetherPoint,
+                                                                                               TArray<TWeakObjectPtr<UTetherPoint>> TetherPoints)
 {
-	TArray<UTetherPoint*> ReturnTetherPoints{};
-	for (UTetherPoint* TetherPoint: TetherPoints)
+	TArray<TWeakObjectPtr<UTetherPoint>> ReturnTetherPoints{};
+	for (TWeakObjectPtr<UTetherPoint> TetherPoint: TetherPoints)
 	{
 		if (!IsLocationReservedTarget(TetherPoint->CenterLocation))
 			ReturnTetherPoints.Add(TetherPoint);
