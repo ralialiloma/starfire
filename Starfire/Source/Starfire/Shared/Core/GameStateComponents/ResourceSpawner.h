@@ -28,7 +28,7 @@ public:
 		ItemTag = InItem->GetItemTag();
 		ResourcePtr = InItem;
 	}
-	FResourceSpawn(const AResourceSpawnLocation* InItem)
+	explicit FResourceSpawn(const AResourceSpawnLocation* InItem)
 	{
 		if (!InItem)
 			return;
@@ -49,7 +49,7 @@ public:
 	}
 	bool IsOccupied() const
 	{
-		return ResourcePtr != nullptr;
+		return IsValid(ResourcePtr);
 	}
 	
 	bool SetItemType(FGameplayTag NewType)
@@ -108,7 +108,7 @@ struct FResourceVein
 	GENERATED_BODY()
 
 	FResourceVein() {  }
-	FResourceVein(uint8 InVeinID, const TArray<FResourceSpawn>& InVeins)
+	FResourceVein(uint8 InVeinID, const TArray<TSharedPtr<FResourceSpawn>>& InVeins)
 	{
 		VeinID = InVeinID;
 		Spawns = InVeins;
@@ -122,7 +122,7 @@ public:
 	uint8 GetVeinID() const;
 	
 	bool AddResource(AResource* Resource);
-	bool AddSpawn(FResourceSpawn Spawn);
+	bool AddSpawn(TSharedPtr<FResourceSpawn> Spawn);
 
 	bool operator==(const FResourceVein& Other) const
 	{
@@ -138,9 +138,7 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	uint8 VeinID = 0;
 	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TArray<FResourceSpawn> Spawns {};
-	
+	TArray<TSharedPtr<FResourceSpawn>> Spawns {};
 };
 
 UCLASS(Blueprintable, meta = (BlueprintSpawnableComponent))
@@ -157,7 +155,7 @@ public:
 	UFUNCTION()
 	void OnVeinEmpty(uint8 VeinID);
 	
-	void QueueSpawnCooldowns(const FResourceVein& Spawn);
+	void QueueSpawnCooldowns(TSharedPtr<FResourceVein> Spawn);
 	void QueueNewResourceVein();
 
 protected:
@@ -181,14 +179,11 @@ protected:
 	int NoSpawnCooldown = 2;
 
 
-
-	UPROPERTY()
-	TArray<FResourceVein> EmptyResourceVeins {};
-	UPROPERTY()
-	TArray<FResourceVein> OccupiedVeins {};
-
-	UPROPERTY()
-	TArray<FResourceVein> CooldownVeins {};
+	
+	TArray<TSharedPtr<FResourceVein>> EmptyResourceVeins {};
+	TArray<TSharedPtr<FResourceVein>> OccupiedVeins {};
+	
+	TArray<TSharedPtr<FResourceVein>> CooldownVeins {};
 	UPROPERTY()
 	FTimerHandle SpawnVeinTimerHandle;
 
