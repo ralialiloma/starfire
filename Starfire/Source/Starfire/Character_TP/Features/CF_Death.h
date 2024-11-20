@@ -5,6 +5,7 @@
 #include "CF_Death.generated.h"
 
 
+class AResource;
 DEFINE_LOG_CATEGORY_STATIC(EF_Death, Display, Display);
 
 UCLASS(Blueprintable)
@@ -21,6 +22,9 @@ public:
 	
 #pragma region Properties
 public:
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<AResource> DroppedResourceClass;
 private:
 #pragma endregion
 

@@ -8,9 +8,6 @@
 
 void USf_CharacterFeature::Initialize(ASf_TP_Character* Holder)
 {
-	if (!GetWorld())
-		return;
-	
 	OwningAIHolder = Holder;
 	AController* Controller = Holder->GetController();
 

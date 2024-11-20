@@ -2,6 +2,7 @@
 #include "CF_Combat.h"
 #include "CF_Locomotion.h"
 #include "Starfire/Character_TP/Sf_TP_Character.h"
+#include "Starfire/Shared/Interact/Interactables/Resource.h"
 
 
 void UCF_Death::Kill()
@@ -40,6 +41,10 @@ void UCF_Death::Kill()
 	//Drop Weapon
 	if (GetOwningSfEquipment()->IsEquipped())
 		GetOwningSfEquipment()->RemoveWeaponActiveWeapon();
+
+	//Spawn Loot
+	if (DroppedResourceClass)
+		GetOwningSfEquipment()->GetWorld()->SpawnActor(DroppedResourceClass, &GetOwningActor()->GetActorTransform());
 	
 	//Pawn Message
 	GetOwningCharacter()->PawnDeath();

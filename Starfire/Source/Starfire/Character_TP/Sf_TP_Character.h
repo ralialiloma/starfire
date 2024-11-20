@@ -51,7 +51,7 @@ protected:
 #pragma region Properties
 protected:
 	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly,Instanced)
-	TSet<USf_CharacterFeature*> Features;
+	TArray<USf_CharacterFeature*> Features;
 
 #pragma endregion
 
