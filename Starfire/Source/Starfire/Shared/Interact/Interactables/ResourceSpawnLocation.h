@@ -19,6 +19,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	FGameplayTag GetItemTag() const;
+	
+	UFUNCTION(BlueprintCallable)
+	uint8 GetVeinGroup() const;
 
 protected:
 	
@@ -27,6 +30,9 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	FGameplayTag ItemTag = Sf_GameplayTags::Gameplay::Resource::Environment;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (ClampMin = 0, UIMax = 20))
+	uint8 VeinGroup = 0;
 	
 #if WITH_EDITORONLY_DATA
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)

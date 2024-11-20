@@ -4,6 +4,78 @@
 #include "Kismet/GameplayStatics.h"
 #include "Starfire/Shared/Interact/Interactables/ResourceSpawnLocation.h"
 
+uint8 FResourceVein::GetNumOccupiedSpawns() const
+{
+	int NumOccupiedSpawns = 0;
+	for (auto ResourceSpawn : Spawns)
+	{
+		if (ResourceSpawn->IsOccupied())
+			NumOccupiedSpawns++;
+	}
+	return NumOccupiedSpawns;
+}
+
+uint8 FResourceVein::GetVeinID() const
+{
+	return VeinID;
+}
+
+void FResourceVein::OnResourceCollected(AResource* Resource)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, "Resouces Collected");
+
+	TSharedPtr<FResourceSpawn>* FoundSpawn = nullptr;
+	FoundSpawn = Spawns.FindByPredicate([Resource](TSharedPtr<FResourceSpawn> Spawn)
+	{
+		return Resource == Spawn->GetItemPtr();
+	});
+
+	check(FoundSpawn);
+	(*FoundSpawn)->ClearItem();
+
+	if (GetNumOccupiedSpawns() <= 0)
+		OnVeinEmpty.Broadcast(VeinID);
+}
+
+bool FResourceVein::AddResource(AResource* Resource)
+{
+	TArray<int> ViableSpawns = GetViableSpawnIndexes();
+	if (ViableSpawns.Num() <= 0)
+		return false;
+
+	int RandomSpawnIndex = FMath::RandRange(0, ViableSpawns.Num() - 1);
+	TSharedPtr<FResourceSpawn> Spawn = Spawns[ViableSpawns[RandomSpawnIndex]];
+	Spawn->SetItem(Resource);
+	Resource->OnCollectDelegate_CPP.AddLambda([this](AResource* Resource)
+	{
+		OnResourceCollected(Resource);
+	});
+
+	return true;
+}
+
+bool FResourceVein::AddSpawn(TSharedPtr<FResourceSpawn> Spawn)
+{
+	Spawns.Add(Spawn);
+	return true;
+}
+
+TArray<int> FResourceVein::GetViableSpawnIndexes()
+{
+	if (Spawns.Num() <= 0)
+		return TArray<int>();
+	
+	TArray<int> ReturnSpawns {};
+	for (int i = 0; i < Spawns.Num(); ++i)
+	{
+		if (Spawns[i]->IsOccupied())
+			continue;
+
+		ReturnSpawns.Add(i);
+	}
+	return ReturnSpawns;
+}
+
 void UResourceSpawner::StartGame()
 {
 	Super::StartGame();
@@ -19,101 +91,124 @@ void UResourceSpawner::StartGame()
 
 	for (AActor* OutActor : OutActors)
 	{
-		AResourceSpawnLocation* Resource = Cast<AResourceSpawnLocation>(OutActor);
-		if (!Resource)
+		AResourceSpawnLocation* ResourceSpawnLocation = Cast<AResourceSpawnLocation>(OutActor);
+		if (!ResourceSpawnLocation)
 			continue;
+
+		auto Vein = EmptyResourceVeins.FindByPredicate([ResourceSpawnLocation](TSharedPtr<FResourceVein> Spawn)
+		{
+			return ResourceSpawnLocation->GetVeinGroup() == Spawn->GetVeinID();
+		});
 		
-		EmptyResourceTransforms.Add(Resource);
-		Resource->Destroy();
+		if (Vein)
+			Vein->Get()->AddSpawn( MakeShared<FResourceSpawn>(FResourceSpawn(ResourceSpawnLocation)));
+		else
+		{
+			TSharedPtr<FResourceVein> NewVein = MakeShared<FResourceVein>(FResourceVein(ResourceSpawnLocation->GetVeinGroup(), { MakeShared<FResourceSpawn>(FResourceSpawn(ResourceSpawnLocation)) }));
+			int Index = EmptyResourceVeins.Add(NewVein);
+			EmptyResourceVeins[Index]->OnVeinEmpty.AddUObject(this, &UResourceSpawner::OnVeinEmpty);
+		}
+		
+		ResourceSpawnLocation->Destroy();
 	}
-	Algo::RandomShuffle(EmptyResourceTransforms);
+	Algo::RandomShuffle(EmptyResourceVeins);
 
 	if (StartWithMax)
 	{
-		for (int i = 0; i < MaxSpawned; ++i)
+		for (int i = 0; i < MaxSpawnedVeins; ++i)
 		{
-			SpawnResourceRandom();
+			SpawnResourceVeinRandom(false);
 		}
 	}
 	else
 	{
-		SpawnResourceRandom();
+		SpawnResourceVeinRandom();
 	}
 }
 
-void UResourceSpawner::SpawnResourceRandom()
+void UResourceSpawner::SpawnResourceVeinRandom(bool QueueNewVein)
 {
-	if (OccupiedTransforms.Num() >= MaxSpawned)
+	if (OccupiedVeins.Num() >= MaxSpawnedVeins)
 		return;
 	
-	GetWorld()->GetTimerManager().ClearTimer(SpawnItemTimerHandle);
-	AResource* Resource = GetWorld()->SpawnActor<AResource>(ResourceClass, FTransform());
+	GetWorld()->GetTimerManager().ClearTimer(SpawnVeinTimerHandle);
 
-	TArray<FResourceSpawn> ViableSpawns = GetViableResourceTransforms();
-	FResourceSpawn RandomSpawn = ViableSpawns[FMath::RandRange(0,ViableSpawns.Num() - 1)];
-	int FoundIndex = ViableSpawns.Find(RandomSpawn);
-	check(FoundIndex != INDEX_NONE)
+	TArray<int> ViableSpawns = GetViableResourceVeinIndexes();
+	if (ViableSpawns.Num() <= 0)
+		return;
 	
-	FResourceSpawn Spawn = EmptyResourceTransforms[FoundIndex];
-	EmptyResourceTransforms.RemoveAt(FoundIndex);
+	int Index = ViableSpawns[FMath::RandRange(0,ViableSpawns.Num() - 1)];
+	check(Index != INDEX_NONE)
 	
-	Spawn.SetItem(Resource);
-	OccupiedTransforms.Add(Spawn);
-	Resource->OnCollectDelegate.AddDynamic(this, &UResourceSpawner::OnTrackedItemCollected);
+	TSharedPtr<FResourceVein> Spawn = EmptyResourceVeins[Index];
+	EmptyResourceVeins.RemoveAt(Index);
 
-	if (OccupiedTransforms.Num() < MaxSpawned)
+	for (int i = 0; i < SpawnedPerVein; ++i)
 	{
-		QueueNewResource();
+		AResource* Resource = GetWorld()->SpawnActor<AResource>(ResourceClass, FTransform());
+		if (!Spawn->AddResource(Resource))
+			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, "Somthing Went Wrong Resource Spawner");
 	}
+	
+	OccupiedVeins.Add(Spawn);
+
+	if (QueueNewVein && OccupiedVeins.Num() < MaxSpawnedVeins)
+		QueueNewResourceVein();
 }
 
-void UResourceSpawner::OnTrackedItemCollected(AResource* Item)
+void UResourceSpawner::SpawnResourceVeinRelay()
 {
-	check(Item);
-	FResourceSpawn* Spawn = OccupiedTransforms.FindByPredicate([Item](const FResourceSpawn& Spawn)
+	SpawnResourceVeinRandom();
+}
+
+void UResourceSpawner::OnVeinEmpty(uint8 VeinID)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, FString::FromInt(VeinID) + " Vein is empty");
+	
+	TSharedPtr<FResourceVein>* Spawn = OccupiedVeins.FindByPredicate([VeinID](TSharedPtr<FResourceVein> Spawn)
 	{
-		return Item == Spawn.GetItemPtr();
+		return VeinID == Spawn->GetVeinID();
 	});
 	check(Spawn);
 
-	FResourceSpawn SpawnLoc = *Spawn;
-	OccupiedTransforms.Remove(SpawnLoc);
-	SpawnLoc.ClearItem();
-	EmptyResourceTransforms.Add(SpawnLoc);
-	QueueSpawnCooldowns(SpawnLoc);
-	QueueNewResource();
+	TSharedPtr<FResourceVein> ResourceVein = *Spawn;
+	OccupiedVeins.Remove(ResourceVein);
+	EmptyResourceVeins.Add(ResourceVein);
+	QueueSpawnCooldowns(ResourceVein);
+	QueueNewResourceVein();
 }
 
-void UResourceSpawner::QueueSpawnCooldowns(const FResourceSpawn& Spawn)
+void UResourceSpawner::QueueSpawnCooldowns(TSharedPtr<FResourceVein> Spawn)
 {
-	CooldownTransforms.Add(Spawn);
-	if (CooldownTransforms.Num() >= NoSpawnCooldown)
-		CooldownTransforms.RemoveAt(0);
+	CooldownVeins.Add(Spawn);
+	if (CooldownVeins.Num() >= NoSpawnCooldown || CooldownVeins.Num() >= EmptyResourceVeins.Num())
+		CooldownVeins.RemoveAt(0);
 }
 
-void UResourceSpawner::QueueNewResource()
+void UResourceSpawner::QueueNewResourceVein()
 {
 	if (SpawnDelay <= 0)
 	{
-		SpawnResourceRandom();
+		SpawnResourceVeinRandom();
 	}
 	else
 	{
-		if (!SpawnItemTimerHandle.IsValid())
-			GetWorld()->GetTimerManager().SetTimer(SpawnItemTimerHandle, this, &UResourceSpawner::SpawnResourceRandom, SpawnDelay);
+		if (!SpawnVeinTimerHandle.IsValid())
+			GetWorld()->GetTimerManager().SetTimer(SpawnVeinTimerHandle, this, &UResourceSpawner::SpawnResourceVeinRelay, SpawnDelay);
 	}
 }
 
-TArray<FResourceSpawn> UResourceSpawner::GetViableResourceTransforms() const
+TArray<int> UResourceSpawner::GetViableResourceVeinIndexes() const
 {
-	TArray<FResourceSpawn> ReturnArray {};
+	TArray<int> ReturnArray {};
 
-	for (auto Element : EmptyResourceTransforms)
+	for (int i = 0; i < EmptyResourceVeins.Num(); ++i)
 	{
-		if (!CooldownTransforms.Contains(Element))
+		if (!CooldownVeins.Contains(EmptyResourceVeins[i]))
 		{
-			ReturnArray.Add(Element);
+			ReturnArray.Add(i);
 		}
 	}
+	
 	return ReturnArray;
 }

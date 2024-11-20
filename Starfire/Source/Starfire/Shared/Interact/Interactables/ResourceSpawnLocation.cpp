@@ -30,3 +30,8 @@ FGameplayTag AResourceSpawnLocation::GetItemTag() const
 {
 	return ItemTag;
 }
+
+uint8 AResourceSpawnLocation::GetVeinGroup() const
+{
+	return VeinGroup;
+}

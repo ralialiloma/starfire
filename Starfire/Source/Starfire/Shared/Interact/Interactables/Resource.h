@@ -6,9 +6,11 @@
 #include "Starfire/Shared/Interact/InteractInterfaces.h"
 #include "Resource.generated.h"
 
+class UResourceSpawner;
 DECLARE_LOG_CATEGORY_EXTERN(SFCollectable, Log, All);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCollect, AResource*, Resource);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCollect_BP, AResource*, Resource);
+DECLARE_MULTICAST_DELEGATE_OneParam(FCollect_CPP, AResource*);
 
 UCLASS(Blueprintable, Abstract)
 class STARFIRE_API AResource : public AActor, public IPrimaryInteract, public IHighlightInterface
@@ -17,7 +19,8 @@ class STARFIRE_API AResource : public AActor, public IPrimaryInteract, public IH
 	
 public:
 	UPROPERTY(BlueprintAssignable)
-	FCollect OnCollectDelegate;
+	FCollect_BP OnCollectDelegate_BP;
+	FCollect_CPP OnCollectDelegate_CPP;
 	
 	AResource();
 
@@ -33,7 +36,15 @@ public:
 	UFUNCTION(BlueprintCallable)
 	FGameplayTag GetItemTag() const;
 	
+	UFUNCTION(BlueprintCallable)
+	uint8 GetResourceVeinGroup();
+	
 protected:
+
+	friend UResourceSpawner;
+
+	UFUNCTION(BlueprintCallable)
+	void AssignResourceVein(uint8 VeinID);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "ItemSettings")
 	int CollectAmount = 1;
@@ -48,7 +59,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UStaticMeshComponent* Mesh;
 
-	UPROPERTY()
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly)
 	bool bHasBeenCollected = false;
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly)
+	uint8 VeinGroup;
 	
 };

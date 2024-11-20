@@ -60,7 +60,8 @@ void AResource::OnInteractStart_Implementation(UInteractComponent* InteractCompo
 
 void AResource::OnCollect_Implementation(FVector CollectLocation, APawn* TriggeringPawn)
 {
-	OnCollectDelegate.Broadcast(this);
+	OnCollectDelegate_BP.Broadcast(this);
+	OnCollectDelegate_CPP.Broadcast(this);
 }
 
 UStaticMesh* AResource::GetStaticMeshAsset() const
@@ -76,4 +77,14 @@ FVector AResource::GetMeshScaling() const
 FGameplayTag AResource::GetItemTag() const
 {
 	return ItemTag;
+}
+
+void AResource::AssignResourceVein(uint8 VeinID)
+{
+	VeinGroup = VeinID;
+}
+
+uint8 AResource::GetResourceVeinGroup()
+{
+	return VeinGroup;
 }
