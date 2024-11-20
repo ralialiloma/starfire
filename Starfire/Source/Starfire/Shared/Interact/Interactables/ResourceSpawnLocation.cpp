@@ -21,11 +21,10 @@ void AResourceSpawnLocation::OnConstruction(const FTransform& Transform)
 		UStaticMesh* Mesh = DisplayResourceClass->GetDefaultObject<AResource>()->GetStaticMeshAsset();
 		FVector Scale = DisplayResourceClass->GetDefaultObject<AResource>()->GetMeshScaling();
 		MeshComponent->SetStaticMesh(Mesh);
-		RootComponent->SetRelativeScale3D(Scale);
+		MeshComponent->SetRelativeScale3D(Scale);
 
 		if (VeinColor != VeinColorCache)
 			RefreshAllVeinColors();
-		
 	}
 #endif
 	
@@ -42,12 +41,42 @@ uint8 AResourceSpawnLocation::GetVeinGroup() const
 }
 
 #if WITH_EDITORONLY_DATA
+void AResourceSpawnLocation::PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent)
+{
+	Super::PostEditChangeProperty(PropertyChangedEvent);
+
+	if (PropertyChangedEvent.Property && PropertyChangedEvent.Property->GetFName() == GET_MEMBER_NAME_CHECKED(AResourceSpawnLocation, VeinGroup))
+	{
+		VeinColor = FColor::White;
+		DynamicMaterial = nullptr;
+		
+		UWorld* World = GetWorld();
+		if (!World)
+			return;
+		
+		UClass* ActorClass = GetClass();
+		for (TActorIterator<AActor> It(World, ActorClass); It; ++It)
+		{
+			AResourceSpawnLocation* OtherActor = Cast<AResourceSpawnLocation>(*It);
+			if (OtherActor && OtherActor->VeinGroup == VeinGroup)
+			{
+				VeinColor = OtherActor->VeinColor;
+				DynamicMaterial = OtherActor->DynamicMaterial;
+				break;
+			}
+		}
+
+		RefreshVeinColors();
+	}
+}
+
 void AResourceSpawnLocation::RefreshVeinColors()
 {
 	if (UMaterialInterface* Material = MeshComponent->GetMaterial(0))
 	{
 		if (DynamicMaterial)
 		{
+			MeshComponent->SetMaterial(0, DynamicMaterial);
 			DynamicMaterial->SetVectorParameterValue(FName("Base Color"), VeinColor);
 		}
 		else
@@ -60,9 +89,9 @@ void AResourceSpawnLocation::RefreshVeinColors()
 	VeinColorCache = VeinColor;
 }
 
-void AResourceSpawnLocation::SetVeinColor(FColor Color)
+void AResourceSpawnLocation::SetVeinColorMaterial(FColor Color, UMaterialInstanceDynamic* Material)
 {
-	UE_LOG(LogTemp, Log, TEXT("Setting to color: %s"), *Color.ToString())
+	DynamicMaterial = Material;
 	VeinColor = Color;
 	RefreshVeinColors();
 }
@@ -81,29 +110,7 @@ void AResourceSpawnLocation::RefreshAllVeinColors()
 		AResourceSpawnLocation* OtherActor = Cast<AResourceSpawnLocation>(*It);
 		if (OtherActor && OtherActor->VeinGroup == VeinGroup)
 		{
-			OtherActor->SetVeinColor(VeinColor);
-		}
-	}
-}
-
-void AResourceSpawnLocation::ForceRefreshMaterials()
-{
-	UWorld* World = GetWorld();
-	if (!World)
-		return;
-	
-	UClass* ActorClass = GetClass();
-	
-	for (TActorIterator<AActor> It(World, ActorClass); It; ++It)
-	{
-		AResourceSpawnLocation* OtherActor = Cast<AResourceSpawnLocation>(*It);
-		if (OtherActor)
-		{
-			OtherActor->DynamicMaterial = nullptr;
-			if (!OtherActor->MeshComponent->GetMaterial(0))
-			{
-				UE_LOG(LogTemp, Log, TEXT("Material id dumb"))
-			}
+			OtherActor->SetVeinColorMaterial(VeinColor, DynamicMaterial);
 		}
 	}
 }

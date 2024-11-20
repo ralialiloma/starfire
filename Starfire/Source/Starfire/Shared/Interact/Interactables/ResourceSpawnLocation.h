@@ -35,29 +35,26 @@ protected:
 	uint8 VeinGroup = 0;
 	
 #if WITH_EDITORONLY_DATA
+	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent) override;
+	
 	UFUNCTION()
 	void RefreshVeinColors();
 	UFUNCTION()
-	void SetVeinColor(FColor Color);
-
-	UFUNCTION(CallInEditor, Category = "Settings")
+	void SetVeinColorMaterial(FColor Color, UMaterialInstanceDynamic* Material);
+	UFUNCTION()
 	void RefreshAllVeinColors();
-
-	UFUNCTION(CallInEditor, Category = "Settings")
-	void ForceRefreshMaterials();
 	
 	UFUNCTION(CallInEditor, Category = "Settings")
 	void SelectVein() const;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Settings")
-	FColor VeinColor;
-
-	UPROPERTY(Transient)
-	FColor VeinColorCache;
 	
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Settings")
+	FColor VeinColor = FColor::White;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Settings")
 	TSoftClassPtr<AResource> DisplayResourceClass;
 
+	//Editor Color Display
+	UPROPERTY(Transient)
+	FColor VeinColorCache;
 	UPROPERTY(Transient)
 	UMaterialInstanceDynamic* DynamicMaterial;
 #endif
