@@ -32,6 +32,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	UStaticMesh* GetStaticMeshAsset() const;
 	UFUNCTION(BlueprintCallable)
+	UStaticMeshComponent* GetStaticMeshComp() const;
+	UFUNCTION(BlueprintCallable)
 	FVector GetMeshScaling() const;
 	UFUNCTION(BlueprintCallable)
 	FGameplayTag GetItemTag() const;

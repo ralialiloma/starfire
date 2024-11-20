@@ -28,15 +28,38 @@ protected:
 	UPROPERTY()
 	UStaticMeshComponent* MeshComponent;
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Settings")
 	FGameplayTag ItemTag = Sf_GameplayTags::Gameplay::Resource::Environment;
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (ClampMin = 0, UIMax = 20))
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (ClampMin = 0, UIMax = 20), Category = "Settings")
 	uint8 VeinGroup = 0;
 	
 #if WITH_EDITORONLY_DATA
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	UFUNCTION()
+	void RefreshVeinColors();
+	UFUNCTION()
+	void SetVeinColor(FColor Color);
+
+	UFUNCTION(CallInEditor, Category = "Settings")
+	void RefreshAllVeinColors();
+
+	UFUNCTION(CallInEditor, Category = "Settings")
+	void ForceRefreshMaterials();
+	
+	UFUNCTION(CallInEditor, Category = "Settings")
+	void SelectVein() const;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Settings")
+	FColor VeinColor;
+
+	UPROPERTY(Transient)
+	FColor VeinColorCache;
+	
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Settings")
 	TSoftClassPtr<AResource> DisplayResourceClass;
+
+	UPROPERTY(Transient)
+	UMaterialInstanceDynamic* DynamicMaterial;
 #endif
 
 };

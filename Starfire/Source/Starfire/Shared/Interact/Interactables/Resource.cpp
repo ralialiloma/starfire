@@ -69,6 +69,11 @@ UStaticMesh* AResource::GetStaticMeshAsset() const
 	return Mesh->GetStaticMesh();
 }
 
+UStaticMeshComponent* AResource::GetStaticMeshComp() const
+{
+	return Mesh;
+}
+
 FVector AResource::GetMeshScaling() const
 {
 	return Mesh->GetRelativeScale3D();
