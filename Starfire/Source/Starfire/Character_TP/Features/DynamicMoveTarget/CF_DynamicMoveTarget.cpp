@@ -38,7 +38,6 @@ void UCF_DynamicMoveTarget::OnTick(float DeltaTime)
 	if (TimeSinceLastUpdate < 1.0f/FrameRate)
 		return;
 	
-
 	const ACharacter* Character =  GetOwningCharacter();
 	if (!IsValid(Character))
 		return;

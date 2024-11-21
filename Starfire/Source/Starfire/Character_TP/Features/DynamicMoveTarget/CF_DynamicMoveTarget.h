@@ -34,10 +34,10 @@ protected:
 	float FrameRate = 10;
 
 	UPROPERTY(EditDefaultsOnly)
-	float MinDistance;
+	float MinDistance = 200;
 
 	UPROPERTY(EditDefaultsOnly)
-	float MaxDistance;
+	float MaxDistance = 500;
 private:
 	float TimeSinceLastUpdate = 0.0f;
 #pragma endregion

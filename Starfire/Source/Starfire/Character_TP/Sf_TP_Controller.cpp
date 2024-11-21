@@ -1,14 +1,13 @@
 #include "Sf_TP_Controller.h"
 
 #include "Behaviour/BlackboardKeyHelperLibrary.h"
-#include "Behaviour/Sense/AISense_TeamWarnSense.h"
+#include "Behaviour/AlertSense/AISense_Alert.h"
 #include "Navigation/CrowdFollowingComponent.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISense_Damage.h"
 #include "Perception/AISense_Hearing.h"
 #include "Perception/AISense_Prediction.h"
 #include "Perception/AISense_Sight.h"
-#include "Perception/AISense_Team.h"
 #include "Perception/AISense_Touch.h"
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
 #include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
@@ -76,6 +75,9 @@ ETeamAttitude::Type ASf_TP_Controller::GetAttitude(const FGenericTeamId Of, cons
 
 void ASf_TP_Controller::HandlePerception(AActor* Actor, FAIStimulus Stimulus)
 {
+	if (!(Actor->GetClass()->IsChildOf(ASf_FP_Character::StaticClass())))
+		return;
+	
 	const TSubclassOf<UAISense> SenseType =  UAIPerceptionSystem::GetSenseClassForStimulus(this,Stimulus);
 	
 	if (SenseType->IsChildOf(UAISense_Sight::StaticClass()))
@@ -88,12 +90,11 @@ void ASf_TP_Controller::HandlePerception(AActor* Actor, FAIStimulus Stimulus)
 		HandleTouchPerception(Stimulus);
 	else if (SenseType->IsChildOf(UAISense_Damage::StaticClass()))
 		HandleTouchPerception(Stimulus);
-	else if (SenseType->IsChildOf(UAISense_TeamWarnSense::StaticClass()))
+	else if (SenseType->IsChildOf(UAISense_Alert::StaticClass()))
 		HandleTeamPerception(Stimulus);
-
-//	UAIPerceptionComponent* PerceptionComponent = nullptr;
-	//PerceptionComponent->
-	if (!SenseType->IsChildOf(UAISense_TeamWarnSense::StaticClass()))
+	
+	if (!SenseType->IsChildOf(UAISense_Alert::StaticClass()) )
+		UAISense_Alert::ReportAlertEvent(this,GetPawn(),Actor);
 		
 
 	if (Stimulus.WasSuccessfullySensed())
@@ -159,7 +160,12 @@ void ASf_TP_Controller::HandleDamagePerception(const FAIStimulus& Stimulus)
 
 void ASf_TP_Controller::HandleTeamPerception(const FAIStimulus& Stimulus)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, "Team perceptoin");
+	UBlackboardComponent* BlackboardComponent = GetBlackboardComponent();
+	if (Stimulus.WasSuccessfullySensed())
+	{
+		UBlackboardKeyHelperLibrary::SetBoolValue(BlackboardComponent,EBoolBlackboardKey::SensedPlayer,true);
+		UBlackboardKeyHelperLibrary::SetVectorValue(BlackboardComponent,ELocationBlackboardKey::LastPlayerLocation,Stimulus.StimulusLocation);
+	}
 }
 
 void ASf_TP_Controller::HandlePerceptionForgotten(AActor* Actor)
