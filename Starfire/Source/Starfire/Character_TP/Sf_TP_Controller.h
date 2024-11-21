@@ -13,11 +13,16 @@ public:
 	ASf_TP_Controller(const FObjectInitializer& ObjectInitializer);
 	virtual void PostInitializeComponents() override;
 	virtual void SetPawn(APawn* InPawn) override;
+
+	
 #pragma region Functions
 public:
 protected:
 	UFUNCTION(BlueprintCallable,BlueprintPure,Category = "AI")
 	ASf_TP_Character* GetTP_Character();
+
+	static ETeamAttitude::Type GetAttitude(FGenericTeamId Of, FGenericTeamId Towards);
+
 private:
 	UFUNCTION()
 	void HandlePerception(AActor* Actor,FAIStimulus Stimulus);
@@ -26,10 +31,10 @@ private:
 	void HandleTouchPerception(const FAIStimulus& Stimulus);
 	void HandlePredictionPerception(const FAIStimulus& Stimulus);
 	void HandleDamagePerception(const FAIStimulus& Stimulus);
+	void HandleTeamPerception(const FAIStimulus& Stimulus);
 
 	UFUNCTION()
 	void HandlePerceptionForgotten(AActor* Actor);
-
 	UFUNCTION()
 	void OnReceiveDamage(float RemainingHealth,float DamageReceived,FVector HitLocation,FVector HitNormal);
 #pragma endregion

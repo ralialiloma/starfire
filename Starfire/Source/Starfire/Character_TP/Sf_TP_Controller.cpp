@@ -1,12 +1,14 @@
 #include "Sf_TP_Controller.h"
 
 #include "Behaviour/BlackboardKeyHelperLibrary.h"
+#include "Behaviour/Sense/AISense_TeamWarnSense.h"
 #include "Navigation/CrowdFollowingComponent.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISense_Damage.h"
 #include "Perception/AISense_Hearing.h"
 #include "Perception/AISense_Prediction.h"
 #include "Perception/AISense_Sight.h"
+#include "Perception/AISense_Team.h"
 #include "Perception/AISense_Touch.h"
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
 #include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
@@ -18,6 +20,7 @@ Super(ObjectInitializer.SetDefaultSubobjectClass<UCrowdFollowingComponent>(TEXT(
 {
 	//AI Perception
 	AIPerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerceptionComponent"));
+	FGenericTeamId::SetAttitudeSolver(&ASf_TP_Controller::GetAttitude);
 }
 
 void ASf_TP_Controller::PostInitializeComponents()
@@ -54,9 +57,21 @@ void ASf_TP_Controller::SetPawn(APawn* InPawn)
 	TP_Character->GetSfDamageController()->OnDamageReceived_BP.AddDynamic(this, &ASf_TP_Controller::OnReceiveDamage);
 }
 
+
+
 ASf_TP_Character* ASf_TP_Controller::GetTP_Character()
 {
 	return TP_Character;
+}
+
+ETeamAttitude::Type ASf_TP_Controller::GetAttitude(const FGenericTeamId Of, const FGenericTeamId Towards)
+{
+	if (Of == Towards)
+	{
+		return ETeamAttitude::Friendly;
+	}
+	
+	return ETeamAttitude::Hostile;
 }
 
 void ASf_TP_Controller::HandlePerception(AActor* Actor, FAIStimulus Stimulus)
@@ -73,6 +88,13 @@ void ASf_TP_Controller::HandlePerception(AActor* Actor, FAIStimulus Stimulus)
 		HandleTouchPerception(Stimulus);
 	else if (SenseType->IsChildOf(UAISense_Damage::StaticClass()))
 		HandleTouchPerception(Stimulus);
+	else if (SenseType->IsChildOf(UAISense_TeamWarnSense::StaticClass()))
+		HandleTeamPerception(Stimulus);
+
+//	UAIPerceptionComponent* PerceptionComponent = nullptr;
+	//PerceptionComponent->
+	if (!SenseType->IsChildOf(UAISense_TeamWarnSense::StaticClass()))
+		
 
 	if (Stimulus.WasSuccessfullySensed())
 		SF_PRINT_TO_SCREEN(-1,2,FColor::Red,TEXT("Successfully Sensed Player"),TP::Controller)
@@ -133,6 +155,11 @@ void ASf_TP_Controller::HandleDamagePerception(const FAIStimulus& Stimulus)
 		UBlackboardKeyHelperLibrary::SetBoolValue(BlackboardComponent,EBoolBlackboardKey::SensedPlayer,true);
 		UBlackboardKeyHelperLibrary::SetVectorValue(BlackboardComponent,ELocationBlackboardKey::LastPlayerLocation,Stimulus.StimulusLocation);
 	}
+}
+
+void ASf_TP_Controller::HandleTeamPerception(const FAIStimulus& Stimulus)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, "Team perceptoin");
 }
 
 void ASf_TP_Controller::HandlePerceptionForgotten(AActor* Actor)

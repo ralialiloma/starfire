@@ -54,13 +54,13 @@ protected:
 
 	UFUNCTION()
 	void OnQueryFinished(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
-
-
-
 public:
 	UPROPERTY(BlueprintAssignable)
 	FOnEQSResult OnEQSResult;
 protected:
+	UPROPERTY()
+	int MaxAllowedActiveRequests = 1;
+	
 	UPROPERTY()
 	TArray<FScheduledEnvRequest> ScheduledRequests;
 

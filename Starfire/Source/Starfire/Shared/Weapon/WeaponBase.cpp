@@ -37,7 +37,7 @@ void AWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	CurrentClip = WeaponConfig.MaxClipSize; 
+	CurrentClip = WeaponConfig.MaxClipSize;
 }
 
 void AWeaponBase::PostInitProperties()
@@ -45,6 +45,16 @@ void AWeaponBase::PostInitProperties()
 	Super::PostInitProperties();
 	
 	CurrentClip = WeaponConfig.MaxClipSize; 
+}
+
+void AWeaponBase::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation,
+	FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)
+{
+	Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
+	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, "Hit Item");
+	
+	if (bDestroyOnCollision)
+		Destroy();
 }
 
 void AWeaponBase::OnInteractStart_Implementation(UInteractComponent* InteractComponent, APawn* TriggeringPawn)
@@ -509,9 +519,15 @@ void AWeaponBase::OnPickup(USf_Equipment* NewHolder)
 void AWeaponBase::OnDrop()
 {
 	WeaponOwner = nullptr;
-	SkeletalMesh->SetCollisionEnabled(ECollisionEnabled::Type::QueryAndPhysics);
-	SkeletalMesh->SetSimulatePhysics(true);
+	SetCollisionAndPhysics(true);
 	UE_LOG(SF_Weapon, Log, TEXT("Dropped %s"),*GetClass()->GetName())
+}
+
+void AWeaponBase::SetCollisionAndPhysics(const bool bActive)
+{
+	SkeletalMesh->SetCollisionEnabled(bActive?ECollisionEnabled::Type::QueryAndPhysics:ECollisionEnabled::Type::NoCollision);
+	SkeletalMesh->SetSimulatePhysics(bActive);
+	SkeletalMesh->SetNotifyRigidBodyCollision(bActive); 
 }
 
 void AWeaponBase::OnEquip()
@@ -579,6 +595,11 @@ bool AWeaponBase::CanFire(const EInputSignalType InputSignal, EFireType FireType
 FWeaponConfig AWeaponBase::GetWeaponConfig() const
 {
 	return  WeaponConfig;
+}
+
+USkeletalMeshComponent* AWeaponBase::GetSkeletalMesh() const
+{
+	return SkeletalMesh;
 }
 
 APawn* AWeaponBase::GetWeaponOwner() const

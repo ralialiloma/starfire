@@ -7,6 +7,13 @@
 
 DECLARE_LOG_CATEGORY_CLASS(USf_BTDecorator_BlueprintBase_Log,Log, Log);
 
+UENUM()
+enum Validity
+{
+	Invalid = 0,
+	Valid = 1,
+};
+
 UCLASS(Abstract, Blueprintable, MinimalAPI)
 class USf_BTDecorator_BlueprintBase: public UBTDecorator_BlueprintBase
 {
@@ -41,6 +48,12 @@ public:
 	void Sf_SetBlackboardBoolValue(EBoolBlackboardKey BoolBlackboardKey, bool Value);
 	UFUNCTION(BlueprintCallable, Category = "Blackboard|Setters")
 	void Sf_SetBlackboardVectorValue(ELocationBlackboardKey ActorBlackboardKey, FVector Value);
+	
+	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "Blackboard|Verify")
+	bool Sf_IsVectorKeyValidAndSet(ELocationBlackboardKey LocationBlackboardKey) const;
+
+	UFUNCTION(BlueprintCallable, meta=(Keywords = "error throw exception", DevelopmentOnly), Category="Development")
+	void Sf_ThrowInvalidLocationKeyError(ELocationBlackboardKey InvalidKey) const;
 private:
 	UPROPERTY()
 	ASf_TP_Character* OwningNPCharacter;

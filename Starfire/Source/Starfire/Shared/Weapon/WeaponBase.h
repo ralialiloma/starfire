@@ -20,7 +20,6 @@ DEFINE_LOG_CATEGORY_STATIC(SF_Weapon, Display, Display);
 #define IS_ACTION_ALLOWED(WeaponBase, ActionType) \
 ((WeaponBase) ? (WeaponBase)->IsActionAllowed(Sf_GameplayTags::Gameplay::Weapon::Action::ActionType) : true)
 
-
 UCLASS(BlueprintType)
 class STARFIRE_API AWeaponBase : public AActor, public IPrimaryInteract
 {
@@ -32,7 +31,9 @@ public:
 	
 	virtual void BeginPlay() override;
 	virtual void PostInitProperties() override;
+	virtual void NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit) override;
 
+protected:
 	virtual void OnInteractStart_Implementation(UInteractComponent* InteractComponent, APawn* TriggeringPawn) override;
 
 #pragma region Functions
@@ -43,6 +44,8 @@ public:
 	FTransform GetMuzzleTransform() const;
 	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
 	FWeaponConfig GetWeaponConfig() const;
+	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
+	USkeletalMeshComponent* GetSkeletalMesh() const;
 	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
 	APawn* GetWeaponOwner() const;
 	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
@@ -58,21 +61,27 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
 	virtual void OnDrop();
 	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
+	void SetCollisionAndPhysics(bool bActive);
+	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
 	virtual  void OnEquip();
 	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
 	virtual void OnUnequip();
 
 	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
 	virtual bool IsActionAllowed(UPARAM(meta=(Categories="Gameplay.Weapon.Action"))FGameplayTag ActionType) const;
-
 protected:
 	//Animation
 	float ExecuteAnimationAndReturnAnimLength(EWeaponAnimationEventType WeaponAnimationEventType, bool bIsStarting = true) const;
 	void ExecuteAnimation(EWeaponAnimationEventType WeaponAnimationEventType, bool bIsStarting = true) const;
+
 #pragma endregion
 
 #pragma region Properties
-
+public:
+	//DestroyOnCollision
+	UPROPERTY()
+	bool bDestroyOnCollision = false;
+	
 protected:
 	//Components
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)

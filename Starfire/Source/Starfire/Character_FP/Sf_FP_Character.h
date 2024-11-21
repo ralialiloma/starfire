@@ -43,10 +43,8 @@ public:
 #endif
 
 #pragma region Functions
-
 public:
 	FCollisionQueryParams GetIgnoreCharacterParams() const;
-
 #pragma endregion
 
 #pragma region Properties

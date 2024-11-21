@@ -37,10 +37,15 @@ void UCF_Death::Kill()
 
 	//Focus
 	GetOwningAIController()->ClearFocus(EAIFocusPriority::Gameplay);
-
+	
 	//Drop Weapon
 	if (GetOwningSfEquipment()->IsEquipped())
+	{
+		EquippedWeapon = GetOwningSfEquipment()->GetActiveWeapon();
 		GetOwningSfEquipment()->RemoveWeaponActiveWeapon();
+		EquippedWeapon->Destroy();
+	}
+	
 
 	//Spawn Loot
 	if (DroppedResourceClass)
@@ -55,3 +60,6 @@ void UCF_Death::Kill()
 	//Destroy Character
 	GetOwningCharacter()->Destroy();
 }
+
+
+    

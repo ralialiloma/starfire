@@ -4,6 +4,7 @@
 
 #include "EnvironmentQuery/EnvQueryManager.h"
 #include "Starfire/Utility/AsyncUtility.h"
+#include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
 
 
 void USf_EQS_Scheduler::Initialize(FSubsystemCollectionBase& Collection)
@@ -39,16 +40,22 @@ FGuid USf_EQS_Scheduler::ScheduleRequest(const FScheduledEnvRequest ScheduledEnv
 
 void USf_EQS_Scheduler::RunRequest(const FScheduledEnvRequest& Request)
 {
+	if (!Request.Querier)
+	{
+		UDebugFunctionLibrary::Sf_ThrowError(this, "Invalid Querier");
+		return;
+	}
+	
 	if (!Request.QueryTemplate)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("RunRequest: Invalid request."));
+		UDebugFunctionLibrary::Sf_ThrowError(this, "Invalid Query Template");
 		return;
 	}
 
 	UEnvQueryManager* EQSManager = UEnvQueryManager::GetCurrent(GetWorld());
 	if (!EQSManager)
 	{
-		UE_LOG(LogTemp, Error, TEXT("RunRequest: Could not find EQS Manager."));
+		UDebugFunctionLibrary::Sf_ThrowError(this, "Could not find EQS Manager.");
 		return;
 	}
 
@@ -57,23 +64,37 @@ void USf_EQS_Scheduler::RunRequest(const FScheduledEnvRequest& Request)
 	 	EQSManager->RunEQSQuery(GetWorld(), Request.QueryTemplate, Request.Querier, Request.RunMode, nullptr);
 	ActiveRequests.Add(Wrapper,Request);
 
+	if (!IsValid(Wrapper))
+	{
+		UDebugFunctionLibrary::Sf_ThrowError(this,"Invalid QueryInstance Wrapper");
+		return;
+	}
+
 	Wrapper->GetOnQueryFinishedEvent().AddDynamic(this,&USf_EQS_Scheduler::OnQueryFinished);
 }
 
 bool USf_EQS_Scheduler::Tick(float DeltaTime)
 {
-	if (ScheduledRequests.Num() <= 0||ActiveRequests.Num()>0)
+	const int NumActiveRequests = ActiveRequests.Num();
+	const int AmountOfAllowedNewRequests = FMath::Abs(MaxAllowedActiveRequests-NumActiveRequests) ;
+	const int NumSchedulesRequests = ScheduledRequests.Num();
+	if (NumSchedulesRequests <=0||AmountOfAllowedNewRequests<=0)
 		return true;
 	
-	// Get the next request to process
-	FScheduledEnvRequest Request = ScheduledRequests[0];
-	ScheduledRequests.RemoveAt(0);
-	RunRequest(Request);
+	const int AmountOfNewRequests = FMath::Min(NumSchedulesRequests,AmountOfAllowedNewRequests);
+	for (int i = 0; i<AmountOfNewRequests;i++)
+	{
+		FScheduledEnvRequest Request = ScheduledRequests[0];
+		ScheduledRequests.RemoveAt(0);
+		RunRequest(Request);
+	}
+
 	return true;
 }
 
 void USf_EQS_Scheduler::OnQueryFinished(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus)
 {
+	
 	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, FString::FromInt(ScheduledRequests.Num()));
 	
 	const FScheduledEnvRequest* RequestPtr =  ActiveRequests.Find(QueryInstance);

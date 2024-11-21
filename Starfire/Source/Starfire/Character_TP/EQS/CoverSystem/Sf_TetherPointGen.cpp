@@ -188,6 +188,8 @@ bool ASf_TetherPointGen::VerifyCover(const FVector LocationToVerify, const float
 	FVector FoundCoverLoc;
 	bool bFoundLocation;
 	GetClosestCoverTo(LocationToVerify,MinScore,Distance,FoundCoverLoc,bFoundLocation);
+
+	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, FString::SanitizeFloat(Distance));
 	
 	if (!bFoundLocation)
 		return false;

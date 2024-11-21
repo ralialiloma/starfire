@@ -53,6 +53,13 @@ public:
 		const float Duration = 2,
 		const FName Key= NAME_None);
 
+	UFUNCTION(BlueprintCallable, meta=(WorldContext="WorldContextObject", CallableWithoutWorldContext, Keywords = "error throw exception", AdvancedDisplay = "2", DevelopmentOnly), Category="Development")
+	static void Sf_ThrowError(
+		const UObject* WorldContextObject,
+		const FString& ErrorMessage= FString("Error"),
+		const bool bPrintToScreen = true,
+		const bool bPrintToLog= true);
+
 	UFUNCTION(BlueprintCallable, Category="Rendering|Debug", meta=(WorldContext="WorldContextObject", DevelopmentOnly))
 	static void Sf_DrawDebugSphere(
 		const UObject* WorldContextObject,

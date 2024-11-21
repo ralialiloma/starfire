@@ -33,6 +33,35 @@ void UDebugFunctionLibrary::Sf_PrintString(
 	UKismetSystemLibrary::PrintString(WorldContextObject,StringToPrint,bShouldPrintToScreen,bShouldPrintToLog,TextColor,Duration,Key);
 }
 
+
+void UDebugFunctionLibrary::Sf_ThrowError(
+	const UObject* WorldContextObject,
+	const FString& ErrorMessage,
+	const bool bPrintToScreen,
+	const bool bPrintToLog) 
+{
+	if (!IsValid(WorldContextObject))
+	{
+		UE_LOG(LogTemp, Error, TEXT("Sf_ThrowError called with invalid WorldContextObject."));
+		return;
+	}
+
+	FString WorldContextObj = WorldContextObject->GetName();
+	WorldContextObj.RemoveFromStart("Debug.");
+	FString TimeStamp = FDateTime::Now().ToString(TEXT("%H:%M:%S"));
+
+	const FString StringToPrint = FString::Printf(
+		TEXT("[ERROR] [%s] [Context: %s] %s"),
+		*TimeStamp,
+		*WorldContextObj,
+		*ErrorMessage
+	);
+	
+	const FLinearColor TextColor = FLinearColor(FColor(255, 0, 0));
+	constexpr float Duration = 400.f;
+	UKismetSystemLibrary::PrintString(WorldContextObject,StringToPrint,bPrintToScreen,bPrintToLog,TextColor,Duration);
+}
+
 auto UDebugFunctionLibrary::Sf_DrawDebugSphere(
 	const UObject* WorldContextObject,
 	const FGameplayTag DebugTag,

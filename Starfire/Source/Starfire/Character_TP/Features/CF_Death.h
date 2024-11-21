@@ -18,6 +18,8 @@ class STARFIRE_API UCF_Death : public USf_CharacterFeature
 public:
 	UFUNCTION(BlueprintCallable, Category = "EnemyFeature|Death")
 	void Kill();
+
+protected:
 #pragma endregion
 	
 #pragma region Properties
@@ -25,7 +27,12 @@ public:
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<AResource> DroppedResourceClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float WeaponLifetimeAfterDeath = 1;
 private:
+	UPROPERTY()
+	AWeaponBase* EquippedWeapon;
 #pragma endregion
 
 

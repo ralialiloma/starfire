@@ -3,6 +3,7 @@
 #include "AIController.h"
 #include "BlackboardKeyHelperLibrary.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
+#include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
 
 
 USf_BTDecorator_BlueprintBase::USf_BTDecorator_BlueprintBase(const FObjectInitializer& ObjectInitializer)
@@ -82,6 +83,26 @@ void USf_BTDecorator_BlueprintBase::Sf_SetBlackboardVectorValue(const ELocationB
 {
 	UBlackboardComponent* BlackboardComponent = UAIBlueprintHelperLibrary::GetBlackboard(GetOwningAIController());
 	UBlackboardKeyHelperLibrary::SetVectorValue(BlackboardComponent,ActorBlackboardKey,Value);
+}
+
+bool USf_BTDecorator_BlueprintBase::Sf_IsVectorKeyValidAndSet(ELocationBlackboardKey LocationBlackboardKey) const
+{
+	UBlackboardComponent* BlackboardComponent = UAIBlueprintHelperLibrary::GetBlackboard(GetOwningAIController());
+
+	if (!UBlackboardKeyHelperLibrary::VerifyVectorValue(BlackboardComponent,LocationBlackboardKey))
+		return false;
+
+	if (!UBlackboardKeyHelperLibrary::IsSetVectorValue(BlackboardComponent,LocationBlackboardKey))
+		return false;
+	
+	return  true;
+}
+
+void USf_BTDecorator_BlueprintBase::Sf_ThrowInvalidLocationKeyError(ELocationBlackboardKey InvalidKey) const
+{
+	FString InvalidKeyName = *USf_FunctionLibrary::GetEnumAsString<ELocationBlackboardKey>(InvalidKey);
+	FString ErrorMessage = FString::Printf(TEXT("Invalid or not set blackboard key for (%s) "),*InvalidKeyName);
+	UDebugFunctionLibrary::Sf_ThrowError(this,ErrorMessage,true,true);
 }
 
 
