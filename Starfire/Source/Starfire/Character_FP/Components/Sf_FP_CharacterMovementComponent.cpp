@@ -6,6 +6,7 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/Character.h"
 #include "DrawDebugHelpers.h"
+#include "Kismet/KismetStringLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
 #include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
@@ -100,10 +101,10 @@ bool USf_FP_CharacterMovementComponent::DoJump(bool bReplayingMoves)
 
 	if (!CharacterOwner || !CharacterOwner->CanJump())
 		return false;
-	
+
 	if (Super::DoJump(bReplayingMoves))
 	{
-		if (bWasWallRunning)
+		if (bWasWallRunning || bWasWallRunningBeforeAllowance)
 			JumpOffWall();
 		
 		return true;
@@ -165,24 +166,33 @@ void USf_FP_CharacterMovementComponent::UpdateCharacterStateBeforeMovement(float
 		TryWallRun();
 	}
 
-	if (SfCharacterOwner->bCustomJumpPressed)
+	if (IsFalling())
 	{
-		if (TryMantle())
+		ElapsedInAirJumpAllowance += DeltaSeconds;
+	}
+
+	if (!bRequireInputForMantle && (SfCharacterOwner->bCustomJumpDown) && TryMantle())
+	{
+		SetMovementMode(MOVE_Custom, CMOVE_Mantle);
+		ElapsedMantleTime = 0;
+		MantleStartingVelocity = Velocity;
+		StopMovementImmediately();
+	}
+	else if (SfCharacterOwner->bCustomJumpPressed)
+	{
+		if (TryDash())
+		{
+			SetMovementMode(MOVE_Custom, CMOVE_Dash);
+			DashDuration = MaxDashDuration;
+			DashCount++;
+			SfCharacterOwner->bCustomJumpPressed = false;
+		}
+		else if (bRequireInputForMantle && TryMantle())
 		{
 			SetMovementMode(MOVE_Custom, CMOVE_Mantle);
 			ElapsedMantleTime = 0;
 			MantleStartingVelocity = Velocity;
 			StopMovementImmediately();
-			CharacterOwner->StopJumping();
-		}
-		else if (TryDash())
-		{
-			SetMovementMode(MOVE_Custom, CMOVE_Dash);
-			DashDuration = MaxDashDuration;
-			FString DebugString = FString::Printf(TEXT("Doing Dash with DashCount %i and MaxDashCount %i"), DashCount, MaxDashes);
-			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, DebugString);
-			DashCount++;
-			SfCharacterOwner->bCustomJumpPressed = false;
 		}
 		else
 		{
@@ -231,27 +241,42 @@ void USf_FP_CharacterMovementComponent::SetMovementMode(EMovementMode NewMovemen
 {
 	if (MovementMode != NewMovementMode || CustomMovementMode != NewCustomMode)
 	{
-		EMovementMode PreviousMovementMode = MovementMode;
+		PreviousMovementMode = MovementMode;
+		PreviousCustomMode = CustomMovementMode;
+
+		//Dash Recharge
+		if ((DashRechargeStates & (1 << NewMovementMode)) != 0 || (DashCustomRechargeStates & (1 << NewCustomMode)) != 0)
+		{
+			DashCount = 0;
+
+			//Debug Message
+			if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::FP::Movement::Dash,EDebugType::Print))
+			{
+				FString EnumName ="";
+				if (NewMovementMode == MOVE_Custom)
+					EnumName = StaticEnum<ECustomMovementMode>()->GetDisplayNameTextByValue(static_cast<int64>(NewCustomMode)).ToString();
+				else
+					EnumName =  USf_FunctionLibrary::GetEnumAsString<EMovementMode>(NewMovementMode);
+
+				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, "Resetting Dash because of new movement mode "+EnumName);
+			}
+		}
+
+		//In Air Jump Allowance
+		if (NewMovementMode == MOVE_Falling &&
+			(PreviousMovementMode == MOVE_Walking || PreviousMovementMode == MOVE_NavWalking ||
+				CMOVE_WallRun == NewCustomMode || CMOVE_Mantle == NewCustomMode))
+		{
+			ElapsedInAirJumpAllowance = 0;
+			bWasWallRunningBeforeAllowance = (PreviousMovementMode == MOVE_Custom && (PreviousCustomMode == CMOVE_WallRun));
+		}
+		else
+		{
+			ElapsedInAirJumpAllowance += InAirJumpAllowance;
+		}
 
 		Super::SetMovementMode(NewMovementMode, NewCustomMode);
 		OnMovementModeChanged.Broadcast(PreviousMovementMode, MovementMode);
-	}
-
-	//Dash Recharge
-	if ((DashRechargeStates & (1 << NewMovementMode)) != 0 || (DashCustomRechargeStates & (1 << NewCustomMode)) != 0)
-	{
-		DashCount = 0;
-
-		//Debug Message
-		if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::FP::Movement::Dash,EDebugType::Print))
-		{
-			FString EnumName ="";
-			if (NewMovementMode == MOVE_Custom)
-				EnumName = StaticEnum<ECustomMovementMode>()->GetDisplayNameTextByValue(static_cast<int64>(NewCustomMode)).ToString();
-			else
-				EnumName =  USf_FunctionLibrary::GetEnumAsString<EMovementMode>(NewMovementMode);
-
-			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, "Resetting Dash because of new movement mode "+EnumName);}
 	}
 	
 	Super::SetMovementMode(NewMovementMode, NewCustomMode);
@@ -527,9 +552,6 @@ void USf_FP_CharacterMovementComponent::PhysWallRun(float deltaTime, int32 Itera
 
 void USf_FP_CharacterMovementComponent::JumpOffWall()
 {
-	//Wall
-	FHitResult WallHit = CheckForWall(PreviousWallNormal);
-
 	//Input
 	FVector InputDir = GetLastInputVector();
 	InputDir = FVector(InputDir.X,InputDir.Y,0);
@@ -551,6 +573,9 @@ void USf_FP_CharacterMovementComponent::JumpOffWall()
 	}
 	else
 	{
+		//Wall
+		FHitResult WallHit = CheckForWall(PreviousWallNormal);
+		
 		FVector WallJumpOffVector = FMath::Lerp(InputDir, WallHit.Normal,WallNormalJumpOffInfluence).GetSafeNormal();
 		Velocity += WallJumpOffVector * WallJumpOffForce;
 		if (SHOULD_DEBUG(FP::Movement::Wallrun, EDebugType::Visual) || true)
@@ -571,18 +596,16 @@ void USf_FP_CharacterMovementComponent::JumpOffWall()
 
 bool USf_FP_CharacterMovementComponent::CanMantle() const
 {
-	return (IsMovementMode(MOVE_Walking) && !IsCrouching() || IsMovementMode(MOVE_Falling) || IsCustomMovementMode(CMOVE_Dash));
+	return (/*IsMovementMode(MOVE_Walking) && !IsCrouching() || */IsMovementMode(MOVE_Falling) || IsCustomMovementMode(CMOVE_Dash));
 }
 
 bool USf_FP_CharacterMovementComponent::TryMantle()
 {
 	if (!CanMantle())
 	{
-		PRINT("Can't Mantle.");
 		return false;
 	}
-
-	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, FString::SanitizeFloat(Velocity.Length()));
+	
 	if (Velocity.Length() < MantleMinVelocity)
 	{
 		PRINT("To slow for Mantle.");
@@ -678,12 +701,12 @@ void USf_FP_CharacterMovementComponent::PhysMantle(float deltaTime, int32 Iterat
 
 	CharacterOwner->SetActorLocation(FMath::Lerp(MantleOriginLocation, MantleTargetLocation, Alpha));
 
-	if (ElapsedMantleTime > Duration * 0.9f)
+	if (ElapsedMantleTime > Duration/* * 0.9f*/)
 	{
 		float MantleBoostDirectionBias = 1.f;
 		float MantleBoostVelocity = GetMaxSpeed() * GetLastInputVector().GetSafeNormal().Length();
 		Velocity = (GetPawnOwner()->GetControlRotation().Vector() + Direction.GetSafeNormal() * MantleBoostDirectionBias).GetSafeNormal() * MantleBoostVelocity;
-		CAPSULE(GetActorLocation(),FColor::Blue)
+		// CAPSULE(GetActorLocation(),FColor::Blue)
 		
 		SetMovementMode(MOVE_Falling);
 	}
@@ -694,6 +717,9 @@ void USf_FP_CharacterMovementComponent::PhysMantle(float deltaTime, int32 Iterat
 bool USf_FP_CharacterMovementComponent::TryDash() const
 {
 	if (MovementMode != MOVE_Falling)
+		return false;
+
+	if (ElapsedInAirJumpAllowance <= InAirJumpAllowance && CharacterOwner->JumpCurrentCount < CharacterOwner->JumpMaxCount)
 		return false;
 	
 	return DashCount < MaxDashes;

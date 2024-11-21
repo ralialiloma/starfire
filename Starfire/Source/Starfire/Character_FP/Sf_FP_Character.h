@@ -32,9 +32,13 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	
+
+	bool IsInJumpAllowance() const;
+	virtual bool CanJumpInternal_Implementation() const override;
 	virtual void Jump() override;
 	virtual void StopJumping() override;
+	virtual void CheckJumpInput(float DeltaTime) override;
+	virtual float GetJumpMaxHoldTime() const override;
 	
 	virtual void PostInitProperties() override;
 	virtual void PostInitializeComponents() override;
@@ -51,6 +55,7 @@ public:
 
 protected:
 	bool bCustomJumpPressed = false;
+	bool bCustomJumpDown = false;
 	
 #pragma endregion
 

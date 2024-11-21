@@ -83,6 +83,19 @@ public:
 	
 	UPROPERTY(Transient)
 	ASf_FP_Character* SfCharacterOwner;
+	
+	UPROPERTY(Transient)
+	TEnumAsByte<EMovementMode> PreviousMovementMode;
+	UPROPERTY(Transient)
+	uint8 PreviousCustomMode;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Character Movement: Jumping / Falling", meta =(CustomConfig))
+	float InAirJumpAllowance = 0.2f;
+	
+	UPROPERTY(Transient)
+	float ElapsedInAirJumpAllowance = 0.f;
+	UPROPERTY(Transient)
+	bool bWasWallRunningBeforeAllowance = false;
 
 #pragma endregion
 	
@@ -190,13 +203,13 @@ private:
 #pragma region Properties
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: Mantle", meta =(CustomConfig))
+	bool bRequireInputForMantle = false;
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: Mantle", meta =(CustomConfig))
 	float MantleMinDistance = 100.0f;
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: Mantle", meta =(CustomConfig))
-	float MantleMaxDistance = 300.0f;
+	float MantleMaxDistance = 200.0f;
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: Mantle", meta =(CustomConfig))
 	float MantleMaxHeight = 150.0f;
-	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: Mantle", meta =(CustomConfig))
-	float MantleLowerDeviation = 20.0f;
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: Mantle", meta =(CustomConfig))
 	float MantleMinWallAngle = 75.0f;
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: Mantle", meta =(CustomConfig))
@@ -204,13 +217,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: Mantle", meta =(CustomConfig))
 	float MantleAlignmentAngle = 40.0f;
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: Mantle", meta =(CustomConfig))
-	float MantleMinVelocityForBoost = 100.0f;
+	float MantleMinVelocity = 50.0f;
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: Mantle", meta =(CustomConfig))
-	float MantleMinVelocity = 300.0f;
-	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: Mantle", meta =(CustomConfig))
-	float MantleMaxDuration = 0.7f;
-	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: Mantle", meta =(CustomConfig))
-	UCurveFloat* MantleCurve = nullptr;
+	float MantleMaxDuration = 0.5f;
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: Mantle", meta =(CustomConfig))
 	UAnimMontage* MantleMontage = nullptr;
 private:

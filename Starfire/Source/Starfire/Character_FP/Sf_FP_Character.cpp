@@ -174,6 +174,7 @@ void ASf_FP_Character::Jump()
 
 	bCustomJumpPressed = true;
 	bPressedJump = false;
+	bCustomJumpDown = true;
 }
 
 void ASf_FP_Character::StopJumping()
@@ -181,6 +182,47 @@ void ASf_FP_Character::StopJumping()
 	Super::StopJumping();
 
 	bCustomJumpPressed = false;
+	bCustomJumpDown = false;
+}
+
+void ASf_FP_Character::CheckJumpInput(float DeltaTime)
+{
+	JumpCurrentCountPreJump = JumpCurrentCount;
+
+	if (SFCharacterMovementComponent)
+	{
+		if (bPressedJump)
+		{
+			// If this is the first jump and we're already falling,
+			// then increment the JumpCount to compensate.
+			const bool bFirstJump = JumpCurrentCount == 0;
+			if (bFirstJump && SFCharacterMovementComponent->IsFalling() && !IsInJumpAllowance())
+			{
+				JumpCurrentCount++;
+			}
+
+			const bool bDidJump = CanJump() && SFCharacterMovementComponent->DoJump(bClientUpdating);
+			if (bDidJump)
+			{
+				// Transition from not (actively) jumping to jumping.
+				if (!bWasJumping)
+				{
+					JumpCurrentCount++;
+					JumpForceTimeRemaining = GetJumpMaxHoldTime();
+					OnJumped();
+				}
+			}
+
+			bWasJumping = bDidJump;
+		}
+	}
+}
+
+float ASf_FP_Character::GetJumpMaxHoldTime() const
+{
+	if (SFCharacterMovementComponent->PreviousMovementMode == MOVE_Custom && SFCharacterMovementComponent->PreviousCustomMode == CMOVE_WallRun)
+		return 0;
+	return Super::GetJumpMaxHoldTime();
 }
 
 void ASf_FP_Character::Tick(float DeltaTime)
@@ -191,6 +233,45 @@ void ASf_FP_Character::Tick(float DeltaTime)
 void ASf_FP_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+}
+
+bool ASf_FP_Character::IsInJumpAllowance() const
+{
+	return (SFCharacterMovementComponent->ElapsedInAirJumpAllowance <= SFCharacterMovementComponent->InAirJumpAllowance);
+}
+
+bool ASf_FP_Character::CanJumpInternal_Implementation() const
+{
+	// Ensure that the CharacterMovement state is valid
+	bool bJumpIsAllowed = GetCharacterMovement()->CanAttemptJump();
+
+	if (bJumpIsAllowed)
+	{
+		// Ensure JumpHoldTime and JumpCount are valid.
+		if (!bWasJumping || GetJumpMaxHoldTime() <= 0.0f)
+		{
+			if ((JumpCurrentCount == 0 && GetCharacterMovement()->IsFalling()) &&
+				!IsInJumpAllowance())
+			{
+				bJumpIsAllowed = JumpCurrentCount + 1 < JumpMaxCount;
+			}
+			else
+			{
+				bJumpIsAllowed = JumpCurrentCount < JumpMaxCount;
+			}
+		}
+		else
+		{
+			// Only consider JumpKeyHoldTime as long as:
+			// A) The jump limit hasn't been met OR
+			// B) The jump limit has been met AND we were already jumping
+			const bool bJumpKeyHeld = (bPressedJump && JumpKeyHoldTime < GetJumpMaxHoldTime());
+			bJumpIsAllowed = bJumpKeyHeld &&
+				((JumpCurrentCount < JumpMaxCount) || (bWasJumping && JumpCurrentCount == JumpMaxCount));
+		}
+	}
+
+	return bJumpIsAllowed;
 }
 
 UAnimInstance* ASf_FP_Character::GetCharacterAnimInstance_Implementation() const
