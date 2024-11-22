@@ -5,11 +5,14 @@
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Starfire/Character_TP/Sf_TP_Character.h"
 #include "Starfire/Character_TP/Behaviour/BlackboardKeyHelperLibrary.h"
+#include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
 
-void USf_CharacterFeature::Initialize(ASf_TP_Character* Holder)
+void USf_CharacterFeature::Initialize(ASf_TP_Character* OwningCharacterIn,const USf_CharacterFeature_Config* InConfig)
 {
-	OwningAIHolder = Holder;
-	AController* Controller = Holder->GetController();
+	OwningCharacter = OwningCharacterIn;
+	AController* Controller = OwningCharacter->GetController();
+
+	Config = InConfig;
 
 	if (!IsValid(Controller))
 	{
@@ -24,9 +27,10 @@ void USf_CharacterFeature::Initialize(ASf_TP_Character* Holder)
 			SfLog_CharacterFeature,
 			Error,
 			TEXT("Invalid type. Needs to be AIController but its %s instead"),
-			*Holder->GetController()->GetClass()->GetName())
+			*OwningCharacterIn->GetController()->GetClass()->GetName())
 	}
 }
+
 
 void USf_CharacterFeature::OnBeginPlay()
 {
@@ -39,25 +43,25 @@ void USf_CharacterFeature::OnTick(float OnTick)
 
 void USf_CharacterFeature::SetBlackboardFloatValue(EFloatBlackboardKey FloatBlackboardKey, float Value)
 {
-	UBlackboardComponent* BlackboardComponent = UAIBlueprintHelperLibrary::GetBlackboard(OwningAIHolder);
+	UBlackboardComponent* BlackboardComponent = UAIBlueprintHelperLibrary::GetBlackboard(OwningCharacter);
 	UBlackboardKeyHelperLibrary::SetFloatValue(BlackboardComponent,FloatBlackboardKey,Value);
 }
 
 void USf_CharacterFeature::SetBlackboardIntValue(EIntBlackboardKey IntBlackboardKey, int32 Value)
 {
-	UBlackboardComponent* BlackboardComponent = UAIBlueprintHelperLibrary::GetBlackboard(OwningAIHolder);
+	UBlackboardComponent* BlackboardComponent = UAIBlueprintHelperLibrary::GetBlackboard(OwningCharacter);
 	UBlackboardKeyHelperLibrary::SetIntValue(BlackboardComponent,IntBlackboardKey,Value);
 }
 
 void USf_CharacterFeature::SetBlackboardBoolValue(EBoolBlackboardKey BoolBlackboardKey, bool Value)
 {
-	UBlackboardComponent* BlackboardComponent = UAIBlueprintHelperLibrary::GetBlackboard(OwningAIHolder);
+	UBlackboardComponent* BlackboardComponent = UAIBlueprintHelperLibrary::GetBlackboard(OwningCharacter);
 	UBlackboardKeyHelperLibrary::SetBoolValue(BlackboardComponent,BoolBlackboardKey,Value);
 }
 
 void USf_CharacterFeature::SetBlackboardVectorValue(ELocationBlackboardKey ActorBlackboardKey, FVector Value)
 {
-	UBlackboardComponent* BlackboardComponent = UAIBlueprintHelperLibrary::GetBlackboard(OwningAIHolder);
+	UBlackboardComponent* BlackboardComponent = UAIBlueprintHelperLibrary::GetBlackboard(OwningCharacter);
 	UBlackboardKeyHelperLibrary::SetVectorValue(BlackboardComponent,ActorBlackboardKey,Value);
 }
 
@@ -70,17 +74,17 @@ USf_CharacterFeature* USf_CharacterFeature::GetFeatureByClass(TSubclassOf<USf_Ch
 
 USf_TP_CharacterMovementComponent* USf_CharacterFeature::GetOwningSfMovement()
 {
-	return OwningAIHolder->GetSf_TP_CharacterMovement();
+	return OwningCharacter->GetSf_TP_CharacterMovement();
 }
 
 USf_Equipment* USf_CharacterFeature::GetOwningSfEquipment()
 {
-	return OwningAIHolder->GetSfEquipment();
+	return OwningCharacter->GetSfEquipment();
 }
 
 ASf_TP_Character* USf_CharacterFeature::GetOwningCharacter() const
 {
-	return OwningAIHolder;
+	return OwningCharacter;
 }
 
 AAIController* USf_CharacterFeature::GetOwningAIController()
@@ -103,18 +107,28 @@ AWeaponBase* USf_CharacterFeature::GetOwningCharacterActiveWeapon()
 	return GetOwningSfEquipment()->GetActiveWeapon();
 }
 
-FCollisionQueryParams USf_CharacterFeature::GetIgnoreCharacterParams()
+FCollisionQueryParams USf_CharacterFeature::GetIgnoreCharacterParams() const
 {
 	return GetOwningCharacter()->GetIgnoreCharacterParams();
 }
 
 TArray<AActor*> USf_CharacterFeature::GetIgnoreActors() const
 {
-	return OwningAIHolder->GetIgnoreActors();
+	return OwningCharacter->GetIgnoreActors();
+}
+
+void USf_CharacterFeature::ThrowInvalidConfigError(TSubclassOf<USf_CharacterFeature_Config> ConfigToCastTo)
+{
+	UDebugFunctionLibrary::Sf_ThrowError(this,FString::Printf(TEXT("Invalid %s Config!"),*ConfigToCastTo->GetName()));
+}
+
+const USf_CharacterFeature_Config* USf_CharacterFeature::GetConfig() const
+{
+	return Config;
 }
 
 FTransform USf_CharacterFeature::GetOwnerTransform() const
 {
-	return OwningAIHolder->GetTransform();
+	return OwningCharacter->GetTransform();
 }
 

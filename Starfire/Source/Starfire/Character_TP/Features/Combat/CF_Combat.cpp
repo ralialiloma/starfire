@@ -12,9 +12,7 @@
 
 bool UCF_Combat::OtherNPCWouldBeHit()
 {
-	ASf_TP_Character* OwningCharacter = GetOwningCharacter();
-	
-	if (!OwningCharacter->Implements<UWeaponOwner>())
+	if (!GetOwningCharacter()->Implements<UWeaponOwner>())
 	{
 		UE_LOG(
 			EF_Combat, Error,
@@ -24,7 +22,7 @@ bool UCF_Combat::OtherNPCWouldBeHit()
 		return false;
 	}
 	
-	FTransform FireTransform = IWeaponOwner::Execute_GetFireTransform(OwningCharacter);
+	FTransform FireTransform = IWeaponOwner::Execute_GetFireTransform(GetOwningCharacter());
 	FVector Start = FireTransform.GetLocation();
 	FVector ForwardVector = FireTransform.GetRotation().GetForwardVector();
 	const float WeaponRange= GetOwningSfEquipment()->GetWeaponConfig().Range;

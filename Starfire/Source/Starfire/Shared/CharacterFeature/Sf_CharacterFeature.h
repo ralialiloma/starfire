@@ -11,11 +11,19 @@
 #include "Sf_CharacterFeature.generated.h"
 
 class ASf_TP_Character;
+class USf_CharacterFeature_Config;
 
 DEFINE_LOG_CATEGORY_STATIC(SfLog_CharacterFeature, Display, Display);
 
+#define VALIDATE_CONFIG(Type, ConfigVar) \
+	ConfigVar = Cast<Type>(GetConfig()); \
+	if (!IsValid(ConfigVar)) \
+	{ \
+		ThrowInvalidConfigError(Type::StaticClass());\
+		return; \
+	}
 
-UCLASS(BlueprintType,Blueprintable,DefaultToInstanced,EditInlineNew,Abstract)
+UCLASS(BlueprintType,Blueprintable)
 class STARFIRE_API USf_CharacterFeature : public USf_Object
 {
 	GENERATED_BODY()
@@ -23,7 +31,7 @@ class STARFIRE_API USf_CharacterFeature : public USf_Object
 
 #pragma region Functions
 public:
-	virtual void Initialize(ASf_TP_Character* Holder);
+	virtual void Initialize(ASf_TP_Character* OwningCharacterIn, const USf_CharacterFeature_Config* InConfig);
 	virtual void OnBeginPlay();
 	virtual void OnTick(float OnTick);
 protected:
@@ -45,6 +53,7 @@ protected:
 	ASf_TP_Character* GetOwningCharacter() const;
 	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "Character")
 	AAIController* GetOwningAIController();
+	const USf_CharacterFeature_Config* GetConfig() const;
 
 	UFUNCTION(BlueprintCallable,BlueprintPure , Category = "Character")      
 	FTransform GetOwnerTransform() const;
@@ -58,10 +67,14 @@ protected:
 	UFUNCTION(BlueprintCallable,BlueprintPure,  Category = "Character")
 	AWeaponBase* GetOwningCharacterActiveWeapon();
 	
-	FCollisionQueryParams GetIgnoreCharacterParams();
+	FCollisionQueryParams GetIgnoreCharacterParams() const;
 
 	UFUNCTION(BlueprintCallable,BlueprintPure,Category = "Character")
 	TArray<AActor*> GetIgnoreActors() const;
+
+	UFUNCTION(BlueprintCallable,Category = "Character Feature")
+	void ThrowInvalidConfigError(TSubclassOf<USf_CharacterFeature_Config> ConfigToCastTo);
+
 #pragma endregion
 
 #pragma region Properties
@@ -73,10 +86,13 @@ public:
 	float UpdateRateInSeconds = 1;
 private:
 	UPROPERTY()
-	ASf_TP_Character* OwningAIHolder = nullptr;
+	ASf_TP_Character* OwningCharacter = nullptr;
 
 	UPROPERTY()
 	AAIController* OwningAIController = nullptr;
+
+	UPROPERTY()
+	const USf_CharacterFeature_Config* Config = nullptr;
 #pragma endregion
 	
 };

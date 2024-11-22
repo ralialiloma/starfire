@@ -1,7 +1,8 @@
 ﻿#pragma once
 #include "CoreMinimal.h"
-#include "Starfire/Sf_Bases/Sf_CharacterFeature.h"
+#include "CF_Locomotion_Config.h"
 #include "Runtime/NavigationSystem/Public/NavFilters/NavigationQueryFilter.h"
+#include "Starfire/Shared/CharacterFeature/Sf_CharacterFeature.h"
 #include "CF_Locomotion.generated.h"
 
 
@@ -59,7 +60,8 @@ UCLASS(Blueprintable)
 class STARFIRE_API UCF_Locomotion : public USf_CharacterFeature
 {
 	GENERATED_BODY()
-
+public:
+	virtual void Initialize(ASf_TP_Character* Holder, const USf_CharacterFeature_Config* InConfig) override;
 	
 #pragma region Functions
 public:
@@ -85,7 +87,10 @@ public:
 	FSf_VoidDelegate_CPP OnMoveFailed_CPP;
 	UPROPERTY(BlueprintAssignable)
 	FSf_VoidDelegate_BP OnMoveFailed_BP;
-private:
+protected:
+	UPROPERTY()
+	const UCF_Locomotion_Config* LocomotionConfig;
+	
 	UPROPERTY()
 	FVector LastDestination;
 #pragma endregion

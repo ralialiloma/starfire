@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "CoreMinimal.h"
-#include "Starfire/Sf_Bases/Sf_CharacterFeature.h"
 #include "Starfire/Sf_Bases/Sf_Delegate.h"
+#include "Starfire/Shared/CharacterFeature/Sf_CharacterFeature.h"
 #include "CF_Combat.generated.h"
 
 DEFINE_LOG_CATEGORY_STATIC(EF_Combat, Display, Display);

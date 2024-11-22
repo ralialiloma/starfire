@@ -6,6 +6,12 @@
 #include "Starfire/Character_TP/EQS/NavigationTargetSubsystem.h"
 
 
+void UCF_Locomotion::Initialize(ASf_TP_Character* Holder, const USf_CharacterFeature_Config* InConfig)
+{
+	Super::Initialize(Holder, InConfig);
+	VALIDATE_CONFIG(UCF_Locomotion_Config,LocomotionConfig)
+}
+
 bool UCF_Locomotion::MoveToLocation(const F_SF_MoveRequest MoveRequest)
 {
 	UNavigationTargetSubsystem* NavTargetSys = GetWorld()->GetGameInstance()->GetSubsystem<UNavigationTargetSubsystem>();

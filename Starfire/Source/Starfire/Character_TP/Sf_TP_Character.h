@@ -4,8 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Components/WeaponAnimMontageController_TP.h"
-#include "Starfire/Sf_Bases/Sf_CharacterFeature.h"
 #include "Starfire/Sf_Bases/Sf_Character.h"
+#include "Starfire/Shared/CharacterFeature/Sf_CharacterFeature.h"
+#include "Starfire/Shared/CharacterFeature/Sf_CharacterFeature_Config.h"
 #include "Sf_TP_Character.generated.h"
 
 
@@ -51,8 +52,11 @@ protected:
 	
 #pragma region Properties
 protected:
+	UPROPERTY(BlueprintReadOnly)
+	TArray<USf_CharacterFeature*> FeaturesNew  = TArray<USf_CharacterFeature*>{};
+
 	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly,Instanced)
-	TArray<USf_CharacterFeature*> Features;
+	TArray<USf_CharacterFeature_Config*> FeatureConfigs = TArray<USf_CharacterFeature_Config*>{};
 
 #pragma endregion
 
@@ -64,11 +68,13 @@ public:
 	template <typename FeatureType>
 	FeatureType* GetFeatureByClass();
 
-	UFUNCTION(BlueprintCallable, Category = "EnemyFeatures")
-	bool TryAddFeature(TSubclassOf<USf_CharacterFeature>& FeatureType, bool bInitFeature = true);
+	UFUNCTION(BlueprintCallable, Category = "Character FeaturesNew")
+	bool TryAddFeature(const USf_CharacterFeature_Config* FeatureConfig);
+	UFUNCTION(BlueprintCallable, Category = "Character FeaturesNew")
+	bool TryAddFeatureByConfigClass(const TSubclassOf<USf_CharacterFeature_Config> FeatureConfigType);
+
 private:
-	void ImportStartFeatures();
-	TSet<TSubclassOf<USf_CharacterFeature>> GetAllStartFeatures() const;
+	static TSet<TSubclassOf<USf_CharacterFeature_Config>> GetAllStartConfigs();
 
 #pragma endregion
 

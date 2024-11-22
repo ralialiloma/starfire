@@ -6,21 +6,19 @@
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
 #include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
 
-void UCF_Cover::Initialize(ASf_TP_Character* Holder)
+
+
+void UCF_Cover::Initialize(ASf_TP_Character* Holder, const USf_CharacterFeature_Config* InConfig)
 {
-	Super::Initialize(Holder);
+	Super::Initialize(Holder, InConfig);
 	bIsInHighCoverState = false;
+	VALIDATE_CONFIG(UCF_Cover_Config,CoverConfig)
 }
 
 bool UCF_Cover::EnterCover()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, "Try Enter Cover");
-	/*if (bIsInHighCoverState||bIsInLowCoverState)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, "Already in Cover State");
-		return true;
-	}*/
-	const bool bInHighCover = !CanBeHitByPlayer(MinCoverHeight);
+	const bool bInHighCover = !CanBeHitByPlayer(CoverConfig->MinCoverHeight);
 	if (bInHighCover)
 	{
 		if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::TP::CharacterFeatures::Cover,EDebugType::Print))
@@ -30,7 +28,7 @@ bool UCF_Cover::EnterCover()
 		return true;
 	}
 
-	const bool bInLowCover = !CanBeHitByPlayer(MaxCrouchCoverHeight+0.001f);
+	const bool bInLowCover = !CanBeHitByPlayer(CoverConfig->MaxCrouchCoverHeight+0.001f);
 	if (bInLowCover)
 	{
 		if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::TP::CharacterFeatures::Cover,EDebugType::Print))
@@ -54,13 +52,13 @@ bool UCF_Cover::VerifyCover(const FVector LocationToVerify)
 	const float CapHh = GetOwningCharacter()->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
 
 	//Verify High Cover
-	const FVector AdditionalHighCoverZHeight = FVector(0,0,MaxCrouchCoverHeight-CapHh);
+	const FVector AdditionalHighCoverZHeight = FVector(0,0,CoverConfig->MaxCrouchCoverHeight-CapHh);
 	const FVector HighCoverStart = LocationToVerify+AdditionalHighCoverZHeight;
 	if (!CanBeHitByPlayer(HighCoverStart))
 		return true;
 
 	//Verify Low Cover
-	const FVector AdditionalLowCoverZHeight = FVector(0,0,MinCoverHeight-CapHh);
+	const FVector AdditionalLowCoverZHeight = FVector(0,0,CoverConfig->MaxCrouchCoverHeight-CapHh);
 	const FVector LowCoverStart = LocationToVerify+AdditionalLowCoverZHeight;
 	if (!CanBeHitByPlayer(LowCoverStart))
 		return true;

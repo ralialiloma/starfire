@@ -2,11 +2,14 @@
 
 
 #include "Sf_TP_Character.h"
-#include "Features/CF_Cover.h"
-#include "Features/CF_Combat.h"
-#include "Features/CF_Death.h"
-#include "Features/CF_Locomotion.h"
+
+#include "Features/Combat/CF_Combat_Config.h"
+#include "Features/Cover/CF_Cover_Config.h"
+#include "Features/Death/CF_Death_Config.h"
 #include "Features/DynamicMoveTarget/CF_DynamicMoveTarget.h"
+#include "Features/DynamicMoveTarget/CF_DynamicMoveTarget_Config.h"
+#include "Features/Locomotion/CF_Locomotion_Config.h"
+#include "Starfire/Shared/CharacterFeature/Sf_CharacterFeature.h"
 #include "Starfire/Shared/Weapon/WeaponBase.h"
 
 ASf_TP_Character::ASf_TP_Character(const FObjectInitializer& ObjectInitializer): Super(
@@ -34,11 +37,17 @@ void ASf_TP_Character::PostInitializeComponents()
 	Super::PostInitializeComponents();
 }
 
-USf_CharacterFeature* ASf_TP_Character::GetFeatureByClass(TSubclassOf<USf_CharacterFeature> Class)
+USf_CharacterFeature* ASf_TP_Character::GetFeatureByClass(const TSubclassOf<USf_CharacterFeature> Class)
 {
-	for (USf_CharacterFeature* Element : Features)
+	if(!IsValid(Class))
+		return nullptr;
+	
+	for (USf_CharacterFeature* Element : FeaturesNew)
 	{
-		if (Element->GetClass() == Class)
+		if (!IsValid(Element))
+			continue;
+		
+		if (Element->GetClass()->IsChildOf(Class))
 		{
 			return Element;
 		}
@@ -47,30 +56,57 @@ USf_CharacterFeature* ASf_TP_Character::GetFeatureByClass(TSubclassOf<USf_Charac
 	return nullptr;
 }
 
-bool ASf_TP_Character::TryAddFeature(TSubclassOf<USf_CharacterFeature>&  FeatureType, bool bInitFeature)
+bool ASf_TP_Character::TryAddFeature(const USf_CharacterFeature_Config* FeatureConfig)
 {
-	if (!IsValid(FeatureType)|| FeatureType->HasAnyClassFlags(CLASS_Abstract))
+	if (!IsValid(FeatureConfig))
 	{
 		return false;
 	}
-
-	for (auto Element : Features)
+	
+	const TSubclassOf<USf_CharacterFeature> NewFeatureType{FeatureConfig->GetFeatureType()};
+	
+	if (!IsValid(FeatureConfig)|| NewFeatureType->HasAnyClassFlags(CLASS_Abstract))
+	{
+		return false;
+	}
+	
+	for (auto Element : FeaturesNew)
 	{
 		if (!IsValid(Element))
 			continue;
 		
-		if (Element->GetClass() == FeatureType)
+		if (Element->GetClass()->IsChildOf(NewFeatureType) || NewFeatureType->IsChildOf(Element->GetClass()))
 		{
 			return false;
 		}
 	}
 	
-	USf_CharacterFeature* Feature = NewObject<USf_CharacterFeature>(this,FeatureType);
-	Features.Add(Feature);
-	if (bInitFeature)
-		Feature->Initialize(this);
-	UE_LOG(LogTemp, Log, TEXT("Added Feature %s"),*FeatureType->GetName())
+	USf_CharacterFeature* Feature = FeatureConfig->MakeFeature(this);
+	FeaturesNew.Add(Feature);
+	UE_LOG(LogTemp, Log, TEXT("Added Feature %s"),*FeatureConfig->GetName())
 	return true;
+}
+
+bool ASf_TP_Character::TryAddFeatureByConfigClass(const TSubclassOf<USf_CharacterFeature_Config> FeatureConfigType)
+{
+	if (!IsValid(FeatureConfigType)|| FeatureConfigType->HasAnyClassFlags(CLASS_Abstract))
+	{
+		return false;
+	}
+	
+	for (auto Element : FeatureConfigs)
+	{
+		if (!IsValid(Element))
+			continue;
+		
+		if (Element->GetClass()->IsChildOf(FeatureConfigType) || FeatureConfigType->IsChildOf(Element->GetClass()))
+		{
+			return false;
+		}
+	}
+	USf_CharacterFeature_Config* NewConfig = NewObject<USf_CharacterFeature_Config>(this,FeatureConfigType);
+	FeatureConfigs.Add(NewConfig);
+	return TryAddFeature(NewConfig);
 }
 
 
@@ -85,27 +121,30 @@ USf_TP_CharacterMovementComponent* ASf_TP_Character::GetSf_TP_CharacterMovement(
 	return SFCharacterMovementComponent;
 }
 
-// Called when the game starts or when spawned
 void ASf_TP_Character::BeginPlay()
 {
 	Super::BeginPlay();
 
-	ImportStartFeatures();
-	
-	for (USf_CharacterFeature* Feature: Features)
+	//User defined features
+	for (USf_CharacterFeature_Config* Config: FeatureConfigs)
+		TryAddFeature(Config);
+
+	//Necessary FeaturesNew
+	for (TSubclassOf<USf_CharacterFeature_Config> ConfigType: GetAllStartConfigs())
 	{
-		Feature->Initialize(this);
-		Feature->OnBeginPlay();
+		TryAddFeatureByConfigClass(ConfigType);
 	}
+	
+	for (USf_CharacterFeature* Feature: FeaturesNew)
+		Feature->OnBeginPlay();
 		
 }
 
-// Called every frame
 void ASf_TP_Character::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	for (USf_CharacterFeature* Feature: Features)
+	for (USf_CharacterFeature* Feature: FeaturesNew)
 		Feature->OnTick(DeltaTime);
 
 }
@@ -116,23 +155,14 @@ void ASf_TP_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 }
-
-void ASf_TP_Character::ImportStartFeatures()
+TSet<TSubclassOf<USf_CharacterFeature_Config>> ASf_TP_Character::GetAllStartConfigs()
 {
-	for (TSubclassOf<USf_CharacterFeature> Feature: GetAllStartFeatures())
-	{
-		TryAddFeature(Feature, false);
-	}
-}
-
-TSet<TSubclassOf<USf_CharacterFeature>> ASf_TP_Character::GetAllStartFeatures() const
-{
-	TSet<TSubclassOf<USf_CharacterFeature>> AllFeatures{
-		UCF_Cover::StaticClass(),
-		UCF_Combat::StaticClass(),
-		UCF_Locomotion::StaticClass(),
-		UCF_Death::StaticClass(),
-		UCF_DynamicMoveTarget::StaticClass()};
+	TSet<TSubclassOf<USf_CharacterFeature_Config>> AllFeatures{
+		UCF_Cover_Config::StaticClass(),
+		UCF_Combat_Config::StaticClass(),
+		UCF_Locomotion_Config::StaticClass(),
+		UCF_Death_Config::StaticClass(),
+		UCF_DynamicMoveTarget_Config::StaticClass()};
 	return AllFeatures;
 }
 
