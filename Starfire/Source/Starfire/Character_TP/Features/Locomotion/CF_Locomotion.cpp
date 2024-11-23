@@ -55,8 +55,8 @@ bool UCF_Locomotion::MoveToLocation(const F_SF_MoveRequest MoveRequest)
 		}
 		ProjectedDestinationLocation = ProjectedDestination.Location;
 
-		NavTargetSys->UnregisterReservedCover(LastDestination);
-		const bool bLocationReserved =  NavTargetSys->LocationInReservedCover(ProjectedDestinationLocation);
+		NavTargetSys->UnregisterNavTarget(LastDestination);
+		const bool bLocationReserved =  NavTargetSys->HasCloseNavTarget(ProjectedDestinationLocation);
 		if (bLocationReserved)
 		{
 			ClearAllDelegates();
@@ -96,7 +96,7 @@ bool UCF_Locomotion::MoveToLocation(const F_SF_MoveRequest MoveRequest)
 	
 	if (!MoveRequest.bMoveToActor)
 	{
-		NavTargetSys->RegisterReservedCover(ProjectedDestinationLocation);
+		NavTargetSys->RegisterNavTarget(ProjectedDestinationLocation);
 		LastDestination = ProjectedDestinationLocation;
 	}
 	else if (MoveRequest.TargetActor)
@@ -117,7 +117,7 @@ void UCF_Locomotion::StopMovement()
 	OwningController->StopMovement();
 	OwningController->ReceiveMoveCompleted.RemoveDynamic(this, &UCF_Locomotion::OnMoveCompleted);
 	UNavigationTargetSubsystem* NavTargetSys = GetWorld()->GetGameInstance()->GetSubsystem<UNavigationTargetSubsystem>();
-	NavTargetSys->UnregisterReservedCover(LastDestination);
+	NavTargetSys->UnregisterNavTarget(LastDestination);
 	ClearAllDelegates();
 }
 
@@ -127,7 +127,7 @@ void UCF_Locomotion::FinishMovement()
 	OwningController->StopMovement();
 	OwningController->ReceiveMoveCompleted.RemoveDynamic(this, &UCF_Locomotion::OnMoveCompleted);
 	UNavigationTargetSubsystem* NavTargetSys = GetWorld()->GetGameInstance()->GetSubsystem<UNavigationTargetSubsystem>();
-	NavTargetSys->UnregisterReservedCover(LastDestination);
+	NavTargetSys->UnregisterNavTarget(LastDestination);
 	
 	OnMoveFinished_CPP.Broadcast();
 	OnMoveFinished_BP.Broadcast();

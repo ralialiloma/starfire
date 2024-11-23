@@ -7,6 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Starfire/Character_TP/Sf_TP_Character.h"
+#include "Starfire/Character_TP/EQS/NavigationTargetSubsystem.h"
 #include "Starfire/Utility/AsyncUtility.h"
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
 #include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
@@ -73,7 +74,13 @@ void UTetherPoint::UpdateScore(const FVector& PlayerLocation, const UObject* Wor
 		CoverPotential = 0;
 		return;
 	}
-		
+
+	if (UNavigationTargetSubsystem::Get(GetWorld())->HasCloseNavTarget(CenterLocation,Scale))
+	{
+		CoverPotential = 0;
+		return;
+	}
+	
 	int CoveredPoints = 0;
 	for (const FVector Point: SurroundingPoints)
 	{

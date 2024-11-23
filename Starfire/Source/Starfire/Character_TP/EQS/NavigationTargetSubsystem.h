@@ -12,24 +12,37 @@ class STARFIRE_API UNavigationTargetSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 
-private:
-	TArray<FVector> ReservedCovers;
-	
 public:	
-	virtual  void Initialize(FSubsystemCollectionBase& Collection) override;
+	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
-
+	
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	TArray<FVector> GetAllReservedCovers();
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	bool LocationInReservedCover(FVector Location, float RadiusToCheck = 200) const;
+	bool HasCloseNavTarget(FVector Location, float RadiusToCheck = 200) const;
 
 	UFUNCTION(BlueprintCallable)
-	void RegisterReservedCover(FVector CoverLocation);
+	void RegisterNavTarget(FVector CoverLocation);
 
 	UFUNCTION(BlueprintCallable)
-	void UnregisterReservedCover(FVector CoverLocation);
+	void UnregisterNavTarget(FVector CoverLocation);
 	
 	void ClearReservedCovers();
+
+	static UNavigationTargetSubsystem* Get(const UWorld* World);
+
+protected:
+	void DebugTick();
+
+protected:
+	UPROPERTY()
+	TArray<FVector> ActiveNavTargets;
+
+	UPROPERTY()
+	FTimerHandle TickTimerHandle;
+
+	UPROPERTY()
+	float Tickrate = 0.5f;
+
 };

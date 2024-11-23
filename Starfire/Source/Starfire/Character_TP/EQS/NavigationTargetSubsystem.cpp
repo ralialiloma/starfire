@@ -2,11 +2,18 @@
 
 #include "NavigationTargetSubsystem.h"
 
+#include "Kismet/KismetSystemLibrary.h"
+#include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
 
 
 void UNavigationTargetSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
+	if (SHOULD_DEBUG(TP::EQS::NavigationsTargets,EDebugType::Visual))
+	{
+		GetWorld()->GetTimerManager().SetTimer(TickTimerHandle,[this]()->void{DebugTick();},Tickrate,true);
+	}
+
 }
 
 void UNavigationTargetSubsystem::Deinitialize()
@@ -14,31 +21,46 @@ void UNavigationTargetSubsystem::Deinitialize()
 	Super::Deinitialize();
 }
 
-
-//Reserved Covers
-void UNavigationTargetSubsystem::RegisterReservedCover(FVector CoverLocation)
+void UNavigationTargetSubsystem::DebugTick()
 {
-	ReservedCovers.Add(CoverLocation);
+	for (FVector Target: ActiveNavTargets)
+	{
+		UKismetSystemLibrary::DrawDebugSphere(this,Target,150.f,6,FColor::Blue,Tickrate+0.01f,2);
+	}
 }
 
-void UNavigationTargetSubsystem::UnregisterReservedCover(FVector CoverLocation)
+
+//Reserved Covers
+void UNavigationTargetSubsystem::RegisterNavTarget(FVector CoverLocation)
 {
-	ReservedCovers.Remove(CoverLocation);
+	ActiveNavTargets.Add(CoverLocation);
+}
+
+void UNavigationTargetSubsystem::UnregisterNavTarget(FVector CoverLocation)
+{
+	ActiveNavTargets.Remove(CoverLocation);
 }
 
 void UNavigationTargetSubsystem::ClearReservedCovers()
 {
-	ReservedCovers.Empty();
+	ActiveNavTargets.Empty();
+}
+
+UNavigationTargetSubsystem* UNavigationTargetSubsystem::Get(const UWorld* World)
+{
+	if (IsValid(World))
+		return  World->GetGameInstance()->GetSubsystem<UNavigationTargetSubsystem>();
+	return 	nullptr;
 }
 
 TArray<FVector> UNavigationTargetSubsystem::GetAllReservedCovers()
 {
-	return  ReservedCovers;
+	return  ActiveNavTargets;
 }
 
-bool UNavigationTargetSubsystem::LocationInReservedCover(const FVector Location, float RadiusToCheck) const
+bool UNavigationTargetSubsystem::HasCloseNavTarget(const FVector Location, float RadiusToCheck) const
 {
-	for (auto ReservedCover: ReservedCovers)
+	for (auto ReservedCover: ActiveNavTargets)
 	{
 		const float Distance = FVector::Distance(Location, ReservedCover);
 		if (Distance<=RadiusToCheck)

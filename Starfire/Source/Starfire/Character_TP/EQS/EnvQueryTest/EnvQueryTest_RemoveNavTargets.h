@@ -4,11 +4,11 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "EnvironmentQuery/EnvQueryTest.h"
-#include "EnvQueryTest_ReservedCoverLocs.generated.h"
+#include "EnvQueryTest_RemoveNavTargets.generated.h"
 
 
 UCLASS()
-class STARFIRE_API UEnvQueryTest_ReservedCoverLocs : public UEnvQueryTest
+class STARFIRE_API UEnvQueryTest_RemoveNavTargets : public UEnvQueryTest
 {
 	GENERATED_UCLASS_BODY()
 
@@ -20,13 +20,13 @@ public:
 	bool CoverShouldBeValid = true;
 
 public:
-	UEnvQueryTest_ReservedCoverLocs();
+	UEnvQueryTest_RemoveNavTargets();
 	virtual  void RunTest(FEnvQueryInstance& QueryInstance) const override;
 	virtual FText GetDescriptionTitle() const override;
 	virtual FText GetDescriptionDetails() const override;
 
 
 private:
-	bool InReservedCover(FVector CoverLocation) const;
+	bool HasCloseNavTarget(FVector CoverLocation) const;
 	
 };

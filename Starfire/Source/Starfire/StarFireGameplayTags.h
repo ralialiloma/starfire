@@ -60,9 +60,11 @@ namespace Sf_GameplayTags
 			namespace EQS
 			{
 				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(NavigationsTargets);
 				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(CoverLocation);
 				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(PeakLocation);
 				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TetherPointGen);
+				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(CloseToPlayerLocations);
 			}
 
 			namespace CharacterFeatures

@@ -16,7 +16,7 @@ bool USf_TPT_ExcludeReservedLocations::IsLocationReservedTarget(const FVector& C
 	if (CoverGen==nullptr)
 		return true;
 
-	return  CoverGen->LocationInReservedCover(CoverLocation,RadiusToCheck);
+	return  CoverGen->HasCloseNavTarget(CoverLocation,RadiusToCheck);
 }
 
 TArray<TWeakObjectPtr<UTetherPoint>> USf_TPT_ExcludeReservedLocations::GetTetherPointsBlocking(TWeakObjectPtr<AActor>,

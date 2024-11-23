@@ -7,7 +7,7 @@
 #include "EnvironmentQuery/EnvQuery.h"
 #include "Tickable.h"
 #include "Runtime/AIModule/Classes/EnvironmentQuery/EnvQueryInstanceBlueprintWrapper.h"
-#include "SF_EQS_Scheduler.generated.h"
+#include "Sf_EQS_Scheduler.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnEQSResult, const TArray<FVector>&, Results, FGuid, UniqueID);
 
@@ -16,6 +16,11 @@ USTRUCT(BlueprintType)
 struct FScheduledEnvRequest
 {
 	GENERATED_BODY()
+
+public:
+	FScheduledEnvRequest(UObject* InQuerier, UEnvQuery* InQueryTemplate, TEnumAsByte<EEnvQueryRunMode::Type> InRunMode);
+
+	FScheduledEnvRequest();
 
 public:
 	UPROPERTY(BlueprintReadWrite)
@@ -41,11 +46,13 @@ class STARFIRE_API USf_EQS_Scheduler : public UGameInstanceSubsystem
 public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
+
+	static USf_EQS_Scheduler* GetCurrent(const UWorld* World);
 	
 	UFUNCTION(BlueprintCallable)
 	FGuid ScheduleRequest(FScheduledEnvRequest ScheduledEnvRequest);
 
-	bool Tick(float DeltaTime);
+	bool Tick();
 
 
 
@@ -66,6 +73,9 @@ protected:
 
 	UPROPERTY()
 	TMap<UEnvQueryInstanceBlueprintWrapper*,FScheduledEnvRequest> ActiveRequests;
+
+	UPROPERTY()
+	float Tickrate = 0.5f;
 	
 	FTSTicker::FDelegateHandle TickHandle;
 

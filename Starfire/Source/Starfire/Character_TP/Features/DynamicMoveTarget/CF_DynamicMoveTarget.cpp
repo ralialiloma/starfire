@@ -4,6 +4,7 @@
 #include "CF_DynamicMoveTarget_Config.h"
 #include "NavigationSystem.h"
 #include "Starfire/Character_TP/Sf_TP_Character.h"
+#include "Starfire/Character_TP/EQS/CloseToPlayerLocations/Sf_CloseToPlayerLoc.h"
 #include "Starfire/Utility/CollisionData.h"
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
 #include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
@@ -59,6 +60,13 @@ void UCF_DynamicMoveTarget::OnTick(float DeltaTime)
 	const float MaxDistance = DynamicMoveTargetConfig->MaxDistance;
 	if (Distance < MinDistance || Distance > MaxDistance)
 	{
+		TArray<FVector> Locations =  USf_CloseToPlayerLoc::GetCurrent(GetWorld())->GetCurrentCloseToPlayerLocations();
+		if (Locations.Num()<=0)
+		{
+			MoveTarget->SetActorLocation(MovingActorLocation);
+			return;
+		}
+		
 		FVector Direction = (MovingActorLocation-PlayerLocation);
 		Direction.Normalize();
 
@@ -69,17 +77,17 @@ void UCF_DynamicMoveTarget::OnTick(float DeltaTime)
 		
 		FVector Location = MovingActorLocation + Direction * (DesiredDistance - Distance);
 		//Raycast to Floor
-		FHitResult HitResult;
+		//FHitResult HitResult;
 
 		FCollisionQueryParams CollisionParams = FCollisionQueryParams();
 		
-		GetWorld()->LineTraceSingleByChannel(
+		/*GetWorld()->LineTraceSingleByChannel(
 			HitResult,
 		    Location,
 		    Location + FVector::DownVector * DynamicMoveTargetConfig->MaxVerticalTraceLength,
 		    ECollisionChannel::ECC_WorldStatic,
 		    CollisionParams
-		);
+		);*/
 
 		UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
 		if (!NavSys)
@@ -94,14 +102,16 @@ void UCF_DynamicMoveTarget::OnTick(float DeltaTime)
 			return;
 		}
 
-		FVector TraceHit = HitResult.Location;
+		FVector TraceHit = Locations[0];
 		FNavLocation ProjectedLocation;
 		if (!NavSys->ProjectPointToNavigation(TraceHit, ProjectedLocation, DynamicMoveTargetConfig->ProjectionExtent))
 		{
 			UDebugFunctionLibrary::Sf_ThrowError(this,"Failed to project to navigation!");
+			UKismetSystemLibrary::DrawDebugSphere(this,TraceHit,150.f,6,FColor::Red,10,2);
 		}
 		
-		MoveTarget->SetActorLocation(ProjectedLocation.Location);
+		MoveTarget->SetActorLocation(ProjectedLocation);
+		
 	}
 	else
 	{

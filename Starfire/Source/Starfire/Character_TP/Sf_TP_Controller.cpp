@@ -9,13 +9,14 @@
 #include "Perception/AISense_Prediction.h"
 #include "Perception/AISense_Sight.h"
 #include "Perception/AISense_Touch.h"
+#include "Starfire/Sf_Bases/Components/Sf_PathFollowingComponent.h"
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
 #include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
 
 DEFINE_LOG_CATEGORY_STATIC(Sf_Log_TP_Controller, Display, Display);
 
 ASf_TP_Controller::ASf_TP_Controller(const FObjectInitializer& ObjectInitializer):
-Super(ObjectInitializer.SetDefaultSubobjectClass<UCrowdFollowingComponent>(TEXT("PathFollowingComponent")))
+Super(ObjectInitializer.SetDefaultSubobjectClass<USf_PathFollowingComponent>(TEXT("PathFollowingComponent")))
 {
 	//AI Perception
 	AIPerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerceptionComponent"));
