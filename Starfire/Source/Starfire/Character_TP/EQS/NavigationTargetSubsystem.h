@@ -17,16 +17,17 @@ public:
 	virtual void Deinitialize() override;
 	
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	TArray<FVector> GetAllReservedCovers();
+	TArray<FVector> GetAllActiveTargetLocations();
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	bool HasCloseNavTarget(FVector Location, float RadiusToCheck = 200) const;
+	bool HasCloseNavTarget(const FVector& Location, float RadiusToCheck = 200.f, const AActor* Actor = nullptr) const;
+	
 
 	UFUNCTION(BlueprintCallable)
-	void RegisterNavTarget(FVector CoverLocation);
+	void RegisterNavTarget(AActor* PursuingAgent ,FVector LocationToRegister);
 
 	UFUNCTION(BlueprintCallable)
-	void UnregisterNavTarget(FVector CoverLocation);
+	void UnregisterNavTarget(AActor* PursuingAgent);
 	
 	void ClearReservedCovers();
 
@@ -36,9 +37,12 @@ protected:
 	void DebugTick();
 
 protected:
-	UPROPERTY()
-	TArray<FVector> ActiveNavTargets;
+	//UPROPERTY()
+	//TArray<FVector> ActiveNavTargets;
 
+	UPROPERTY()
+	TMap<AActor*,FVector> ActorToTarget;
+	
 	UPROPERTY()
 	FTimerHandle TickTimerHandle;
 

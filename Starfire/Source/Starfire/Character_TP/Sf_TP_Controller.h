@@ -12,9 +12,11 @@ class ASf_TP_Controller: public AAIController
 public:
 	ASf_TP_Controller(const FObjectInitializer& ObjectInitializer);
 	virtual void PostInitializeComponents() override;
+protected:
+	virtual FPathFollowingRequestResult MoveTo(const FAIMoveRequest& MoveRequest, FNavPathSharedPtr* OutPath = nullptr) override;
 	virtual void SetPawn(APawn* InPawn) override;
 
-	
+
 #pragma region Functions
 public:
 protected:

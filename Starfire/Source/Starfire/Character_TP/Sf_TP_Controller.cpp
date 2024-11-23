@@ -30,6 +30,19 @@ void ASf_TP_Controller::PostInitializeComponents()
 	AIPerceptionComponent->OnTargetPerceptionForgotten.AddDynamic(this, &ASf_TP_Controller::HandlePerceptionForgotten);
 }
 
+FPathFollowingRequestResult ASf_TP_Controller::MoveTo(const FAIMoveRequest& MoveRequest, FNavPathSharedPtr* OutPath)
+{
+	if (!IsValid(TP_Character))
+		TP_Character->RemoveAsDynamicObstacle();
+
+	const FPathFollowingRequestResult Result =  Super::MoveTo(MoveRequest, OutPath);
+
+	if (!IsValid(TP_Character))
+		TP_Character->RegisterAsDynamicObstacle();
+
+	return Result;
+}
+
 void ASf_TP_Controller::SetPawn(APawn* InPawn)
 {
 	Super::SetPawn(InPawn);

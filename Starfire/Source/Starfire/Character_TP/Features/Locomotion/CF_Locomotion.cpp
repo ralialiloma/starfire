@@ -4,6 +4,7 @@
 #include "Navigation/PathFollowingComponent.h"
 #include "Starfire/Character_TP/Sf_TP_Character.h"
 #include "Starfire/Character_TP/EQS/NavigationTargetSubsystem.h"
+#include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
 
 
 void UCF_Locomotion::Initialize(ASf_TP_Character* Holder, const USf_CharacterFeature_Config* InConfig)
@@ -25,7 +26,8 @@ bool UCF_Locomotion::MoveToLocation(const F_SF_MoveRequest MoveRequest)
 	{
 		if(!IsValid(MoveRequest.TargetActor))
 		{
-			UE_LOG(EF_Locomotion, Error, TEXT("Target Actor is invalid"))
+			UDebugFunctionLibrary::Sf_ThrowError(this, "Target Actor is invalid");
+			//UE_LOG(EF_Locomotion, Error, TEXT("Target Actor is invalid"))
 			return false;
 		}
 		
@@ -51,16 +53,20 @@ bool UCF_Locomotion::MoveToLocation(const F_SF_MoveRequest MoveRequest)
 
 		if (!bProjected)
 		{
+			const FString ErrorString = FString::Printf(TEXT("Failed to project location with radius: %f"),MoveRequest.ProjectionRadius);
+			UDebugFunctionLibrary::Sf_ThrowError(this, ErrorString);
+			//UE_LOG(EF_Locomotion, Warning, TEXT("Faild to project location"))
 			return false;
 		}
 		ProjectedDestinationLocation = ProjectedDestination.Location;
 
-		NavTargetSys->UnregisterNavTarget(LastDestination);
+		//NavTargetSys->UnregisterNavTarget(TODO);
 		const bool bLocationReserved =  NavTargetSys->HasCloseNavTarget(ProjectedDestinationLocation);
 		if (bLocationReserved)
 		{
 			ClearAllDelegates();
-			UE_LOG(EF_Locomotion, Log, TEXT("Location already reserved"))
+			UDebugFunctionLibrary::Sf_ThrowError(this, "Location already reserved");
+			//UE_LOG(EF_Locomotion, Warning, TEXT("Location already reserved"))
 			return false;
 		}
 		
@@ -90,13 +96,14 @@ bool UCF_Locomotion::MoveToLocation(const F_SF_MoveRequest MoveRequest)
 		OnMoveFailed_BP.Broadcast();
 		OnMoveFailed_CPP.Broadcast();
 		StopMovement();
-		UE_LOG(EF_Locomotion, Warning, TEXT("Failed path request"))
+		//UE_LOG(EF_Locomotion, Warning, TEXT("Failed path request"))
+		UDebugFunctionLibrary::Sf_ThrowError(this, "Failed path request");
 		return false;
 	}
 	
 	if (!MoveRequest.bMoveToActor)
 	{
-		NavTargetSys->RegisterNavTarget(ProjectedDestinationLocation);
+		//NavTargetSys->RegisterNavTarget(ProjectedDestinationLocation);
 		LastDestination = ProjectedDestinationLocation;
 	}
 	else if (MoveRequest.TargetActor)
@@ -117,7 +124,7 @@ void UCF_Locomotion::StopMovement()
 	OwningController->StopMovement();
 	OwningController->ReceiveMoveCompleted.RemoveDynamic(this, &UCF_Locomotion::OnMoveCompleted);
 	UNavigationTargetSubsystem* NavTargetSys = GetWorld()->GetGameInstance()->GetSubsystem<UNavigationTargetSubsystem>();
-	NavTargetSys->UnregisterNavTarget(LastDestination);
+	//NavTargetSys->UnregisterNavTarget(TODO);
 	ClearAllDelegates();
 }
 
@@ -127,7 +134,7 @@ void UCF_Locomotion::FinishMovement()
 	OwningController->StopMovement();
 	OwningController->ReceiveMoveCompleted.RemoveDynamic(this, &UCF_Locomotion::OnMoveCompleted);
 	UNavigationTargetSubsystem* NavTargetSys = GetWorld()->GetGameInstance()->GetSubsystem<UNavigationTargetSubsystem>();
-	NavTargetSys->UnregisterNavTarget(LastDestination);
+	//NavTargetSys->UnregisterNavTarget(TODO);
 	
 	OnMoveFinished_CPP.Broadcast();
 	OnMoveFinished_BP.Broadcast();

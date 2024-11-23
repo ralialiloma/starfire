@@ -3,12 +3,16 @@
 
 #include "Sf_TP_Character.h"
 
+#include "NavigationSystem.h"
+#include "NavModifierComponent.h"
 #include "Features/Combat/CF_Combat_Config.h"
 #include "Features/Cover/CF_Cover_Config.h"
 #include "Features/Death/CF_Death_Config.h"
 #include "Features/DynamicMoveTarget/CF_DynamicMoveTarget.h"
 #include "Features/DynamicMoveTarget/CF_DynamicMoveTarget_Config.h"
 #include "Features/Locomotion/CF_Locomotion_Config.h"
+#include "NavAreas/NavArea_Default.h"
+#include "NavAreas/NavArea_Null.h"
 #include "Starfire/Shared/CharacterFeature/Sf_CharacterFeature.h"
 #include "Starfire/Shared/Weapon/WeaponBase.h"
 
@@ -25,6 +29,16 @@ ASf_TP_Character::ASf_TP_Character(const FObjectInitializer& ObjectInitializer):
 	
 	//Movement Component
 	SFCharacterMovementComponent = Cast<USf_TP_CharacterMovementComponent>(GetCharacterMovement());;
+
+	//Nav Modifier
+	NavModifier = CreateDefaultSubobject<UNavModifierComponent>(TEXT("NavModifier"));
+	NavModifier->SetAreaClass(UNavArea_Null::StaticClass()); // Mark the area as non-navigable
+	NavModifier->SetActive(false);
+
+	//Box Compnent
+	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("Box"));
+	BoxComponent->SetupAttachment(GetCapsuleComponent());
+	
 }
 
 void ASf_TP_Character::PreInitializeComponents()
@@ -137,6 +151,8 @@ void ASf_TP_Character::BeginPlay()
 	
 	for (USf_CharacterFeature* Feature: FeaturesNew)
 		Feature->OnBeginPlay();
+
+	RemoveAsDynamicObstacle();
 		
 }
 
@@ -216,5 +232,21 @@ TArray<AActor*> ASf_TP_Character::GetIgnoreActors()
 	if (IsValid(ActiveWapon))
 		IgnoreActors.Add(ActiveWapon);
 	return IgnoreActors;
+}
+
+void ASf_TP_Character::RegisterAsDynamicObstacle() const
+{
+	/*NavModifier->AreaClass = UNavArea_Null::StaticClass();
+	BoxComponent->SetAreaClassOverride(UNavArea_Null::StaticClass());
+	BoxComponent->SetActive(true);
+	BoxComponent->bDynamicObstacle = true;*/
+}
+
+void ASf_TP_Character::RemoveAsDynamicObstacle() const
+{
+	NavModifier->AreaClass = UNavArea_Default::StaticClass();
+	BoxComponent->SetAreaClassOverride(UNavArea_Default::StaticClass());
+	BoxComponent->SetActive(false);
+	BoxComponent->bDynamicObstacle = false;
 }
 

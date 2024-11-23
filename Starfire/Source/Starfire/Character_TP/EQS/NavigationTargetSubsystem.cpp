@@ -2,6 +2,7 @@
 
 #include "NavigationTargetSubsystem.h"
 
+#include "Kismet/KismetStringLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
 
@@ -23,28 +24,43 @@ void UNavigationTargetSubsystem::Deinitialize()
 
 void UNavigationTargetSubsystem::DebugTick()
 {
-	for (FVector Target: ActiveNavTargets)
+	for (const TTuple<AActor*,FVector>  Target: ActorToTarget)
 	{
-		UKismetSystemLibrary::DrawDebugSphere(this,Target,150.f,6,FColor::Blue,Tickrate+0.01f,2);
+		UKismetSystemLibrary::DrawDebugSphere(this,Target.Value,150.f,6,FColor::Blue,Tickrate+0.01f,2);
 	}
 }
 
 
 //Reserved Covers
-void UNavigationTargetSubsystem::RegisterNavTarget(FVector CoverLocation)
+void UNavigationTargetSubsystem::RegisterNavTarget(AActor* PursuingAgent,FVector LocationToRegister)
 {
-	ActiveNavTargets.Add(CoverLocation);
+	if (!IsValid(PursuingAgent))
+	{
+		UDebugFunctionLibrary::Sf_ThrowError(this,"Trying to add invalid PursuingAgent");
+		return;
+	}
+
+	if (ActorToTarget.Contains(PursuingAgent))
+		return;
+
+	FString DebugString =
+		FString::Printf(TEXT("Registered %s at %s"),*PursuingAgent->GetName(),*UKismetStringLibrary::Conv_VectorToString(LocationToRegister));
+	UDebugFunctionLibrary::Sf_PrintString(this,DebugString,Sf_GameplayTags::Debug::TP::EQS::NavigationsTargets);
+	ActorToTarget.Add(PursuingAgent,LocationToRegister);
+	//ActiveNavTargets.Add(LocationToRegister);
 }
 
-void UNavigationTargetSubsystem::UnregisterNavTarget(FVector CoverLocation)
-{
-	ActiveNavTargets.Remove(CoverLocation);
+void UNavigationTargetSubsystem::UnregisterNavTarget(AActor* PursuingAgent)
+{;
+	ActorToTarget.Remove(PursuingAgent);
+	//ActiveNavTargets.Remove(LocationToRegister);
 }
 
 void UNavigationTargetSubsystem::ClearReservedCovers()
 {
-	ActiveNavTargets.Empty();
+	ActorToTarget.Empty();
 }
+
 
 UNavigationTargetSubsystem* UNavigationTargetSubsystem::Get(const UWorld* World)
 {
@@ -53,16 +69,22 @@ UNavigationTargetSubsystem* UNavigationTargetSubsystem::Get(const UWorld* World)
 	return 	nullptr;
 }
 
-TArray<FVector> UNavigationTargetSubsystem::GetAllReservedCovers()
+TArray<FVector> UNavigationTargetSubsystem::GetAllActiveTargetLocations()
 {
-	return  ActiveNavTargets;
+	TArray<FVector> Locations{};
+	ActorToTarget.GenerateValueArray(Locations);
+	return  Locations;
 }
 
-bool UNavigationTargetSubsystem::HasCloseNavTarget(const FVector Location, float RadiusToCheck) const
+bool UNavigationTargetSubsystem::HasCloseNavTarget(const FVector& Location, float RadiusToCheck, const AActor* Actor) const
 {
-	for (auto ReservedCover: ActiveNavTargets)
+	
+	for (const TTuple<AActor*,FVector>  Target: ActorToTarget)
 	{
-		const float Distance = FVector::Distance(Location, ReservedCover);
+		if (Target.Key == Actor)
+			continue;
+		
+		const float Distance = FVector::Distance(Location, Target.Value);
 		if (Distance<=RadiusToCheck)
 		{
 			return true;

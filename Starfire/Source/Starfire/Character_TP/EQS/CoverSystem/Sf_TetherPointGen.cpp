@@ -353,8 +353,11 @@ TArray<UTetherPoint*> ASf_TetherPointGen::GetTetherPointsAroundPlayer() const
 	for (UTetherPoint* TetherPoint: AllTetherPoints)
 	{
 		const float Distance = FVector::Dist(PlayerLocation, TetherPoint->CenterLocation);
+		
+		
 		if (MinUpdateDistance < Distance && Distance < MaxUpdateDistance)
 		{
+			
 			TetherPointsAroundPlayer.Add(TetherPoint);
 		}
 

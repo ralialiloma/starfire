@@ -4,6 +4,7 @@
 #include "CF_DynamicMoveTarget_Config.h"
 #include "NavigationSystem.h"
 #include "Starfire/Character_TP/Sf_TP_Character.h"
+#include "Starfire/Character_TP/EQS/NavigationTargetSubsystem.h"
 #include "Starfire/Character_TP/EQS/CloseToPlayerLocations/Sf_CloseToPlayerLoc.h"
 #include "Starfire/Utility/CollisionData.h"
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
@@ -58,7 +59,10 @@ void UCF_DynamicMoveTarget::OnTick(float DeltaTime)
 
 	float MinDistance = DynamicMoveTargetConfig->MinDistance;
 	const float MaxDistance = DynamicMoveTargetConfig->MaxDistance;
-	if (Distance < MinDistance || Distance > MaxDistance)
+
+	bool bTooClose = Distance < MinDistance;
+	bool bTooFar =  Distance > MaxDistance;
+	if (/*bTooClose ||bTooFar*/true)
 	{
 		TArray<FVector> Locations =  USf_CloseToPlayerLoc::GetCurrent(GetWorld())->GetCurrentCloseToPlayerLocations();
 		if (Locations.Num()<=0)
@@ -67,7 +71,7 @@ void UCF_DynamicMoveTarget::OnTick(float DeltaTime)
 			return;
 		}
 		
-		FVector Direction = (MovingActorLocation-PlayerLocation);
+	/*	FVector Direction = (MovingActorLocation-PlayerLocation);
 		Direction.Normalize();
 
 		const float CapsuleRadius = Character->GetCapsuleComponent()->GetScaledCapsuleRadius();
@@ -81,7 +85,7 @@ void UCF_DynamicMoveTarget::OnTick(float DeltaTime)
 
 		FCollisionQueryParams CollisionParams = FCollisionQueryParams();
 		
-		/*GetWorld()->LineTraceSingleByChannel(
+		GetWorld()->LineTraceSingleByChannel(
 			HitResult,
 		    Location,
 		    Location + FVector::DownVector * DynamicMoveTargetConfig->MaxVerticalTraceLength,
@@ -96,13 +100,89 @@ void UCF_DynamicMoveTarget::OnTick(float DeltaTime)
 			return;
 		}
 
-		if (!DynamicMoveTargetConfig || DynamicMoveTargetConfig->ProjectionExtent.IsNearlyZero())
+	/*	if (!DynamicMoveTargetConfig || DynamicMoveTargetConfig->ProjectionExtent.IsNearlyZero())
 		{
 			UDebugFunctionLibrary::Sf_ThrowError(this,"Invalid DynamicMoveTargetConfig or ProjectionExtent!");
 			return;
+		}*/
+
+		ANavigationData* NavData = NavSys->GetDefaultNavDataInstance(FNavigationSystem::DontCreate);
+		if (!NavData)
+		{
+			UDebugFunctionLibrary::Sf_ThrowError(this,"Invalid NavData!");
+			return;
 		}
 
-		FVector TraceHit = Locations[0];
+		//Remove All Reserved Locations
+		TArray<FVector>  TempLocations = Locations;
+		for (FVector Location: TempLocations)
+		{
+			if(UNavigationTargetSubsystem::Get(GetWorld())->HasCloseNavTarget(Location,300.f,GetOwningCharacter()))
+				Locations.Remove(Location);
+		}
+
+		if (Locations.Num() <=0)
+		{
+			UDebugFunctionLibrary::Sf_ThrowError(this,"all points already targeted");
+			return;
+		}
+		
+		if (bTooFar)
+		{
+			Locations.Sort([&MovingActorLocation, &PlayerLocation](const FVector& A, const FVector& B) {
+			constexpr float WeightToAI = 0.6f;
+			float WeightToPlayer = 0.4f; 
+					
+			float ScoreA = WeightToAI * FVector::DistSquared(MovingActorLocation, A) +
+						   WeightToPlayer * FVector::DistSquared(PlayerLocation, A);
+			float ScoreB = WeightToAI * FVector::DistSquared(MovingActorLocation, B)+
+							WeightToPlayer * FVector::DistSquared(PlayerLocation, B);
+					
+				return ScoreA < ScoreB;
+			});
+		}
+		else if (bTooClose)
+		{
+			Locations.Sort([&MovingActorLocation, &PlayerLocation](const FVector& A, const FVector& B) {
+			constexpr float WeightToAI = 0.6f;
+			float WeightToPlayer = 0.4f; 
+					
+			float ScoreA = WeightToAI * FVector::DistSquared(MovingActorLocation, A) -
+						   WeightToPlayer * FVector::DistSquared(PlayerLocation, A);
+			float ScoreB = WeightToAI * FVector::DistSquared(MovingActorLocation, B)-
+							WeightToPlayer * FVector::DistSquared(PlayerLocation, B);
+					
+				return ScoreA < ScoreB;
+			});
+		}
+		
+
+		
+		
+		//Make sure point is rechable for Character
+		bool bPointFound = false;
+		FVector TraceHit;
+		for (FVector Point: Locations)
+		{
+			FPathFindingQuery Query;
+			Query.StartLocation = MovingActorLocation;
+			Query.EndLocation = Point;
+			Query.NavData = NavData;
+
+			if (NavSys->TestPathSync(Query))
+			{
+				TraceHit = Point;
+				bPointFound = true;
+				break;
+			};
+		}
+
+		if (!bPointFound)
+		{
+			UDebugFunctionLibrary::Sf_ThrowError(this,"None of the points are reachable");
+			return;
+		}
+		
 		FNavLocation ProjectedLocation;
 		if (!NavSys->ProjectPointToNavigation(TraceHit, ProjectedLocation, DynamicMoveTargetConfig->ProjectionExtent))
 		{
@@ -115,7 +195,7 @@ void UCF_DynamicMoveTarget::OnTick(float DeltaTime)
 	}
 	else
 	{
-		MoveTarget->SetActorLocation(MovingActorLocation);
+		//MoveTarget->SetActorLocation(MovingActorLocation);
 	}
 	TimeSinceLastUpdate = 0.0f;
 }
