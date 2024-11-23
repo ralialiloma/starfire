@@ -265,7 +265,7 @@ void USf_FP_CharacterMovementComponent::SetMovementMode(EMovementMode NewMovemen
 		//In Air Jump Allowance
 		if (NewMovementMode == MOVE_Falling &&
 			(PreviousMovementMode == MOVE_Walking || PreviousMovementMode == MOVE_NavWalking ||
-				CMOVE_WallRun == NewCustomMode || CMOVE_Mantle == NewCustomMode))
+				CMOVE_WallRun == PreviousCustomMode || CMOVE_Mantle == PreviousCustomMode))
 		{
 			ElapsedInAirJumpAllowance = 0;
 			bWasWallRunningBeforeAllowance = (PreviousMovementMode == MOVE_Custom && (PreviousCustomMode == CMOVE_WallRun));
