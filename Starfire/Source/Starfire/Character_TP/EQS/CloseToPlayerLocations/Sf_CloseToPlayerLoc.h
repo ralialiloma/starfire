@@ -18,6 +18,9 @@ struct FCloseToPlayerLocEntry
 
 	UPROPERTY()
 	FVector RegisterdCloseToPlayerPoint;
+
+	UPROPERTY()
+	int AssignedIndex = -1;
 };
 
 UCLASS(Blueprintable)
@@ -38,6 +41,7 @@ public:
 	FVector GetCloseToPlayerLoc(const AActor* ActorToFindLocationFor);
 	bool ValidateCloseToPlayerLoc(FVector Location, float Radius);
 	FVector GetRegisterdActorLocation(const AActor* Actor);
+	FCloseToPlayerLocEntry GetEntryByActor(const AActor* Actor);
 
 protected:
 	UFUNCTION()

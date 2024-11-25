@@ -148,7 +148,6 @@ void ASf_TP_Character::BeginPlay()
 void ASf_TP_Character::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 	for (USf_CharacterFeature* Feature: FeaturesNew)
 		Feature->OnTick(DeltaTime);
 
