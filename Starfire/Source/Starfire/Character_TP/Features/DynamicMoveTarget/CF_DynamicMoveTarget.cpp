@@ -2,13 +2,9 @@
 #include "CF_DynamicMoveTarget.h"
 
 #include "CF_DynamicMoveTarget_Config.h"
-#include "NavigationSystem.h"
 #include "Starfire/Character_TP/Sf_TP_Character.h"
-#include "Starfire/Character_TP/EQS/NavigationTargetSubsystem.h"
 #include "Starfire/Character_TP/EQS/CloseToPlayerLocations/Sf_CloseToPlayerLoc.h"
-#include "Starfire/Utility/CollisionData.h"
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
-#include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
 
 
 void UCF_DynamicMoveTarget::Initialize(ASf_TP_Character* Holder, const USf_CharacterFeature_Config* InConfig)
@@ -25,6 +21,8 @@ void UCF_DynamicMoveTarget::OnBeginPlay()
 
 	if (!IsValid(World))
 		return;
+
+	USf_CloseToPlayerLoc::GetCurrent(GetWorld())->RegisterActor(GetOwningCharacter());
 
 	ACharacter* Character =  GetOwningCharacter();
 	FActorSpawnParameters SpawnParams;
@@ -48,7 +46,9 @@ void UCF_DynamicMoveTarget::OnTick(float DeltaTime)
 	TimeSinceLastUpdate += DeltaTime;
 	if (TimeSinceLastUpdate < 1.0f/DynamicMoveTargetConfig->FrameRate)
 		return;
-	
+
+	TimeSinceLastUpdate = 0.0f;
+
 	const ACharacter* Character =  GetOwningCharacter();
 	if (!IsValid(Character))
 		return;
@@ -62,14 +62,33 @@ void UCF_DynamicMoveTarget::OnTick(float DeltaTime)
 
 	bool bTooClose = Distance < MinDistance;
 	bool bTooFar =  Distance > MaxDistance;
-	if (/*bTooClose ||bTooFar*/true)
+	constexpr float MinMoveDistance = 300.f;
+	//if (!USf_CloseToPlayerLoc::GetCurrent(GetWorld())->ValidateCloseToPlayerLoc(MoveTarget->GetActorLocation(),MinMoveDistance))
 	{
-		TArray<FVector> Locations =  USf_CloseToPlayerLoc::GetCurrent(GetWorld())->GetCurrentCloseToPlayerLocations();
+		const FVector Location =  USf_CloseToPlayerLoc::GetCurrent(GetWorld())->GetCloseToPlayerLoc(Character);
+
+		//if (FVector::Distance(MoveTarget->GetActorLocation(),Location)>MinMoveDistance)
+			MoveTarget->SetActorLocation(Location);
+	}
+
+
+	/*const FVector MovingActorLocation = Character->GetActorLocation();
+	const FVector PlayerLocation = USf_FunctionLibrary::GetPlayerLocation(this);
+	const float Distance = FVector::Distance(MovingActorLocation, PlayerLocation);
+
+	float MinDistance = DynamicMoveTargetConfig->MinDistance;
+	const float MaxDistance = DynamicMoveTargetConfig->MaxDistance;
+
+	bool bTooClose = Distance < MinDistance;
+	bool bTooFar =  Distance > MaxDistance;
+	if (/*bTooClose ||bTooFar/true)
+	{
+		/*TArray<FVector> Locations =  USf_CloseToPlayerLoc::GetCurrent(GetWorld())->GetCurrentCloseToPlayerLocations();
 		if (Locations.Num()<=0)
 		{
 			MoveTarget->SetActorLocation(MovingActorLocation);
 			return;
-		}
+		}*/
 		
 	/*	FVector Direction = (MovingActorLocation-PlayerLocation);
 		Direction.Normalize();
@@ -93,28 +112,28 @@ void UCF_DynamicMoveTarget::OnTick(float DeltaTime)
 		    CollisionParams
 		);*/
 
-		UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
+		/*UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
 		if (!NavSys)
 		{
 			UDebugFunctionLibrary::Sf_ThrowError(this,"Navigation system not found!");
 			return;
 		}
 
-	/*	if (!DynamicMoveTargetConfig || DynamicMoveTargetConfig->ProjectionExtent.IsNearlyZero())
+		if (!DynamicMoveTargetConfig || DynamicMoveTargetConfig->ProjectionExtent.IsNearlyZero())
 		{
 			UDebugFunctionLibrary::Sf_ThrowError(this,"Invalid DynamicMoveTargetConfig or ProjectionExtent!");
 			return;
-		}*/
+		}
 
 		ANavigationData* NavData = NavSys->GetDefaultNavDataInstance(FNavigationSystem::DontCreate);
 		if (!NavData)
 		{
 			UDebugFunctionLibrary::Sf_ThrowError(this,"Invalid NavData!");
 			return;
-		}
+		}*/
 
 		//Remove All Reserved Locations
-		TArray<FVector>  TempLocations = Locations;
+		/*TArray<FVector>  TempLocations = Locations;
 		for (FVector Location: TempLocations)
 		{
 			if(UNavigationTargetSubsystem::Get(GetWorld())->HasCloseNavTarget(Location,300.f,GetOwningCharacter()))
@@ -130,13 +149,17 @@ void UCF_DynamicMoveTarget::OnTick(float DeltaTime)
 		if (bTooFar)
 		{
 			Locations.Sort([&MovingActorLocation, &PlayerLocation](const FVector& A, const FVector& B) {
-			constexpr float WeightToAI = 0.6f;
-			float WeightToPlayer = 0.4f; 
+			constexpr float WeightAIToPoint = 0.6f;
+			constexpr float WeightAIToPlayer = 0.4f;
+			constexpr float WeightPlayerToAI = 0.2f;
+				
 					
-			float ScoreA = WeightToAI * FVector::DistSquared(MovingActorLocation, A) +
-						   WeightToPlayer * FVector::DistSquared(PlayerLocation, A);
-			float ScoreB = WeightToAI * FVector::DistSquared(MovingActorLocation, B)+
-							WeightToPlayer * FVector::DistSquared(PlayerLocation, B);
+			float ScoreA = WeightAIToPoint * FVector::DistSquared(MovingActorLocation, A) +
+						   WeightAIToPlayer * FVector::DistSquared(PlayerLocation, A) +
+						   WeightPlayerToAI * FVector::DistSquared(PlayerLocation, MovingActorLocation);
+
+			float ScoreB = WeightAIToPoint * FVector::DistSquared(MovingActorLocation, B)+
+							WeightAIToPlayer * FVector::DistSquared(PlayerLocation, B);
 					
 				return ScoreA < ScoreB;
 			});
@@ -154,13 +177,11 @@ void UCF_DynamicMoveTarget::OnTick(float DeltaTime)
 					
 				return ScoreA < ScoreB;
 			});
-		}
-		
-
+		}*/
 		
 		
 		//Make sure point is rechable for Character
-		bool bPointFound = false;
+		/*bool bPointFound = false;
 		FVector TraceHit;
 		for (FVector Point: Locations)
 		{
@@ -196,8 +217,7 @@ void UCF_DynamicMoveTarget::OnTick(float DeltaTime)
 	else
 	{
 		//MoveTarget->SetActorLocation(MovingActorLocation);
-	}
-	TimeSinceLastUpdate = 0.0f;
+	}*/
 }
 
 ASf_TP_DynamicMoveTarget* UCF_DynamicMoveTarget::GetMoveTarget() const

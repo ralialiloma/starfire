@@ -29,15 +29,6 @@ ASf_TP_Character::ASf_TP_Character(const FObjectInitializer& ObjectInitializer):
 	
 	//Movement Component
 	SFCharacterMovementComponent = Cast<USf_TP_CharacterMovementComponent>(GetCharacterMovement());;
-
-	//Nav Modifier
-	NavModifier = CreateDefaultSubobject<UNavModifierComponent>(TEXT("NavModifier"));
-	NavModifier->SetAreaClass(UNavArea_Null::StaticClass()); // Mark the area as non-navigable
-	NavModifier->SetActive(false);
-
-	//Box Compnent
-	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("Box"));
-	BoxComponent->SetupAttachment(GetCapsuleComponent());
 	
 }
 
@@ -151,8 +142,6 @@ void ASf_TP_Character::BeginPlay()
 	
 	for (USf_CharacterFeature* Feature: FeaturesNew)
 		Feature->OnBeginPlay();
-
-	RemoveAsDynamicObstacle();
 		
 }
 
@@ -234,19 +223,5 @@ TArray<AActor*> ASf_TP_Character::GetIgnoreActors()
 	return IgnoreActors;
 }
 
-void ASf_TP_Character::RegisterAsDynamicObstacle() const
-{
-	/*NavModifier->AreaClass = UNavArea_Null::StaticClass();
-	BoxComponent->SetAreaClassOverride(UNavArea_Null::StaticClass());
-	BoxComponent->SetActive(true);
-	BoxComponent->bDynamicObstacle = true;*/
-}
 
-void ASf_TP_Character::RemoveAsDynamicObstacle() const
-{
-	NavModifier->AreaClass = UNavArea_Default::StaticClass();
-	BoxComponent->SetAreaClassOverride(UNavArea_Default::StaticClass());
-	BoxComponent->SetActive(false);
-	BoxComponent->bDynamicObstacle = false;
-}
 

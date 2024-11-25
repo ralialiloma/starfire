@@ -20,5 +20,5 @@ class STARFIRE_API IKnockbackReceiver: public IInterface
 public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "KnockbackReceiver")
-	void ReceiveKnockback(FVector KnockbackForce) const;
+	void ReceiveKnockback(FVector KnockbackForce);
 };

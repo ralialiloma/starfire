@@ -263,7 +263,7 @@ void AWeaponBase::MeleeTraces()
 	
 }
 
-void AWeaponBase::ApplyMelee(AActor* ActorToApplyOn, FVector Start, FVector End, FVector Direction)
+void AWeaponBase::ApplyMelee(AActor* ActorToApplyOn, const FVector& Start, const FVector& End, const FVector& Direction)
 {
 
 	//Apply Knockback

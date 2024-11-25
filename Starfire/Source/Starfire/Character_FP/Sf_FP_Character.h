@@ -8,6 +8,7 @@
 #include "Starfire/Animation/Sf_AnimHelper.h"
 #include "Starfire/Sf_Bases/Sf_Character.h"
 #include "Starfire/Shared/HSM/SF_CharacterStateMachine.h"
+#include "Starfire/Shared/Weapon/Interfaces/KnockbackReceiver.h"
 #include "Starfire/Shared/Weapon/StructsAndEnums/MeleeInfo.h"
 #include "Sf_FP_Character.generated.h"
 
@@ -20,7 +21,7 @@ class USf_FP_CharacterMovementComponent;
 class UBoxComponent;
 
 UCLASS(Config = Game,BlueprintType)
-class STARFIRE_API ASf_FP_Character : public ASf_Character
+class STARFIRE_API ASf_FP_Character : public ASf_Character, public IKnockbackReceiver
 {
 	GENERATED_BODY()
 	
@@ -42,6 +43,8 @@ public:
 	
 	virtual void PostInitProperties() override;
 	virtual void PostInitializeComponents() override;
+
+	virtual void ReceiveKnockback_Implementation(FVector KnockbackForce) override;
 #if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 #endif

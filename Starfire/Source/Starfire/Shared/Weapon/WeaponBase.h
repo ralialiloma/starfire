@@ -216,7 +216,7 @@ public:
 protected:
 	
 	void MeleeTraces();
-	void ApplyMelee(AActor* ActorToApplyOn, FVector Start, FVector End, FVector Direction);
+	void ApplyMelee(AActor* ActorToApplyOn, const FVector& Start, const FVector& End, const FVector& Direction);
 	void DoMelee();
 
 #pragma endregion

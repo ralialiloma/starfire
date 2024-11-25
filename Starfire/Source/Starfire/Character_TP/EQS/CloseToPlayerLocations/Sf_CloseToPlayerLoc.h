@@ -8,6 +8,18 @@
 #include "Sf_CloseToPlayerLoc.generated.h"
 
 
+USTRUCT()
+struct FCloseToPlayerLocEntry
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	AActor* Actor;
+
+	UPROPERTY()
+	FVector RegisterdCloseToPlayerPoint;
+};
+
 UCLASS(Blueprintable)
 class STARFIRE_API USf_CloseToPlayerLoc : public UGameInstanceSubsystem
 {
@@ -19,11 +31,22 @@ public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	void Tick();
 	static USf_CloseToPlayerLoc* GetCurrent(const UWorld* World);
-
 	TArray<FVector> GetCurrentCloseToPlayerLocations();
+
+	void RegisterActor(AActor* ActorToRegister);
+	void UnregisterActor(AActor* ActorToUnregister);
+	FVector GetCloseToPlayerLoc(const AActor* ActorToFindLocationFor);
+	bool ValidateCloseToPlayerLoc(FVector Location, float Radius);
+	FVector GetRegisterdActorLocation(const AActor* Actor);
+
 protected:
 	UFUNCTION()
 	void OnEQSResult(const TArray<FVector>& Results, FGuid UniqueID);
+
+	UFUNCTION()
+	void UpdateQuery();
+
+	void UpdateEntries();
 
 protected:
 	UPROPERTY()
@@ -43,6 +66,11 @@ protected:
 
 	UPROPERTY()
 	bool bFinishedQuery;
+
+	UPROPERTY()
+	TArray<AActor*> RegisteredActors;
+
+	TArray<FCloseToPlayerLocEntry> Entries;
 
 private:
 	UPROPERTY()

@@ -32,14 +32,7 @@ void ASf_TP_Controller::PostInitializeComponents()
 
 FPathFollowingRequestResult ASf_TP_Controller::MoveTo(const FAIMoveRequest& MoveRequest, FNavPathSharedPtr* OutPath)
 {
-	if (!IsValid(TP_Character))
-		TP_Character->RemoveAsDynamicObstacle();
-
 	const FPathFollowingRequestResult Result =  Super::MoveTo(MoveRequest, OutPath);
-
-	if (!IsValid(TP_Character))
-		TP_Character->RegisterAsDynamicObstacle();
-
 	return Result;
 }
 

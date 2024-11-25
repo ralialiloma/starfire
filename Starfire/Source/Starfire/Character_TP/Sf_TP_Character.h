@@ -33,17 +33,9 @@ public:
 	USf_Equipment* GetSfEquipment();
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	USf_TP_CharacterMovementComponent* GetSf_TP_CharacterMovement();
-	UPROPERTY(VisibleAnywhere, Category = "Navigation")
-	UNavModifierComponent* NavModifier;
-	UPROPERTY(VisibleAnywhere, Category = "Navigation")
-	UBoxComponent* BoxComponent;
 	//Collision
 	FCollisionQueryParams GetIgnoreCharacterParams();
 	TArray<AActor*> GetIgnoreActors();
-
-	//NavModification
-	void RegisterAsDynamicObstacle() const;
-	void RemoveAsDynamicObstacle() const;
 
 #pragma endregion
 	

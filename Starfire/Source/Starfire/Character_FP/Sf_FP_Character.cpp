@@ -142,6 +142,11 @@ void ASf_FP_Character::PostInitializeComponents()
 	//FConfigLoader::LoadConfigFile<ASf_FP_Character>(this,"SF_CharacterDefault");
 }
 
+void ASf_FP_Character::ReceiveKnockback_Implementation(FVector KnockbackForce)
+{
+	IKnockbackReceiver::ReceiveKnockback_Implementation(KnockbackForce);
+	LaunchCharacter(KnockbackForce,false,false);
+}
 #if WITH_EDITOR
 void ASf_FP_Character::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {

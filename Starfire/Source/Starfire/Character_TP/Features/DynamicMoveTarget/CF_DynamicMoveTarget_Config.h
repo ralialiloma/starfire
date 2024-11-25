@@ -14,7 +14,7 @@ public:
 #pragma region Properties
 public:
 	UPROPERTY(EditDefaultsOnly)
-	float FrameRate = 10;
+	float FrameRate = 5;
 
 	UPROPERTY(EditDefaultsOnly)
 	float MinDistance = 200;
