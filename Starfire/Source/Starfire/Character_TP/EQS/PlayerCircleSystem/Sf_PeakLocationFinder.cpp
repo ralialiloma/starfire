@@ -211,13 +211,41 @@ void USf_PeakLocationFinder::UpdateActorAssignments()
 	
 	// Assign positions to actors
     TSet<FVector> AssignedPositions;
-    for (FSf_ActorAssignment& Assignment : RegisteredActors)
+	for (int32 ActorIndex = 0; ActorIndex < RegisteredActors.Num(); ++ActorIndex)
     {
+		FSf_ActorAssignment& Assignment = RegisteredActors[ActorIndex];
 	    const AActor* Actor = Assignment.AssignedActor;
         if (!Actor)
             continue;
 
+		const FSf_Circle& Circle = SortedCircles[ActorIndex];
+
+		// Find the closest available position on this circle to the actor
         FVector ActorLocation = Actor->GetActorLocation();
+    	FVector BestPosition = FVector::Zero();
+    	float BestDistance = FLT_MAX;
+    	
+    	for (const FVector& Position : Circle.PointsOnCircle)
+        {
+            if (AssignedPositions.Contains(Position))
+                continue;
+
+            float Distance = FVector::DistSquared(Position, ActorLocation);
+            if (Distance < BestDistance)
+            {
+                BestDistance = Distance;
+                BestPosition = Position;
+            }
+
+    		if (!BestPosition.IsZero())
+    		{
+    			Assignment.TargetPosition = BestPosition;
+    			AssignedPositions.Add(BestPosition);
+    		}
+        }
+
+
+    	
     	
     	// Sort positions by proximity to the actor
     	/*TArray<FVector> SortedPositions = AllPositions.FilterByPredicate(
@@ -229,7 +257,7 @@ void USf_PeakLocationFinder::UpdateActorAssignments()
 		});*/
     	//
 
-        for (const FVector& Position : AllPositions)
+       /* for (const FVector& Position : AllPositions)
         {
             if (AssignedPositions.Contains(Position))
                 continue;
@@ -279,6 +307,6 @@ void USf_PeakLocationFinder::UpdateActorAssignments()
             AssignedPositions.Add(Position);
             break;
             
-        }
+        }*/
     }
 }
