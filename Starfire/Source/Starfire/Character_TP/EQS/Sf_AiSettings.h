@@ -18,4 +18,7 @@ public:
 public:
 	UPROPERTY(BlueprintReadOnly,Config, EditAnywhere)
 	TSoftObjectPtr<UEnvQuery> CloseToPlayerLocationQuery;
+
+	UPROPERTY(BlueprintReadOnly,Config, EditAnywhere)
+	TSubclassOf<AActor> NavBlockerToSpawn;
 };

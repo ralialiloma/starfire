@@ -41,6 +41,9 @@ protected:
 	//TArray<FVector> ActiveNavTargets;
 
 	UPROPERTY()
+	TArray<AActor*> Navblockers;
+
+	UPROPERTY()
 	TMap<AActor*,FVector> ActorToTarget;
 	
 	UPROPERTY()

@@ -37,7 +37,7 @@ public:
 	void UnregisterActor(AActor* ActorToUnregister);
 	FVector GetCloseToPlayerLoc(const AActor* ActorToFindLocationFor);
 	bool ValidateCloseToPlayerLoc(FVector Location, float Radius);
-	FVector GetRegisterdActorLocation(const AActor* Actor);
+	FVector GetRegisteredActorLocation(const AActor* Actor);
 
 protected:
 	UFUNCTION()

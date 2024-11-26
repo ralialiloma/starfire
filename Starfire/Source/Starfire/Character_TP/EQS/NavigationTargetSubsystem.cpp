@@ -2,6 +2,7 @@
 
 #include "NavigationTargetSubsystem.h"
 
+#include "Sf_AiSettings.h"
 #include "Kismet/KismetStringLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
@@ -47,12 +48,43 @@ void UNavigationTargetSubsystem::RegisterNavTarget(AActor* PursuingAgent,FVector
 		FString::Printf(TEXT("Registered %s at %s"),*PursuingAgent->GetName(),*UKismetStringLibrary::Conv_VectorToString(LocationToRegister));
 	UDebugFunctionLibrary::Sf_PrintString(this,DebugString,Sf_GameplayTags::Debug::TP::EQS::NavigationsTargets);
 	ActorToTarget.Add(PursuingAgent,LocationToRegister);
+
+	FActorSpawnParameters ActorSpawnParameters;
+	ActorSpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	//if (USf_AISettings::Get()->NavBlockerToSpawn)
+		//Navblockers.Add(
+		//	GetWorld()->SpawnActor(USf_AISettings::Get()->NavBlockerToSpawn,&LocationToRegister,&FRotator::ZeroRotator,ActorSpawnParameters)); 
+
 	//ActiveNavTargets.Add(LocationToRegister);
 }
 
 void UNavigationTargetSubsystem::UnregisterNavTarget(AActor* PursuingAgent)
 {;
+	FVector* FoundLocationRef =  ActorToTarget.Find(PursuingAgent);
+	if (FoundLocationRef == nullptr)
+		return;
+
+	FVector FoundLocation = *FoundLocationRef;
+	
+	TArray<AActor*> TempBlockers = Navblockers;
+	for (AActor* Blocker: TempBlockers)
+	{
+		if (!IsValid(Blocker))
+		{
+			Navblockers.Remove(Blocker);
+			continue;
+		}
+
+		if(FVector::Distance(Blocker->GetActorLocation(),FoundLocation)<150.f)
+		{
+			Navblockers.Remove(Blocker);
+			Blocker->Destroy();
+		}
+			
+	}
+
 	ActorToTarget.Remove(PursuingAgent);
+	
 	//ActiveNavTargets.Remove(LocationToRegister);
 }
 

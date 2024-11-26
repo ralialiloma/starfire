@@ -4,6 +4,7 @@
 #include "CF_DynamicMoveTarget_Config.h"
 #include "Starfire/Character_TP/Sf_TP_Character.h"
 #include "Starfire/Character_TP/EQS/CloseToPlayerLocations/Sf_CloseToPlayerLoc.h"
+#include "Starfire/Character_TP/EQS/PlayerCircleSystem/Sf_PeakLocationFinder.h"
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
 
 
@@ -22,7 +23,9 @@ void UCF_DynamicMoveTarget::OnBeginPlay()
 	if (!IsValid(World))
 		return;
 
-	USf_CloseToPlayerLoc::GetCurrent(GetWorld())->RegisterActor(GetOwningCharacter());
+	//USf_CloseToPlayerLoc::GetCurrent(GetWorld())->RegisterActor(GetOwningCharacter());
+
+	USf_PeakLocationFinder::GetCurrent(GetWorld())->RegisterActor(GetOwningCharacter());
 
 	ACharacter* Character =  GetOwningCharacter();
 	FActorSpawnParameters SpawnParams;
@@ -40,7 +43,9 @@ void UCF_DynamicMoveTarget::OnTick(float DeltaTime)
 {
 	Super::OnTick(DeltaTime);
 
-	if (!IsValid(DynamicMoveTargetConfig))
+	MoveTarget->SetActorLocation(USf_PeakLocationFinder::GetCurrent(GetWorld())->GetTargetLocationForActor(GetOwningCharacter()));
+
+	/*if (!IsValid(DynamicMoveTargetConfig))
 		return;
 
 	TimeSinceLastUpdate += DeltaTime;
@@ -51,9 +56,10 @@ void UCF_DynamicMoveTarget::OnTick(float DeltaTime)
 
 	const ACharacter* Character =  GetOwningCharacter();
 	if (!IsValid(Character))
-		return;
+		return;*/
+	
 
-	const FVector MovingActorLocation = Character->GetActorLocation();
+	/*const FVector MovingActorLocation = Character->GetActorLocation();
 	const FVector PlayerLocation = USf_FunctionLibrary::GetPlayerLocation(this);
 	const float Distance = FVector::Distance(MovingActorLocation, PlayerLocation);
 
@@ -69,7 +75,7 @@ void UCF_DynamicMoveTarget::OnTick(float DeltaTime)
 
 		//if (FVector::Distance(MoveTarget->GetActorLocation(),Location)>MinMoveDistance)
 			MoveTarget->SetActorLocation(Location);
-	}
+	}*/
 
 
 	/*const FVector MovingActorLocation = Character->GetActorLocation();

@@ -1,6 +1,7 @@
 
 #include "Sf_CloseToPlayerLoc.h"
 
+#include "NavigationPath.h"
 #include "NavigationSystem.h"
 #include "AI/NavigationSystemBase.h"
 #include "Kismet/GameplayStatics.h"
@@ -28,7 +29,7 @@ void USf_CloseToPlayerLoc::Initialize(FSubsystemCollectionBase& Collection)
 	
 	//Register Ticker
 	bFinishedQuery = true;
-	GetWorld()->GetTimerManager().SetTimer(TickTimerHandle,[this]()->void{Tick();},Tickrate,true);
+	//GetWorld()->GetTimerManager().SetTimer(TickTimerHandle,[this]()->void{Tick();},Tickrate,true);
 }
 
 
@@ -90,7 +91,7 @@ bool USf_CloseToPlayerLoc::ValidateCloseToPlayerLoc(FVector Location, float Radi
 	return false;
 }
 
-FVector USf_CloseToPlayerLoc::GetRegisterdActorLocation(const AActor* Actor)
+FVector USf_CloseToPlayerLoc::GetRegisteredActorLocation(const AActor* Actor)
 {
 	for (const FCloseToPlayerLocEntry Entry: Entries)
 	{
@@ -173,20 +174,21 @@ void USf_CloseToPlayerLoc::UpdateEntries()
 	//Sort by distance to player ascending
 	RegisteredActors.Sort([&PlayerLocation,this](const AActor& A, const AActor& B)
 	{
-		//return  FVector::DistSquared(GetRegisterdActorLocation(&A),PlayerLocation)< FVector::DistSquared(GetRegisterdActorLocation(&B),PlayerLocation);
+		//return  FVector::DistSquared(GetRegisteredActorLocation(&A),PlayerLocation)< FVector::DistSquared(GetRegisteredActorLocation(&B),PlayerLocation);
 		
 		UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
 		double DistanceA_Actor = 0.f, DistanceB_Actor = 0.f;
-		NavSys->GetPathLength(GetWorld(), GetRegisterdActorLocation(&A), PlayerLocation,DistanceA_Actor);
-		NavSys->GetPathLength(GetWorld(), GetRegisterdActorLocation(&B), PlayerLocation,DistanceB_Actor);
+		NavSys->GetPathLength(GetWorld(), GetRegisteredActorLocation(&A), PlayerLocation,DistanceA_Actor);
+		NavSys->GetPathLength(GetWorld(), GetRegisteredActorLocation(&B), PlayerLocation,DistanceB_Actor);
 		
 		return  DistanceA_Actor< DistanceB_Actor;
 	});
 
+	TArray<FVector> FoundLocations{};
 	int Index = 1;
 	for (AActor* Actor: RegisteredActors)
 	{
-		FVector RegisteredActorLocation = GetRegisterdActorLocation(Actor);
+		FVector RegisteredActorLocation = GetRegisteredActorLocation(Actor);
 		FVector ActorLocation = Actor->GetActorLocation();
 
 		if (CurrentCloseToPlayerLocations.Num()<=0)
@@ -194,15 +196,23 @@ void USf_CloseToPlayerLoc::UpdateEntries()
 			return;
 		}
 
+		UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
+		double DistanceToPlayer = 0.f;
+		NavSys->GetPathLength(GetWorld(), ActorLocation, PlayerLocation,DistanceToPlayer);
 		//Sort by distance to actor and to player ascending
-		CurrentCloseToPlayerLocations.Sort([&RegisteredActorLocation, &PlayerLocation,Index,this](const FVector& A, const FVector& B) {
+		CurrentCloseToPlayerLocations.Sort([FoundLocations,&RegisteredActorLocation, &PlayerLocation,Index,this,DistanceToPlayer](const FVector& A, const FVector& B) {
 		float WeightAIToPoint = 2*Index;
-		constexpr float WeightAIToPlayer = 2;
+		float WeightAIToPlayer = 2-Index;
 
-		const float ScoreA = WeightAIToPoint * FVector::DistSquared(RegisteredActorLocation, A) +
+			UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
+			double DistanceA_Actor = 0.f, DistanceB_Actor = 0.f;
+			NavSys->GetPathLength(GetWorld(), RegisteredActorLocation, A,DistanceA_Actor);
+			NavSys->GetPathLength(GetWorld(), RegisteredActorLocation, B,DistanceB_Actor);
+			
+		const float ScoreA = WeightAIToPoint * DistanceA_Actor +
 					   WeightAIToPlayer * FVector::DistSquared(PlayerLocation, A);
 
-		const float ScoreB = WeightAIToPoint * FVector::DistSquared(RegisteredActorLocation, B)+
+		const float ScoreB = WeightAIToPoint * DistanceB_Actor+
 						WeightAIToPlayer * FVector::DistSquared(PlayerLocation, B);
 					
 			return ScoreA < ScoreB;
@@ -230,14 +240,17 @@ void USf_CloseToPlayerLoc::UpdateEntries()
 		TArray<FVector>  TempLocations = CurrentCloseToPlayerLocations;
 		for (FVector Location: TempLocations)
 		{
-			if(FVector::Distance(Location,FoundLocation)<400.f || FVector::Distance(PlayerLocation,Location)<=FoundLocationDistanceToPlayer)
+			if(FVector::Distance(Location,FoundLocation)<300.f /*|| FVector::Distance(PlayerLocation,Location)<=FoundLocationDistanceToPlayer*/)
 				CurrentCloseToPlayerLocations.Remove(Location);
 		}
 		
 		NewEntries.Add(NewEntry);
+		FoundLocations.Add(FoundLocation);
 		Index++;
 	}
 	Entries = NewEntries;
 }
+
+
 
 
