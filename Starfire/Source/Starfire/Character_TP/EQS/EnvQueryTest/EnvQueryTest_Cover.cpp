@@ -4,7 +4,7 @@
 #include "EnvQueryTest_Cover.h"
 
 #include "EnvironmentQuery/Items/EnvQueryItemType_VectorBase.h"
-#include "Starfire/Character_TP/EQS/CoverSystem/Sf_TetherPointSubsystem.h"
+#include "Starfire/Character_TP/EQS/TetherPointSystem/Sf_TetherPointSubsystem.h"
 
 UEnvQueryTest_Cover::UEnvQueryTest_Cover(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {

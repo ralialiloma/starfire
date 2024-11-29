@@ -4,9 +4,8 @@
 #include "Sf_TetherPointSubsystem.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "NavAreas/NavArea_Obstacle.h"
 #include "Starfire/Character_TP/Sf_TP_Character.h"
-#include "Starfire/Character_TP/EQS/NavigationTargetSubsystem.h"
+#include "Starfire/Character_TP/PatrolArea/Sf_PatrolAreaManager.h"
 #include "Starfire/Utility/AsyncUtility.h"
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
 #include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
@@ -77,7 +76,6 @@ void UTetherPoint::FindSurroundingPoints(const UObject* WorldContextObject)
 					continue;
 				}
 
-
 				//if (OverlappedActors.Num()>0)
 				//	continue;
 				
@@ -91,12 +89,6 @@ void UTetherPoint::UpdateScore(const FVector& PlayerLocation, const UObject* Wor
 {
 	const int NumSurroundingPoints = SurroundingPoints.Num();
 	if (NumSurroundingPoints<=0)
-	{
-		CoverPotential = 0;
-		return;
-	}
-
-	if (UNavigationTargetSubsystem::Get(GetWorld())->HasCloseNavTarget(CenterLocation,Scale))
 	{
 		CoverPotential = 0;
 		return;
@@ -178,8 +170,10 @@ void ASf_TetherPointGen::GeneratePoints()
 			{
 				FVector CenterLocation = GetActorLocation()+ FVector(x, y, z) * Scale;
 
+				if (!USf_PatrolAreaManager::Get(GetWorld())->IsPointInAnyPatrolArea(CenterLocation))
+					continue;
+				
 				FNavLocation ProjectedNavCenterLocation;
-
 				if (!NavSystem->ProjectPointToNavigation(CenterLocation, ProjectedNavCenterLocation, ProjectExtent,&NavAgentProperties,QueryFilter))
 					continue;
 				

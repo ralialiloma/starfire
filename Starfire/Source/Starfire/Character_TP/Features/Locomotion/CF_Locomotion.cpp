@@ -1,9 +1,7 @@
 ﻿#include "CF_Locomotion.h"
-
 #include "NavigationSystem.h"
 #include "Navigation/PathFollowingComponent.h"
 #include "Starfire/Character_TP/Sf_TP_Character.h"
-#include "Starfire/Character_TP/EQS/NavigationTargetSubsystem.h"
 #include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
 
 
@@ -15,8 +13,6 @@ void UCF_Locomotion::Initialize(ASf_TP_Character* Holder, const USf_CharacterFea
 
 bool UCF_Locomotion::MoveToLocation(const F_SF_MoveRequest MoveRequest)
 {
-	UNavigationTargetSubsystem* NavTargetSys = GetWorld()->GetGameInstance()->GetSubsystem<UNavigationTargetSubsystem>();
-
 	
 	AAIController* OwningController = GetOwningAIController();
 	FVector ProjectedDestinationLocation;
@@ -59,16 +55,6 @@ bool UCF_Locomotion::MoveToLocation(const F_SF_MoveRequest MoveRequest)
 			return false;
 		}
 		ProjectedDestinationLocation = ProjectedDestination.Location;
-
-		//NavTargetSys->UnregisterNavTarget(TODO);
-		const bool bLocationReserved =  NavTargetSys->HasCloseNavTarget(ProjectedDestinationLocation,200.f,GetOwningCharacter());
-		if (bLocationReserved)
-		{
-			ClearAllDelegates();
-			UDebugFunctionLibrary::Sf_ThrowError(this, "Location already reserved");
-			//UE_LOG(EF_Locomotion, Warning, TEXT("Location already reserved"))
-			return false;
-		}
 		
 		Result =  OwningController->MoveToLocation(
 		ProjectedDestinationLocation,
@@ -122,8 +108,6 @@ void UCF_Locomotion::StopMovement()
 	
 	OwningController->StopMovement();
 	OwningController->ReceiveMoveCompleted.RemoveDynamic(this, &UCF_Locomotion::OnMoveCompleted);
-	UNavigationTargetSubsystem* NavTargetSys = GetWorld()->GetGameInstance()->GetSubsystem<UNavigationTargetSubsystem>();
-	//NavTargetSys->UnregisterNavTarget(TODO);
 	ClearAllDelegates();
 }
 
@@ -132,9 +116,6 @@ void UCF_Locomotion::FinishMovement()
 	AAIController* OwningController = GetOwningAIController();
 	OwningController->StopMovement();
 	OwningController->ReceiveMoveCompleted.RemoveDynamic(this, &UCF_Locomotion::OnMoveCompleted);
-	UNavigationTargetSubsystem* NavTargetSys = GetWorld()->GetGameInstance()->GetSubsystem<UNavigationTargetSubsystem>();
-	//NavTargetSys->UnregisterNavTarget(TODO);
-	
 	OnMoveFinished_CPP.Broadcast();
 	OnMoveFinished_BP.Broadcast();
 	ClearAllDelegates();

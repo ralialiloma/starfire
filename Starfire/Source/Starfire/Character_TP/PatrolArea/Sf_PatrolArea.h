@@ -3,23 +3,26 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "NavModifierComponent.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/Actor.h"
-#include "NavMesh/NavMeshBoundsVolume.h"
-#include "Sf_NavAreaBox.generated.h"
+#include "Sf_PatrolArea.generated.h"
 
 UCLASS()
-class STARFIRE_API ASf_NavAreaBox : public AActor
+class STARFIRE_API ASf_PatrolArea : public AActor
 {
 	GENERATED_BODY()
 
 public:
-	ASf_NavAreaBox();
+	ASf_PatrolArea();
 	virtual void OnConstruction(const FTransform& Transform) override;
+	virtual void PostInitializeComponents() override;
+	virtual void BeginPlay() override;
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	bool IsInBox(const FVector& LocationToTest)  const;
 
 protected:
-	virtual void BeginPlay() override;
+
 
 	UPROPERTY(EditAnywhere)
 	UBoxComponent* Box;

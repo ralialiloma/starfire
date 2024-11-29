@@ -3,9 +3,7 @@
 
 #include "CF_DynamicMoveTarget_Config.h"
 #include "Starfire/Character_TP/Sf_TP_Character.h"
-#include "Starfire/Character_TP/EQS/CloseToPlayerLocations/Sf_CloseToPlayerLoc.h"
-#include "Starfire/Character_TP/EQS/CoverSystem/Sf_TetherPointSubsystem.h"
-#include "Starfire/Character_TP/EQS/PlayerCircleSystem/Sf_PeakLocationFinder.h"
+#include "Starfire/Character_TP/EQS/TetherPointSystem/Sf_TetherPointSubsystem.h"
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
 
 
@@ -26,7 +24,7 @@ void UCF_DynamicMoveTarget::OnBeginPlay()
 
 	//USf_CloseToPlayerLoc::GetCurrent(GetWorld())->RegisterActor(GetOwningCharacter());
 
-	USf_PeakLocationFinder::GetCurrent(GetWorld())->RegisterActor(GetOwningCharacter());
+//	USf_PeakLocationFinder::GetCurrent(GetWorld())->RegisterActor(GetOwningCharacter());
 	
 
 	ACharacter* Character =  GetOwningCharacter();
@@ -54,7 +52,7 @@ void UCF_DynamicMoveTarget::OnTick(float DeltaTime)
 		}
 	}
 
-	MoveTarget->SetActorLocation(USf_PeakLocationFinder::GetCurrent(GetWorld())->GetTargetLocationForActor(GetOwningCharacter()));
+//	MoveTarget->SetActorLocation(USf_PeakLocationFinder::GetCurrent(GetWorld())->GetTargetLocationForActor(GetOwningCharacter()));
 
 	/*if (!IsValid(DynamicMoveTargetConfig))
 		return;

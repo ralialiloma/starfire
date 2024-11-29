@@ -1,7 +1,7 @@
 ﻿#include "CF_Combat.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Starfire/Character_TP/Sf_TP_Character.h"
-#include "Starfire/Character_TP/EQS/CoverSystem/Sf_TetherPointGen.h"
+#include "Starfire/Character_TP/EQS/TetherPointSystem/Sf_TetherPointGen.h"
 #include "Starfire/Shared/Weapon/WeaponBase.h"
 #include "Starfire/Shared/Weapon/StructsAndEnums/WeaponConfig.h"
 #include "Starfire/Utility/AsyncUtility.h"
