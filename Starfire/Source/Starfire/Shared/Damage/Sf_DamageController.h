@@ -85,7 +85,7 @@ public:
 	float PassiveHealingStartAfterDamageInSeconds = 5;
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "Damage Receiver",meta = (Categories = "Gameplay.DamageType",CustomConfig))
-	FGameplayTagContainer SupportedDamageTypes = FGameplayTagContainer(Sf_GameplayTags::Gameplay::DamageType::Fire);
+	FGameplayTagContainer SupportedDamageTypes = FGameplayTagContainer(Sf_GameplayTags::Gameplay::DamageType::FirePlayer);
 private:
 	UPROPERTY()
 	float CurrentHealth = 0;

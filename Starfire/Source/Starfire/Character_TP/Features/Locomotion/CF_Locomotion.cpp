@@ -61,7 +61,7 @@ bool UCF_Locomotion::MoveToLocation(const F_SF_MoveRequest MoveRequest)
 		ProjectedDestinationLocation = ProjectedDestination.Location;
 
 		//NavTargetSys->UnregisterNavTarget(TODO);
-		const bool bLocationReserved =  NavTargetSys->HasCloseNavTarget(ProjectedDestinationLocation);
+		const bool bLocationReserved =  NavTargetSys->HasCloseNavTarget(ProjectedDestinationLocation,200.f,GetOwningCharacter());
 		if (bLocationReserved)
 		{
 			ClearAllDelegates();
@@ -96,7 +96,6 @@ bool UCF_Locomotion::MoveToLocation(const F_SF_MoveRequest MoveRequest)
 		OnMoveFailed_BP.Broadcast();
 		OnMoveFailed_CPP.Broadcast();
 		StopMovement();
-		//UE_LOG(EF_Locomotion, Warning, TEXT("Failed path request"))
 		UDebugFunctionLibrary::Sf_ThrowError(this, "Failed path request");
 		return false;
 	}

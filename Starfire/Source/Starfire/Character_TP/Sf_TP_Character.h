@@ -48,7 +48,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Movement")
 	USf_TP_CharacterMovementComponent* SFCharacterMovementComponent;
 
-
 #pragma endregion
 
 #pragma region Features

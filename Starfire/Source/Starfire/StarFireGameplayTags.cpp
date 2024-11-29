@@ -16,7 +16,8 @@ namespace Sf_GameplayTags
 		{
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay.DamageType", "")
 			DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.DamageType,Melee,"");
-			DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.DamageType,Fire,"");
+			DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.DamageType,FirePlayer,"");
+			DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.DamageType,FireEnemy,"");
 			DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.DamageType,Explosion,"");
 		}
 		namespace PlayState
@@ -144,7 +145,7 @@ namespace Sf_GameplayTags
 				namespace Montage
 				{
 					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Animation.Character.TP.Montage", "")
-					DEFINE_GAMEPLAY_TAG_AUTO(Animation.Character.TP.Montage, Fire, "Fire Montage Third Person");
+					DEFINE_GAMEPLAY_TAG_AUTO(Animation.Character.TP.Montage, Fire, "FirePlayer Montage Third Person");
 					DEFINE_GAMEPLAY_TAG_AUTO(Animation.Character.TP.Montage, Melee, "Melee Montage Third Person");
 					DEFINE_GAMEPLAY_TAG_AUTO(Animation.Character.TP.Montage, Reload, "Reload Montage Third Person");
 					DEFINE_GAMEPLAY_TAG_AUTO(Animation.Character.TP.Montage, Aim, "Aim Montage Third Person");

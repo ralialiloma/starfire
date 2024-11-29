@@ -38,6 +38,7 @@ void AWeaponBase::BeginPlay()
 	Super::BeginPlay();
 	
 	CurrentClip = WeaponConfig.MaxClipSize;
+
 }
 
 void AWeaponBase::PostInitProperties()
@@ -47,8 +48,13 @@ void AWeaponBase::PostInitProperties()
 	CurrentClip = WeaponConfig.MaxClipSize; 
 }
 
+void AWeaponBase::Tick(const float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+}
+
 void AWeaponBase::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation,
-	FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)
+                            FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)
 {
 	Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
 	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, "Hit Item");
@@ -197,107 +203,31 @@ void AWeaponBase::StopAiming()
 
 void AWeaponBase::DoMelee()
 {
-	ExecuteAnimation(EWeaponAnimationEventType::Melee);
-	//PlayMontage(EWeaponAnimationMontageType_FP::Melee);
+	const float AnimLength =  ExecuteAnimationAndReturnAnimLength(EWeaponAnimationEventType::Melee);
+	bIsMeleeing = true;
+	bActiveMeleeCountdown = false;
 
-	float CurrentMeleeDelay = WeaponConfig.MeleeDelay;
-	if (CurrentMeleeDelay>0)
+	for (AActor* Actor: OverlappedMeleeActors)
+		ApplyMeleeToActor(Actor);
+
+	FTimerDelegate EndMeleeDel;
+	EndMeleeDel.BindLambda([this]() -> void
 	{
-		//Start Cooldown
+		bIsMeleeing = false;
 		bActiveMeleeCountdown = true;
 		FTimerDelegate TimerDel;
 		TimerDel.BindLambda([this]() -> void { bActiveMeleeCountdown = false; });
-		GetWorld()->GetTimerManager().SetTimer(MeleeCooldown, TimerDel,CurrentMeleeDelay,false);
-	}
-	MeleeTraces();
+		float CurrentMeleeDelay = WeaponConfig.MeleeDelay;
+		if (CurrentMeleeDelay>0)
+			GetWorld()->GetTimerManager().SetTimer(MeleeCooldown, TimerDel,CurrentMeleeDelay,false);
+		else
+			TimerDel.Execute();
+	});
+
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, EndMeleeDel,AnimLength,false);
 }
 
-void AWeaponBase::MeleeTraces()
-{
-	if (!IsValid(WeaponOwner))
-	{
-		UE_LOG(SF_Weapon, Warning, TEXT("Invalid Weapon Holder to stop get melee info from"))
-		return;
-	}
-
-	//Get Melee Info
-	FMeleeInfo MeleeInfo =  IWeaponOwner::Execute_GetMeleeInfo(WeaponOwner);
-	
-	//Draw Debug
-	if(UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::Weapon::Name,EDebugType::Visual))
-	{
-		DrawDebugBox(
-			GetWorld(),
-			MeleeInfo.Location,
-			MeleeInfo.Extent,
-			MeleeInfo.Rotation.Quaternion(),
-			FColor::Red,
-			false,
-			5.0f,
-			0,           
-			1.0f       
-		);
-	}
-
-	TArray<AActor*> FoundActors{};
-	TArray<AActor*> IgnoredActors{this,WeaponOwner};
-	USf_FunctionLibrary::BetterBoxOverlapActors(
-		this,
-		MeleeInfo.Location,
-		MeleeInfo.Rotation,
-		MeleeInfo.Extent,
-		 TArray<TEnumAsByte<EObjectTypeQuery>>{},
-		AActor::StaticClass(),
-		IgnoredActors,
-		FoundActors);
-
-	for (AActor* FoundActor: FoundActors)
-	{
-		//FVector Start = MeleeInfo.Location;
-		FVector Origin;
-		FVector BoxExtent;
-		FoundActor->GetActorBounds(false,Origin,BoxExtent,true);
-		const FVector End = MeleeInfo.Location*MeleeInfo.Direction*MeleeInfo.Extent*BoxExtent;
-		ApplyMelee(FoundActor,MeleeInfo.Location,End, MeleeInfo.Direction);
-	}
-	
-}
-
-void AWeaponBase::ApplyMelee(AActor* ActorToApplyOn, const FVector& Start, const FVector& End, const FVector& Direction)
-{
-
-	//Apply Knockback
-	if (ActorToApplyOn->Implements<UKnockbackReceiver>())
-		IKnockbackReceiver:: Execute_ReceiveKnockback(ActorToApplyOn,Direction);
-
-	//Get Damage Receiver
-	USf_DamageController* DamageReceiver =  ActorToApplyOn->GetComponentByClass<USf_DamageController>();
-	if (!IsValid(DamageReceiver))
-		return;
-
-	//Line Trace
-	FHitResult HitResult;
-	UKismetSystemLibrary::LineTraceSingle(
-		this,
-		Start,
-		End,
-		WeaponConfig.TraceTypeQuery,
-		false,
-		TArray<AActor*>{this,WeaponOwner},
-		UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::Weapon::Name,EDebugType::Visual)?EDrawDebugTrace::Persistent:EDrawDebugTrace::None,
-		HitResult,
-		true,
-		FLinearColor::Blue,
-		FLinearColor::Red);
-
-	//Apply Damage
-	APPLY_DAMAGE(DamageReceiver,
-	GetWeaponConfig().MeleeDamage,
-	HitResult.Location,
-	HitResult.Normal,
-	HitResult.Component.Get(),
-	Melee);
-}
 
 
 float AWeaponBase::ExecuteAnimationAndReturnAnimLength(EWeaponAnimationEventType WeaponAnimationEventType, const bool bIsStarting) const
@@ -395,7 +325,7 @@ bool AWeaponBase::CanAim()
 
 void AWeaponBase::DoFire(FHitResult& OutHitResult)
 {
-	//Start Fire Delay
+	//Start FirePlayer Delay
 	const float CurrentFireDelay = WeaponConfig.FireDelay;
 	if (CurrentFireDelay>0)
 	{
@@ -484,6 +414,76 @@ bool AWeaponBase::Melee()
 	return true;
 }
 
+void AWeaponBase::HandleMeleeBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+                                          int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (!bIsMeleeing)
+	{
+		OverlappedMeleeActors.Add(OtherActor);
+		return;
+	}
+
+	ApplyMeleeToActor(OtherActor);
+
+}
+
+void AWeaponBase::HandleMeleeEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	OverlappedMeleeActors.Remove(OtherActor);
+}
+
+void AWeaponBase::ApplyMeleeToActor(AActor* ActorToApplyMeleeTo)
+{
+	FMeleeInfo MeleeInfo =  IWeaponOwner::Execute_GetMeleeInfo(WeaponOwner);
+	UBoxComponent* BoxComponent = MeleeInfo.BoxComponent;
+
+	FVector TraceStart = WeaponOwner->GetActorLocation();
+	FVector TraceEnd = ActorToApplyMeleeTo->GetActorLocation();
+
+	//Line Trace
+	FHitResult HitResult;
+	UKismetSystemLibrary::LineTraceSingle(
+		this,
+		TraceStart,
+		TraceEnd,
+		WeaponConfig.TraceTypeQuery,
+		false,
+		TArray<AActor*>{this,WeaponOwner},
+		UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::Weapon::Name,EDebugType::Visual)?EDrawDebugTrace::Persistent:EDrawDebugTrace::None,
+		HitResult,
+		true,
+		FLinearColor::Blue,
+		FLinearColor::Red);
+
+	if (!HitResult.bBlockingHit)
+		return;
+
+	FVector Direction = HitResult.ImpactNormal;
+	Direction.Normalize();
+
+	FVector KnockbackDirection = (ActorToApplyMeleeTo->GetActorLocation() - WeaponOwner->GetActorLocation()).GetSafeNormal();
+	KnockbackDirection.Normalize();
+	//Apply Knockback
+	if (ActorToApplyMeleeTo->Implements<UKnockbackReceiver>())
+		IKnockbackReceiver:: Execute_ReceiveKnockback(ActorToApplyMeleeTo,KnockbackDirection*GetWeaponConfig().MeleeKnockbackForce);
+	
+
+	//Get Damage Receiver
+	USf_DamageController* DamageReceiver =  ActorToApplyMeleeTo->GetComponentByClass<USf_DamageController>();
+	if (!IsValid(DamageReceiver))
+		return;
+
+	//Apply Damage
+	APPLY_DAMAGE(DamageReceiver,
+	GetWeaponConfig().MeleeDamage,
+	BoxComponent->GetComponentLocation(),
+	HitResult.Normal,
+	HitResult.Component.Get(),
+	Melee);
+}
+
+
+
 bool AWeaponBase::CanMelee()
 {
 	if (!IsValid(WeaponOwner))
@@ -493,6 +493,8 @@ bool AWeaponBase::CanMelee()
 	if (bActiveMeleeCountdown)
 		return false;
 	if (bActiveFireCooldown)
+		return false;
+	if (bIsMeleeing)
 		return false;
 
 	return true;
@@ -622,4 +624,9 @@ void AWeaponBase::SetNewHolder(USf_Equipment* NewHolder)
 {
 	OwningEquipmentComponent = NewHolder;
 	WeaponOwner = OwningEquipmentComponent->GetOwner<APawn>();
+	
+	//Wait For Overlap Events
+	FMeleeInfo MeleeInfo =  IWeaponOwner::Execute_GetMeleeInfo(WeaponOwner);
+	MeleeInfo.BoxComponent->OnComponentBeginOverlap.AddDynamic(this,&AWeaponBase::HandleMeleeBeginOverlap);
+	MeleeInfo.BoxComponent->OnComponentEndOverlap.AddDynamic(this,&AWeaponBase::AWeaponBase::HandleMeleeEndOverlap);
 }

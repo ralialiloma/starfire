@@ -275,7 +275,7 @@ auto FAsyncUtility::WaitForFutures(
 			for (auto& Future : Futures)
 			{
 				FAsyncUtility::Wait(Future,WorldContextObject, CheckInterval,MaxWaitTime,DebugName);
-				Results.Add(Future.Get());
+				Results.Add(Future.Get(Future));
 				if(!FAsyncUtility::IsGameRunning(WorldContextObject))
 					return Results;
 			}

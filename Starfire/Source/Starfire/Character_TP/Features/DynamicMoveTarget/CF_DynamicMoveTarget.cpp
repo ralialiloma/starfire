@@ -4,6 +4,7 @@
 #include "CF_DynamicMoveTarget_Config.h"
 #include "Starfire/Character_TP/Sf_TP_Character.h"
 #include "Starfire/Character_TP/EQS/CloseToPlayerLocations/Sf_CloseToPlayerLoc.h"
+#include "Starfire/Character_TP/EQS/CoverSystem/Sf_TetherPointSubsystem.h"
 #include "Starfire/Character_TP/EQS/PlayerCircleSystem/Sf_PeakLocationFinder.h"
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
 
@@ -26,6 +27,7 @@ void UCF_DynamicMoveTarget::OnBeginPlay()
 	//USf_CloseToPlayerLoc::GetCurrent(GetWorld())->RegisterActor(GetOwningCharacter());
 
 	USf_PeakLocationFinder::GetCurrent(GetWorld())->RegisterActor(GetOwningCharacter());
+	
 
 	ACharacter* Character =  GetOwningCharacter();
 	FActorSpawnParameters SpawnParams;
@@ -42,6 +44,15 @@ void UCF_DynamicMoveTarget::OnBeginPlay()
 void UCF_DynamicMoveTarget::OnTick(float DeltaTime)
 {
 	Super::OnTick(DeltaTime);
+
+	if(!bRegisteredForTetherPointGen)
+	{
+		if (USf_TetherPointSubsystem::Get(GetWorld())->GetTetherPointGen())
+		{
+			USf_TetherPointSubsystem::Get(GetWorld())->GetTetherPointGen()->RegisterActor(GetOwningCharacter());
+			bRegisteredForTetherPointGen = true;
+		}
+	}
 
 	MoveTarget->SetActorLocation(USf_PeakLocationFinder::GetCurrent(GetWorld())->GetTargetLocationForActor(GetOwningCharacter()));
 

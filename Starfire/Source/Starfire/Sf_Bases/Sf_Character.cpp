@@ -11,18 +11,20 @@ ASf_Character::ASf_Character(const FObjectInitializer& ObjectInitializer)
 	SfEquipmentComponent->SetUsingAbsoluteScale(false);
 
 	//Melee Transform
-	MeleeTransform = CreateDefaultSubobject<UBoxComponent>(TEXT("Melee Transform"));
-	MeleeTransform->SetUsingAbsoluteLocation(false);
-	MeleeTransform->SetUsingAbsoluteRotation(false);
-	MeleeTransform->SetUsingAbsoluteScale(false);
-	MeleeTransform->SetRelativeLocation(FVector(30,0,0));
-	MeleeTransform->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
-	MeleeTransform->ShapeColor = FColor::Purple;
-	MeleeTransform->SetLineThickness(1.0f);
+	WeaponMeleeTransform = CreateDefaultSubobject<UBoxComponent>(TEXT("Melee Transform"));
+	WeaponMeleeTransform->SetUsingAbsoluteLocation(false);
+	WeaponMeleeTransform->SetUsingAbsoluteRotation(false);
+	WeaponMeleeTransform->SetUsingAbsoluteScale(false);
+	WeaponMeleeTransform->SetRelativeLocation(FVector(30,0,0));
+	WeaponMeleeTransform->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
+	WeaponMeleeTransform->ShapeColor = FColor::Purple;
+	WeaponMeleeTransform->SetLineThickness(1.0f);
+	WeaponMeleeTransform->AttachToComponent(GetCapsuleComponent(),FAttachmentTransformRules::KeepRelativeTransform);
 
 	//Damage Controller
 	SfDamageController = CreateDefaultSubobject<USf_DamageController>(TEXT("SfDamageController"));
 }
+
 
 void ASf_Character::PostInitializeComponents()
 {

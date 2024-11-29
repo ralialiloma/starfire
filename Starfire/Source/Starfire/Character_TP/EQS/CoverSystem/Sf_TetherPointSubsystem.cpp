@@ -21,3 +21,10 @@ ASf_TetherPointGen* USf_TetherPointSubsystem::GetTetherPointGen() const
 	}
 	return TetherPointGen;
 }
+
+USf_TetherPointSubsystem* USf_TetherPointSubsystem::Get(const UWorld* World)
+{
+	if (IsValid(World))
+		return  World->GetGameInstance()->GetSubsystem<USf_TetherPointSubsystem>();
+	return 	nullptr;
+}

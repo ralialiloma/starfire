@@ -193,11 +193,11 @@ FTransform ASf_TP_Character::GetFireTransform_Implementation() const
 
 FMeleeInfo ASf_TP_Character::GetMeleeInfo_Implementation() const
 {
-	const FVector Location = MeleeTransform->GetComponentLocation();
-	const FVector Extent = MeleeTransform->GetScaledBoxExtent();
-	const FRotator Rotation = MeleeTransform->GetComponentRotation();
-	const FVector Direction = GetActorLocation()-Location;
-	const FMeleeInfo MeleeInfo = FMeleeInfo(Location,Extent,Rotation,Direction);
+	/*const FVector Location = WeaponMeleeTransform->GetComponentLocation();
+	const FVector Extent = WeaponMeleeTransform->GetScaledBoxExtent();
+	const FRotator Rotation = WeaponMeleeTransform->GetComponentRotation();
+	const FVector Direction = Rotation.Vector();*/
+	const FMeleeInfo MeleeInfo = FMeleeInfo(WeaponMeleeTransform);
 	return MeleeInfo;
 }
 

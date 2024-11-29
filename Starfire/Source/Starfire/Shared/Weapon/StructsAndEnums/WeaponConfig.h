@@ -86,6 +86,8 @@ public:
 	float MeleeDamage = 50.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Melee")
 	float MeleeDelay = .5f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Melee")
+	float MeleeKnockbackForce = 100.f;
 	
 	//Other
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Other")
@@ -94,7 +96,7 @@ public:
 	TEnumAsByte<ETraceTypeQuery>  TraceTypeQuery = TraceTypeQuery2;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Other", meta=(Categories="Gameplay.DamageType"))
-	FGameplayTag DamageType = Sf_GameplayTags::Gameplay::DamageType::Fire;
+	FGameplayTag DamageType = Sf_GameplayTags::Gameplay::DamageType::FirePlayer;
 
 	//Animation
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Animation")

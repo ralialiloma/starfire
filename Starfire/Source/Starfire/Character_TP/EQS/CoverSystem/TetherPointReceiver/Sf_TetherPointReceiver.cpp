@@ -69,7 +69,7 @@ TFuture<TArray<TWeakObjectPtr<UTetherPoint>>> USf_TetherPointReceiver::ImportTet
 				if (!IsValid(TetherPointGen))
 					return WeakTetherPoints;
 					
-				const TArray<UTetherPoint*> AllTetherPoints =  TetherPointGen->GetTetherPointsAroundPlayer();
+				const TArray<UTetherPoint*> AllTetherPoints =  TetherPointGen->GetRelevantTetherPoints();
 				WeakTetherPoints.Reserve(AllTetherPoints.Num());
 				for (UTetherPoint* TetherPoint : AllTetherPoints)
 					WeakTetherPoints.Add(TetherPoint);

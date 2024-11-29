@@ -8,7 +8,7 @@ UENUM(BlueprintType)
 enum class EWeaponAnimationEventType : uint8
 {
 	None = 0 UMETA(Hidden),
-	Fire = 1 UMETA(DisplayName = "Fire") ,
+	Fire = 1 UMETA(DisplayName = "FirePlayer") ,
 	Reload = 2 UMETA(DisplayName = "Reload"),
 	Aim = 3 UMETA(DisplayName = "Aim"),
 	Equip = 4 UMETA(DisplayName = "Equip"),

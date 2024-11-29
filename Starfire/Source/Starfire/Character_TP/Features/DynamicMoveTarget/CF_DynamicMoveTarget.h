@@ -35,6 +35,9 @@ protected:
 
 	UPROPERTY()
 	const UCF_DynamicMoveTarget_Config* DynamicMoveTargetConfig;
+
+	UPROPERTY()
+	bool bRegisteredForTetherPointGen  = false;
 private:
 	float TimeSinceLastUpdate = 0.0f;
 #pragma endregion

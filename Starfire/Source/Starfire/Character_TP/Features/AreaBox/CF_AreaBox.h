@@ -1,17 +1,14 @@
 ﻿#pragma once
 #include "CoreMinimal.h"
-#include "CF_Death_Config.h"
+#include "CF_AreaBox_Config.h"
 #include "Runtime/NavigationSystem/Public/NavFilters/NavigationQueryFilter.h"
 #include "Starfire/Shared/CharacterFeature/Sf_CharacterFeature.h"
-#include "CF_Death.generated.h"
+#include "CF_AreaBox.generated.h"
 
 
-class AResource;
-
-DEFINE_LOG_CATEGORY_STATIC(EF_Death, Display, Display);
 
 UCLASS(Blueprintable)
-class STARFIRE_API UCF_Death : public USf_CharacterFeature
+class STARFIRE_API UCF_AreaBox : public USf_CharacterFeature
 {
 	GENERATED_BODY()
 
@@ -20,8 +17,7 @@ class STARFIRE_API UCF_Death : public USf_CharacterFeature
 public:
 	virtual void Initialize(ASf_TP_Character* Holder, const USf_CharacterFeature_Config* InConfig) override;
 
-	UFUNCTION(BlueprintCallable, Category = "EnemyFeature|Death")
-	void Kill();
+	
 
 protected:
 #pragma endregion
@@ -29,10 +25,7 @@ protected:
 #pragma region Properties
 protected:
 	UPROPERTY()
-	const UCF_Death_Config* Death_Config;
-	
-	UPROPERTY()
-	AWeaponBase* EquippedWeapon;
+	const UCF_AreaBox_Config* AreaBox_Config;
 #pragma endregion
 
 

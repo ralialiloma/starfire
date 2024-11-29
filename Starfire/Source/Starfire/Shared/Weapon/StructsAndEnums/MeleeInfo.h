@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "Components/BoxComponent.h"
 #include "MeleeInfo.generated.h"
 
 USTRUCT(Blueprintable)
@@ -6,7 +7,7 @@ struct STARFIRE_API FMeleeInfo
 {
 	GENERATED_BODY()
 
-	UPROPERTY(BlueprintReadWrite)
+	/*UPROPERTY(BlueprintReadWrite)
 	FVector Location;
 
 	UPROPERTY(BlueprintReadWrite)
@@ -16,12 +17,11 @@ struct STARFIRE_API FMeleeInfo
 	FRotator Rotation;
 
 	UPROPERTY(BlueprintReadWrite)
-	FVector Direction;
+	FVector Direction;;*/
+
+	UPROPERTY(BlueprintReadWrite)
+	UBoxComponent* BoxComponent;
 
 	FMeleeInfo();
-
-	FMeleeInfo(FVector InLocation, FVector InExtent, FRotator InRotation, FVector InDirection)
-	   : Location(InLocation), Extent(InExtent), Rotation(InRotation), Direction(InDirection)
-	{
-	}
+	FMeleeInfo(UBoxComponent* BoxComponentIn);
 };

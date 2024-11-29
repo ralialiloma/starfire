@@ -145,7 +145,7 @@ void ASf_FP_Character::PostInitializeComponents()
 void ASf_FP_Character::ReceiveKnockback_Implementation(FVector KnockbackForce)
 {
 	IKnockbackReceiver::ReceiveKnockback_Implementation(KnockbackForce);
-	LaunchCharacter(KnockbackForce,false,false);
+	LaunchCharacter(KnockbackForce,true,false);
 }
 #if WITH_EDITOR
 void ASf_FP_Character::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
@@ -291,11 +291,7 @@ FTransform ASf_FP_Character::GetFireTransform_Implementation() const
 
 FMeleeInfo ASf_FP_Character::GetMeleeInfo_Implementation() const
 {
-	const FVector Location = MeleeTransform->GetComponentLocation();
-	const FVector Extent = MeleeTransform->GetScaledBoxExtent();
-	const FRotator Rotation = MeleeTransform->GetComponentRotation();
-	const FVector Direction = GetActorLocation()-Location;
-	const FMeleeInfo MeleeInfo = FMeleeInfo(Location,Extent,Rotation,Direction);
+	const FMeleeInfo MeleeInfo = FMeleeInfo(WeaponMeleeTransform);
 	return MeleeInfo;
 }
 

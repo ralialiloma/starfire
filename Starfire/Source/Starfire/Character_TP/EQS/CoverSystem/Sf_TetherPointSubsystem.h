@@ -21,6 +21,8 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	ASf_TetherPointGen* GetTetherPointGen() const;
 
+	static USf_TetherPointSubsystem* Get(const UWorld* World);
+
 private:
 	UPROPERTY()
 	ASf_TetherPointGen* TetherPointGen = nullptr;

@@ -11,7 +11,7 @@ USf_PeakLocationFinder::USf_PeakLocationFinder(const FObjectInitializer& ObjectI
 void USf_PeakLocationFinder::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
-	GetWorld()->GetTimerManager().SetTimer(TickTimerHandle,[this]()->void{Tick();},Tickrate,true);
+	//GetWorld()->GetTimerManager().SetTimer(TickTimerHandle,[this]()->void{Tick();},Tickrate,true);
 }
 
 void USf_PeakLocationFinder::Tick()
@@ -19,7 +19,7 @@ void USf_PeakLocationFinder::Tick()
 	GeneratedCircles.Empty();
 	GeneratedCircles =
 		GenerateCircleAroundPlayer(5,15,200.f,300.f, 500.f);
-	DrawDebugCircles(GeneratedCircles,GetWorld(),FColor::Red,FColor::Green,50.f,Tickrate+0.01f);
+	DrawDebugCircles(GeneratedCircles,FColor::Red,FColor::Green,50.f,Tickrate+0.01f);
 	UpdateActorAssignments();
 }
 
@@ -122,16 +122,21 @@ TArray<FSf_Circle> USf_PeakLocationFinder::GenerateCircleAroundPlayer(
     return Circles;
 }
 
-void USf_PeakLocationFinder::DrawDebugCircles(const TArray<FSf_Circle>& Circles, UWorld* World, const FColor& CircleColor, const FColor& SphereColor, float SphereRadius, float Duration)
+void USf_PeakLocationFinder::DrawDebugCircles(const TArray<FSf_Circle>& Circles, const FColor& CircleColor, const FColor& SphereColor, float SphereRadius, float Duration)
 {
-	if (!World) return;
+	
+	const APawn* PlayerPawn = USf_FunctionLibrary::GetSfPlayerpawn(GetWorld());
+	if (!PlayerPawn)
+		return;
 
+	FVector PlayerLocation = PlayerPawn->GetActorLocation();
+	
 	for (const FSf_Circle& Circle : Circles)
 	{
 		// Draw the circle outline
 		DrawDebugCircle(
-			World,
-			Circle.PointsOnCircle.IsEmpty() ? FVector::ZeroVector : Circle.PointsOnCircle[0] - FVector(Circle.Radius.X, 0, 0), // Center of the circle
+			GetWorld(),
+			PlayerLocation,
 			Circle.Radius.X, // Radius
 			50, // Number of segments
 			CircleColor,
@@ -148,7 +153,7 @@ void USf_PeakLocationFinder::DrawDebugCircles(const TArray<FSf_Circle>& Circles,
 		for (const FVector& Point : Circle.PointsOnCircle)
 		{
 			DrawDebugSphere(
-				World,
+				GetWorld(),
 				Point,
 				SphereRadius,
 				6,
@@ -230,22 +235,32 @@ void USf_PeakLocationFinder::UpdateActorAssignments()
             if (AssignedPositions.Contains(Position))
                 continue;
 
-            float Distance = FVector::DistSquared(Position, ActorLocation);
-            if (Distance < BestDistance)
-            {
-                BestDistance = Distance;
-                BestPosition = Position;
-            }
+            double Distance = FVector::DistSquared(Position, ActorLocation);
 
+    		UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
+
+    		FPathFindingQuery PathFindingQuery;
+    		PathFindingQuery.Owner = Actor;
+    		PathFindingQuery.StartLocation = Position;
+    		PathFindingQuery.EndLocation = ActorLocation;
+    		if (NavSys->TestPathSync(PathFindingQuery))
+    		{
+    			NavSys->GetPathCost(GetWorld(), Position, ActorLocation,Distance);
+                if (Distance < BestDistance)
+                {
+                    BestDistance = Distance;
+                    BestPosition = Position;
+                }
+    		}
+
+    		
     		if (!BestPosition.IsZero())
     		{
     			Assignment.TargetPosition = BestPosition;
     			AssignedPositions.Add(BestPosition);
     		}
         }
-
-
-    	
+		
     	
     	// Sort positions by proximity to the actor
     	/*TArray<FVector> SortedPositions = AllPositions.FilterByPredicate(

@@ -51,7 +51,6 @@ protected:
 	TArray<FSf_Circle> GenerateCircleAroundPlayer(const int AmountOfRings, const int PointsPerRing, const float RingDistance, const int MinRingSize, const float MaxHeightDifference) const;
 	void DrawDebugCircles(
 		const TArray<FSf_Circle>& Circles,
-		UWorld* World,
 		const FColor& CircleColor,
 		const FColor& SphereColor,
 		float SphereRadius, float

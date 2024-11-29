@@ -85,11 +85,20 @@ public:
 	TArray<FVector> GetPeakLocationsInRadius(const float MaxScore, const FVector& Location, float Radius) const;
 
 	UFUNCTION(BlueprintCallable)
-	TArray<UTetherPoint*> GetTetherPointsAroundPlayer() const;
+	TArray<UTetherPoint*> GetRelevantTetherPoints() const;
+
+	UFUNCTION(BlueprintCallable)
+	TArray<AActor*> GetRelevantActors() const;
+
+	UFUNCTION(BlueprintCallable)
+	void RegisterActor(AActor* Actor);
+
+	UFUNCTION(BlueprintCallable)
+	void UnregisterActor(AActor* Actor);
 	
 private:
 	void UpdateTetherPoints();
-	void AddCloseToPlayerTetherPointsToProcess();
+	void AddRelevantTetherPointsToProcess();
 #pragma endregion
 
 
@@ -129,22 +138,31 @@ protected:
 	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly)
 	float PlayerUpdateRateInSeconds = 1;
 
-
-	UPROPERTY()
+	
+	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly)
 	float MaxWallDistance = 200;
 	
-	//Player
-	UPROPERTY()
-	float MinUpdateDistance = 200;
+	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly)
+	float MaxRelevancyDistance = 1000.f;
+	
+	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly)
+	float MinActorUpdateDistance = 200;
 
-	UPROPERTY()
-	float MaxUpdateDistance = 2000;
+	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly)
+	float MaxActorUpdateDistance = 2000;
+
+	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly)
+	TSubclassOf<UNavigationQueryFilter> QueryFilterClass;
+
 private:
 	UPROPERTY()
 	FTimerHandle CloseToPlayerTethers;
 
 	UPROPERTY()
 	FTimerHandle OtherTethers;
+
+	UPROPERTY()
+	TArray<AActor*> RegisteredActors;
 #pragma endregion
 
 };

@@ -1,11 +1,10 @@
 ﻿
 #include "Sf_TetherPointGen.h"
-
-#include "CollisionDebugDrawingPublic.h"
 #include "NavigationSystem.h"
 #include "Sf_TetherPointSubsystem.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "NavAreas/NavArea_Obstacle.h"
 #include "Starfire/Character_TP/Sf_TP_Character.h"
 #include "Starfire/Character_TP/EQS/NavigationTargetSubsystem.h"
 #include "Starfire/Utility/AsyncUtility.h"
@@ -45,8 +44,24 @@ void UTetherPoint::FindSurroundingPoints(const UObject* WorldContextObject)
 			for (int32 z = 0; z <= Size.Z; z++)
 			{
 				FVector Point = CenterLocation + FVector::UpVector*VerticalOffset + FVector(x, y, z) * Scale;
+
+				FHitResult HitResult;
+				UKismetSystemLibrary::LineTraceSingle(
+					WorldContextObject,
+					Point + FVector::UpVector * Scale, // A little above the point
+					Point - FVector::UpVector * Scale, // A little below the point
+					ETraceTypeQuery::TraceTypeQuery_MAX, // Replace with your desired trace type
+					false,
+					TArray<AActor*>{},
+					EDrawDebugTrace::None,
+					HitResult,
+					true,
+					FLinearColor::Blue,
+					FLinearColor::Red,
+					2.0f
+				);
 				
-				TArray<TEnumAsByte<EObjectTypeQuery>>  ObjectTypes = TArray<TEnumAsByte<EObjectTypeQuery>> {EObjectTypeQuery::ObjectTypeQuery_MAX};
+				/*TArray<TEnumAsByte<EObjectTypeQuery>>  ObjectTypes = TArray<TEnumAsByte<EObjectTypeQuery>> {EObjectTypeQuery::ObjectTypeQuery_MAX};
 				TArray<AActor*> OverlappedActors;
 				UKismetSystemLibrary::SphereOverlapActors(
 					WorldContextObject,
@@ -55,10 +70,16 @@ void UTetherPoint::FindSurroundingPoints(const UObject* WorldContextObject)
 					ObjectTypes,
 					AActor::StaticClass(),
 					TArray<AActor*>{},
-					OverlappedActors);
+					OverlappedActors);*/
 
-				if (OverlappedActors.Num()>0)
+				if (HitResult.bBlockingHit)
+				{
 					continue;
+				}
+
+
+				//if (OverlappedActors.Num()>0)
+				//	continue;
 				
 				SurroundingPoints.Add(Point);
 			}
@@ -97,7 +118,7 @@ void UTetherPoint::UpdateScore(const FVector& PlayerLocation, const UObject* Wor
 			true,
 			FLinearColor::Blue,
 			FLinearColor::Red,
-			1.0f);
+			2.0f);
 
 		if (HitResult.bBlockingHit)
 		{
@@ -130,7 +151,7 @@ void ASf_TetherPointGen::BeginPlay()
 	GetGameInstance()->GetSubsystem<USf_TetherPointSubsystem>()->RegisterTetherPointGen(this);
 	GeneratePoints();
 	
-	GetWorld()->GetTimerManager().SetTimer(CloseToPlayerTethers,[this]()->void{AddCloseToPlayerTetherPointsToProcess();},PlayerUpdateRateInSeconds,true);
+	GetWorld()->GetTimerManager().SetTimer(CloseToPlayerTethers,[this]()->void{AddRelevantTetherPointsToProcess();},PlayerUpdateRateInSeconds,true);
 	//GetWorld()->GetTimerManager().SetTimer(OtherTethers,[this]()->void{AddOtherTetherPointsToProcess();},OtherUpdateRateInSecdonds,true);
 }
 
@@ -142,6 +163,13 @@ void ASf_TetherPointGen::Tick(float DeltaSeconds)
 
 void ASf_TetherPointGen::GeneratePoints()
 {
+	UNavigationSystemV1* NavSystem =  UNavigationSystemV1::GetCurrent(GetWorld());
+	FVector ProjectExtent = FVector(Scale/2.0f);
+	const ANavigationData* NavData = NavSystem->GetDefaultNavDataInstance(FNavigationSystem::DontCreate);
+	
+	const FSharedConstNavQueryFilter QueryFilter = NavData->GetQueryFilter(QueryFilterClass);
+	const FNavAgentProperties NavAgentProperties =  FNavAgentProperties::DefaultProperties;
+	
 	for (int32 x = -Size.X / 2; x <= Size.X / 2; x++)
 	{
 		for (int32 y = -Size.Y / 2; y <= Size.Y / 2; y++)
@@ -151,8 +179,8 @@ void ASf_TetherPointGen::GeneratePoints()
 				FVector CenterLocation = GetActorLocation()+ FVector(x, y, z) * Scale;
 
 				FNavLocation ProjectedNavCenterLocation;
-				FVector ProjectExtent = FVector(Scale/2.0f);
-				if (!UNavigationSystemV1::GetCurrent(GetWorld())->ProjectPointToNavigation(CenterLocation, ProjectedNavCenterLocation, ProjectExtent))
+
+				if (!NavSystem->ProjectPointToNavigation(CenterLocation, ProjectedNavCenterLocation, ProjectExtent,&NavAgentProperties,QueryFilter))
 					continue;
 				
 				UTetherPoint* TetherPoint = NewObject<UTetherPoint>(this);
@@ -336,31 +364,60 @@ void ASf_TetherPointGen::UpdateTetherPoints()
 }
 
 
-void ASf_TetherPointGen::AddCloseToPlayerTetherPointsToProcess()
+void ASf_TetherPointGen::AddRelevantTetherPointsToProcess()
 {
-	const TArray<UTetherPoint*> TetherPointsAroundPlayer  = GetTetherPointsAroundPlayer();
+	const TArray<UTetherPoint*> TetherPointsAroundPlayer  = GetRelevantTetherPoints();
 	for(UTetherPoint* TetherPoint: TetherPointsAroundPlayer)
 	{
 		TetherPointsToProcess.AddUnique(TetherPoint);
 	}
 }
 
-TArray<UTetherPoint*> ASf_TetherPointGen::GetTetherPointsAroundPlayer() const
+TArray<UTetherPoint*> ASf_TetherPointGen::GetRelevantTetherPoints() const
 {
-	const FVector PlayerLocation = USf_FunctionLibrary::GetPlayerLocation(this);
-
-	TArray<UTetherPoint*> TetherPointsAroundPlayer{};
+	TArray<UTetherPoint*> RelevantPoints{};
+	TArray<AActor*> RelevantActors = GetRelevantActors();
+	
 	for (UTetherPoint* TetherPoint: AllTetherPoints)
 	{
-		const float Distance = FVector::Dist(PlayerLocation, TetherPoint->CenterLocation);
-		
-		
-		if (MinUpdateDistance < Distance && Distance < MaxUpdateDistance)
+		for (const AActor* Actor: RelevantActors)
 		{
-			
-			TetherPointsAroundPlayer.Add(TetherPoint);
+			const float ActorToTetherPoint = FVector::Dist(Actor->GetActorLocation(), TetherPoint->CenterLocation);
+			if (MinActorUpdateDistance < ActorToTetherPoint && ActorToTetherPoint < MaxActorUpdateDistance)
+			{
+				RelevantPoints.AddUnique(TetherPoint);
+				break;
+			}
 		}
-
 	}
-	return TetherPointsAroundPlayer;
+	return RelevantPoints;
+}
+
+TArray<AActor*> ASf_TetherPointGen::GetRelevantActors() const
+{
+	const FVector PlayerLocation = USf_FunctionLibrary::GetPlayerLocation(this);
+	TArray<AActor*> Actors{};
+	for (AActor* Actor: RegisteredActors)
+	{
+		if (!IsValid(Actor))
+			continue;
+			
+		const float PlayerToActor = FVector::Dist(PlayerLocation, Actor->GetActorLocation());
+
+		if (PlayerToActor<=MaxRelevancyDistance)
+			Actors.AddUnique(Actor);
+	}
+	return Actors;
+}
+
+void ASf_TetherPointGen::RegisterActor(AActor* Actor)
+{
+	if (IsValid(Actor) && !RegisteredActors.Contains(Actor))
+		RegisteredActors.AddUnique(Actor);
+}
+
+void ASf_TetherPointGen::UnregisterActor(AActor* Actor)
+{
+	if (IsValid(Actor))
+		RegisteredActors.Remove(Actor);
 }

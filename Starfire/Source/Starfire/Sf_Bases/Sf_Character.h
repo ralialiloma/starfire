@@ -41,7 +41,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Weapon")
 	USf_Equipment* SfEquipmentComponent;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Weapon")
-	UBoxComponent* MeleeTransform;
+	UBoxComponent* WeaponMeleeTransform;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Damage")
 	USf_DamageController* SfDamageController;
 #pragma endregion

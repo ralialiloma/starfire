@@ -31,6 +31,7 @@ public:
 	
 	virtual void BeginPlay() override;
 	virtual void PostInitProperties() override;
+	virtual void Tick(float DeltaSeconds) override;
 	virtual void NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit) override;
 
 protected:
@@ -104,6 +105,8 @@ private:
 	bool bActiveFireCooldown = false;
 	UPROPERTY()
 	bool bActiveMeleeCountdown = false;
+	UPROPERTY()
+	bool bIsMeleeing = false;
 	
 	//Ammo
 	UPROPERTY()
@@ -120,6 +123,10 @@ private:
 	UPROPERTY()
 	USf_Equipment* OwningEquipmentComponent = nullptr;
 
+	//Melee
+	UPROPERTY()
+	TArray<AActor*> OverlappedMeleeActors = {};
+	
 #pragma endregion
 
 #pragma region Fire
@@ -214,10 +221,26 @@ public:
 	bool Melee();
 	
 protected:
+
+	UFUNCTION()
+	void HandleMeleeBeginOverlap(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex,
+		bool bFromSweep,
+		const FHitResult& SweepResult);
+
+	UFUNCTION()
+	void HandleMeleeEndOverlap(
+	UPrimitiveComponent* OverlappedComponent, 
+	AActor* OtherActor, 
+	UPrimitiveComponent* OtherComp, 
+	int32 OtherBodyIndex
+	);
 	
-	void MeleeTraces();
-	void ApplyMelee(AActor* ActorToApplyOn, const FVector& Start, const FVector& End, const FVector& Direction);
 	void DoMelee();
+	void ApplyMeleeToActor(AActor* ActorToApplyMeleeTo);
 
 #pragma endregion
 	
