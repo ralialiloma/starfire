@@ -65,10 +65,10 @@ void UCF_DynamicMoveTarget::OnTick(float DeltaTime)
 
 	const ACharacter* Character =  GetOwningCharacter();
 	if (!IsValid(Character))
-		return;*/
+		return;
 	
 
-	/*const FVector MovingActorLocation = Character->GetActorLocation();
+	const FVector MovingActorLocation = Character->GetActorLocation();
 	const FVector PlayerLocation = USf_FunctionLibrary::GetPlayerLocation(this);
 	const float Distance = FVector::Distance(MovingActorLocation, PlayerLocation);
 
@@ -84,10 +84,10 @@ void UCF_DynamicMoveTarget::OnTick(float DeltaTime)
 
 		//if (FVector::Distance(MoveTarget->GetActorLocation(),Location)>MinMoveDistance)
 			MoveTarget->SetActorLocation(Location);
-	}*/
+	}
 
 
-	/*const FVector MovingActorLocation = Character->GetActorLocation();
+	const FVector MovingActorLocation = Character->GetActorLocation();
 	const FVector PlayerLocation = USf_FunctionLibrary::GetPlayerLocation(this);
 	const float Distance = FVector::Distance(MovingActorLocation, PlayerLocation);
 
@@ -96,16 +96,16 @@ void UCF_DynamicMoveTarget::OnTick(float DeltaTime)
 
 	bool bTooClose = Distance < MinDistance;
 	bool bTooFar =  Distance > MaxDistance;
-	if (/*bTooClose ||bTooFar/true)
+	if (bTooClose ||bTooFar/true)
 	{
-		/*TArray<FVector> Locations =  USf_CloseToPlayerLoc::GetCurrent(GetWorld())->GetCurrentCloseToPlayerLocations();
+		TArray<FVector> Locations =  USf_CloseToPlayerLoc::GetCurrent(GetWorld())->GetCurrentCloseToPlayerLocations();
 		if (Locations.Num()<=0)
 		{
 			MoveTarget->SetActorLocation(MovingActorLocation);
 			return;
-		}*/
+		}
 		
-	/*	FVector Direction = (MovingActorLocation-PlayerLocation);
+		FVector Direction = (MovingActorLocation-PlayerLocation);
 		Direction.Normalize();
 
 		const float CapsuleRadius = Character->GetCapsuleComponent()->GetScaledCapsuleRadius();
@@ -125,9 +125,9 @@ void UCF_DynamicMoveTarget::OnTick(float DeltaTime)
 		    Location + FVector::DownVector * DynamicMoveTargetConfig->MaxVerticalTraceLength,
 		    ECollisionChannel::ECC_WorldStatic,
 		    CollisionParams
-		);*/
+		);
 
-		/*UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
+		UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
 		if (!NavSys)
 		{
 			UDebugFunctionLibrary::Sf_ThrowError(this,"Navigation system not found!");
@@ -145,10 +145,10 @@ void UCF_DynamicMoveTarget::OnTick(float DeltaTime)
 		{
 			UDebugFunctionLibrary::Sf_ThrowError(this,"Invalid NavData!");
 			return;
-		}*/
+		}
 
 		//Remove All Reserved Locations
-		/*TArray<FVector>  TempLocations = Locations;
+		TArray<FVector>  TempLocations = Locations;
 		for (FVector Location: TempLocations)
 		{
 			if(UNavigationTargetSubsystem::Get(GetWorld())->HasCloseNavTarget(Location,300.f,GetOwningCharacter()))
@@ -192,11 +192,11 @@ void UCF_DynamicMoveTarget::OnTick(float DeltaTime)
 					
 				return ScoreA < ScoreB;
 			});
-		}*/
+		}
 		
 		
 		//Make sure point is rechable for Character
-		/*bool bPointFound = false;
+		bool bPointFound = false;
 		FVector TraceHit;
 		for (FVector Point: Locations)
 		{
