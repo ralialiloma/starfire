@@ -155,7 +155,32 @@ void ASf_TetherPointGen::Tick(float DeltaSeconds)
 
 void ASf_TetherPointGen::GeneratePoints()
 {
-	UNavigationSystemV1* NavSystem =  UNavigationSystemV1::GetCurrent(GetWorld());
+	
+	TArray<AActor*> FoundActors{};
+	UGameplayStatics::GetAllActorsOfClass(this,ASf_PatrolAreaMarker::StaticClass(),FoundActors);
+
+	for (AActor* Actor:FoundActors)
+	{
+		FVector CenterLocation = Actor->GetActorLocation();
+		if (!USf_PatrolAreaManager::Get(GetWorld())->IsPointInAnyPatrolArea(CenterLocation))
+			continue;
+
+		ASf_PatrolAreaMarker* Marker = Cast<ASf_PatrolAreaMarker>(Actor);
+		if (!IsValid(Marker))
+			continue;
+
+		UTetherPoint* TetherPoint = NewObject<UTetherPoint>(this);
+		TetherPoint->CoverPotential = 0;
+		TetherPoint->CenterLocation = CenterLocation;
+		TetherPoint->Scale =   TetherScale;
+		TetherPoint->Size = TetherPointSize;
+		TetherPoint->VerticalOffset = VerticalOffset;
+		TetherPoint->GameplayTags = Marker->PatrolTags;
+		TetherPoint->FindSurroundingPoints(this);
+		AllTetherPoints.Add(TetherPoint);
+	}
+	
+	/*UNavigationSystemV1* NavSystem =  UNavigationSystemV1::GetCurrent(GetWorld());
 	FVector ProjectExtent = FVector(Scale/2.0f);
 	const ANavigationData* NavData = NavSystem->GetDefaultNavDataInstance(FNavigationSystem::DontCreate);
 	
@@ -187,7 +212,7 @@ void ASf_TetherPointGen::GeneratePoints()
 				AllTetherPoints.Add(TetherPoint);
 			}
 		}
-	}
+	}*/
 }
 
 

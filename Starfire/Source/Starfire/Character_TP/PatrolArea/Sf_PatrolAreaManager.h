@@ -18,6 +18,12 @@ public:
 	void RegisterPatrolArea(ASf_PatrolArea* PatrolArea);
 	void UnregisterPatrolArea (ASf_PatrolArea* PatrolArea);
 
+	ASf_PatrolArea* RegisterMarker(FGuid Guid, ASf_PatrolAreaMarker* MarkerToRegister);
+	void UnregisterMarker (ASf_PatrolAreaMarker* MarkerToUnregister);
+
+	UFUNCTION(BlueprintCallable)
+	ASf_PatrolArea* FindPatrolAreaForLocation(FVector PointToTest);
+
 	UFUNCTION(BlueprintCallable)
 	bool IsPointInAnyPatrolArea(const FVector& PointToTest);
 

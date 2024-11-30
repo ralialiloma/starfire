@@ -13,6 +13,10 @@ void UCF_Death::Initialize(ASf_TP_Character* Holder, const USf_CharacterFeature_
 
 void UCF_Death::Kill()
 {
+	//Broadcast Events
+	OnDeath_CPP.Broadcast();
+	OnDeath_BP.Broadcast();
+	
 	//Handle Combat
 	UCF_Combat* Combat =  GetOwningCharacter()->GetFeatureByClass<UCF_Combat>();
 	
@@ -52,7 +56,6 @@ void UCF_Death::Kill()
 		GetOwningSfEquipment()->RemoveWeaponActiveWeapon();
 		EquippedWeapon->Destroy();
 	}
-	
 
 	//Spawn Loot
 	const TSubclassOf<AResource> DroppedResourceClass = Death_Config->DroppedResourceClass;

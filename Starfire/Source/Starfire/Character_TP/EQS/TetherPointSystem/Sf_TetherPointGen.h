@@ -2,6 +2,7 @@
 
 #pragma once
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "Components/ActorComponent.h"
 #include "Sf_TetherPointGen.generated.h"
 
@@ -33,6 +34,9 @@ public:
 
 	UPROPERTY()
 	float DistanceToWall = 0;
+
+	UPROPERTY()
+	FGameplayTagContainer GameplayTags;
 
 	UPROPERTY()
 	float Scale;

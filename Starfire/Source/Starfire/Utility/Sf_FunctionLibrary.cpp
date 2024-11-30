@@ -54,6 +54,11 @@ FVector USf_FunctionLibrary::GetPlayerLocation(const UObject* WorldContextObject
 	return Pawn->GetActorLocation();
 }
 
+FString USf_FunctionLibrary::FormatStringWithNewlines(const FString& InputString)
+{
+	return InputString.Replace(TEXT(";"), TEXT("\n"));
+}
+
 int USf_FunctionLibrary::ConvertEnumToInteger(uint8 Byte)
 {
 	return FMath::Pow(2,static_cast<float>(Byte));

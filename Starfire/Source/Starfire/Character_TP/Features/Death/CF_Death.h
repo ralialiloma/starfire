@@ -27,6 +27,9 @@ protected:
 #pragma endregion
 	
 #pragma region Properties
+public:
+	FSf_VoidDelegate_BP OnDeath_BP;
+	FSf_VoidDelegate_CPP OnDeath_CPP;
 protected:
 	UPROPERTY()
 	const UCF_Death_Config* Death_Config;

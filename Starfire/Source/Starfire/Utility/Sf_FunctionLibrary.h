@@ -54,6 +54,9 @@ class STARFIRE_API USf_FunctionLibrary : public UBlueprintFunctionLibrary
 	template<typename RowType>
 	static TArray<RowType> GetRowDataFromDT(const FSoftObjectPath& DTPath);
 
+	UFUNCTION(BlueprintCallable)
+	static  FString FormatStringWithNewlines(const FString& InputString);
+
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	static  int ConvertEnumToInteger(uint8 Byte);
 

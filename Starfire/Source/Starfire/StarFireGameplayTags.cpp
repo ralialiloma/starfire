@@ -12,6 +12,24 @@ namespace Sf_GameplayTags
 	namespace Gameplay
 	{
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay", "")
+		namespace PatrolAreaMarkerTypes
+		{
+			STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+			STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(FirePlayer);
+		}
+
+		namespace PatrolAreaMarkerTypes
+		{
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay.PatrolAreaMarkerTypes", "")
+			DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.PatrolAreaMarkerTypes,Peak,"");
+			namespace Cover
+			{
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay.Cover", "")
+				DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.PatrolAreaMarkerTypes.Cover,Low,"");
+				DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.PatrolAreaMarkerTypes.Cover,High,"");
+			}
+		}
+		
 		namespace DamageType
 		{
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay.DamageType", "")
