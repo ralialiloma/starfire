@@ -77,3 +77,16 @@ bool USf_PatrolAreaManager::IsPointInAnyPatrolArea(const FVector& PointToTest)
 {
 	return FindPatrolAreaForLocation(PointToTest)!=nullptr;
 }
+
+TArray<ASf_PatrolArea*> USf_PatrolAreaManager::GetFreePatrolAreas() const
+{
+	TArray<ASf_PatrolArea*> PatrolAreas = RegisteredPatrolAreas;
+
+	for (auto PatrolArea : RegisteredPatrolAreas)
+	{
+		if (PatrolArea->IsOccupied())
+			PatrolAreas.Remove(PatrolArea);
+	}
+	
+	return PatrolAreas;
+}

@@ -52,6 +52,11 @@ bool ASf_PatrolArea::IsInBox(const FVector& LocationToTest) const
 	return bIsInBox;
 }
 
+bool ASf_PatrolArea::IsOccupied() const
+{
+	return Character != nullptr;
+}
+
 void ASf_PatrolArea::OnRegisterMarker_Implementation(ASf_PatrolAreaMarker* NewMarker)
 {
 }

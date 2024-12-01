@@ -47,6 +47,10 @@ public:
 	{
 		return ResourcePtr;
 	}
+	FVector GetLocation() const
+	{
+		return Transform.GetLocation();
+	}
 	bool IsOccupied() const
 	{
 		return IsValid(ResourcePtr);
@@ -123,6 +127,8 @@ public:
 	
 	bool AddResource(AResource* Resource);
 	bool AddSpawn(TSharedPtr<FResourceSpawn> Spawn);
+
+	FVector GetVeinCenter() const;
 
 	bool operator==(const FResourceVein& Other) const
 	{

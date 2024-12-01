@@ -27,6 +27,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool IsPointInAnyPatrolArea(const FVector& PointToTest);
 
+	UFUNCTION(BlueprintCallable)
+	TArray<ASf_PatrolArea*> GetFreePatrolAreas() const;
+
 protected:
 
 	UPROPERTY()

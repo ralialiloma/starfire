@@ -23,6 +23,8 @@ public:
 	
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool IsInBox(const FVector& LocationToTest) const;
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	bool IsOccupied() const;
 
 	UFUNCTION(BlueprintNativeEvent)
 	void OnRegisterMarker(ASf_PatrolAreaMarker* NewMarker);

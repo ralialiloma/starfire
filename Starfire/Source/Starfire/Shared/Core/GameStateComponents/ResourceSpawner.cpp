@@ -60,6 +60,22 @@ bool FResourceVein::AddSpawn(TSharedPtr<FResourceSpawn> Spawn)
 	return true;
 }
 
+FVector FResourceVein::GetVeinCenter() const
+{
+	if (Spawns.Num() == 0)
+		return FVector();
+
+	FVector SumLocation = FVector::ZeroVector;
+	
+	for (const auto& Spawn : Spawns)
+	{
+		SumLocation += Spawn->GetLocation();
+	}
+	
+	FVector CenterLocation = SumLocation / Spawns.Num();
+	return CenterLocation;
+}
+
 TArray<int> FResourceVein::GetViableSpawnIndexes()
 {
 	if (Spawns.Num() <= 0)
