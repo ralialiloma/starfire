@@ -43,14 +43,14 @@ void UCF_DynamicMoveTarget::OnTick(float DeltaTime)
 {
 	Super::OnTick(DeltaTime);
 
-	if(!bRegisteredForTetherPointGen)
+	/*if(!bRegisteredForTetherPointGen)
 	{
 		if (USf_TetherPointSubsystem::Get(GetWorld())->GetTetherPointGen())
 		{
 			USf_TetherPointSubsystem::Get(GetWorld())->GetTetherPointGen()->RegisterActor(GetOwningCharacter());
 			bRegisteredForTetherPointGen = true;
 		}
-	}
+	}*/
 
 //	MoveTarget->SetActorLocation(USf_PeakLocationFinder::GetCurrent(GetWorld())->GetTargetLocationForActor(GetOwningCharacter()));
 
