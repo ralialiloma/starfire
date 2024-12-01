@@ -48,7 +48,7 @@ float USf_DamageController::ApplyDamage(
 	
 	//Get Hitbox
 	const USf_Hitbox* Hitbox =  Cast<USf_Hitbox>(HitComponent);
-	if (!IsValid(Hitbox))
+	if (!IsValid(Hitbox) && IsValid(HitComponent))
 		return 0;
 	
 	//Total Damage
@@ -69,8 +69,8 @@ float USf_DamageController::ApplyDamage(
 	SetHealth(CurrentHealth-TotalDamage);
 
 	//Broadcast Damage Received
-	OnDamageReceived_CPP.Broadcast(CurrentHealth,TotalDamage,HitLocation,HitNormal);
-	OnDamageReceived_BP.Broadcast(CurrentHealth,TotalDamage,HitLocation,HitNormal);
+	OnDamageReceived_CPP.Broadcast(CurrentHealth,TotalDamage,HitLocation,HitNormal,DamageType);
+	OnDamageReceived_BP.Broadcast(CurrentHealth,TotalDamage,HitLocation,HitNormal,DamageType);
 	
 	return TotalDamage;
 }
@@ -99,6 +99,11 @@ void USf_DamageController::Heal(const float AmountOfHeal, const bool bInternal)
 		OnFullHealth_CPP.Broadcast();
 		OnFullHealth_BP.Broadcast();
 	}
+}
+
+float USf_DamageController::IsMaxHealth() const
+{
+	return MaxHealth<=CurrentHealth;
 }
 
 

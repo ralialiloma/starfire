@@ -183,7 +183,13 @@ void ASf_TP_Controller::HandlePerceptionForgotten(AActor* Actor)
 	UBlackboardKeyHelperLibrary::ClearVectorValue(BlackboardComponent,ELocationBlackboardKey::LastPlayerLocation);
 }
 
-void ASf_TP_Controller::OnReceiveDamage(float RemainingHealth, float DamageReceived, FVector HitLocation, FVector HitNormal)
+
+void ASf_TP_Controller::OnReceiveDamage(
+	float RemainingHealth,
+	float DamageReceived,
+	FVector HitLocation,
+	FVector HitNormal,
+	FGameplayTag DamageType)
 {
 	UAISense_Damage::ReportDamageEvent(
 		this,

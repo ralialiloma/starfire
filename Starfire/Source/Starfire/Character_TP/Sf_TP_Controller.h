@@ -38,7 +38,7 @@ private:
 	UFUNCTION()
 	void HandlePerceptionForgotten(AActor* Actor);
 	UFUNCTION()
-	void OnReceiveDamage(float RemainingHealth,float DamageReceived,FVector HitLocation,FVector HitNormal);
+	void OnReceiveDamage(float RemainingHealth, float DamageReceived, FVector HitLocation, FVector HitNormal, FGameplayTag DamageType);
 #pragma endregion
 
 #pragma region Properties

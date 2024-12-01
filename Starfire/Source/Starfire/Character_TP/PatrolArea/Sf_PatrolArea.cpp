@@ -147,7 +147,7 @@ void ASf_PatrolArea::ImportData()
 			TryRegisterMarker(PatrolAreaMarker);
 
 		Character = Cast<ASf_TP_Character>(Actor);
-		if(!IsValid(Character) && IsValid(	Character->GetFeatureByClass<UCF_Death>()))
+		if(IsValid(Character) && IsValid(	Character->GetFeatureByClass<UCF_Death>()))
 		{
 			Character->GetFeatureByClass<UCF_Death>()->OnDeath_CPP.AddLambda([this]()
 			{

@@ -1,5 +1,6 @@
 ﻿#include "Sf_BreakerTarget.h"
 
+#include "Kismet/GameplayStatics.h"
 #include "Starfire/Shared/Core/Sf_GameState.h"
 #include "Starfire/Shared/Damage/Sf_DamageController.h"
 
@@ -11,16 +12,9 @@ ASf_BreakerTarget::ASf_BreakerTarget(const FObjectInitializer& ObjectInitializer
 	PrimaryActorTick.bTickEvenWhenPaused = true;
 	
 	//Damage Controller
-	SfDamageController = CreateDefaultSubobject<USf_DamageController>(TEXT("SfDamageController"));
-	SfDamageController->bEnablePassiveHealing = false;
-	SfDamageController->SupportedDamageTypes = FGameplayTagContainer(Sf_GameplayTags::Gameplay::DamageType::Explosion);
-	SfDamageController->bStartWithMaxHealth = false;
-
-	//Damage Controller
-	PrimaryHitbox = CreateDefaultSubobject<USf_Hitbox>(TEXT("HitBox"));
-	PrimaryHitbox->SetUsingAbsoluteLocation(false);
-	PrimaryHitbox->SetUsingAbsoluteRotation(false);
-	PrimaryHitbox->SetUsingAbsoluteScale(false);
+	DamageController = CreateDefaultSubobject<USf_DamageController>(TEXT("DamageController"));
+	DamageController->bEnablePassiveHealing = false;
+	DamageController->bStartWithMaxHealth = false;
 }
 
 void ASf_BreakerTarget::BeginPlay()
@@ -30,13 +24,13 @@ void ASf_BreakerTarget::BeginPlay()
 	GameState = GetWorld()->GetGameState<ASf_GameState>();
 
 	TWeakObjectPtr<ASf_BreakerTarget> WeakSelf = this;
-	if (!IsValid(SfDamageController))
+	if (!IsValid(DamageController))
 	{
 		UE_LOG(LogBreakerTarget, Error, TEXT("Invalid %s"),*USf_DamageController::StaticClass()->GetName())
 		return;
 	}
 	
-	DelHandle =  SfDamageController->OnHealthChanged_CPP.AddLambda([WeakSelf]()->void
+	DelHandle =  DamageController->OnHealthChanged_CPP.AddLambda([WeakSelf]()->void
 	{
 		if (!WeakSelf.IsValid())
 		{
@@ -47,7 +41,7 @@ void ASf_BreakerTarget::BeginPlay()
 		WeakSelf->OnProgressChanged_BP.Broadcast();
 	});
 
-	SfDamageController->OnFullHealth_CPP.AddLambda([WeakSelf]()->void
+	DamageController->OnFullHealth_CPP.AddLambda([WeakSelf]()->void
 	{
 		if (!WeakSelf.IsValid())
 		{
@@ -63,7 +57,7 @@ void ASf_BreakerTarget::BeginPlay()
 		}
 	});
 
-	SfDamageController->OnZeroHealth_CPP.AddLambda([WeakSelf]()->void
+	DamageController->OnZeroHealth_CPP.AddLambda([WeakSelf]()->void
 	{
 		if (!WeakSelf.IsValid())
 		{
@@ -90,22 +84,132 @@ void ASf_BreakerTarget::Tick(const float DeltaSeconds)
 	}
 }
 
+void ASf_BreakerTarget::RegisterShard(ASf_BreakerShard* ShardToRegister)
+{
+	if (!IsValid(ShardToRegister))
+		return;;
+	if(BreakerShards.Contains(ShardToRegister))
+		return;
+	BreakerShards.AddUnique(ShardToRegister);
+	ShardToRegister->GetDamageController()->OnHealthChanged_CPP.AddLambda([this]()->void{UpdateTotalHealth();});
+
+	//Get all shard tags
+	FGameplayTagContainer ShardContainer = ShardToRegister->GetDamageController()->SupportedDamageTypes;
+	for (const FGameplayTag& CurrentTag : ShardContainer)
+	{
+		if (!DamageController->SupportedDamageTypes.HasTag(CurrentTag))
+			DamageController->SupportedDamageTypes.AddTag(CurrentTag);
+	}
+	UpdateTotalHealth();
+}
+
 void ASf_BreakerTarget::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+	if (GetWorld() && GetWorld()->GetGameInstance())
+		ImportShards();
 }
+
+
 
 float ASf_BreakerTarget::GetProgress() const
 {
-	return SfDamageController->GetCurrentHealthInPercent();
+	return DamageController->GetCurrentHealthInPercent();
 }
 
 USf_DamageController* ASf_BreakerTarget::GetDamageController() const
 {
-	return SfDamageController;
+	return DamageController;
 }
 
 void ASf_BreakerTarget::DoProgress(const float DeltaSeconds) const
 {
-	SfDamageController->Heal(ProgressionRatePerSecond*DeltaSeconds);
+	TArray<ASf_BreakerShard*> SortedShards =  SortBreakerShardsByHealth(BreakerShards);
+	TArray<ASf_BreakerShard*> ShardsToHeal{};
+	ShardsToHeal.Empty();
+	for (ASf_BreakerShard* Shard: SortedShards)
+	{
+		if (!IsValid(Shard))
+			continue;
+		if (!Shard->GetDamageController()->IsMaxHealth())
+			continue;
+		ShardsToHeal.Add(Shard);
+	}
+
+	int AmountOfShardsToHeal = ShardsToHeal.Num();
+	const float AmountOfHealPerShard = AmountOfShardsToHeal>0?(1/ShardsToHeal.Num())*ProgressionRatePerSecond*DeltaSeconds:0;
+	for (const ASf_BreakerShard* Shard: ShardsToHeal)
+	{
+		Shard->GetDamageController()->Heal(AmountOfHealPerShard);
+	}
 }
+
+TArray<ASf_BreakerShard*> ASf_BreakerTarget::SortBreakerShardsByHealth(const TArray<ASf_BreakerShard*>& BreakerShards)
+{
+	TArray<ASf_BreakerShard*> SortedShards = BreakerShards;
+
+	int32 N = SortedShards.Num();
+
+	// Simple Selection Sort by health (descending order)
+	for (int32 i = 0; i < N - 1; ++i)
+	{
+		int32 MaxIndex = i;
+
+		for (int32 j = i + 1; j < N; ++j)
+		{
+			// Compare health values
+			float HealthA = SortedShards[MaxIndex]->GetDamageController()->GetCurrentHealth();
+			float HealthB = SortedShards[j]->GetDamageController()->GetCurrentHealth();
+
+			if (HealthB > HealthA)  // Swap if B has more health
+			{
+				MaxIndex = j;
+			}
+		}
+
+		// Swap the elements
+		if (MaxIndex != i)
+		{
+			SortedShards.Swap(i, MaxIndex);
+		}
+	}
+
+	return SortedShards;
+}
+
+void ASf_BreakerTarget::UpdateTotalHealth()
+{
+	float CurrentHealth = 0;
+	float MaxHealth = 0;
+	for (const ASf_BreakerShard* Shard: BreakerShards)
+	{
+		if (!IsValid(Shard))
+			continue;
+		const USf_DamageController* CurrentController = Shard->GetDamageController();
+		float CurrentShardHealth =  CurrentController->GetCurrentHealth();
+		float ShardMaxHealth = CurrentController->MaxHealth;
+
+		CurrentHealth+=CurrentShardHealth;
+		MaxHealth += ShardMaxHealth;
+	}
+	DamageController->MaxHealth = MaxHealth;
+	DamageController->SetHealth(CurrentHealth);
+
+	FString DebugString = FString::Printf(TEXT("Max Health: %f, CurrentHealth %f, Set Health: %f"),MaxHealth,DamageController->GetCurrentHealth(),CurrentHealth);
+	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, DebugString);
+}
+
+void ASf_BreakerTarget::ImportShards()
+{
+	//Import Shards
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsOfClass(this,ASf_BreakerShard::StaticClass(),FoundActors);
+	for (AActor* Actor: FoundActors)
+	{
+		ASf_BreakerShard* BreakerShard = Cast<ASf_BreakerShard>(Actor);
+		RegisterShard(BreakerShard);
+	}
+}
+
+
+

@@ -8,11 +8,8 @@
 #include "Features/Combat/CF_Combat_Config.h"
 #include "Features/Cover/CF_Cover_Config.h"
 #include "Features/Death/CF_Death_Config.h"
-#include "Features/DynamicMoveTarget/CF_DynamicMoveTarget.h"
 #include "Features/DynamicMoveTarget/CF_DynamicMoveTarget_Config.h"
 #include "Features/Locomotion/CF_Locomotion_Config.h"
-#include "NavAreas/NavArea_Default.h"
-#include "NavAreas/NavArea_Null.h"
 #include "Starfire/Shared/CharacterFeature/Sf_CharacterFeature.h"
 #include "Starfire/Shared/Weapon/WeaponBase.h"
 
@@ -40,7 +37,23 @@ void ASf_TP_Character::PreInitializeComponents()
 void ASf_TP_Character::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+
+	if (GetWorld() && GetWorld()->GetGameInstance())
+	{
+		//User defined features
+		for (USf_CharacterFeature_Config* Config: FeatureConfigs)
+			TryAddFeature(Config);
+
+		//Necessary FeaturesNew
+		for (TSubclassOf<USf_CharacterFeature_Config> ConfigType: GetAllStartConfigs())
+		{
+			TryAddFeatureByConfigClass(ConfigType);
+		}
+	}
 }
+
+	
+
 
 USf_CharacterFeature* ASf_TP_Character::GetFeatureByClass(const TSubclassOf<USf_CharacterFeature> Class)
 {
@@ -129,16 +142,6 @@ USf_TP_CharacterMovementComponent* ASf_TP_Character::GetSf_TP_CharacterMovement(
 void ASf_TP_Character::BeginPlay()
 {
 	Super::BeginPlay();
-
-	//User defined features
-	for (USf_CharacterFeature_Config* Config: FeatureConfigs)
-		TryAddFeature(Config);
-
-	//Necessary FeaturesNew
-	for (TSubclassOf<USf_CharacterFeature_Config> ConfigType: GetAllStartConfigs())
-	{
-		TryAddFeatureByConfigClass(ConfigType);
-	}
 	
 	for (USf_CharacterFeature* Feature: FeaturesNew)
 		Feature->OnBeginPlay();

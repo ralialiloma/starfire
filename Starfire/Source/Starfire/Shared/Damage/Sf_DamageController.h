@@ -14,10 +14,11 @@
 (DamageController->ApplyDamage(Damage,HitLocation,HitNormal,HitComponent,Sf_GameplayTags::Gameplay::DamageType::Type))
 
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FReceivedDamage_BP , float, RemainingHealth, float, DamageReceived, FVector, HitLocation, FVector, HitNormal);
-DECLARE_MULTICAST_DELEGATE_FourParams(FReceivedDamage_CPP , float, float, FVector, FVector);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FiveParams(FReceivedDamage_BP , float, RemainingHealth, float, DamageReceived, FVector, HitLocation, FVector, 
+HitNormal,FGameplayTag,DamageType);
+DECLARE_MULTICAST_DELEGATE_FiveParams(FReceivedDamage_CPP , float, float, FVector, FVector, FGameplayTag);
 
-UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent), Blueprintable)
+UCLASS(ClassGroup=(Damage), meta=(BlueprintSpawnableComponent), Blueprintable)
 class STARFIRE_API USf_DamageController : public UActorComponent
 {
 	GENERATED_BODY()
@@ -42,13 +43,17 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void Heal(float AmountOfHeal, bool bInternal = false);
 	UFUNCTION(BlueprintCallable)
+	float IsMaxHealth() const;
+	UFUNCTION(BlueprintCallable)
 	float GetCurrentHealth() const;
 	UFUNCTION(BlueprintCallable)
 	float GetCurrentHealthInPercent() const;
 	UFUNCTION(BlueprintCallable)
 	float GetCurrentArmor() const;
-private:
+
+	UFUNCTION(BlueprintCallable)
 	void SetHealth(float NewHealth);
+private:
 	void PassiveHeal(float DeltaSeconds);
 
 #pragma endregion
