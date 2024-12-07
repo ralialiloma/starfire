@@ -222,6 +222,9 @@ TArray<FVector> ASf_TetherPointGen::GetCoverLocations(const float MinScore) cons
 	TArray<FVector> CoverLocations{};
 	for (const UTetherPoint* Point: AllTetherPoints)
 	{
+		if (!Point->GameplayTags.HasTag(Sf_GameplayTags::Gameplay::PatrolAreaMarkerTypes::Cover::Name))
+			continue;
+		
 		if (Point->CoverPotential>MinScore &&  Point->DistanceToWall < MaxWallDistance)
 		{
 			CoverLocations.Add(Point->CenterLocation);
@@ -242,8 +245,7 @@ bool ASf_TetherPointGen::VerifyCover(const FVector LocationToVerify, const float
 	FVector FoundCoverLoc;
 	bool bFoundLocation;
 	GetClosestCoverTo(LocationToVerify,MinScore,Distance,FoundCoverLoc,bFoundLocation);
-
-	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, FString::SanitizeFloat(Distance));
+	
 	
 	if (!bFoundLocation)
 		return false;
@@ -340,6 +342,9 @@ TArray<FVector> ASf_TetherPointGen::GetPeakLocationsInRange(const float MaxScore
 	TArray<FVector> CoverLocations{};
 	for (const UTetherPoint* Point: AllTetherPoints)
 	{
+		if (!Point->GameplayTags.HasTag(Sf_GameplayTags::Gameplay::PatrolAreaMarkerTypes::Peak))
+			continue;
+		
 		if (Point->CoverPotential<MaxScore)
 		{
 			CoverLocations.Add(Point->CenterLocation);
