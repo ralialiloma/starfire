@@ -28,21 +28,19 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent)
 	void OnRegisterMarker(ASf_PatrolAreaMarker* NewMarker);
-
 	UFUNCTION(BlueprintNativeEvent)
 	void OnUnregistermarker(ASf_PatrolAreaMarker* OldMarker);
-
 	UFUNCTION(BlueprintCallable)
 	bool TryRegisterMarker(ASf_PatrolAreaMarker* Marker);
 	UFUNCTION(BlueprintCallable)
 	void UnregisterMarker(ASf_PatrolAreaMarker* Marker);
-	UFUNCTION(BlueprintCallable)
-	TArray<ASf_PatrolAreaMarker*> GetCurrentMarkers();
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	TArray<ASf_PatrolAreaMarker*> GetCurrentMarkers() const;
 
 	UFUNCTION(BlueprintCallable)
 	void ValidateMarkers();
 
-	void ImportData();
+	void ImportActors();
 
 	void OnCharacterDeath();
 

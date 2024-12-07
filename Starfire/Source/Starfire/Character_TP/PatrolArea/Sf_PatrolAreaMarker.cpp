@@ -2,11 +2,14 @@
 
 #include "Sf_PatrolAreaMarker.h"
 #include "NavigationSystem.h"
+#include "Chaos/CollisionResolution.h"
 
 
 ASf_PatrolAreaMarker::ASf_PatrolAreaMarker()
 {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
+	CollisionMesh = CreateDefaultSubobject<UStaticMeshComponent>("CollisionMesh");
+	CollisionMesh->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
 }
 
 void ASf_PatrolAreaMarker::OnConstruction(const FTransform& Transform)

@@ -33,6 +33,11 @@ void ASf_PatrolArea::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
+	if (!IsValid(GetWorld()))
+		return;
+	if (!IsValid(GetWorld()->GetGameInstance()))
+		return;
+	
 	USf_PatrolAreaManager* PatrolAreaManager = USf_PatrolAreaManager::Get(GetWorld());
 	if (IsValid(PatrolAreaManager))
 		PatrolAreaManager->RegisterPatrolArea(this);
@@ -64,7 +69,7 @@ void ASf_PatrolArea::OnRegisterMarker_Implementation(ASf_PatrolAreaMarker* NewMa
 void ASf_PatrolArea::BeginPlay()
 {
 	Super::BeginPlay();
-	ImportData();
+	ImportActors();
 }
 
 void ASf_PatrolArea::Tick(float DeltaTime)
@@ -115,7 +120,7 @@ void ASf_PatrolArea::UnregisterMarker(ASf_PatrolAreaMarker* Marker)
 	ValidateMarkers();
 }
 
-TArray<ASf_PatrolAreaMarker*> ASf_PatrolArea::GetCurrentMarkers()
+TArray<ASf_PatrolAreaMarker*> ASf_PatrolArea::GetCurrentMarkers() const
 {
 	return Markers;
 }
@@ -141,7 +146,7 @@ void ASf_PatrolArea::ValidateMarkers()
 	Markers = ValidMarkers;
 }
 
-void ASf_PatrolArea::ImportData()
+void ASf_PatrolArea::ImportActors()
 {
 	TArray<AActor*> ActorsInBox;
 	GetActorsInsideBox(ActorsInBox);

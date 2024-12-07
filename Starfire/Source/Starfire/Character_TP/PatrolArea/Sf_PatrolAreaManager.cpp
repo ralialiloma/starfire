@@ -34,11 +34,13 @@ void USf_PatrolAreaManager::UnregisterPatrolArea(ASf_PatrolArea* PatrolArea)
 	RegisteredPatrolAreas.Remove(PatrolArea);
 }
 
-ASf_PatrolArea* USf_PatrolAreaManager::RegisterMarker(const FGuid Guid,ASf_PatrolAreaMarker* MarkerToRegister)
+ASf_PatrolArea* USf_PatrolAreaManager::RegisterMarker(ASf_PatrolAreaMarker* MarkerToRegister)
 {
+
 	if (!IsValid(MarkerToRegister))
 		return nullptr;
-	ASf_PatrolArea* FoundArea  =  FindPatrolAreaForLocation(MarkerToRegister->GetActorLocation());
+	bool bFound;
+	ASf_PatrolArea* FoundArea  =  FindPatrolAreaForLocation(MarkerToRegister->GetActorLocation(), bFound);
 	if (!IsValid(FoundArea))
 		return nullptr;
 		
@@ -59,23 +61,28 @@ void USf_PatrolAreaManager::UnregisterMarker(ASf_PatrolAreaMarker* MarkerToUnreg
 	}
 }
 
-ASf_PatrolArea* USf_PatrolAreaManager::FindPatrolAreaForLocation(const FVector PointToTest)
+ASf_PatrolArea* USf_PatrolAreaManager::FindPatrolAreaForLocation(const FVector PointToTest, bool &bFound)
 {
+	bFound = false;
 	for (ASf_PatrolArea* PatrolArea: RegisteredPatrolAreas)
 	{
 		if (!IsValid(PatrolArea))
 			continue;
 
 		if (PatrolArea->IsInBox(PointToTest))
+		{
+			bFound = true;
 			return PatrolArea;
+		}
 	}
-
 	return nullptr;
 }
 
 bool USf_PatrolAreaManager::IsPointInAnyPatrolArea(const FVector& PointToTest)
 {
-	return FindPatrolAreaForLocation(PointToTest)!=nullptr;
+	bool bFound = false;
+	FindPatrolAreaForLocation(PointToTest, bFound);
+	return bFound;
 }
 
 TArray<ASf_PatrolArea*> USf_PatrolAreaManager::GetFreePatrolAreas() const

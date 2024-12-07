@@ -18,6 +18,7 @@ public:
 #pragma region Functions
 protected:
 	void ProjectToNavigation();
+
 #pragma endregion
 	
 
@@ -26,6 +27,8 @@ public:
 	UPROPERTY(BlueprintReadOnly,EditAnywhere, Category = PatrolArea,meta=(Categories="Gameplay.PatrolAreaMarkerTypes"))
 	FGameplayTagContainer PatrolTags;
 protected:
+	UPROPERTY(BlueprintReadWrite,EditDefaultsOnly)
+	UStaticMeshComponent* CollisionMesh;
 	UPROPERTY()
 	bool bONavmesh = false;
 	UPROPERTY()
