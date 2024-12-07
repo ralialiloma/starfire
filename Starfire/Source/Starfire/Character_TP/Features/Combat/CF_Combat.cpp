@@ -112,7 +112,7 @@ bool UCF_Combat::StartFire(bool bScoped, bool bInClearFocusAfterFiring)
 	{
 		if (!WeakSelf.IsValid() || !WeakSelf->bIsFiring)
 			return;
-		FAsyncUtility::WaitForSeconds(FireDelay,WeakSelf,0.05f);
+		FAsyncUtility::WaitForSeconds(FireDelay,WeakSelf,0.1f);
 		while (WeakSelf.IsValid() && WeakSelf->bIsFiring)
 		{
 			FAsyncUtility::RunOnGameThread<void>(WeakSelf,[WeakSelf,bScoped]()->void
@@ -121,7 +121,7 @@ bool UCF_Combat::StartFire(bool bScoped, bool bInClearFocusAfterFiring)
 					return;
 				WeakSelf->DoFire(EInputSignalType::InputSignal_Triggered,bScoped);
 			});
-			FAsyncUtility::WaitForSeconds(FireDelay,WeakSelf,0.05f);
+			FAsyncUtility::WaitForSeconds(FireDelay,WeakSelf,0.1f);
 		}
 	});
 
