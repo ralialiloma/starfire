@@ -55,18 +55,20 @@ float USf_DamageController::ApplyDamage(
 	float SafeCurrentArmor = FMath::Max(CurrentArmor,1);
 	float TotalDamage = (Damage/SafeCurrentArmor)*Hitbox->DamageMultiplier;
 
+	
+	//Update CurrentHealth
+	SetHealth(CurrentHealth-TotalDamage);
+
 	//Stop Passive Heal
 	bShouldPassiveHeal = false;
 	GetWorld()->GetTimerManager().PauseTimer(PassiveHealCooldown);
 	GetWorld()->GetTimerManager().ClearTimer(PassiveHealCooldown);
 	GetWorld()->GetTimerManager().SetTimer(
 		PassiveHealCooldown,
-		[this]()->void{bShouldPassiveHeal = bEnablePassiveHealing;},
+		[this]()->void{bShouldPassiveHeal = bEnablePassiveHealing && CurrentHealth>0;},
 		PassiveHealingStartAfterDamageInSeconds,
 		false);
 
-	//Update CurrentHealth
-	SetHealth(CurrentHealth-TotalDamage);
 
 	//Broadcast Damage Received
 	OnDamageReceived_CPP.Broadcast(CurrentHealth,TotalDamage,HitLocation,HitNormal,DamageType);
@@ -86,6 +88,9 @@ void USf_DamageController::Reset()
 
 void USf_DamageController::Heal(const float AmountOfHeal, const bool bInternal)
 {
+	if (CurrentHealth<=0 && !bInternal)
+		return;
+	
 	const float AbsoluteAmountOfHeal = FMath::Abs(AmountOfHeal);
 	const bool bRequiredHealing = CurrentHealth<MaxHealth;
 	SetHealth(FMath::Min(CurrentHealth+AbsoluteAmountOfHeal,MaxHealth));

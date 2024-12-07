@@ -10,6 +10,7 @@ ASf_BreakerTarget::ASf_BreakerTarget(const FObjectInitializer& ObjectInitializer
 {
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bTickEvenWhenPaused = true;
+	PrimaryActorTick.TickInterval = 1.0f;
 	
 	//Damage Controller
 	DamageController = CreateDefaultSubobject<USf_DamageController>(TEXT("DamageController"));
@@ -80,7 +81,7 @@ void ASf_BreakerTarget::Tick(const float DeltaSeconds)
 
 	if (GameState && GameState->IsInPlayState(Sf_GameplayTags::Gameplay::PlayState::Arena))
 	{
-		DoProgress(DeltaSeconds);
+		//DoProgress(DeltaSeconds);
 	}
 }
 
@@ -120,61 +121,6 @@ float ASf_BreakerTarget::GetProgress() const
 USf_DamageController* ASf_BreakerTarget::GetDamageController() const
 {
 	return DamageController;
-}
-
-void ASf_BreakerTarget::DoProgress(const float DeltaSeconds) const
-{
-	TArray<ASf_BreakerShard*> SortedShards =  SortBreakerShardsByHealth(BreakerShards);
-	TArray<ASf_BreakerShard*> ShardsToHeal{};
-	ShardsToHeal.Empty();
-	for (ASf_BreakerShard* Shard: SortedShards)
-	{
-		if (!IsValid(Shard))
-			continue;
-		if (!Shard->GetDamageController()->IsMaxHealth())
-			continue;
-		ShardsToHeal.Add(Shard);
-	}
-
-	int AmountOfShardsToHeal = ShardsToHeal.Num();
-	const float AmountOfHealPerShard = AmountOfShardsToHeal>0?(1/ShardsToHeal.Num())*ProgressionRatePerSecond*DeltaSeconds:0;
-	for (const ASf_BreakerShard* Shard: ShardsToHeal)
-	{
-		Shard->GetDamageController()->Heal(AmountOfHealPerShard);
-	}
-}
-
-TArray<ASf_BreakerShard*> ASf_BreakerTarget::SortBreakerShardsByHealth(const TArray<ASf_BreakerShard*>& BreakerShards)
-{
-	TArray<ASf_BreakerShard*> SortedShards = BreakerShards;
-
-	int32 N = SortedShards.Num();
-
-	// Simple Selection Sort by health (descending order)
-	for (int32 i = 0; i < N - 1; ++i)
-	{
-		int32 MaxIndex = i;
-
-		for (int32 j = i + 1; j < N; ++j)
-		{
-			// Compare health values
-			float HealthA = SortedShards[MaxIndex]->GetDamageController()->GetCurrentHealth();
-			float HealthB = SortedShards[j]->GetDamageController()->GetCurrentHealth();
-
-			if (HealthB > HealthA)  // Swap if B has more health
-			{
-				MaxIndex = j;
-			}
-		}
-
-		// Swap the elements
-		if (MaxIndex != i)
-		{
-			SortedShards.Swap(i, MaxIndex);
-		}
-	}
-
-	return SortedShards;
 }
 
 void ASf_BreakerTarget::UpdateTotalHealth()

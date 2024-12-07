@@ -26,7 +26,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	USf_DamageController* GetDamageController() const;
 private:
-	void DoProgress(float DeltaSeconds) const;
 	void UpdateTotalHealth();
 	void ImportShards();
 	static TArray<ASf_BreakerShard*> SortBreakerShardsByHealth(const TArray<ASf_BreakerShard*>& BreakerShards);

@@ -4,7 +4,7 @@ ASf_BreakerShard::ASf_BreakerShard()
 {
 	//Damage Controller
 	DamageController = CreateDefaultSubobject<USf_DamageController>(TEXT("DamageController"));
-	DamageController->bEnablePassiveHealing = false;
+	DamageController->bEnablePassiveHealing = true;
 	DamageController->SupportedDamageTypes = FGameplayTagContainer(Sf_GameplayTags::Gameplay::DamageType::Explosion);
 	DamageController->bStartWithMaxHealth = false;
 
