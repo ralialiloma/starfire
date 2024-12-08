@@ -5,6 +5,7 @@
 
 #include "NavigationSystem.h"
 #include "NavModifierComponent.h"
+#include "EQS/TetherPointSystem/Sf_TetherPointGen.h"
 #include "Features/Combat/CF_Combat_Config.h"
 #include "Features/Cover/CF_Cover_Config.h"
 #include "Features/Death/CF_Death_Config.h"
@@ -145,7 +146,11 @@ void ASf_TP_Character::BeginPlay()
 	
 	for (USf_CharacterFeature* Feature: FeaturesNew)
 		Feature->OnBeginPlay();
-		
+
+
+	ASf_TetherPointGen* TetherPointGen =  ASf_TetherPointGen::Get(GetWorld());
+	if (IsValid(TetherPointGen))
+		TetherPointGen->RegisterActor(this);
 }
 
 void ASf_TP_Character::Tick(float DeltaTime)

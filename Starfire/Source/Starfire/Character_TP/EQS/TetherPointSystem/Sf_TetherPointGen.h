@@ -75,6 +75,11 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool VerifyPeak(FVector LocationToVerify, float Extent, const float MaxScore = 0.1f) const;
+	
+	UTetherPoint* GetClosestTetherPointTo(const FVector& Location) const;
+
+	UFUNCTION(BlueprintCallable)
+	FGameplayTagContainer GetClosestTetherPointTags(const FVector Location) const;
 
 	UFUNCTION(BlueprintCallable)
 	void GetClosestCoverTo(const FVector Location, const float MinScore, float& OutDistance, FVector& ClosestCoverLocation, bool& bFound) const;
@@ -140,7 +145,7 @@ protected:
 	float VerticalOffset = 50;
 
 	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly)
-	float PlayerUpdateRateInSeconds = 1;
+	float RelevantPointUpdateRate = 1;
 
 	
 	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly)
