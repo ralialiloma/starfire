@@ -5,6 +5,7 @@
 #include "Starfire/Utility/CollisionData.h"
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
 #include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
+#include "Starfire/Character_TP/EQS/TetherPointSystem/Sf_TetherPointGen.h"
 
 
 
@@ -17,7 +18,15 @@ void UCF_Cover::Initialize(ASf_TP_Character* Holder, const USf_CharacterFeature_
 
 bool UCF_Cover::EnterCover()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, "Try Enter Cover");
+	ASf_TetherPointGen* TetherPointGen = ASf_TetherPointGen::Get(this);
+	if (!IsValid(TetherPointGen))
+		return false;
+	FGameplayTagContainer ActivePatrolPointTags =  TetherPointGen->GetClosestTetherPointTags(GetOwnerLocation());
+	if (ActivePatrolPointTags.HasTag(Sf_GameplayTags::Gameplay::PatrolAreaMarkerTypes::Cover::Low))
+		GetOwningCharacter()->Crouch();
+	return true;
+	
+	/*GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, "Try Enter Cover");
 	const bool bInHighCover = !CanBeHitByPlayer(CoverConfig->MinCoverHeight);
 	if (bInHighCover)
 	{
@@ -44,7 +53,7 @@ bool UCF_Cover::EnterCover()
 	ExitCover();
 	bIsInHighCoverState = false;
 	bIsInLowCoverState = false;
-	return false;
+	return false;*/
 }
 
 bool UCF_Cover::VerifyCover(const FVector LocationToVerify)

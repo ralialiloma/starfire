@@ -2,6 +2,7 @@
 #include "NavigationSystem.h"
 #include "Navigation/PathFollowingComponent.h"
 #include "Starfire/Character_TP/Sf_TP_Character.h"
+#include "Starfire/Character_TP/EQS/TetherPointSystem/Sf_TetherPointSubsystem.h"
 #include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
 
 
@@ -71,6 +72,8 @@ bool UCF_Locomotion::MoveToLocation(const F_SF_MoveRequest MoveRequest)
 
 	if (Result ==EPathFollowingRequestResult::Type::AlreadyAtGoal)
 	{
+		OnMoveStarted_CPP.Broadcast();
+		OnMoveStarted_BP.Broadcast();
 		OnMoveFinished_CPP.Broadcast();
 		OnMoveFinished_BP.Broadcast();
 		StopMovement();
@@ -96,7 +99,9 @@ bool UCF_Locomotion::MoveToLocation(const F_SF_MoveRequest MoveRequest)
 		LastDestination = MoveRequest.TargetActor->GetActorLocation();
 	}
 
-	
+
+	OnMoveStarted_CPP.Broadcast();
+	OnMoveStarted_BP.Broadcast();
 	ProcessLocomotionType(MoveRequest.LocomotionType);
 	OwningController->ReceiveMoveCompleted.AddDynamic(this, &UCF_Locomotion::OnMoveCompleted);
 	return true;
@@ -105,10 +110,9 @@ bool UCF_Locomotion::MoveToLocation(const F_SF_MoveRequest MoveRequest)
 void UCF_Locomotion::StopMovement()
 {
 	AAIController* OwningController = GetOwningAIController();
-	
 	OwningController->StopMovement();
 	OwningController->ReceiveMoveCompleted.RemoveDynamic(this, &UCF_Locomotion::OnMoveCompleted);
-	ClearAllDelegates();
+	ClearMoveFailAndFinishDelegates();
 }
 
 void UCF_Locomotion::FinishMovement()
@@ -116,10 +120,12 @@ void UCF_Locomotion::FinishMovement()
 	AAIController* OwningController = GetOwningAIController();
 	OwningController->StopMovement();
 	OwningController->ReceiveMoveCompleted.RemoveDynamic(this, &UCF_Locomotion::OnMoveCompleted);
+	ASf_TetherPointGen* TetherPointGen =  USf_TetherPointSubsystem::Get(GetWorld())->GetTetherPointGen();
 	OnMoveFinished_CPP.Broadcast();
 	OnMoveFinished_BP.Broadcast();
-	ClearAllDelegates();
+	ClearMoveFailAndFinishDelegates();
 }
+
 
 void UCF_Locomotion::ProcessLocomotionType(E_Sf_TP_LocomotionType LocomotionType)
 {
@@ -161,10 +167,10 @@ void UCF_Locomotion::OnMoveCompleted(FAIRequestID RequestID, EPathFollowingResul
 	UE_LOG(EF_Locomotion, Error, TEXT("Move Failed"))
 	OnMoveFailed_BP.Broadcast();
 	OnMoveFailed_CPP.Broadcast();
-	ClearAllDelegates();
+	ClearMoveFailAndFinishDelegates();
 }
 
-void UCF_Locomotion::ClearAllDelegates()
+void UCF_Locomotion::ClearMoveFailAndFinishDelegates()
 {
 	OnMoveFinished_CPP.Clear();
 	OnMoveFinished_BP.Clear();

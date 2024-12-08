@@ -24,7 +24,7 @@ namespace Sf_GameplayTags
 			DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.PatrolAreaMarkerTypes,Peak,"");
 			namespace Cover
 			{
-				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay.Cover", "")
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay.PatrolAreaMarkerTypes.Cover", "")
 				DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.PatrolAreaMarkerTypes.Cover,Low,"");
 				DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.PatrolAreaMarkerTypes.Cover,High,"");
 			}
@@ -80,6 +80,11 @@ namespace Sf_GameplayTags
 			DEFINE_GAMEPLAY_TAG_AUTO(Debug.TP, DynamicMoveTarget, "");
 			DEFINE_GAMEPLAY_TAG_AUTO(Debug.TP,RandomRoamLocation,"");
 			DEFINE_GAMEPLAY_TAG_AUTO(Debug.TP, MeleeRangeCheck, "");
+			namespace PatrolArea
+			{
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Debug.TP.PatrolArea", "")
+				DEFINE_GAMEPLAY_TAG_AUTO(Debug.TP.PatrolArea, PatrolMarker, "");
+			}
 			namespace EQS
 			{
 				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Debug.TP.EQS", "")

@@ -3,6 +3,7 @@
 #include "Sf_PatrolAreaMarker.h"
 #include "NavigationSystem.h"
 #include "Chaos/CollisionResolution.h"
+#include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
 
 
 ASf_PatrolAreaMarker::ASf_PatrolAreaMarker()
@@ -16,7 +17,7 @@ void ASf_PatrolAreaMarker::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 	ProjectToNavigation();
-	
+	SetActorHiddenInGame(SHOULD_DEBUG(TP::PatrolArea::PatrolMarker,EDebugType::Visual));
 }
 
 void ASf_PatrolAreaMarker::ProjectToNavigation()

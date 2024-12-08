@@ -75,11 +75,15 @@ private:
 	void ProcessLocomotionType(E_Sf_TP_LocomotionType LocomotionType);
 	UFUNCTION()
 	void OnMoveCompleted(FAIRequestID RequestID,EPathFollowingResult::Type Result);
-	void ClearAllDelegates();
+	void ClearMoveFailAndFinishDelegates();
 #pragma endregion
 	
 #pragma region Properties
 public:
+	FSf_VoidDelegate_CPP OnMoveStarted_CPP;
+	UPROPERTY(BlueprintAssignable)
+	FSf_VoidDelegate_BP OnMoveStarted_BP;
+	
 	FSf_VoidDelegate_CPP OnMoveFinished_CPP;
 	UPROPERTY(BlueprintAssignable)
 	FSf_VoidDelegate_BP OnMoveFinished_BP;
