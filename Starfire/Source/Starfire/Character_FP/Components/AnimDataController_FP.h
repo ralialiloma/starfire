@@ -15,17 +15,17 @@ public:
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 #endif
 
-	virtual float RunAnimation(FWeaponMontageEventPackage WeaponAnimationUpdateData) const override ;
+	virtual float RunAnimation(FWeaponMontageEventPackage WeaponAnimationUpdateData) override ;
 
 # pragma region Functions
 private:
 	float PlayFPMontage(
 		const FWeaponAnimData_FP& AnimData_FP,
-		UPARAM(meta=(Categories="Animation.Character.FP.Montage"))FGameplayTag MontageType) const;
+		UPARAM(meta=(Categories="Animation.Character.FP.Montage"))FGameplayTag MontageType);
 	
 	void StopFPMontage(
 		FWeaponAnimData_FP AnimData_FP,
-		UPARAM(meta=(Categories="Animation.Character.FP.Montage"))FGameplayTag MontageType) const;
+		UPARAM(meta=(Categories="Animation.Character.FP.Montage"))FGameplayTag MontageType);
 # pragma endregion Functions
 
 # pragma region Properties

@@ -3,7 +3,7 @@
 #include "Starfire/Shared/Weapon/Interfaces/WeaponOwner.h"
 
 
-float USf_AnimHelper::RunAnimation(FWeaponMontageEventPackage WeaponAnimationUpdateData) const
+float USf_AnimHelper::RunAnimation(FWeaponMontageEventPackage WeaponAnimationUpdateData)
 {
 	return 0;
 }
@@ -14,7 +14,7 @@ void USf_AnimHelper::OnAnimNotifyEvent(FGameplayTag Tag)
 	AnimNotifyEvent_BP.Broadcast(Tag);
 }
 
-float USf_AnimHelper::PlayMontage(UAnimMontage* MontageToPlay) const
+float USf_AnimHelper::PlayMontage(UAnimMontage* MontageToPlay)
 {
 	const AActor* WeaponOwner = GetOwner();
 	if (!IsValid(WeaponOwner))
@@ -61,7 +61,7 @@ float USf_AnimHelper::PlayMontage(UAnimMontage* MontageToPlay) const
 		true);
 }
 
-void USf_AnimHelper::StopMontage(UAnimMontage* MontageToStop, float BlendOutTime) const
+void USf_AnimHelper::StopMontage(UAnimMontage* MontageToStop, const float BlendOutTime)
 {
 
 	AActor* WeaponOwner = GetOwner();

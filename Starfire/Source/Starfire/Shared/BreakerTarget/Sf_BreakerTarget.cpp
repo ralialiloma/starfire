@@ -140,9 +140,6 @@ void ASf_BreakerTarget::UpdateTotalHealth()
 	}
 	DamageController->MaxHealth = MaxHealth;
 	DamageController->SetHealth(CurrentHealth);
-
-	FString DebugString = FString::Printf(TEXT("Max Health: %f, CurrentHealth %f, Set Health: %f"),MaxHealth,DamageController->GetCurrentHealth(),CurrentHealth);
-	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, DebugString);
 }
 
 void ASf_BreakerTarget::ImportShards()

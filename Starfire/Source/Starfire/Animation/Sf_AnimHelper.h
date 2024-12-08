@@ -14,7 +14,7 @@ class USf_AnimHelper: public UActorComponent
 	
 public:
 	UFUNCTION(BlueprintCallable,Blueprintable)
-	virtual float RunAnimation(FWeaponMontageEventPackage WeaponAnimationUpdateData) const;
+	virtual float RunAnimation(FWeaponMontageEventPackage WeaponAnimationUpdateData);
 
 	virtual void OnAnimNotifyEvent(FGameplayTag Tag);
 
@@ -24,8 +24,8 @@ public:
 
 protected:
 	UFUNCTION(BlueprintCallable,Blueprintable)
-	float PlayMontage(UAnimMontage* MontageToPlay) const;
+	float PlayMontage(UAnimMontage* MontageToPlay);
 
 	UFUNCTION(BlueprintCallable,Blueprintable)
-	void StopMontage(UAnimMontage* MontageToStop, float BlendOutTime = 0) const;
+	void StopMontage(UAnimMontage* MontageToStop, float BlendOutTime = 0);
 };

@@ -5,6 +5,10 @@
 #include "Kismet/GameplayStatics.h"
 #include "Starfire/Character_TP/Features/Death/CF_Death.h"
 #include "Starfire/Character_TP/PatrolArea/Sf_PatrolAreaManager.h"
+#include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
+#include "Starfire/StarFireGameplayTags.h"
+
+DEFINE_LOG_CATEGORY(LogEnemySpawner);
 
 void UEnemySpawner::StartGame()
 {
@@ -12,6 +16,21 @@ void UEnemySpawner::StartGame()
 
 	if (bDisableSpawning)
 		return; //Temp
+
+	TArray<AActor*> OutActors;
+	UGameplayStatics::GetAllActorsOfClass(this, ASf_PatrolArea::StaticClass(), OutActors);
+	if (MaxEnemies > OutActors.Num())
+	{
+		SF_SIMPLE_DEBUG(
+			LogEnemySpawner, 
+			Warning, 
+			FColor::Orange, 
+			*FString::Printf(TEXT("MaxEnemies changed from %i to %i"), MaxEnemies, OutActors.Num()), 
+			Spawning::Enemies);
+		
+		MaxEnemies = OutActors.Num();
+	}
+	
 	// if (bWaitForVeins)
 	// 	return;
 
@@ -39,39 +58,72 @@ void UEnemySpawner::StartGame()
 
 void UEnemySpawner::SpawnEnemy(const FTransform& Transform)
 {
-	UE_LOG(LogTemp, Log, TEXT("SPawning Enemy."));
+	SF_SIMPLE_DEBUG(
+		LogEnemySpawner, 
+		Warning, 
+		FColor::White, 
+		*FString::Printf(TEXT("Spawning Enemy")), 
+		Spawning::Enemies);
 
 	UClass* EnemyClass = EvaluateSpawnedEnemyClass();
 	if (!EnemyClass)
 	{
-		//Print Error
+		SF_SIMPLE_DEBUG(
+			LogEnemySpawner, 
+			Error, 
+			FColor::Red, 
+			*FString::Printf(TEXT("Spawning Class Invalid!")), 
+			Spawning::Enemies);
 		return;
 	}
-	
-	ASf_TP_Character* Enemy = GetWorld()->SpawnActor<ASf_TP_Character>(EvaluateSpawnedEnemyClass(), Transform.GetLocation(), Transform.GetRotation().Rotator());
-	if(Enemy && Enemy->GetFeatureByClass<UCF_Death>())
+
+	FActorSpawnParameters SpawnParameters {};
+	SpawnParameters.Name = FName(RequestEnemyName());
+
+	ASf_TP_Character* Enemy = GetWorld()->SpawnActor<ASf_TP_Character>(EvaluateSpawnedEnemyClass(), Transform.GetLocation(), Transform.GetRotation().Rotator(), SpawnParameters);
+
+#if WITH_EDITOR
+	if (GEditor) // Ensure editor context
 	{
-		Enemy->GetFeatureByClass<UCF_Death>()->OnDeath_CPP.AddLambda([this]()
-		{
-			RequestNewEnemy();
-		});
+		Enemy->SetActorLabel(GetName());
 	}
+#endif
 	
+	RegisterEnemy(Enemy);	
 }
 
 void UEnemySpawner::SpawnEnemyRandom()
 {
+	GetWorld()->GetTimerManager().ClearTimer(SpawnEnemyTimerHandle);
+	
 	SpawnEnemy(GetSpawnLocation());
+	
+	EnemiesToBeSpawned = FMath::Max(EnemiesToBeSpawned - 1, 0);
+	if (EnemiesToBeSpawned > 0)
+	{
+		RequestNewEnemy();
+	}
 }
 
-void UEnemySpawner:: RegisterEnemy(ASf_TP_Character* Enemy)
+void UEnemySpawner::RegisterEnemy(ASf_TP_Character* Enemy)
 {
-	UE_LOG(LogTemp, Log, TEXT("Register Enemy"));
+	SF_SIMPLE_DEBUG(LogEnemySpawner, Log, FColor::White, *FString::Printf(TEXT("Register Enemy")), Spawning::Enemies);
 
 	if(Enemy && Enemy->GetFeatureByClass<UCF_Death>())
 	{
-		Enemy->GetFeatureByClass<UCF_Death>()->OnDeath_CPP.AddLambda([this]()
+		Enemy->GetFeatureByClass<UCF_Death>()->OnDeath_CPP.AddLambda([this, Enemy]()
 		{
+			SF_SIMPLE_DEBUG(
+				LogEnemySpawner, 
+				Warning, 
+				FColor::White, 
+				*FString::Printf(TEXT("On Death Triggered")), 
+				Spawning::Enemies);
+			EnemiesToBeSpawned++;
+			UsedEnemyNames.Remove(Enemy->GetName());
+			FString ModifiedName = GetIncrementedName(Enemy->GetActorLabel());
+			PossibleEnemyNames.Add(ModifiedName);
+			
 			RequestNewEnemy();
 		});
 	}
@@ -84,16 +136,13 @@ void UEnemySpawner::RequestNewEnemy()
 		GetWorld()->GetTimerManager().ClearTimer(SpawnEnemyTimerHandle);
 		return;
 	}
-
-	UE_LOG(LogTemp, Log, TEXT("New Enemy Request process"));
-
-	SpawnEnemyRandom();
-	EnemiesToBeSpawned--;
+	
+	SF_SIMPLE_DEBUG(LogEnemySpawner, Log, FColor::White, *FString::Printf(TEXT("New Enemy Request process")), Spawning::Enemies);
 
 	if (EnemiesToBeSpawned > 0)
 	{
 		if (!SpawnEnemyTimerHandle.IsValid())
-			GetWorld()->GetTimerManager().SetTimer(SpawnEnemyTimerHandle,this, &UEnemySpawner::RequestNewEnemy, SpawnDelay);
+			GetWorld()->GetTimerManager().SetTimer(SpawnEnemyTimerHandle,this, &UEnemySpawner::SpawnEnemyRandom, SpawnDelay);
 	}
 }
 
@@ -102,29 +151,21 @@ TSubclassOf<ASf_TP_Character> UEnemySpawner::EvaluateSpawnedEnemyClass() const
 	return SpawnedEnemyClass;
 }
 
-TArray<FTransform> UEnemySpawner::GetViableSpawns() const
+TArray<ASf_PatrolArea*> UEnemySpawner::GetViableSpawns() const
 {
-	TArray<ASf_PatrolArea*> Areas = USf_PatrolAreaManager::Get(this->GetWorld())->GetFreePatrolAreas();
-	TArray<FTransform> AreaTransfroms;
-	for (auto Area : Areas)
-	{
-		if (Area)
-			AreaTransfroms.Add(Area->GetTransform());
-	}
-	
-	return AreaTransfroms;
+	return  USf_PatrolAreaManager::Get(this->GetWorld())->GetFreePatrolAreas();
 }
 
 FTransform UEnemySpawner::GetSpawnLocation() const
 {
-	TArray<FTransform> PossibleTransforms = GetViableSpawns();
+	TArray<ASf_PatrolArea*> PossibleTransforms = GetViableSpawns();
 	if (PossibleTransforms.Num() <= 0)
 		return FTransform();
 	
 	//TODO: Currently chooses a random location
 	
 	int RandomIndex = FMath::RandRange(0, PossibleTransforms.Num() - 1);
-	return PossibleTransforms[RandomIndex];
+	return PossibleTransforms[RandomIndex]->GetRandomMarkerTransform();
 }
 
 TArray<ASf_TP_Character*> UEnemySpawner::GetAllEnemies() const
@@ -143,4 +184,42 @@ TArray<ASf_TP_Character*> UEnemySpawner::GetAllEnemies() const
 	}
 
 	return Enemies;
+}
+
+FString UEnemySpawner::RequestEnemyName()
+{
+	if (PossibleEnemyNames.Num() <= 0)
+		return FString("Tony_" + FString::FromInt(TonyCount++));
+	
+	int RandomIndex = FMath::RandRange(0, PossibleEnemyNames.Num() - 1);
+	FString Name = PossibleEnemyNames[RandomIndex];
+	UsedEnemyNames.Add(Name);
+	PossibleEnemyNames.Remove(Name);
+	return Name;
+}
+
+FString UEnemySpawner::GetIncrementedName(FString OriginalName)
+{
+	FString NewName = OriginalName;
+	int32 LastIndex = OriginalName.Len() - 1;
+	
+	int32 NumberIndex = LastIndex;
+	while (NumberIndex >= 0 && FChar::IsDigit(OriginalName[NumberIndex]))
+	{
+		--NumberIndex;
+	}
+
+	if (NumberIndex < LastIndex)
+	{
+		FString BaseName = OriginalName.Left(NumberIndex + 1);
+		FString NumberPart = OriginalName.Mid(NumberIndex + 1);
+		int32 Number = FCString::Atoi(*NumberPart);
+		NewName = BaseName + FString::Printf(TEXT("%d"), Number + 1);
+	}
+	else
+	{
+		NewName = OriginalName + TEXT("_0");
+	}
+
+	return FString(NewName);
 }
