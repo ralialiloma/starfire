@@ -18,7 +18,7 @@ void USf_WeaponAnimMontageController_TP::PostEditChangeProperty(FPropertyChanged
 }
 #endif
 
-float USf_WeaponAnimMontageController_TP::RunAnimation(FWeaponMontageEventPackage WeaponAnimationUpdateData) const
+float USf_WeaponAnimMontageController_TP::RunAnimation(FWeaponMontageEventPackage WeaponAnimationUpdateData)
 {
 	const EWeaponAnimationEventType EventType = WeaponAnimationUpdateData.AnimationEventType;
 	const FGameplayTag* MontageType  =  AnimationStartMappings.Find(EventType);
@@ -44,7 +44,7 @@ float USf_WeaponAnimMontageController_TP::RunAnimation(FWeaponMontageEventPackag
 	return PlayFPMontage(WeaponAnimationUpdateData.AnimData_TP,*MontageType);
 }
 
-float USf_WeaponAnimMontageController_TP::PlayFPMontage(FWeaponAnimData_TP AnimData_TP,FGameplayTag MontageType) const
+float USf_WeaponAnimMontageController_TP::PlayFPMontage(const FWeaponAnimData_TP& AnimData_TP, const FGameplayTag MontageType)
 {
 	UAnimMontage* AnimMontage =  UAnimDataHelper::GetAnimationMontage_TP(AnimData_TP,MontageType);
 	if (!IsValid(AnimMontage))
@@ -56,7 +56,7 @@ float USf_WeaponAnimMontageController_TP::PlayFPMontage(FWeaponAnimData_TP AnimD
 	return PlayMontage(AnimMontage);
 }
 
-void USf_WeaponAnimMontageController_TP::StopFPMontage(FWeaponAnimData_TP AnimData_FP, FGameplayTag MontageType) const
+void USf_WeaponAnimMontageController_TP::StopFPMontage(const FWeaponAnimData_TP& AnimData_FP, const FGameplayTag MontageType)
 {
 	UAnimMontage* AnimMontage =  UAnimDataHelper::GetAnimationMontage_TP(AnimData_FP,MontageType);
 	if (!IsValid(AnimMontage))
