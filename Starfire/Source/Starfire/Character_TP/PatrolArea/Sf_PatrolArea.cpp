@@ -62,6 +62,15 @@ bool ASf_PatrolArea::IsOccupied() const
 	return Character != nullptr;
 }
 
+FTransform ASf_PatrolArea::GetRandomMarkerTransform() const
+{
+	if (Markers.Num() <= 0)
+		return GetTransform();
+	
+	int RandomIndex = FMath::RandRange(0, Markers.Num() - 1);
+	return Markers[RandomIndex]->GetTransform();
+}
+
 void ASf_PatrolArea::OnRegisterMarker_Implementation(ASf_PatrolAreaMarker* NewMarker)
 {
 }
@@ -69,7 +78,20 @@ void ASf_PatrolArea::OnRegisterMarker_Implementation(ASf_PatrolAreaMarker* NewMa
 void ASf_PatrolArea::BeginPlay()
 {
 	Super::BeginPlay();
-	ImportActors();
+
+	Box->OnComponentBeginOverlap.AddDynamic(this, &ASf_PatrolArea::OnOverlap);
+
+	if (GetWorld()->GetBegunPlay())
+	{
+		StartGame();
+	}
+	else
+	{
+		GetWorld()->OnWorldBeginPlay.AddLambda([this]()
+		{
+			StartGame();
+		});
+	}
 }
 
 void ASf_PatrolArea::Tick(float DeltaTime)
@@ -77,8 +99,29 @@ void ASf_PatrolArea::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void ASf_PatrolArea::OnUnregistermarker_Implementation(ASf_PatrolAreaMarker* OldMarker)
+void ASf_PatrolArea::StartGame()
 {
+	ImportActors();
+}
+
+void ASf_PatrolArea::OnUnregisterMarker_Implementation(ASf_PatrolAreaMarker* OldMarker)
+{
+}
+
+void ASf_PatrolArea::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
+	bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (IsOccupied())
+		return;
+	
+	if (OtherActor->IsA<ASf_TP_Character>())
+	{
+		Character = Cast<ASf_TP_Character>(OtherActor);
+		Character->GetFeatureByClass<UCF_Death>()->OnDeath_CPP.AddLambda([this]()
+		{
+			OnCharacterDeath();
+		});
+	}
 }
 
 bool ASf_PatrolArea::TryRegisterMarker(ASf_PatrolAreaMarker* Marker)
@@ -150,27 +193,20 @@ void ASf_PatrolArea::ImportActors()
 {
 	TArray<AActor*> ActorsInBox;
 	GetActorsInsideBox(ActorsInBox);
+	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, FString::FromInt(ActorsInBox.Num()));
 	for (AActor* Actor: ActorsInBox)
 	{
 		ASf_PatrolAreaMarker* PatrolAreaMarker = Cast<ASf_PatrolAreaMarker>(Actor);
 		if (IsValid(PatrolAreaMarker))
 			TryRegisterMarker(PatrolAreaMarker);
 
-		Character = Cast<ASf_TP_Character>(Actor);
-		if(IsValid(Character) && IsValid(	Character->GetFeatureByClass<UCF_Death>()))
-		{
-			Character->GetFeatureByClass<UCF_Death>()->OnDeath_CPP.AddLambda([this]()
-			{
-				OnCharacterDeath();
-			});
-		}
-		else
-			OnCharacterDeath();
+		OnOverlap(Box, Actor, nullptr, -1, false, FHitResult());
 	}
 }
 
 void ASf_PatrolArea::OnCharacterDeath()
 {
+	Character = nullptr;
 }
 
 void ASf_PatrolArea::GetActorsInsideBox(TArray<AActor*>& OutActors) const

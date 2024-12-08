@@ -135,6 +135,12 @@ namespace Sf_GameplayTags
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Debug.Core", "");
 			DEFINE_GAMEPLAY_TAG_AUTO(Debug.Core, GameState, "");
 		}
+		namespace Spawning
+		{
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Debug.Spawning", "");
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Resources, "Debug.Spawning.Resources", "");
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Enemies, "Debug.Spawning.Enemies", "");
+		}
 
 	}
 	namespace Animation

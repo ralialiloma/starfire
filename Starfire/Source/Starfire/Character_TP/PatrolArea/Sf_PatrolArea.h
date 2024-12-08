@@ -20,16 +20,25 @@ public:
 	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
+
+	void StartGame();
 	
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool IsInBox(const FVector& LocationToTest) const;
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool IsOccupied() const;
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	FTransform GetRandomMarkerTransform() const;
 
 	UFUNCTION(BlueprintNativeEvent)
 	void OnRegisterMarker(ASf_PatrolAreaMarker* NewMarker);
 	UFUNCTION(BlueprintNativeEvent)
-	void OnUnregistermarker(ASf_PatrolAreaMarker* OldMarker);
+
+	void OnUnregisterMarker(ASf_PatrolAreaMarker* OldMarker);
+
+	UFUNCTION()
+	void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
 	UFUNCTION(BlueprintCallable)
 	bool TryRegisterMarker(ASf_PatrolAreaMarker* Marker);
 	UFUNCTION(BlueprintCallable)

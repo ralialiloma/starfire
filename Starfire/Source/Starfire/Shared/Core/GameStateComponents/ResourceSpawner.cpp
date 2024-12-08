@@ -22,8 +22,6 @@ uint8 FResourceVein::GetVeinID() const
 
 void FResourceVein::OnResourceCollected(AResource* Resource)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, "Resouces Collected");
-
 	TSharedPtr<FResourceSpawn>* FoundSpawn = nullptr;
 	FoundSpawn = Spawns.FindByPredicate([Resource](TSharedPtr<FResourceSpawn> Spawn)
 	{

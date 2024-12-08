@@ -8,6 +8,8 @@
 #include "Components/ActorComponent.h"
 #include "EnemySpawner.generated.h"
 
+class ASf_PatrolArea;
+DECLARE_LOG_CATEGORY_EXTERN(LogEnemySpawner, Log, All);
 
 class ASf_TP_Character;
 
@@ -31,9 +33,12 @@ protected:
 	void RegisterEnemy(ASf_TP_Character* Enemy);
 
 	TSubclassOf<ASf_TP_Character> EvaluateSpawnedEnemyClass() const;
-	TArray<FTransform> GetViableSpawns() const;
+	TArray<ASf_PatrolArea*> GetViableSpawns() const;
 	FTransform GetSpawnLocation() const;
 	TArray<ASf_TP_Character*> GetAllEnemies() const;
+
+	FString RequestEnemyName();
+	static FString GetIncrementedName(FString Name);
 
 protected:
 	
@@ -51,6 +56,34 @@ protected:
 	bool bStartWithMax = true;
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
 	bool bDisableSpawning = true;
+	
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	TArray<FString> PossibleEnemyNames { 
+		FString("Tony"), 
+		FString("Victor"), 
+		FString("Lena"), 
+		FString("Max"), 
+		FString("Sasha"), 
+		FString("Ivy"), 
+		FString("Dimitri"), 
+		FString("Raven"), 
+		FString("Kira"), 
+		FString("Axel"),
+		FString("Serena"),
+		FString("Elio"),
+		FString("Maxine"),
+		FString("Richard"),
+		FString("Samantha"),
+		FString("Jesse"),
+		FString("Marlon"),
+		FString("Lukas"),
+		FString("Jermaine"),
+		FString("Marek")
+	};
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	TArray<FString> UsedEnemyNames {};
+	UPROPERTY()
+	int TonyCount = 0;
 	
 	UPROPERTY()
 	FTimerHandle SpawnEnemyTimerHandle = FTimerHandle();
