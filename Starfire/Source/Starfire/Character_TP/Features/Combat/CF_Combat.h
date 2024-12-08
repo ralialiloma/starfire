@@ -93,6 +93,7 @@ public:
 	FDelegateHandle OnReloadStoppedHandle = FDelegateHandle();
 
 private:
+	FTimerHandle FireHandle;
 	bool bIsFiring;
 	int FiredBullets;
 	bool bCLearFocusAfterFiring;

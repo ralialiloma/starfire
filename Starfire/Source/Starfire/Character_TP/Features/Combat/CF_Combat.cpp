@@ -107,23 +107,16 @@ bool UCF_Combat::StartFire(bool bScoped, bool bInClearFocusAfterFiring)
 	const float FireDelay = GetOwningSfEquipment()->GetWeaponConfig().FireDelay+0.01f;
 	UE_LOG(EF_Combat, Log, TEXT("Starting timer with this rate %f"),FireDelay);
 
-	TWeakObjectPtr<UCF_Combat> WeakSelf = this;
-	FAsyncUtility::RunOnAnyThread<void>(WeakSelf,[bScoped,WeakSelf,FireDelay]()->void
-	{
-		if (!WeakSelf.IsValid() || !WeakSelf->bIsFiring)
-			return;
-		FAsyncUtility::WaitForSeconds(FireDelay,WeakSelf,0.1f);
-		while (WeakSelf.IsValid() && WeakSelf->bIsFiring)
+	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Green, "Starting Timer");
+	GetWorld()->GetTimerManager().SetTimer(
+		FireHandle,
+		[this, bScoped]()
 		{
-			FAsyncUtility::RunOnGameThread<void>(WeakSelf,[WeakSelf,bScoped]()->void
-			{
-				if (!WeakSelf.IsValid())
-					return;
-				WeakSelf->DoFire(EInputSignalType::InputSignal_Triggered,bScoped);
-			});
-			FAsyncUtility::WaitForSeconds(FireDelay,WeakSelf,0.1f);
-		}
-	});
+			DoFire(EInputSignalType::InputSignal_Triggered,bScoped);
+		},
+		FireDelay,
+		true,
+		FireDelay);
 
 	return true;
 }
@@ -139,6 +132,8 @@ void UCF_Combat::StopFire(FStopFireInfo StopFireInfo)
 		return;
 	
 	FiredBullets = 0;
+	GetWorld()->GetTimerManager().ClearTimer(FireHandle);
+	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Orange, "Stopping Timer");
 
 	if (bCLearFocusAfterFiring)
 		GetOwningAIController()->ClearFocus(EAIFocusPriority::Gameplay);
@@ -194,7 +189,11 @@ void UCF_Combat::StartReload()
 	OnReloadFinishHandle = ActiveWeapon->OnReloadFinish_CPP.AddLambda([this,ActiveWeapon]()->void
 	{
 		if (IsValid(ActiveWeapon))
+		{
 			ActiveWeapon->OnReloadFinish_CPP.Remove(OnReloadFinishHandle);
+			ActiveWeapon->OnReloadStopped_CPP.Remove(OnReloadStoppedHandle);
+		}
+
 		OnReloadFinish_CPP.Broadcast();
 		OnReloadFinish_BP.Broadcast();
 	});
@@ -202,8 +201,13 @@ void UCF_Combat::StartReload()
 	//On Reload Stopped
 	OnReloadStoppedHandle = ActiveWeapon->OnReloadStopped_CPP.AddLambda([this,ActiveWeapon]()->void
 	{
+		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Black, "Reload Stopped");
 		if (IsValid(ActiveWeapon))
+		{
 			ActiveWeapon->OnReloadStopped_CPP.Remove(OnReloadStoppedHandle);
+			ActiveWeapon->OnReloadFinish_CPP.Remove(OnReloadFinishHandle);
+		}
+
 		OnReloadStopped_CPP.Broadcast();
 		OnReloadStopped_BP.Broadcast();
 	});

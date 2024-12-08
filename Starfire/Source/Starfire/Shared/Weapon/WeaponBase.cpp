@@ -79,8 +79,6 @@ void AWeaponBase::OnInteractStart_Implementation(UInteractComponent* InteractCom
 
 bool AWeaponBase::Fire(const EInputSignalType InputSignal, EFireType FireType, FHitResult& OutHitResult,EFireBlock& OutFireBlock) 
 {
-	StopReloading();
-	
 	if (!CanFire(InputSignal,FireType,OutFireBlock))
 	{
 		if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::Weapon::FireBlocks,EDebugType::Print))
@@ -90,6 +88,8 @@ bool AWeaponBase::Fire(const EInputSignalType InputSignal, EFireType FireType, F
 		}
 		return false;
 	}
+
+	StopReloading();
 	
 	DoFire(OutHitResult);
 	ApplyRecoil();
