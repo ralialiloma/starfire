@@ -34,7 +34,7 @@ protected:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (ClampMin = 0, UIMax = 20), Category = "Settings")
 	uint8 VeinGroup = 0;
 	
-#if WITH_EDITORONLY_DATA
+#if WITH_EDITOR
 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent) override;
 	
 	UFUNCTION()
@@ -46,7 +46,9 @@ protected:
 	
 	UFUNCTION(CallInEditor, Category = "Settings")
 	void SelectVein() const;
-	
+#endif
+
+#if WITH_EDITORONLY_DATA
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Settings")
 	FColor VeinColor = FColor::White;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Settings")
@@ -58,5 +60,7 @@ protected:
 	UPROPERTY(Transient)
 	UMaterialInstanceDynamic* DynamicMaterial;
 #endif
+	
+
 
 };

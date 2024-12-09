@@ -4,6 +4,7 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "Components/ActorComponent.h"
+#include "Runtime/NavigationSystem/Public/NavFilters/NavigationQueryFilter.h"
 #include "Sf_TetherPointGen.generated.h"
 
 
@@ -161,7 +162,7 @@ protected:
 	float MaxActorUpdateDistance = 2000;
 
 	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly)
-	TSubclassOf<UNavigationQueryFilter> QueryFilterClass;
+	TSubclassOf<UNavigationQueryFilter> QueryFilterClass = nullptr;
 
 private:
 	UPROPERTY()
@@ -171,7 +172,7 @@ private:
 	FTimerHandle OtherTethers;
 
 	UPROPERTY()
-	TArray<AActor*> RegisteredActors;
+	TArray<AActor*> RegisteredActors = TArray<AActor*>{};
 #pragma endregion
 
 };

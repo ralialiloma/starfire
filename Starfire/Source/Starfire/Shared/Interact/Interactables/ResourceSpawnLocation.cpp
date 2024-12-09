@@ -15,7 +15,7 @@ void AResourceSpawnLocation::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 
-#if WITH_EDITORONLY_DATA
+#if WITH_EDITOR
 	if (DisplayResourceClass.LoadSynchronous())
 	{
 		UStaticMesh* Mesh = DisplayResourceClass->GetDefaultObject<AResource>()->GetStaticMeshAsset();
@@ -40,7 +40,7 @@ uint8 AResourceSpawnLocation::GetVeinGroup() const
 	return VeinGroup;
 }
 
-#if WITH_EDITORONLY_DATA
+#if WITH_EDITOR
 void AResourceSpawnLocation::PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);

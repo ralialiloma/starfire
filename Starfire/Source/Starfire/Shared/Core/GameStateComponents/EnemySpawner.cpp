@@ -121,9 +121,12 @@ void UEnemySpawner::RegisterEnemy(ASf_TP_Character* Enemy)
 				Spawning::Enemies);
 			EnemiesToBeSpawned++;
 			UsedEnemyNames.Remove(Enemy->GetName());
+
+		#if WITH_EDITOR
 			FString ModifiedName = GetIncrementedName(Enemy->GetActorLabel());
 			PossibleEnemyNames.Add(ModifiedName);
-			
+		#endif
+		
 			RequestNewEnemy();
 		});
 	}

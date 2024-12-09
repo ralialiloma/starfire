@@ -9,9 +9,9 @@
 #include "EnemySpawner.generated.h"
 
 class ASf_PatrolArea;
+class ASf_TP_Character;
 DECLARE_LOG_CATEGORY_EXTERN(LogEnemySpawner, Log, All);
 
-class ASf_TP_Character;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class STARFIRE_API UEnemySpawner : public UManagerComponent
