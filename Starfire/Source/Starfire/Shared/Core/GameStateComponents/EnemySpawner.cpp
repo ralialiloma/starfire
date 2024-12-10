@@ -78,7 +78,7 @@ void UEnemySpawner::SpawnEnemy(const FTransform& Transform)
 	}
 
 	FActorSpawnParameters SpawnParameters {};
-	SpawnParameters.Name = FName(RequestEnemyName());
+	//SpawnParameters.Name = FName(RequestEnemyName());
 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
 	ASf_TP_Character* Enemy = GetWorld()->SpawnActor<ASf_TP_Character>(EvaluateSpawnedEnemyClass(), Transform.GetLocation(), Transform.GetRotation().Rotator(), SpawnParameters);
@@ -115,11 +115,8 @@ void UEnemySpawner::RegisterEnemy(ASf_TP_Character* Enemy)
 				Spawning::Enemies);
 			EnemiesToBeSpawned++;
 			UsedEnemyNames.Remove(Enemy->GetName());
-
-		#if WITH_EDITOR
-			FString ModifiedName = GetIncrementedName(Enemy->GetActorLabel());
+			FString ModifiedName = GetIncrementedName(Enemy->GetName());
 			PossibleEnemyNames.Add(ModifiedName);
-		#endif
 		
 			RequestNewEnemy();
 		});
