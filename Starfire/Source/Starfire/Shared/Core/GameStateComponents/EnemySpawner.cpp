@@ -79,15 +79,9 @@ void UEnemySpawner::SpawnEnemy(const FTransform& Transform)
 
 	FActorSpawnParameters SpawnParameters {};
 	SpawnParameters.Name = FName(RequestEnemyName());
+	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
 	ASf_TP_Character* Enemy = GetWorld()->SpawnActor<ASf_TP_Character>(EvaluateSpawnedEnemyClass(), Transform.GetLocation(), Transform.GetRotation().Rotator(), SpawnParameters);
-
-#if WITH_EDITOR
-	if (GEditor) // Ensure editor context
-	{
-		Enemy->SetActorLabel(GetName());
-	}
-#endif
 	
 	RegisterEnemy(Enemy);	
 }
