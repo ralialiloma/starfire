@@ -155,11 +155,13 @@ void UCF_Combat::StopFire(FStopFireInfo StopFireInfo)
 void UCF_Combat::DoFire(EInputSignalType InputSignalType, bool bScoped)
 {
 	USf_Equipment* Equipment = GetOwningSfEquipment();
+
+	if(!IsValid(Equipment))
+		return;
 	
 	const EFireType FireType = bScoped?EFireType::FireType_Scoped:EFireType::FireType_Default;
 	FHitResult HitResult;
 	EFireBlock FireBlock;
-
 	const bool bHasFired = Equipment->Fire(InputSignalType,FireType,HitResult,FireBlock);
 	
 	if (OtherNPCWouldBeHit(HitResult))
