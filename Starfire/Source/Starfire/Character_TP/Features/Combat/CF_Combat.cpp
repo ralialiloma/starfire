@@ -88,7 +88,13 @@ FString FStopFireInfo::ToString()
 		return  FString::Printf(TEXT("StopFireReason: %s"), *StopFireReasonString);
 }
 
-bool UCF_Combat::StartFire(bool bScoped, bool bInClearFocusAfterFiring)
+void UCF_Combat::BeginDestroy()
+{
+	Super::BeginDestroy();
+	GetWorld()->GetTimerManager().ClearTimer(FireHandle);
+}
+
+bool UCF_Combat::StartFire(bool bScoped, const bool bInClearFocusAfterFiring)
 {
 	bCLearFocusAfterFiring = bInClearFocusAfterFiring;
 	if (bIsFiring)

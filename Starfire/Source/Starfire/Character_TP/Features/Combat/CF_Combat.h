@@ -44,6 +44,9 @@ class STARFIRE_API UCF_Combat : public USf_CharacterFeature
 {
 	GENERATED_BODY()
 
+public:
+	virtual void BeginDestroy() override;
+
 #pragma region Functions
 public:
 	UFUNCTION(BlueprintCallable, Category = "EnemyFeature|Combat")
