@@ -26,6 +26,7 @@ public:
 protected:
 
 	virtual void StartGame() override;
+	void DelayedStartGame();
 
 	// void SpawnEnemiesForVein(FResourceVein Vein);
 	void SpawnEnemy(const FTransform& Transform);

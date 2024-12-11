@@ -15,26 +15,36 @@ void UEnemySpawner::StartGame()
 	Super::StartGame();
 
 	if (bDisableSpawning)
-		return; //Temp
+		return;
 
+	// Delay the execution by 1 frame
+	GetWorld()->GetTimerManager().SetTimerForNextTick([this]()
+	{
+		DelayedStartGame();
+	});
+}
+
+void UEnemySpawner::DelayedStartGame()
+{
 	TArray<AActor*> OutActors;
 	UGameplayStatics::GetAllActorsOfClass(this, ASf_PatrolArea::StaticClass(), OutActors);
 	if (MaxEnemies > OutActors.Num())
 	{
 		SF_SIMPLE_DEBUG(
-			LogEnemySpawner, 
-			Warning, 
-			FColor::Orange, 
-			*FString::Printf(TEXT("MaxEnemies changed from %i to %i"), MaxEnemies, OutActors.Num()), 
+			LogEnemySpawner,
+			Warning,
+			FColor::Orange,
+			*FString::Printf(TEXT("MaxEnemies changed from %i to %i"), MaxEnemies, OutActors.Num()),
 			Spawning::Enemies);
-		
+
 		MaxEnemies = OutActors.Num();
 	}
-	
+
 	// if (bWaitForVeins)
-	// 	return;
+	//     return;
 
 	TArray<ASf_TP_Character*> Enemies = GetAllEnemies();
+	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, FString::FromInt(Enemies.Num()));
 	if (Enemies.Num() < MaxEnemies)
 	{
 		if (bStartWithMax)

@@ -29,31 +29,29 @@ public:
 	bool IsOccupied() const;
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	FTransform GetRandomMarkerTransform() const;
-
-	UFUNCTION(BlueprintNativeEvent)
-	void OnRegisterMarker(ASf_PatrolAreaMarker* NewMarker);
-	UFUNCTION(BlueprintNativeEvent)
-
-	void OnUnregisterMarker(ASf_PatrolAreaMarker* OldMarker);
-
-	UFUNCTION()
-	void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	TArray<ASf_PatrolAreaMarker*> GetCurrentMarkers() const;
 
 	UFUNCTION(BlueprintCallable)
 	bool TryRegisterMarker(ASf_PatrolAreaMarker* Marker);
 	UFUNCTION(BlueprintCallable)
 	void UnregisterMarker(ASf_PatrolAreaMarker* Marker);
-	UFUNCTION(BlueprintCallable, BlueprintPure)
-	TArray<ASf_PatrolAreaMarker*> GetCurrentMarkers() const;
-
+	
+	UFUNCTION(BlueprintNativeEvent)
+	void OnRegisterMarker(ASf_PatrolAreaMarker* NewMarker);
+	UFUNCTION(BlueprintNativeEvent)
+	void OnUnregisterMarker(ASf_PatrolAreaMarker* OldMarker);
+		
 	UFUNCTION(BlueprintCallable)
 	void ValidateMarkers();
+	
+protected:
+	UFUNCTION()
+	void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	void ImportActors();
-
 	void OnCharacterDeath();
-
-protected:
+	
 	void GetActorsInsideBox(TArray<AActor*>& OutActors) const;
 
 protected:
