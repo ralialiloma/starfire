@@ -9,6 +9,7 @@ DEFINE_LOG_CATEGORY(LogBreakerTarget);
 ASf_BreakerCore::ASf_BreakerCore(const FObjectInitializer& ObjectInitializer)
 {
 	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bStartWithTickEnabled = false;
 	PrimaryActorTick.bTickEvenWhenPaused = true;
 	PrimaryActorTick.TickInterval = 1.0f;
 }
@@ -39,10 +40,9 @@ void ASf_BreakerCore::Tick(float DeltaSeconds)
 
 void ASf_BreakerCore::StartGame()
 {
-	GameState = GetWorld()->GetGameState<ASf_GameState>();
-
 	ImportPillars();
 	SyncPillars();
+	SetActorTickEnabled(true);
 }
 
 void ASf_BreakerCore::Stop()
@@ -57,8 +57,12 @@ void ASf_BreakerCore::RegisterPillar(ASf_BreakerPillar* PillarToRegister)
 	
 	if (BreakerPillars.Contains(PillarToRegister))
 		return;
-	
 	BreakerPillars.AddUnique(PillarToRegister);
+	
+	PillarToRegister->OnBreak_CPP.AddLambda([this]()
+	{
+		UpdateProgress(-GetDividedPillarProgress());
+	});
 }
 
 void ASf_BreakerCore::SyncPillars()
@@ -99,12 +103,23 @@ float ASf_BreakerCore::GetRawProgress() const
 
 float ASf_BreakerCore::GetPillarProgress() const
 {
-	return Progress - CalculateNumActivePillars() * GetDividedPillarProgress();
+	return Progress - GetNumActivePillars() * GetDividedPillarProgress();
+}
+
+void ASf_BreakerCore::OnProgressChanged_Implementation()
+{
+}
+
+void ASf_BreakerCore::OnProgressFull_Implementation()
+{
+}
+
+void ASf_BreakerCore::OnProgressEmpty_Implementation()
+{
 }
 
 void ASf_BreakerCore::UpdateProgress(float Value)
 {
-	float PreviousProgress = GetRawProgress();
 	Progress += Value;
 
 	float RestoreProgress = GetPillarProgress();
@@ -118,27 +133,31 @@ void ASf_BreakerCore::UpdateProgress(float Value)
 			break;
 
 		float RemainingProgress = 0;
-		ChargingPillar->SetRestore(RestoreProgress, RemainingProgress);
-
+		if (ChargingPillar->SetRestore(RestoreProgress, RemainingProgress))
+			ChargingPillar = nullptr;
+		
 		RestoreProgress = RemainingProgress;
 	}
 
 	OnProgressChanged_BP.Broadcast();
 	OnProgressChanged_CPP.Broadcast();
+	OnProgressChanged();
 
 	//Lose Game
 	if (GetNumActivePillars() >= GetNumPillars())
 	{
 		OnFullProgress_BP.Broadcast();
 		OnFullProgress_CPP.Broadcast();
+		OnProgressFull();
 		Stop();
 	}
 
 	//Win Game
-	if (GetNumActivePillars() < 0)
+	if (GetNumActivePillars() <= 0)
 	{
 		OnZeroProgress_BP.Broadcast();
 		OnZeroProgress_CPP.Broadcast();
+		OnProgressEmpty();
 		Stop();
 	}
 }
@@ -187,7 +206,10 @@ void ASf_BreakerCore::ImportPillars()
 		ASf_BreakerPillar* BreakerShard = Cast<ASf_BreakerPillar>(Actor);
 		RegisterPillar(BreakerShard);
 	}
+
+	float DividedProgress = GetDividedPillarProgress();
+	for (auto Pillar : BreakerPillars)
+	{
+		Pillar->MaxRestoreValue = DividedProgress;
+	}
 }
-
-
-

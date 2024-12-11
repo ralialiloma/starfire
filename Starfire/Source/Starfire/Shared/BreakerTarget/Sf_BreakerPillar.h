@@ -9,6 +9,7 @@ class ASf_BreakerPillar: public AActor
 	
 public:
 	ASf_BreakerPillar();
+	virtual void BeginPlay() override;
 
 public:
 	UFUNCTION(BlueprintCallable)
@@ -23,6 +24,8 @@ public:
 
 protected:
 
+	friend class ASf_BreakerCore;
+
 	UFUNCTION(BlueprintNativeEvent)
 	void OnBreak();
 	UFUNCTION(BlueprintNativeEvent)
@@ -30,9 +33,17 @@ protected:
 	UFUNCTION(BlueprintNativeEvent)
 	void OnRestoreProgress(float Alpha);
 
+public:
+
+	UPROPERTY(BlueprintAssignable)
+	FSf_VoidDelegate_BP OnBreak_BP;
+	FSf_VoidDelegate_CPP OnBreak_CPP;
+	
+protected:
+	
 	UPROPERTY(BlueprintReadOnly)
 	float CurrentRestoreValue = 0;
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	UPROPERTY(BlueprintReadOnly, VisibleInstanceOnly)
 	float MaxRestoreValue = 100;
 
 	//Components

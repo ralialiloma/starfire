@@ -38,6 +38,13 @@ public:
 	float GetPillarProgress() const;
 
 protected:
+
+	UFUNCTION(BlueprintNativeEvent)
+	void OnProgressChanged();
+	UFUNCTION(BlueprintNativeEvent)
+	void OnProgressFull();
+	UFUNCTION(BlueprintNativeEvent)
+	void OnProgressEmpty();
 	
 	void UpdateProgress(float Value);
 
@@ -78,13 +85,10 @@ protected:
 	float Progress = 50.f;
 	
 	UPROPERTY(BlueprintReadOnly)
-	TArray<ASf_BreakerPillar*> BreakerPillars;
+	TArray<ASf_BreakerPillar*> BreakerPillars {};
 
 	UPROPERTY(BlueprintReadOnly)
-	ASf_BreakerPillar* ChargingPillar;
-
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	TObjectPtr<ASf_GameState> GameState = nullptr;
+	ASf_BreakerPillar* ChargingPillar = nullptr;
 	
 #pragma endregion
 };

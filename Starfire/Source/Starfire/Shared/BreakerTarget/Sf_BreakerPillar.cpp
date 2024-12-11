@@ -5,9 +5,9 @@ ASf_BreakerPillar::ASf_BreakerPillar()
 {
 	//Damage Controller
 	DamageController = CreateDefaultSubobject<USf_DamageController>(TEXT("DamageController"));
-	DamageController->bEnablePassiveHealing = true;
+	DamageController->bEnablePassiveHealing = false;
 	DamageController->SupportedDamageTypes = FGameplayTagContainer(Sf_GameplayTags::Gameplay::DamageType::Explosion);
-	DamageController->bStartWithMaxHealth = true;
+	DamageController->bStartWithMaxHealth = false;
 	DamageController->MaxHealth = 1;
 
 	//Hitbox
@@ -17,6 +17,18 @@ ASf_BreakerPillar::ASf_BreakerPillar()
 	PrimaryHitbox->SetUsingAbsoluteScale(false);
 
 	RootComponent = PrimaryHitbox;
+}
+
+void ASf_BreakerPillar::BeginPlay()
+{
+	Super::BeginPlay();
+
+	DamageController->OnZeroHealth_CPP.AddLambda([this]()
+	{
+		OnBreak();
+		OnBreak_BP.Broadcast();
+		OnBreak_CPP.Broadcast();
+	});
 }
 
 USf_DamageController* ASf_BreakerPillar::GetDamageController() const
@@ -36,7 +48,7 @@ bool ASf_BreakerPillar::SetRestore(float RestoreValue, float& OutRemainingValue)
 	if (IsActive())
 		return false;
 
-	CurrentRestoreValue = FMath::Min(CurrentRestoreValue, MaxRestoreValue);
+	CurrentRestoreValue = FMath::Min(RestoreValue, MaxRestoreValue);
 	OutRemainingValue = FMath::Max(RestoreValue - MaxRestoreValue, 0.0f);
 
 	OnRestoreProgress(FMath::Clamp(CurrentRestoreValue / MaxRestoreValue, 0.f, 1.f));
@@ -54,6 +66,7 @@ void ASf_BreakerPillar::FullRestore()
 
 	CurrentRestoreValue = 0;
 	DamageController->Reset();
+	DamageController->SetHealth(1);
 	OnRestore();
 }
 
