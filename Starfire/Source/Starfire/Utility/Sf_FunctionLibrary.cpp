@@ -44,6 +44,12 @@ FVector USf_FunctionLibrary::GetPlayerLocation(const UObject* WorldContextObject
 		return FVector::Zero();
 	}
 
+	if (!IsValid(WorldContextObject->GetWorld()))
+		return FVector::Zero();
+
+	if (!IsValid(WorldContextObject->GetWorld()->GetGameInstance()))
+		return FVector::Zero();
+
 	APawn* Pawn = UGameplayStatics::GetPlayerPawn(WorldContextObject, 0);
 	if (!Pawn)
 	{

@@ -241,12 +241,13 @@ TArray<FVector> ASf_TetherPointGen::GetCoverLocations(const float MinScore) cons
 TArray<FVector> ASf_TetherPointGen::GetCoverLocationsInPatrolArea(ASf_PatrolArea* PatrolArea,const float MinScore) const
 {
 	TArray<FVector> CoverLocations{};
+	const bool bValidPatrolArea = IsValid(PatrolArea);
 	for (const UTetherPoint* Point: AllTetherPoints)
 	{
 		if (!Point->GameplayTags.HasTag(Sf_GameplayTags::Gameplay::PatrolAreaMarkerTypes::Cover::Name))
 			continue;
 
-		if (!PatrolArea->IsInBox(Point->CenterLocation))
+		if (bValidPatrolArea && !PatrolArea->IsInBox(Point->CenterLocation))
 			continue;
 
 		if (Point->CoverPotential>MinScore)
