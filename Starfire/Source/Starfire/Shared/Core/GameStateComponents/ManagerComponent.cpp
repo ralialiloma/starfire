@@ -10,7 +10,7 @@ void UManagerComponent::BeginPlay()
 	}
 	else
 	{
-		GetWorld()->OnWorldBeginPlay.AddLambda([this]()
+		StartGameDelegateHandle = GetWorld()->OnWorldBeginPlay.AddLambda([this]()
 		{
 			StartGame();
 		});
@@ -19,5 +19,7 @@ void UManagerComponent::BeginPlay()
 
 void UManagerComponent::StartGame()
 {
+	GetWorld()->OnWorldBeginPlay.Remove(StartGameDelegateHandle);
+	
 	StartGameEvent();
 }

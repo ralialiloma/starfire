@@ -157,7 +157,9 @@ TSubclassOf<ASf_TP_Character> UEnemySpawner::EvaluateSpawnedEnemyClass() const
 
 TArray<ASf_PatrolArea*> UEnemySpawner::GetViableSpawns() const
 {
-	return  USf_PatrolAreaManager::Get(this->GetWorld())->GetFreePatrolAreas();
+	if (USf_PatrolAreaManager::Get(GetWorld()))
+		return  USf_PatrolAreaManager::Get(this->GetWorld())->GetFreePatrolAreas();
+	return {};
 }
 
 FTransform UEnemySpawner::GetSpawnLocation() const
@@ -169,7 +171,10 @@ FTransform UEnemySpawner::GetSpawnLocation() const
 	//TODO: Currently chooses a random location
 	
 	int RandomIndex = FMath::RandRange(0, PossibleTransforms.Num() - 1);
-	return PossibleTransforms[RandomIndex]->GetRandomMarkerTransform();
+	if (PossibleTransforms[RandomIndex])
+		return PossibleTransforms[RandomIndex]->GetRandomMarkerTransform();
+
+	return FTransform();
 }
 
 TArray<ASf_TP_Character*> UEnemySpawner::GetAllEnemies() const

@@ -64,4 +64,8 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 	ASf_TP_Character* Character;
 
+private:
+
+	FDelegateHandle StartGameDelegateHandle;
+
 };

@@ -62,6 +62,9 @@ public:
 
 protected:
 
+	UFUNCTION(BlueprintNativeEvent)
+	void OnChangeState(FGameplayTag NewState, FGameplayTag OldState);
+
 	UPROPERTY(EditDefaultsOnly, Category = "PlayState", meta = (Categories = "Gameplay.PlayState"))
 	FGameplayTag CurrentPlayState = Sf_GameplayTags::Gameplay::PlayState::Tutorial;
 

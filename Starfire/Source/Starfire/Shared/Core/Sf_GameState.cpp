@@ -50,6 +50,7 @@ bool ASf_GameState::SetPlayState(FGameplayTag NewPlayState)
 	FGameplayTag OldPlayState = CurrentPlayState;
 	CurrentPlayState = NewPlayState;
 
+	OnChangeState(NewPlayState, OldPlayState);
 	OnPlayStateChange.Broadcast(NewPlayState, OldPlayState);
 	return true;
 }
@@ -67,6 +68,11 @@ bool ASf_GameState::HasWonGame() const
 bool ASf_GameState::IsInPlayState(FGameplayTag NewPlayState) const
 {
 	return CurrentPlayState.MatchesTag(NewPlayState);
+}
+
+void ASf_GameState::OnChangeState_Implementation(FGameplayTag NewState, FGameplayTag OldState)
+{
+	
 }
 
 void ASf_GameState::EndGame(bool HasWon)

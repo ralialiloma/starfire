@@ -91,6 +91,9 @@ TArray<ASf_PatrolArea*> USf_PatrolAreaManager::GetFreePatrolAreas() const
 
 	for (auto PatrolArea : RegisteredPatrolAreas)
 	{
+		if (!PatrolArea)
+			continue;
+		
 		if (PatrolArea->IsOccupied())
 			PatrolAreas.Remove(PatrolArea);
 	}

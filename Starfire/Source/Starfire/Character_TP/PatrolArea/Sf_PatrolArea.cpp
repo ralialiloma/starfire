@@ -87,7 +87,7 @@ void ASf_PatrolArea::BeginPlay()
 	}
 	else
 	{
-		GetWorld()->OnWorldBeginPlay.AddLambda([this]()
+		StartGameDelegateHandle = GetWorld()->OnWorldBeginPlay.AddLambda([this]()
 		{
 			StartGame();
 		});
@@ -101,6 +101,8 @@ void ASf_PatrolArea::Tick(float DeltaTime)
 
 void ASf_PatrolArea::StartGame()
 {
+	GetWorld()->OnWorldBeginPlay.Remove(StartGameDelegateHandle);
+	
 	ImportActors();
 }
 
