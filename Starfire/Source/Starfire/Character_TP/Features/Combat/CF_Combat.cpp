@@ -106,8 +106,6 @@ bool UCF_Combat::StartFire(bool bScoped, bool bInClearFocusAfterFiring)
 	DoFire(EInputSignalType::InputSignal_Started,bScoped);
 	const float FireDelay = GetOwningSfEquipment()->GetWeaponConfig().FireDelay+0.01f;
 	UE_LOG(EF_Combat, Log, TEXT("Starting timer with this rate %f"),FireDelay);
-
-	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Green, "Starting Timer");
 	GetWorld()->GetTimerManager().SetTimer(
 		FireHandle,
 		[this, bScoped]()
@@ -133,7 +131,6 @@ void UCF_Combat::StopFire(FStopFireInfo StopFireInfo)
 	
 	FiredBullets = 0;
 	GetWorld()->GetTimerManager().ClearTimer(FireHandle);
-	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Orange, "Stopping Timer");
 
 	if (bCLearFocusAfterFiring)
 		GetOwningAIController()->ClearFocus(EAIFocusPriority::Gameplay);
@@ -152,7 +149,7 @@ void UCF_Combat::StopFire(FStopFireInfo StopFireInfo)
 	OnFireStopped_BP.Broadcast();
 }
 
-void UCF_Combat::DoFire(EInputSignalType InputSignalType, bool bScoped)
+void UCF_Combat::DoFire(const EInputSignalType InputSignalType, const bool bScoped)
 {
 	USf_Equipment* Equipment = GetOwningSfEquipment();
 

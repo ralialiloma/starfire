@@ -20,6 +20,12 @@ void ASf_PatrolAreaMarker::OnConstruction(const FTransform& Transform)
 	SetActorHiddenInGame(SHOULD_DEBUG(TP::PatrolArea::PatrolMarker,EDebugType::Visual));
 }
 
+bool ASf_PatrolAreaMarker::ShouldBeTetherPoint() const
+{
+	return PatrolTags.HasTag(Sf_GameplayTags::Gameplay::PatrolAreaMarkerTypes::Cover::Name)||
+			PatrolTags.HasTag(Sf_GameplayTags::Gameplay::PatrolAreaMarkerTypes::Peak);
+}
+
 void ASf_PatrolAreaMarker::ProjectToNavigation()
 {
 	UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());

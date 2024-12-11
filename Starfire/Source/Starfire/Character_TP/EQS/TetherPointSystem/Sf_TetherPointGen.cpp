@@ -169,6 +169,9 @@ void ASf_TetherPointGen::GeneratePoints()
 		if (!IsValid(Marker))
 			continue;
 
+		if(!Marker->ShouldBeTetherPoint())
+			return;
+
 		UTetherPoint* TetherPoint = NewObject<UTetherPoint>(this);
 		TetherPoint->CoverPotential = 0;
 		TetherPoint->CenterLocation = CenterLocation;
@@ -226,6 +229,26 @@ TArray<FVector> ASf_TetherPointGen::GetCoverLocations(const float MinScore) cons
 		{
 			continue;
 		}
+
+		if (Point->CoverPotential>MinScore)
+		{
+			CoverLocations.Add(Point->CenterLocation);
+		}
+	}
+	return CoverLocations;
+}
+
+TArray<FVector> ASf_TetherPointGen::GetCoverLocationsInPatrolArea(ASf_PatrolArea* PatrolArea,const float MinScore) const
+{
+	TArray<FVector> CoverLocations{};
+	const bool bValidPatrolArea = IsValid(PatrolArea);
+	for (const UTetherPoint* Point: AllTetherPoints)
+	{
+		if (!Point->GameplayTags.HasTag(Sf_GameplayTags::Gameplay::PatrolAreaMarkerTypes::Cover::Name))
+			continue;
+
+		if (bValidPatrolArea && !PatrolArea->IsInBox(Point->CenterLocation))
+			continue;
 
 		if (Point->CoverPotential>MinScore)
 		{
@@ -412,7 +435,6 @@ void ASf_TetherPointGen::UpdateTetherPoints()
 void ASf_TetherPointGen::AddRelevantTetherPointsToProcess()
 {
 	const TArray<UTetherPoint*> RelevantPoints  = GetRelevantTetherPoints();
-	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, "Get Relevant Points");
 	for(UTetherPoint* TetherPoint: RelevantPoints)
 	{
 		TetherPointsToProcess.AddUnique(TetherPoint);

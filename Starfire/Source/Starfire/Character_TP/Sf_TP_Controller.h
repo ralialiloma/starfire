@@ -42,6 +42,12 @@ private:
 #pragma endregion
 
 #pragma region Properties
+public:
+	FSf_VoidDelegate_BP OnPlayerDetected_BP;
+	FSf_VoidDelegate_CPP OnPlayerDetected_CPP;
+
+	FSf_VoidDelegate_BP OnPlayerForgotten_BP;
+	FSf_VoidDelegate_CPP OnPlayerForgotten_CPP;
 protected:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "AI")
 	UAIPerceptionComponent* AIPerceptionComponent;

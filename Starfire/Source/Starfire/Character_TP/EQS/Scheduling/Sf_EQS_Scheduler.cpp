@@ -47,11 +47,26 @@ FGuid USf_EQS_Scheduler::ScheduleRequest(const FScheduledEnvRequest ScheduledEnv
 	{
 		UE_LOG(LogTemp, Warning, TEXT("ScheduleRequest: Invalid request provided."));
 	}
+
+	FScheduledEnvRequest FoundSimilarRequest;
+	if (HasExistingSimilarRequest(ScheduledEnvRequest, FoundSimilarRequest))
+	{
+		return FoundSimilarRequest.UniqueIdentifier;
+	}
 	
 	ScheduledRequests.Add(ScheduledEnvRequest);
-	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Green, FString::FromInt(ScheduledRequests.Num()));
-
+	FString DebugString = FString::Printf(TEXT("Currently have %i requests scheduled"),ScheduledRequests.Num()); 
+	SF_LOG(LogTemp,Type::Warning,DebugString,TP::EQS::Scheduler);
 	return ScheduledEnvRequest.UniqueIdentifier;
+}
+
+bool USf_EQS_Scheduler::HasExistingSimilarRequest(FScheduledEnvRequest RequestToCompare, FScheduledEnvRequest OutFoundSimilarRequest)
+{
+	const FScheduledEnvRequest* FoundRequest =  ScheduledRequests.FindByPredicate([RequestToCompare](const FScheduledEnvRequest& Request)->bool
+		{
+			return RequestToCompare.Querier == Request.Querier && RequestToCompare.QueryTemplate == Request.QueryTemplate;
+		});
+	return FoundRequest != nullptr;
 }
 
 void USf_EQS_Scheduler::RunRequest(const FScheduledEnvRequest& Request)
@@ -92,13 +107,13 @@ void USf_EQS_Scheduler::RunRequest(const FScheduledEnvRequest& Request)
 bool USf_EQS_Scheduler::Tick()
 {
 	const int NumActiveRequests = ActiveRequests.Num();
-	const int AmountOfAllowedNewRequests = FMath::Abs(MaxAllowedActiveRequests-NumActiveRequests) ;
+	const int AllowedNewRequests = FMath::Abs(MaxAllowedActiveRequests-NumActiveRequests) ;
 	const int NumSchedulesRequests = ScheduledRequests.Num();
-	if (NumSchedulesRequests <=0||AmountOfAllowedNewRequests<=0)
+	if (NumSchedulesRequests <=0||AllowedNewRequests<=0)
 		return true;
 	
-	const int AmountOfNewRequests = FMath::Min(NumSchedulesRequests,AmountOfAllowedNewRequests);
-	for (int i = 0; i<AmountOfNewRequests;i++)
+	const int NewRequestsToRun  = FMath::Min(NumSchedulesRequests,AllowedNewRequests);
+	for (int i = 0; i<NewRequestsToRun ;i++)
 	{
 		FScheduledEnvRequest Request = ScheduledRequests[0];
 		ScheduledRequests.RemoveAt(0);
@@ -111,8 +126,6 @@ bool USf_EQS_Scheduler::Tick()
 void USf_EQS_Scheduler::OnQueryFinished(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus)
 {
 	
-	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, FString::FromInt(ScheduledRequests.Num()));
-	
 	const FScheduledEnvRequest* RequestPtr =  ActiveRequests.Find(QueryInstance);
 
 	if (RequestPtr==nullptr)
@@ -124,6 +137,8 @@ void USf_EQS_Scheduler::OnQueryFinished(UEnvQueryInstanceBlueprintWrapper* Query
 	TArray<FVector> Locations{};
 	QueryInstance->GetQueryResultsAsLocations(Locations);
 
+	FString DebugString = FString::Printf(TEXT("Finished query. Remaining Requests: %id"),ScheduledRequests.Num()); 
+	SF_LOG(LogTemp,Type::Warning,DebugString,TP::EQS::Scheduler);
 	OnEQSResult.Broadcast(Locations,Request.UniqueIdentifier);
 	
 }

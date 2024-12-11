@@ -195,7 +195,6 @@ void ASf_PatrolArea::ImportActors()
 {
 	TArray<AActor*> ActorsInBox;
 	GetActorsInsideBox(ActorsInBox);
-	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, FString::FromInt(ActorsInBox.Num()));
 	for (AActor* Actor: ActorsInBox)
 	{
 		ASf_PatrolAreaMarker* PatrolAreaMarker = Cast<ASf_PatrolAreaMarker>(Actor);

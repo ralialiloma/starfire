@@ -16,6 +16,9 @@ public:
 	virtual void OnConstruction(const FTransform& Transform) override;
 
 #pragma region Functions
+public:
+	UFUNCTION()
+	bool ShouldBeTetherPoint() const;
 protected:
 	void ProjectToNavigation();
 
