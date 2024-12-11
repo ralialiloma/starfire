@@ -68,30 +68,78 @@ void UEnemySpawner::DelayedStartGame()
 
 void UEnemySpawner::SpawnEnemy(const FTransform& Transform)
 {
-	SF_SIMPLE_DEBUG(
-		LogEnemySpawner, 
-		Warning, 
-		FColor::White, 
-		*FString::Printf(TEXT("Spawning Enemy")), 
-		Spawning::Enemies);
+    SF_SIMPLE_DEBUG(
+        LogEnemySpawner,
+        Warning,
+        FColor::White,
+        *FString::Printf(TEXT("Spawning Enemy")),
+        Spawning::Enemies);
 
-	UClass* EnemyClass = EvaluateSpawnedEnemyClass();
-	if (!EnemyClass)
-	{
-		SF_SIMPLE_DEBUG(
-			LogEnemySpawner, 
-			Error, 
-			FColor::Red, 
-			*FString::Printf(TEXT("Spawning Class Invalid!")), 
-			Spawning::Enemies);
-		return;
-	}
+    UClass* EnemyClass = EvaluateSpawnedEnemyClass();
+    if (!EnemyClass)
+    {
+        SF_SIMPLE_DEBUG(
+            LogEnemySpawner,
+            Error,
+            FColor::Red,
+            *FString::Printf(TEXT("Spawning Class Invalid!")),
+            Spawning::Enemies);
+        return;
+    }
 
-	FActorSpawnParameters SpawnParameters {};
-	//SpawnParameters.Name = FName(RequestEnemyName());
-	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+    FActorSpawnParameters SpawnParameters{};
+    SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-	ASf_TP_Character* Enemy = GetWorld()->SpawnActor<ASf_TP_Character>(EvaluateSpawnedEnemyClass(), Transform.GetLocation(), Transform.GetRotation().Rotator(), SpawnParameters);
+    // Retrieve default object to access capsule size
+    const ASf_TP_Character* DefaultEnemy = EnemyClass->GetDefaultObject<ASf_TP_Character>();
+    if (!DefaultEnemy)
+    {
+        SF_SIMPLE_DEBUG(
+            LogEnemySpawner,
+            Error,
+            FColor::Red,
+            *FString::Printf(TEXT("Failed to retrieve default object for enemy class!")),
+            Spawning::Enemies);
+        return;
+    }
+
+    // Get capsule component half-height
+    const UCapsuleComponent* Capsule = DefaultEnemy->GetCapsuleComponent();
+    if (!Capsule)
+    {
+        SF_SIMPLE_DEBUG(
+            LogEnemySpawner,
+            Error,
+            FColor::Red,
+            *FString::Printf(TEXT("Enemy class does not have a capsule component!")),
+            Spawning::Enemies);
+        return;
+    }
+
+    float CapsuleHalfHeight = Capsule->GetScaledCapsuleHalfHeight();
+    FVector AdjustedLocation = Transform.GetLocation()+FVector::UpVector*CapsuleHalfHeight;
+
+    // Spawn the actor deferred
+    ASf_TP_Character* Enemy = GetWorld()->SpawnActorDeferred<ASf_TP_Character>(
+        EnemyClass,
+        FTransform(Transform.GetRotation(), AdjustedLocation,FVector(1,1,1)),
+        nullptr, // Owner
+        nullptr, // Instigator
+        ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding);
+
+    if (!Enemy)
+    {
+        SF_SIMPLE_DEBUG(
+            LogEnemySpawner,
+            Error,
+            FColor::Red,
+            *FString::Printf(TEXT("Enemy spawn failed!")),
+            Spawning::Enemies);
+        return;
+    }
+
+    // Finalize spawning
+    Enemy->FinishSpawning(FTransform(Transform.GetRotation(), AdjustedLocation, FVector(1,1,1)));
 	
 	RegisterEnemy(Enemy);	
 }

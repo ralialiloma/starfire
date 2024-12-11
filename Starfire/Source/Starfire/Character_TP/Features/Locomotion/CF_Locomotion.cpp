@@ -86,6 +86,14 @@ bool UCF_Locomotion::MoveToLocation(const F_SF_MoveRequest MoveRequest)
 		OnMoveFailed_CPP.Broadcast();
 		StopMovement();
 		UDebugFunctionLibrary::Sf_ThrowError(this, "Failed path request");
+		UDebugFunctionLibrary::Sf_DrawDebugSphere(
+			this,
+			Sf_GameplayTags::Debug::TP::CharacterFeatures::Locomotion,
+			MoveRequest.Destination,
+			100,
+			12,
+		FColor::Red,
+		40);
 		return false;
 	}
 	
