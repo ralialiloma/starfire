@@ -83,7 +83,7 @@ void USf_DamageController::Reset()
 	GetWorld()->GetTimerManager().ClearTimer(PassiveHealCooldown);
 	bShouldPassiveHeal = bEnablePassiveHealing;
 	CurrentArmor = MaxArmor;
-	CurrentHealth = bStartWithMaxHealth?MaxHealth:0;
+	CurrentHealth = bStartWithMaxHealth ? MaxHealth : 0;
 }
 
 void USf_DamageController::Heal(const float AmountOfHeal, const bool bInternal)
@@ -108,7 +108,12 @@ void USf_DamageController::Heal(const float AmountOfHeal, const bool bInternal)
 
 float USf_DamageController::IsMaxHealth() const
 {
-	return MaxHealth<=CurrentHealth;
+	return MaxHealth <= CurrentHealth;
+}
+
+float USf_DamageController::IsZeroHealth() const
+{
+	return CurrentHealth <= 0;
 }
 
 
@@ -119,9 +124,9 @@ float USf_DamageController::GetCurrentHealth() const
 
 float USf_DamageController::GetCurrentHealthInPercent() const
 {
-	if (MaxHealth>0)
+	if (MaxHealth > 0)
 	{
-		return CurrentHealth/MaxHealth;
+		return CurrentHealth / MaxHealth;
 	}
 
 	return 0;
