@@ -45,6 +45,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	float IsMaxHealth() const;
 	UFUNCTION(BlueprintCallable)
+	float IsZeroHealth() const;
+	UFUNCTION(BlueprintCallable)
 	float GetCurrentHealth() const;
 	UFUNCTION(BlueprintCallable)
 	float GetCurrentHealthInPercent() const;
@@ -53,6 +55,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetHealth(float NewHealth);
+	
 private:
 	void PassiveHeal(float DeltaSeconds);
 
@@ -75,11 +78,11 @@ public:
 	UPROPERTY(BlueprintReadOnly,BlueprintAssignable, Category = "Damage Receiver")
 	FSf_VoidDelegate_BP OnHealthChanged_BP;
 	FSf_VoidDelegate_CPP OnHealthChanged_CPP;
-
+	
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "Damage Receiver", meta = (CustomConfig))
-	bool bStartWithMaxHealth= true;
+	bool bStartWithMaxHealth = true;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "Damage Receiver", meta = (CustomConfig))
-	float MaxHealth= 100;
+	float MaxHealth = 100;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "Damage Receiver", meta = (CustomConfig))
 	float MaxArmor = 50;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "Damage Receiver", meta = (CustomConfig))
@@ -92,15 +95,13 @@ public:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "Damage Receiver",meta = (Categories = "Gameplay.DamageType",CustomConfig))
 	FGameplayTagContainer SupportedDamageTypes = FGameplayTagContainer(Sf_GameplayTags::Gameplay::DamageType::FirePlayer);
 private:
+	
 	UPROPERTY()
 	float CurrentHealth = 0;
-
 	UPROPERTY()
 	float CurrentArmor = 0;
-
 	UPROPERTY()
 	bool bShouldPassiveHeal;
-
 	UPROPERTY()
 	FTimerHandle PassiveHealCooldown;
 
