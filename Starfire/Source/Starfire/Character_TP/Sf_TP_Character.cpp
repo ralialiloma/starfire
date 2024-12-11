@@ -13,6 +13,7 @@
 #include "Features/Locomotion/CF_Locomotion_Config.h"
 #include "Starfire/Shared/CharacterFeature/Sf_CharacterFeature.h"
 #include "Starfire/Shared/Weapon/WeaponBase.h"
+#include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
 
 ASf_TP_Character::ASf_TP_Character(const FObjectInitializer& ObjectInitializer): Super(
 		  ObjectInitializer.SetDefaultSubobjectClass<USf_TP_CharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
@@ -102,7 +103,7 @@ bool ASf_TP_Character::TryAddFeature(const USf_CharacterFeature_Config* FeatureC
 	
 	USf_CharacterFeature* Feature = FeatureConfig->MakeFeature(this);
 	FeaturesNew.Add(Feature);
-	UE_LOG(LogTemp, Log, TEXT("Added Feature %s"),*FeatureConfig->GetName())
+	SF_LOG(LogTemp,Log,FString::Printf(TEXT("Added Feature %s"),*FeatureConfig->GetName()),TP::CharacterFeatures::Name);
 	return true;
 }
 

@@ -88,11 +88,8 @@ FString FStopFireInfo::ToString()
 		return  FString::Printf(TEXT("StopFireReason: %s"), *StopFireReasonString);
 }
 
-void UCF_Combat::BeginDestroy()
-{
-	Super::BeginDestroy();
-	GetWorld()->GetTimerManager().ClearTimer(FireHandle);
-}
+
+
 
 bool UCF_Combat::StartFire(bool bScoped, const bool bInClearFocusAfterFiring)
 {
@@ -132,11 +129,11 @@ void UCF_Combat::StopFire()
 
 void UCF_Combat::StopFire(FStopFireInfo StopFireInfo)
 {
+	GetWorld()->GetTimerManager().ClearTimer(FireHandle);
 	if (!bIsFiring)
 		return;
 	
 	FiredBullets = 0;
-	GetWorld()->GetTimerManager().ClearTimer(FireHandle);
 
 	if (bCLearFocusAfterFiring)
 		GetOwningAIController()->ClearFocus(EAIFocusPriority::Gameplay);
