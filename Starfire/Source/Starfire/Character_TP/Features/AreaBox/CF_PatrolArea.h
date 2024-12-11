@@ -22,6 +22,9 @@ public:
 	void OnMoveFinished();
 
 	UFUNCTION(BlueprintCallable,BlueprintPure)
+	ASf_PatrolArea* GetCurrentPatrolArea();
+
+	UFUNCTION(BlueprintCallable,BlueprintPure)
 	FGameplayTagContainer GetActivePatrolPointTags() const;
 protected:
 #pragma endregion

@@ -5,6 +5,7 @@
 #include "GameplayTagContainer.h"
 #include "Components/ActorComponent.h"
 #include "Runtime/NavigationSystem/Public/NavFilters/NavigationQueryFilter.h"
+#include "Starfire/Character_TP/PatrolArea/Sf_PatrolArea.h"
 #include "Sf_TetherPointGen.generated.h"
 
 
@@ -68,6 +69,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	TArray<FVector> GetCoverLocations(float MinScore = 0.5f) const;
+
+	UFUNCTION(BlueprintCallable)
+	TArray<FVector> GetCoverLocationsInPatrolArea(ASf_PatrolArea* PatrolArea,const float MinScore) const;
 
 	TArray<UTetherPoint*>  GetAllTetherPoints();
 

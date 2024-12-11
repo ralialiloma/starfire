@@ -44,7 +44,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, meta=(WorldContext="WorldContextObject", CallableWithoutWorldContext, Keywords = "log print", AdvancedDisplay = "3", DevelopmentOnly), Category="Development")
 	static void Sf_PrintString(
-		UObject* WorldContextObject,
+		const UObject* WorldContextObject,
 		const FString& InString= FString("Hello"),
 		UPARAM(meta=(Categories="Debug"))const FGameplayTag InDebugTag = FGameplayTag(),
 		const bool bPrintToScreen = true,

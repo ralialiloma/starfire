@@ -42,6 +42,11 @@ void UCF_PatrolArea::OnMoveFinished()
 		GetOwningCharacter()->Crouch();
 }
 
+ASf_PatrolArea* UCF_PatrolArea::GetCurrentPatrolArea()
+{
+	return CurrentPatrolArea;
+}
+
 FGameplayTagContainer UCF_PatrolArea::GetActivePatrolPointTags() const
 {
 	return ActivePatrolPointTags;

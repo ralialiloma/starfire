@@ -51,7 +51,11 @@ void ACheckPoint::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 			if (!bRetriggerableCheckpoint)
 				Destroy();
 			else
-				GameState->OnCheckPointChange.AddDynamic(this, &ACheckPoint::OnCheckPointChange);
+			{
+				if (!GameState->OnCheckPointChange.IsAlreadyBound(this, &ACheckPoint::OnCheckPointChange ))
+					GameState->OnCheckPointChange.AddDynamic(this, &ACheckPoint::OnCheckPointChange);
+			}
+				
 		}
 	}
 }

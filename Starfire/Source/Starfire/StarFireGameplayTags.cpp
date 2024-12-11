@@ -22,6 +22,7 @@ namespace Sf_GameplayTags
 		{
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay.PatrolAreaMarkerTypes", "")
 			DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.PatrolAreaMarkerTypes,Peak,"");
+			DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.PatrolAreaMarkerTypes,Roam,"");
 			namespace Cover
 			{
 				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay.PatrolAreaMarkerTypes.Cover", "")
@@ -88,7 +89,7 @@ namespace Sf_GameplayTags
 			namespace EQS
 			{
 				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Debug.TP.EQS", "")
-				DEFINE_GAMEPLAY_TAG_AUTO(Debug.TP.EQS, NavigationsTargets, "");
+				DEFINE_GAMEPLAY_TAG_AUTO(Debug.TP.EQS, Scheduler, "");
 				DEFINE_GAMEPLAY_TAG_AUTO(Debug.TP.EQS, CoverLocation, "");
 				DEFINE_GAMEPLAY_TAG_AUTO(Debug.TP.EQS, PeakLocation, "");
 				DEFINE_GAMEPLAY_TAG_AUTO(Debug.TP.EQS, TetherPointGen, "");

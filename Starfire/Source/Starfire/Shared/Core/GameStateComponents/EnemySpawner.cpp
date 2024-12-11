@@ -89,7 +89,7 @@ void UEnemySpawner::SpawnEnemy(const FTransform& Transform)
 
 	FActorSpawnParameters SpawnParameters {};
 	//SpawnParameters.Name = FName(RequestEnemyName());
-	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
 	ASf_TP_Character* Enemy = GetWorld()->SpawnActor<ASf_TP_Character>(EvaluateSpawnedEnemyClass(), Transform.GetLocation(), Transform.GetRotation().Rotator(), SpawnParameters);
 	

@@ -11,7 +11,7 @@ bool UDebugFunctionLibrary::ShouldDebug(const FGameplayTag DebugTag, const EDebu
 }
 
 void UDebugFunctionLibrary::Sf_PrintString(
-	UObject* WorldContextObject,
+	const UObject* WorldContextObject,
 	const FString& InString,
 	const FGameplayTag InDebugTag,
 	const bool bPrintToScreen,

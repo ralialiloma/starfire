@@ -52,10 +52,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	FGuid ScheduleRequest(FScheduledEnvRequest ScheduledEnvRequest);
 
+	UFUNCTION(BlueprintCallable)
+	bool HasExistingSimilarRequest(FScheduledEnvRequest RequestToCompare, FScheduledEnvRequest OutFoundSimilarRequests);
+
 	bool Tick();
-
-
-
 protected:
 	void RunRequest(const FScheduledEnvRequest& Request);
 
@@ -66,7 +66,7 @@ public:
 	FOnEQSResult OnEQSResult;
 protected:
 	UPROPERTY()
-	int MaxAllowedActiveRequests = 1;
+	int MaxAllowedActiveRequests = 3;
 	
 	UPROPERTY()
 	TArray<FScheduledEnvRequest> ScheduledRequests;
