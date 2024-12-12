@@ -147,11 +147,6 @@ void ASf_TP_Character::BeginPlay()
 	
 	for (USf_CharacterFeature* Feature: FeaturesNew)
 		Feature->OnBeginPlay();
-
-
-	ASf_TetherPointGen* TetherPointGen =  ASf_TetherPointGen::Get(GetWorld());
-	if (IsValid(TetherPointGen))
-		TetherPointGen->RegisterActor(this);
 }
 
 void ASf_TP_Character::Tick(float DeltaTime)

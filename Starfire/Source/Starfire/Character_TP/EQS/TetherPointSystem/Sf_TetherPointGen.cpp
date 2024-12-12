@@ -444,14 +444,13 @@ void ASf_TetherPointGen::AddRelevantTetherPointsToProcess()
 TArray<UTetherPoint*> ASf_TetherPointGen::GetRelevantTetherPoints() const
 {
 	TArray<UTetherPoint*> RelevantPoints{};
-	TArray<AActor*> RelevantActors = GetRelevantActors();
+	TArray<ASf_PatrolArea*> RelevantAreas = GetRelevantPatrolAreas();
 	
 	for (UTetherPoint* TetherPoint: AllTetherPoints)
 	{
-		for (const AActor* Actor: RelevantActors)
+		for (const ASf_PatrolArea* Area: RelevantAreas)
 		{
-			const float ActorToTetherPoint = FVector::Dist(Actor->GetActorLocation(), TetherPoint->CenterLocation);
-			if (MinActorUpdateDistance < ActorToTetherPoint && ActorToTetherPoint < MaxActorUpdateDistance)
+			if (Area->IsInBox(TetherPoint->CenterLocation))
 			{
 				RelevantPoints.AddUnique(TetherPoint);
 				break;
@@ -461,31 +460,34 @@ TArray<UTetherPoint*> ASf_TetherPointGen::GetRelevantTetherPoints() const
 	return RelevantPoints;
 }
 
-TArray<AActor*> ASf_TetherPointGen::GetRelevantActors() const
+TArray<ASf_PatrolArea*> ASf_TetherPointGen::GetRelevantPatrolAreas() const
 {
 	const FVector PlayerLocation = USf_FunctionLibrary::GetPlayerLocation(this);
-	TArray<AActor*> Actors{};
-	for (AActor* Actor: RegisteredActors)
+	TArray<ASf_PatrolArea*> PatrolAreas{};
+	for (ASf_PatrolArea* PatrolArea: RegisteredAreas)
 	{
-		if (!IsValid(Actor))
+		if (!IsValid(PatrolArea))
+			continue;
+
+		if(!PatrolArea->IsOccupied())
 			continue;
 			
-		const float PlayerToActor = FVector::Dist(PlayerLocation, Actor->GetActorLocation());
+		const float PatrolAreaToPlayer = FVector::Dist(PlayerLocation, PatrolArea->GetActorLocation());
 
-		if (PlayerToActor<=MaxRelevancyDistance)
-			Actors.AddUnique(Actor);
+		if (PatrolAreaToPlayer<=MaxRelevancyDistance)
+			PatrolAreas.AddUnique(PatrolArea);
 	}
-	return Actors;
+	return PatrolAreas;
 }
 
-void ASf_TetherPointGen::RegisterActor(AActor* Actor)
+void ASf_TetherPointGen::RegisterArea(ASf_PatrolArea* Actor)
 {
-	if (IsValid(Actor) && !RegisteredActors.Contains(Actor))
-		RegisteredActors.AddUnique(Actor);
+	if (IsValid(Actor) && !RegisteredAreas.Contains(Actor))
+		RegisteredAreas.AddUnique(Actor);
 }
 
-void ASf_TetherPointGen::UnregisterActor(AActor* Actor)
+void ASf_TetherPointGen::UnregisterArea(ASf_PatrolArea* Actor)
 {
 	if (IsValid(Actor))
-		RegisteredActors.Remove(Actor);
+		RegisteredAreas.Remove(Actor);
 }

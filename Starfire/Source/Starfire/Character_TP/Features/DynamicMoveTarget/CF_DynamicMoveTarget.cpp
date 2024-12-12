@@ -22,9 +22,9 @@ void UCF_DynamicMoveTarget::OnBeginPlay()
 	if (!IsValid(World))
 		return;
 
-	//USf_CloseToPlayerLoc::GetCurrent(GetWorld())->RegisterActor(GetOwningCharacter());
+	//USf_CloseToPlayerLoc::GetCurrent(GetWorld())->RegisterArea(GetOwningCharacter());
 
-//	USf_PeakLocationFinder::GetCurrent(GetWorld())->RegisterActor(GetOwningCharacter());
+//	USf_PeakLocationFinder::GetCurrent(GetWorld())->RegisterArea(GetOwningCharacter());
 	
 
 	ACharacter* Character =  GetOwningCharacter();
@@ -47,7 +47,7 @@ void UCF_DynamicMoveTarget::OnTick(float DeltaTime)
 	{
 		if (USf_TetherPointSubsystem::Get(GetWorld())->GetTetherPointGen())
 		{
-			USf_TetherPointSubsystem::Get(GetWorld())->GetTetherPointGen()->RegisterActor(GetOwningCharacter());
+			USf_TetherPointSubsystem::Get(GetWorld())->GetTetherPointGen()->RegisterArea(GetOwningCharacter());
 			bRegisteredForTetherPointGen = true;
 		}
 	}*/

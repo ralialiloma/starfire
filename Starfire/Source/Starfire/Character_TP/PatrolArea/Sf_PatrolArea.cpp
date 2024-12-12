@@ -4,6 +4,7 @@
 #include "Sf_PatrolAreaManager.h"
 #include "Kismet/KismetStringLibrary.h"
 #include "Starfire/Character_TP/Sf_TP_Character.h"
+#include "Starfire/Character_TP/EQS/TetherPointSystem/Sf_TetherPointGen.h"
 #include "Starfire/Character_TP/Features/Death/CF_Death.h"
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
 
@@ -92,6 +93,11 @@ void ASf_PatrolArea::BeginPlay()
 			StartGame();
 		});
 	}
+
+	
+	ASf_TetherPointGen* TetherPointGen =  ASf_TetherPointGen::Get(GetWorld());
+	if (IsValid(TetherPointGen))
+		TetherPointGen->RegisterArea(this);
 }
 
 void ASf_PatrolArea::Tick(float DeltaTime)

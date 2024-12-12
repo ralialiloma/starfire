@@ -102,13 +102,13 @@ public:
 	TArray<UTetherPoint*> GetRelevantTetherPoints() const;
 
 	UFUNCTION(BlueprintCallable)
-	TArray<AActor*> GetRelevantActors() const;
+	TArray<ASf_PatrolArea*> GetRelevantPatrolAreas() const;
 
 	UFUNCTION(BlueprintCallable)
-	void RegisterActor(AActor* Actor);
+	void RegisterArea(ASf_PatrolArea* Actor);
 
 	UFUNCTION(BlueprintCallable)
-	void UnregisterActor(AActor* Actor);
+	void UnregisterArea(ASf_PatrolArea* Actor);
 	
 private:
 	void UpdateTetherPoints();
@@ -151,19 +151,11 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly)
 	float RelevantPointUpdateRate = 1;
-
+	
 	
 	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly)
-	float MaxWallDistance = 200;
+	float MaxRelevancyDistance = 2000.f;
 	
-	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly)
-	float MaxRelevancyDistance = 1000.f;
-	
-	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly)
-	float MinActorUpdateDistance = 200;
-
-	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly)
-	float MaxActorUpdateDistance = 2000;
 
 	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly)
 	TSubclassOf<UNavigationQueryFilter> QueryFilterClass = nullptr;
@@ -176,7 +168,7 @@ private:
 	FTimerHandle OtherTethers;
 
 	UPROPERTY()
-	TArray<AActor*> RegisteredActors = TArray<AActor*>{};
+	TArray<ASf_PatrolArea*> RegisteredAreas = TArray<ASf_PatrolArea*>{};
 #pragma endregion
 
 };
