@@ -1,10 +1,10 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
-#include "ManagerComponent.generated.h"
+#include "ManagerActor.generated.h"
 
 UCLASS(Blueprintable)
-class STARFIRE_API UManagerComponent : public UActorComponent
+class STARFIRE_API AManagerActor : public AActor
 {
 	GENERATED_BODY()
 	

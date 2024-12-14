@@ -9,12 +9,13 @@
 
 
 UCLASS(BlueprintType, Blueprintable)
-class STARFIRE_API USf_TetherPointSubsystem : public UGameInstanceSubsystem 
+class STARFIRE_API USf_TetherPointSubsystem : public UWorldSubsystem 
 {
 	GENERATED_BODY()
 
 
-public:	
+public:
+
 	UFUNCTION(BlueprintCallable)
 	void RegisterTetherPointGen(ASf_TetherPointGen* ActorToRegister);
 	
@@ -22,6 +23,9 @@ public:
 	ASf_TetherPointGen* GetTetherPointGen() const;
 
 	static USf_TetherPointSubsystem* Get(const UWorld* World);
+
+	UFUNCTION()
+	void OnTetherPointGenDestroy(AActor* DestroyedActor);
 
 private:
 	UPROPERTY()

@@ -139,18 +139,59 @@ ASf_TetherPointGen::ASf_TetherPointGen(): TraceTypeQuery()
 void ASf_TetherPointGen::BeginPlay()
 {
 	Super::BeginPlay();
-
-	GetGameInstance()->GetSubsystem<USf_TetherPointSubsystem>()->RegisterTetherPointGen(this);
-	GeneratePoints();
 	
-	GetWorld()->GetTimerManager().SetTimer(CloseToPlayerTethers,[this]()->void{AddRelevantTetherPointsToProcess();},RelevantPointUpdateRate,true);
+	GeneratePoints();
+
+	GetWorld()->GetTimerManager().SetTimer(
+		CloseToPlayerTethers,
+		[this]()->void
+		{
+			if (this)
+				AddRelevantTetherPointsToProcess();
+		},
+		RelevantPointUpdateRate,
+		true);
 	//GetWorld()->GetTimerManager().SetTimer(OtherTethers,[this]()->void{AddOtherTetherPointsToProcess();},OtherUpdateRateInSecdonds,true);
+}
+
+void ASf_TetherPointGen::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	if (!GetWorld())
+		return;
+
+	if (!GetWorld()->GetSubsystem<USf_TetherPointSubsystem>())
+		return;
+	
+	GetWorld()->GetSubsystem<USf_TetherPointSubsystem>()->RegisterTetherPointGen(this);
 }
 
 void ASf_TetherPointGen::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+
+	if (!this)
+	{
+		return;
+	}
+
+	if (!GetWorld())
+	{
+		return;
+	}
+	
 	UpdateTetherPoints();
+}
+
+void ASf_TetherPointGen::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+	
+	if (GetWorld())
+	{
+		GetWorld()->GetTimerManager().ClearTimer(CloseToPlayerTethers);
+	}
 }
 
 void ASf_TetherPointGen::GeneratePoints()
@@ -471,8 +512,9 @@ TArray<ASf_PatrolArea*> ASf_TetherPointGen::GetRelevantPatrolAreas() const
 
 		if(!PatrolArea->IsOccupied())
 			continue;
-			
-		const float PatrolAreaToPlayer = FVector::Dist(PlayerLocation, PatrolArea->GetActorLocation());
+
+		FVector PatrolLocation = PatrolArea->GetActorLocation();
+		const float PatrolAreaToPlayer = FVector::Dist(PlayerLocation, PatrolLocation);
 
 		if (PatrolAreaToPlayer<=MaxRelevancyDistance)
 			PatrolAreas.AddUnique(PatrolArea);

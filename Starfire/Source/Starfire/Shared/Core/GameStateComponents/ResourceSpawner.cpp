@@ -3,6 +3,9 @@
 #include "Algo/RandomShuffle.h"
 #include "Kismet/GameplayStatics.h"
 #include "Starfire/Shared/Interact/Interactables/ResourceSpawnLocation.h"
+#include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
+
+DEFINE_LOG_CATEGORY(LogResourceSpawner)
 
 uint8 FResourceVein::GetNumOccupiedSpawns() const
 {
@@ -90,17 +93,30 @@ TArray<int> FResourceVein::GetViableSpawnIndexes()
 	return ReturnSpawns;
 }
 
-void UResourceSpawner::StartGame()
+void AResourceSpawner::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
+void AResourceSpawner::StartGame()
 {
 	Super::StartGame();
 
 	if (!ResourceClass)
 	{
-		DestroyComponent();
+		Destroy();
+		SF_SIMPLE_DEBUG(
+			LogResourceSpawner,
+			Warning,
+			FColor::Yellow,
+			*FString::Printf(TEXT("No Resource Class Defined!")),
+			Spawning::Resources)
 		return;
 	}
 
-	TArray<AActor*> OutActors;
+	GEngine->AddOnScreenDebugMessage(-1, 20, FColor::Yellow, "Beginning Spawner");
+
+	TArray<AActor*> OutActors {};
 	UGameplayStatics::GetAllActorsOfClass(this, AResourceSpawnLocation::StaticClass(), OutActors);
 
 	for (AActor* OutActor : OutActors)
@@ -120,7 +136,7 @@ void UResourceSpawner::StartGame()
 		{
 			TSharedPtr<FResourceVein> NewVein = MakeShared<FResourceVein>(FResourceVein(ResourceSpawnLocation->GetVeinGroup(), { MakeShared<FResourceSpawn>(FResourceSpawn(ResourceSpawnLocation)) }));
 			int Index = EmptyResourceVeins.Add(NewVein);
-			EmptyResourceVeins[Index]->OnVeinEmpty.AddUObject(this, &UResourceSpawner::OnVeinEmpty);
+			EmptyResourceVeins[Index]->OnVeinEmpty.AddUObject(this, &AResourceSpawner::OnVeinEmpty);
 		}
 		
 		ResourceSpawnLocation->Destroy();
@@ -140,7 +156,7 @@ void UResourceSpawner::StartGame()
 	}
 }
 
-void UResourceSpawner::SpawnResourceVeinRandom(bool QueueNewVein)
+void AResourceSpawner::SpawnResourceVeinRandom(bool QueueNewVein)
 {
 	if (OccupiedVeins.Num() >= MaxSpawnedVeins)
 		return;
@@ -170,12 +186,12 @@ void UResourceSpawner::SpawnResourceVeinRandom(bool QueueNewVein)
 		QueueNewResourceVein();
 }
 
-void UResourceSpawner::SpawnResourceVeinRelay()
+void AResourceSpawner::SpawnResourceVeinRelay()
 {
 	SpawnResourceVeinRandom();
 }
 
-void UResourceSpawner::OnVeinEmpty(uint8 VeinID)
+void AResourceSpawner::OnVeinEmpty(uint8 VeinID)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, FString::FromInt(VeinID) + " Vein is empty");
 	
@@ -192,14 +208,14 @@ void UResourceSpawner::OnVeinEmpty(uint8 VeinID)
 	QueueNewResourceVein();
 }
 
-void UResourceSpawner::QueueSpawnCooldowns(TSharedPtr<FResourceVein> Spawn)
+void AResourceSpawner::QueueSpawnCooldowns(TSharedPtr<FResourceVein> Spawn)
 {
 	CooldownVeins.Add(Spawn);
 	if (CooldownVeins.Num() >= NoSpawnCooldown || CooldownVeins.Num() >= EmptyResourceVeins.Num())
 		CooldownVeins.RemoveAt(0);
 }
 
-void UResourceSpawner::QueueNewResourceVein()
+void AResourceSpawner::QueueNewResourceVein()
 {
 	if (SpawnDelay <= 0)
 	{
@@ -208,11 +224,11 @@ void UResourceSpawner::QueueNewResourceVein()
 	else
 	{
 		if (!SpawnVeinTimerHandle.IsValid())
-			GetWorld()->GetTimerManager().SetTimer(SpawnVeinTimerHandle, this, &UResourceSpawner::SpawnResourceVeinRelay, SpawnDelay);
+			GetWorld()->GetTimerManager().SetTimer(SpawnVeinTimerHandle, this, &AResourceSpawner::SpawnResourceVeinRelay, SpawnDelay);
 	}
 }
 
-TArray<int> UResourceSpawner::GetViableResourceVeinIndexes() const
+TArray<int> AResourceSpawner::GetViableResourceVeinIndexes() const
 {
 	TArray<int> ReturnArray {};
 

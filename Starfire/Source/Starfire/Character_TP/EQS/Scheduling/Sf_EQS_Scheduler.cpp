@@ -22,8 +22,7 @@ FScheduledEnvRequest::FScheduledEnvRequest(): RunMode()
 void USf_EQS_Scheduler::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
-
-	FTimerHandle TimerHandle;
+	
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle,[this]()->void{Tick();},Tickrate,true);
 	UEnvQueryManager::GetCurrent(GetWorld())->SetAllowTimeSlicing(true);
 }
@@ -31,13 +30,16 @@ void USf_EQS_Scheduler::Initialize(FSubsystemCollectionBase& Collection)
 void USf_EQS_Scheduler::Deinitialize()
 {
 	//FTSTicker::GetCoreTicker().RemoveTicker(TickHandle);
+	if (GetWorld())
+		GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
+	
 	Super::Deinitialize();
 }
 
 USf_EQS_Scheduler* USf_EQS_Scheduler::GetCurrent(const UWorld* World)
 {
 	if (IsValid(World))
-		return  World->GetGameInstance()->GetSubsystem<USf_EQS_Scheduler>();
+		return  World->GetSubsystem<USf_EQS_Scheduler>();
 	return 	nullptr;
 }
 

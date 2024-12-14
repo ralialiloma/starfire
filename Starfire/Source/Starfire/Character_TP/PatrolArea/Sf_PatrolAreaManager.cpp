@@ -20,7 +20,7 @@ USf_PatrolAreaManager* USf_PatrolAreaManager::Get(const UWorld* World)
 	if (!IsValid(World->GetGameInstance()) )
 		return nullptr;
 
-	return  World->GetGameInstance()->GetSubsystem<USf_PatrolAreaManager>();
+	return  World->GetSubsystem<USf_PatrolAreaManager>();
 }
 
 void USf_PatrolAreaManager::RegisterPatrolArea(ASf_PatrolArea* PatrolArea)

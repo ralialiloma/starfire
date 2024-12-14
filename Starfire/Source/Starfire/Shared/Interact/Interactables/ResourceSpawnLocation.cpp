@@ -8,7 +8,7 @@ AResourceSpawnLocation::AResourceSpawnLocation()
 	RootComponent = CreateDefaultSubobject<USceneComponent>("RootComponent");
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("DisplayMesh");
 	MeshComponent->SetupAttachment(RootComponent);
-	MeshComponent->SetHiddenInGame(true);
+	// MeshComponent->SetHiddenInGame(true);
 }
 
 void AResourceSpawnLocation::OnConstruction(const FTransform& Transform)
@@ -28,6 +28,18 @@ void AResourceSpawnLocation::OnConstruction(const FTransform& Transform)
 	}
 #endif
 	
+}
+
+void AResourceSpawnLocation::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	GEngine->AddOnScreenDebugMessage(-1, 20, FColor::Blue, "Post init components");
+}
+
+void AResourceSpawnLocation::BeginPlay()
+{
+	Super::BeginPlay();
+	GEngine->AddOnScreenDebugMessage(-1, 20, FColor::Blue, "Begin	");
 }
 
 FGameplayTag AResourceSpawnLocation::GetItemTag() const

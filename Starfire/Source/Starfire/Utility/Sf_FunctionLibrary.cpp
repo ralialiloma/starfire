@@ -38,6 +38,12 @@ ASf_FP_Character* USf_FunctionLibrary::GetSfPlayerpawn(const UObject* WorldConte
 
 FVector USf_FunctionLibrary::GetPlayerLocation(const UObject* WorldContextObject)
 {
+	if (!WorldContextObject->IsValidLowLevel())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Invalid WorldContextObject passed to GetPlayerLocation."));
+		return FVector::Zero();
+	}
+	
 	if (!IsValid(WorldContextObject))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Invalid WorldContextObject passed to GetPlayerLocation."));

@@ -41,6 +41,10 @@ void USf_CharacterFeature::OnTick(float OnTick)
 {
 }
 
+void USf_CharacterFeature::OnEndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+}
+
 void USf_CharacterFeature::SetBlackboardFloatValue(EFloatBlackboardKey FloatBlackboardKey, float Value)
 {
 	UBlackboardComponent* BlackboardComponent = UAIBlueprintHelperLibrary::GetBlackboard(OwningCharacter);
@@ -79,6 +83,12 @@ USf_TP_CharacterMovementComponent* USf_CharacterFeature::GetOwningSfMovement()
 
 USf_Equipment* USf_CharacterFeature::GetOwningSfEquipment()
 {
+	if (!this)
+		return nullptr;
+
+	if (!IsValid(OwningCharacter))
+		return nullptr;
+	
 	return OwningCharacter->GetSfEquipment();
 }
 

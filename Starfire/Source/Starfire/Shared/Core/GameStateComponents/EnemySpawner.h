@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ManagerComponent.h"
+#include "ManagerActor.h"
 #include "ResourceSpawner.h"
 #include "Components/ActorComponent.h"
 #include "EnemySpawner.generated.h"
@@ -14,7 +14,7 @@ DECLARE_LOG_CATEGORY_EXTERN(LogEnemySpawner, Log, All);
 
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class STARFIRE_API UEnemySpawner : public UManagerComponent
+class STARFIRE_API AEnemySpawner : public AManagerActor
 {
 	GENERATED_BODY()
 
@@ -43,11 +43,11 @@ protected:
 
 protected:
 	
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
 	TSubclassOf<ASf_TP_Character> SpawnedEnemyClass = nullptr;
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
 	int MaxEnemies = 10;
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
 	float SpawnDelay = 5.f;
 	// UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
 	// int EnemiesPerVein = 3;
@@ -81,7 +81,7 @@ protected:
 		FString("Jermaine"),
 		FString("Marek")
 	};
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	UPROPERTY(BlueprintReadOnly)
 	TArray<FString> UsedEnemyNames {};
 	UPROPERTY()
 	int TonyCount = 0;

@@ -1,9 +1,9 @@
-﻿#include "ManagerComponent.h"
+﻿#include "ManagerActor.h"
 
-void UManagerComponent::BeginPlay()
+void AManagerActor::BeginPlay()
 {
 	Super::BeginPlay();
-
+	
 	if (GetWorld()->GetBegunPlay())
 	{
 		StartGame();
@@ -17,7 +17,7 @@ void UManagerComponent::BeginPlay()
 	}
 }
 
-void UManagerComponent::StartGame()
+void AManagerActor::StartGame()
 {
 	GetWorld()->OnWorldBeginPlay.Remove(StartGameDelegateHandle);
 	

@@ -164,6 +164,15 @@ void ASf_TP_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 }
+
+void ASf_TP_Character::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	for (USf_CharacterFeature* Feature: FeaturesNew)
+		Feature->OnEndPlay(EndPlayReason);
+}
+
 TSet<TSubclassOf<USf_CharacterFeature_Config>> ASf_TP_Character::GetAllStartConfigs()
 {
 	TSet<TSubclassOf<USf_CharacterFeature_Config>> AllFeatures{

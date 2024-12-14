@@ -10,7 +10,7 @@
 
 DEFINE_LOG_CATEGORY(LogEnemySpawner);
 
-void UEnemySpawner::StartGame()
+void AEnemySpawner::StartGame()
 {
 	Super::StartGame();
 
@@ -24,7 +24,7 @@ void UEnemySpawner::StartGame()
 	});
 }
 
-void UEnemySpawner::DelayedStartGame()
+void AEnemySpawner::DelayedStartGame()
 {
 	TArray<AActor*> OutActors;
 	UGameplayStatics::GetAllActorsOfClass(this, ASf_PatrolArea::StaticClass(), OutActors);
@@ -66,7 +66,7 @@ void UEnemySpawner::DelayedStartGame()
 	}
 }
 
-void UEnemySpawner::SpawnEnemy(const FTransform& Transform)
+void AEnemySpawner::SpawnEnemy(const FTransform& Transform)
 {
     SF_SIMPLE_DEBUG(
         LogEnemySpawner,
@@ -144,7 +144,7 @@ void UEnemySpawner::SpawnEnemy(const FTransform& Transform)
 	RegisterEnemy(Enemy);	
 }
 
-void UEnemySpawner::SpawnEnemyRandom()
+void AEnemySpawner::SpawnEnemyRandom()
 {
 	GetWorld()->GetTimerManager().ClearTimer(SpawnEnemyTimerHandle);
 	
@@ -157,7 +157,7 @@ void UEnemySpawner::SpawnEnemyRandom()
 	}
 }
 
-void UEnemySpawner::RegisterEnemy(ASf_TP_Character* Enemy)
+void AEnemySpawner::RegisterEnemy(ASf_TP_Character* Enemy)
 {
 	SF_SIMPLE_DEBUG(LogEnemySpawner, Log, FColor::White, *FString::Printf(TEXT("Register Enemy")), Spawning::Enemies);
 
@@ -181,7 +181,7 @@ void UEnemySpawner::RegisterEnemy(ASf_TP_Character* Enemy)
 	}
 }
 
-void UEnemySpawner::RequestNewEnemy()
+void AEnemySpawner::RequestNewEnemy()
 {
 	if (EnemiesToBeSpawned <= 0)
 	{
@@ -194,23 +194,23 @@ void UEnemySpawner::RequestNewEnemy()
 	if (EnemiesToBeSpawned > 0)
 	{
 		if (!SpawnEnemyTimerHandle.IsValid())
-			GetWorld()->GetTimerManager().SetTimer(SpawnEnemyTimerHandle,this, &UEnemySpawner::SpawnEnemyRandom, SpawnDelay);
+			GetWorld()->GetTimerManager().SetTimer(SpawnEnemyTimerHandle,this, &AEnemySpawner::SpawnEnemyRandom, SpawnDelay);
 	}
 }
 
-TSubclassOf<ASf_TP_Character> UEnemySpawner::EvaluateSpawnedEnemyClass() const
+TSubclassOf<ASf_TP_Character> AEnemySpawner::EvaluateSpawnedEnemyClass() const
 {
 	return SpawnedEnemyClass;
 }
 
-TArray<ASf_PatrolArea*> UEnemySpawner::GetViableSpawns() const
+TArray<ASf_PatrolArea*> AEnemySpawner::GetViableSpawns() const
 {
 	if (USf_PatrolAreaManager::Get(GetWorld()))
 		return  USf_PatrolAreaManager::Get(this->GetWorld())->GetFreePatrolAreas();
 	return {};
 }
 
-FTransform UEnemySpawner::GetSpawnLocation() const
+FTransform AEnemySpawner::GetSpawnLocation() const
 {
 	TArray<ASf_PatrolArea*> PossibleTransforms = GetViableSpawns();
 	if (PossibleTransforms.Num() <= 0)
@@ -225,7 +225,7 @@ FTransform UEnemySpawner::GetSpawnLocation() const
 	return FTransform();
 }
 
-TArray<ASf_TP_Character*> UEnemySpawner::GetAllEnemies() const
+TArray<ASf_TP_Character*> AEnemySpawner::GetAllEnemies() const
 {
 	TArray<AActor*> FoundActors {};
 	TArray<ASf_TP_Character*> Enemies {};
@@ -243,7 +243,7 @@ TArray<ASf_TP_Character*> UEnemySpawner::GetAllEnemies() const
 	return Enemies;
 }
 
-FString UEnemySpawner::RequestEnemyName()
+FString AEnemySpawner::RequestEnemyName()
 {
 	if (PossibleEnemyNames.Num() <= 0)
 		return FString("Tony_" + FString::FromInt(TonyCount++));
@@ -255,7 +255,7 @@ FString UEnemySpawner::RequestEnemyName()
 	return Name;
 }
 
-FString UEnemySpawner::GetIncrementedName(FString OriginalName)
+FString AEnemySpawner::GetIncrementedName(FString OriginalName)
 {
 	FString NewName = OriginalName;
 	int32 LastIndex = OriginalName.Len() - 1;

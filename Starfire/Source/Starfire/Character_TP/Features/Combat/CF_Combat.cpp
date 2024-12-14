@@ -88,8 +88,15 @@ FString FStopFireInfo::ToString()
 		return  FString::Printf(TEXT("StopFireReason: %s"), *StopFireReasonString);
 }
 
+void UCF_Combat::OnEndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::OnEndPlay(EndPlayReason);
 
-
+	if (GetWorld())
+	{
+		GetWorld()->GetTimerManager().ClearTimer(FireHandle);
+	}
+}
 
 bool UCF_Combat::StartFire(bool bScoped, const bool bInClearFocusAfterFiring)
 {
@@ -109,11 +116,13 @@ bool UCF_Combat::StartFire(bool bScoped, const bool bInClearFocusAfterFiring)
 	DoFire(EInputSignalType::InputSignal_Started,bScoped);
 	const float FireDelay = GetOwningSfEquipment()->GetWeaponConfig().FireDelay+0.01f;
 	UE_LOG(EF_Combat, Log, TEXT("Starting timer with this rate %f"),FireDelay);
+	GetWorld()->GetTimerManager().ClearTimer(FireHandle);
 	GetWorld()->GetTimerManager().SetTimer(
 		FireHandle,
 		[this, bScoped]()
 		{
-			DoFire(EInputSignalType::InputSignal_Triggered,bScoped);
+			if (this)	
+				DoFire(EInputSignalType::InputSignal_Triggered,bScoped);
 		},
 		FireDelay,
 		true,

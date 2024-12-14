@@ -23,7 +23,7 @@ void UEnvQueryTest_Cover::RunTest(FEnvQueryInstance& QueryInstance) const
 	
 	for (FEnvQueryInstance::ItemIterator Iterator(this, QueryInstance); Iterator; ++Iterator)
 	{
-		ASf_TetherPointGen* TetherPointGen =  GetWorld()->GetGameInstance()->GetSubsystem<USf_TetherPointSubsystem>()->GetTetherPointGen();
+		ASf_TetherPointGen* TetherPointGen =  GetWorld()->GetSubsystem<USf_TetherPointSubsystem>()->GetTetherPointGen();
 		TArray<UTetherPoint*> TetherPoints =  TetherPointGen->GetRelevantTetherPoints();
 
 		bool bFoundTetherPoint = false;
@@ -55,12 +55,3 @@ FText UEnvQueryTest_Cover::GetDescriptionDetails() const
 {
 	return DescribeFloatTestParams();
 }
-
-
-
-
-
-
-
-
-

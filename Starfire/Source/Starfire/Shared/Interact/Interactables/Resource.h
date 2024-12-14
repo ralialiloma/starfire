@@ -6,7 +6,7 @@
 #include "Starfire/Shared/Interact/InteractInterfaces.h"
 #include "Resource.generated.h"
 
-class UResourceSpawner;
+class AResourceSpawner;
 DECLARE_LOG_CATEGORY_EXTERN(SFCollectable, Log, All);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCollect_BP, AResource*, Resource);
@@ -43,7 +43,7 @@ public:
 	
 protected:
 
-	friend UResourceSpawner;
+	friend AResourceSpawner;
 
 	UFUNCTION(BlueprintCallable)
 	void AssignResourceVein(uint8 VeinID);

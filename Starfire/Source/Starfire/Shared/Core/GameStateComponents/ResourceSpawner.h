@@ -2,7 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
-#include "ManagerComponent.h"
+#include "ManagerActor.h"
 #include "Starfire/Shared/Interact/Interactables/Resource.h"
 #include "Starfire/Shared/Interact/Interactables/ResourceSpawnLocation.h"
 #include "ResourceSpawner.generated.h"
@@ -106,6 +106,8 @@ protected:
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FVeinEmpty, uint8 /*VeinID*/)
 
+DECLARE_LOG_CATEGORY_EXTERN(LogResourceSpawner, Log, All);
+
 USTRUCT(BlueprintType)
 struct FResourceVein
 {
@@ -148,11 +150,12 @@ protected:
 };
 
 UCLASS(Blueprintable, meta = (BlueprintSpawnableComponent))
-class STARFIRE_API UResourceSpawner : public UManagerComponent
+class STARFIRE_API AResourceSpawner : public AManagerActor
 {
 	GENERATED_BODY()
 	
 public:
+	virtual void BeginPlay() override;
 	virtual void StartGame() override;
 	
 	void SpawnResourceVeinRandom(bool QueueNewVein = true);

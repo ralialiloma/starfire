@@ -46,6 +46,9 @@ class STARFIRE_API UCF_Combat : public USf_CharacterFeature
 
 #pragma region Functions
 public:
+
+	virtual void OnEndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	
 	UFUNCTION(BlueprintCallable, Category = "EnemyFeature|Combat")
 	bool StartFire(bool bScoped, bool bInClearFocusAfterFiring = true);
 
@@ -66,6 +69,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "EnemyFeature|Combat")
 	bool Melee();
+
+protected:
+
+	
 
 private:
 	void StopFire(FStopFireInfo StopFireInfo);

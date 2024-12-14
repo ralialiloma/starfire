@@ -34,6 +34,7 @@ public:
 	virtual void Initialize(ASf_TP_Character* OwningCharacterIn, const USf_CharacterFeature_Config* InConfig);
 	virtual void OnBeginPlay();
 	virtual void OnTick(float OnTick);
+	virtual void OnEndPlay(const EEndPlayReason::Type EndPlayReason);
 protected:
 	UFUNCTION(BlueprintCallable, Category = "Blackboard|Setters")
 	void SetBlackboardFloatValue(EFloatBlackboardKey FloatBlackboardKey, float Value);

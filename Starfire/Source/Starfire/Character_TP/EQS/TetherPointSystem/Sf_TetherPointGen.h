@@ -59,8 +59,10 @@ class STARFIRE_API ASf_TetherPointGen : public AActor
 public:
 	ASf_TetherPointGen();
 	virtual void BeginPlay() override;
+	virtual void PostInitializeComponents() override;
 	virtual void Tick(float DeltaSeconds) override;
-	
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 #pragma region Functions
 public:
 	void GeneratePoints();
@@ -166,7 +168,7 @@ private:
 
 	UPROPERTY()
 	FTimerHandle OtherTethers;
-
+	
 	UPROPERTY()
 	TArray<ASf_PatrolArea*> RegisteredAreas = TArray<ASf_PatrolArea*>{};
 #pragma endregion

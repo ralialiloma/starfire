@@ -5,7 +5,7 @@
 #include "Sf_PatrolAreaManager.generated.h"
 
 UCLASS(BlueprintType)
-class STARFIRE_API USf_PatrolAreaManager : public UGameInstanceSubsystem
+class STARFIRE_API USf_PatrolAreaManager : public UWorldSubsystem
 {
 	GENERATED_BODY()
 

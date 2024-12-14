@@ -39,7 +39,7 @@ public:
 
 
 UCLASS(BlueprintType, Blueprintable)
-class STARFIRE_API USf_EQS_Scheduler : public UGameInstanceSubsystem 
+class STARFIRE_API USf_EQS_Scheduler : public UWorldSubsystem 
 {
 	GENERATED_BODY()
 
@@ -76,8 +76,9 @@ protected:
 
 	UPROPERTY()
 	float Tickrate = 0.5f;
-	
-	FTSTicker::FDelegateHandle TickHandle;
+
+	UPROPERTY()
+	FTimerHandle TimerHandle;
 
 };
 
