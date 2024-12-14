@@ -30,18 +30,6 @@ void AResourceSpawnLocation::OnConstruction(const FTransform& Transform)
 	
 }
 
-void AResourceSpawnLocation::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
-	GEngine->AddOnScreenDebugMessage(-1, 20, FColor::Blue, "Post init components");
-}
-
-void AResourceSpawnLocation::BeginPlay()
-{
-	Super::BeginPlay();
-	GEngine->AddOnScreenDebugMessage(-1, 20, FColor::Blue, "Begin	");
-}
-
 FGameplayTag AResourceSpawnLocation::GetItemTag() const
 {
 	return ItemTag;

@@ -114,8 +114,6 @@ void AResourceSpawner::StartGame()
 		return;
 	}
 
-	GEngine->AddOnScreenDebugMessage(-1, 20, FColor::Yellow, "Beginning Spawner");
-
 	TArray<AActor*> OutActors {};
 	UGameplayStatics::GetAllActorsOfClass(this, AResourceSpawnLocation::StaticClass(), OutActors);
 
