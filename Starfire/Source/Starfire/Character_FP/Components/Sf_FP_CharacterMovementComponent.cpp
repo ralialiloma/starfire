@@ -15,15 +15,9 @@
 #if 1
 float MacroDuration = 100.f;
 #define PRINT(x)  \
-	if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::FP::Movement::Name, EDebugDisplayType::Print)) \
-		GEngine->AddOnScreenDebugMessage(-1, MacroDuration ? MacroDuration : -1.f, FColor::Yellow, x); \
-	if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::FP::Movement::Name,EDebugDisplayType::Log)) \
-		UE_LOG(SF_FP_CharacterMovement, Log, TEXT("%s"), *x);
+	DEBUG_SIMPLE(SF_FP_CharacterMovement, Log, FColor::Yellow, x, Sf_GameplayTags::Debug::FP::Movement::Name)
 #define PRINTCOLOR(x,c)  \
-	if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::FP::Movement::Name, EDebugDisplayType::Print)) \
-		GEngine->AddOnScreenDebugMessage(-1, MacroDuration ? MacroDuration : -1.f, c, x); \
-	if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::FP::Movement::Name,EDebugDisplayType::Log)) \
-		UE_LOG(SF_FP_CharacterMovement, Log, TEXT("%s"), *x);
+	DEBUG_SIMPLE(SF_FP_CharacterMovement, Log, c, FString::Printf(x), Sf_GameplayTags::Debug::FP::Movement::Name)
 #define POINT(x, c)  \
 	if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::FP::Movement::Name, EDebugDisplayType::Visual)) \
 		DrawDebugPoint(GetWorld(), x, 10, c, !MacroDuration, MacroDuration);
@@ -427,7 +421,7 @@ bool USf_FP_CharacterMovementComponent::TryWallRun()
 #define EXIT_WALLRUNPHYS(ReasonString) \
 	SetMovementMode(MOVE_Falling); \
 	StartNewPhysics(RemainingTime, Iterations); \
-	PRINTCOLOR(ReasonString,FColor::Red) \
+	PRINTCOLOR(TEXT(ReasonString), FColor::Red) \
 	return;
 
 void USf_FP_CharacterMovementComponent::PhysWallRun(float deltaTime, int32 Iterations)
@@ -608,7 +602,7 @@ bool USf_FP_CharacterMovementComponent::TryMantle()
 	
 	if (Velocity.Length() < MantleMinVelocity)
 	{
-		PRINT("To slow for Mantle.");
+		PRINT(TEXT("To slow for Mantle."));
 		return false;
 	}
 
