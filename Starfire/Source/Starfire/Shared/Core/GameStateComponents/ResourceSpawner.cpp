@@ -1,9 +1,9 @@
 ﻿#include "ResourceSpawner.h"
 
+#include "DebugFunctionLibrary.h"
 #include "Algo/RandomShuffle.h"
 #include "Kismet/GameplayStatics.h"
 #include "Starfire/Shared/Interact/Interactables/ResourceSpawnLocation.h"
-#include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
 
 DEFINE_LOG_CATEGORY(LogResourceSpawner)
 
@@ -105,12 +105,12 @@ void AResourceSpawner::StartGame()
 	if (!ResourceClass)
 	{
 		Destroy();
-		SF_SIMPLE_DEBUG(
+		DEBUG_SIMPLE(
 			LogResourceSpawner,
 			Warning,
 			FColor::Yellow,
 			*FString::Printf(TEXT("No Resource Class Defined!")),
-			Spawning::Resources)
+			Sf_GameplayTags::Debug::Spawning::Resources)
 		return;
 	}
 

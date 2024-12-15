@@ -4,7 +4,7 @@
 #include "SF_CharacterStateMachine.h"
 #include "GameFramework/Character.h"
 #include "Starfire/Character_FP/Sf_FP_Character.h"
-#include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
+#include "Starfire/Utility/Debug/SF_DebugFunctionLibrary.h"
 
 
 
@@ -62,7 +62,7 @@ void USf_CharacterStateMachine::BeginPlay()
 void USf_CharacterStateMachine::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::FP::HSM::Name,EDebugType::Print) && IsValid(StateCallstack))
+	if (USF_DebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::FP::HSM::Name,EDebugType::Print) && IsValid(StateCallstack))
 	{
 		StateCallstack->DisplayAllActiveStates();
 	}

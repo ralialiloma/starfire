@@ -4,7 +4,7 @@
 
 #include "EnvironmentQuery/EnvQueryManager.h"
 #include "Starfire/Utility/AsyncUtility.h"
-#include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
+#include "Starfire/Utility/Debug/SF_DebugFunctionLibrary.h"
 
 
 FScheduledEnvRequest::FScheduledEnvRequest(UObject* InQuerier, UEnvQuery* InQueryTemplate, TEnumAsByte<EEnvQueryRunMode::Type> InRunMode):
@@ -75,20 +75,20 @@ void USf_EQS_Scheduler::RunRequest(const FScheduledEnvRequest& Request)
 {
 	if (!Request.Querier)
 	{
-		UDebugFunctionLibrary::Sf_ThrowError(this, "Invalid Querier");
+		USF_DebugFunctionLibrary::Sf_ThrowError(this, "Invalid Querier");
 		return;
 	}
 	
 	if (!Request.QueryTemplate)
 	{
-		UDebugFunctionLibrary::Sf_ThrowError(this, "Invalid Query Template");
+		USF_DebugFunctionLibrary::Sf_ThrowError(this, "Invalid Query Template");
 		return;
 	}
 
 	UEnvQueryManager* EQSManager = UEnvQueryManager::GetCurrent(GetWorld());
 	if (!EQSManager)
 	{
-		UDebugFunctionLibrary::Sf_ThrowError(this, "Could not find EQS Manager.");
+		USF_DebugFunctionLibrary::Sf_ThrowError(this, "Could not find EQS Manager.");
 		return;
 	}
 
@@ -99,7 +99,7 @@ void USf_EQS_Scheduler::RunRequest(const FScheduledEnvRequest& Request)
 
 	if (!IsValid(Wrapper))
 	{
-		UDebugFunctionLibrary::Sf_ThrowError(this,"Invalid QueryInstance Wrapper");
+		USF_DebugFunctionLibrary::Sf_ThrowError(this,"Invalid QueryInstance Wrapper");
 		return;
 	}
 

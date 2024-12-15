@@ -5,7 +5,7 @@
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Starfire/Character_TP/Sf_TP_Character.h"
 #include "Starfire/Character_TP/Behaviour/BlackboardKeyHelperLibrary.h"
-#include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
+#include "Starfire/Utility/Debug/SF_DebugFunctionLibrary.h"
 
 void USf_CharacterFeature::Initialize(ASf_TP_Character* OwningCharacterIn,const USf_CharacterFeature_Config* InConfig)
 {
@@ -129,7 +129,7 @@ TArray<AActor*> USf_CharacterFeature::GetIgnoreActors() const
 
 void USf_CharacterFeature::ThrowInvalidConfigError(TSubclassOf<USf_CharacterFeature_Config> ConfigToCastTo)
 {
-	UDebugFunctionLibrary::Sf_ThrowError(this,FString::Printf(TEXT("Invalid %s Config!"),*ConfigToCastTo->GetName()));
+	USF_DebugFunctionLibrary::Sf_ThrowError(this,FString::Printf(TEXT("Invalid %s Config!"),*ConfigToCastTo->GetName()));
 }
 
 const USf_CharacterFeature_Config* USf_CharacterFeature::GetConfig() const

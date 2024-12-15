@@ -3,7 +3,7 @@
 #include "AIController.h"
 #include "BlackboardKeyHelperLibrary.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
-#include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
+#include "Starfire/Utility/Debug/SF_DebugFunctionLibrary.h"
 
 
 USf_BTDecorator_BlueprintBase::USf_BTDecorator_BlueprintBase(const FObjectInitializer& ObjectInitializer)
@@ -102,7 +102,7 @@ void USf_BTDecorator_BlueprintBase::Sf_ThrowInvalidLocationKeyError(ELocationBla
 {
 	FString InvalidKeyName = *USf_FunctionLibrary::GetEnumAsString<ELocationBlackboardKey>(InvalidKey);
 	FString ErrorMessage = FString::Printf(TEXT("Invalid or not set blackboard key for (%s) "),*InvalidKeyName);
-	UDebugFunctionLibrary::Sf_ThrowError(this,ErrorMessage,true,true);
+	USF_DebugFunctionLibrary::Sf_ThrowError(this,ErrorMessage,true,true);
 }
 
 

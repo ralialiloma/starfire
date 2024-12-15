@@ -4,7 +4,7 @@
 #include "Starfire/Character_FP/Sf_FP_Character.h"
 #include "Starfire/Character_FP/Components/Inventory/InventoryComponent.h"
 #include "Starfire/Sf_Bases/Components/Sf_Equipment.h"
-#include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
+#include "Starfire/Utility/Debug/SF_DebugFunctionLibrary.h"
 
 DEFINE_LOG_CATEGORY(SFCollectable);
 
@@ -23,9 +23,9 @@ void AResource::OnInteractStart_Implementation(UInteractComponent* InteractCompo
 
 	if (!ItemTag.IsValid())
 	{
-		if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::Interactables::Name, EDebugType::Log))
+		if (USF_DebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::Interactables::Name, EDebugType::Log))
 			UE_LOG(SFCollectable, Error, TEXT("Collectable item has invalid item tag {%s}"), *ItemTag.ToString());
-		if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::Interactables::Name, EDebugType::Print))
+		if (USF_DebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::Interactables::Name, EDebugType::Print))
 			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, "Collectable item has invalid item tag {" + ItemTag.ToString() + "}");
 	}
 
@@ -37,9 +37,9 @@ void AResource::OnInteractStart_Implementation(UInteractComponent* InteractCompo
 	if (RemainingCollections == CollectAmount)
 		return;
 
-	if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::Interactables::Name, EDebugType::Log))
+	if (USF_DebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::Interactables::Name, EDebugType::Log))
 		UE_LOG(SFCollectable, Log, TEXT("Collecting Collectable."));
-	if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::Interactables::Name, EDebugType::Print))
+	if (USF_DebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::Interactables::Name, EDebugType::Print))
 		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, "Collecting Collectable.");
 
 

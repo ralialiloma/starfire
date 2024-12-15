@@ -8,7 +8,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Net/UnrealNetwork.h"
-#include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
+#include "Starfire/Utility/Debug/SF_DebugFunctionLibrary.h"
 
 #define LOCTEXT_NAMESPACE "Interact"
 
@@ -1189,7 +1189,7 @@ EInteractMoment UInteractComponent::ConvertToInteractMoment(EInteractMoment InMo
 
 void UInteractComponent::DebugString(const FString Message, FName Key) const
 {
-	UDebugFunctionLibrary::Sf_PrintString(this, Message,Sf_GameplayTags::Debug::Interactables::Name,true,true,FColor::Purple);
+	USF_DebugFunctionLibrary::Sf_PrintString(this, Message,Sf_GameplayTags::Debug::Interactables::Name,true,true,FColor::Purple);
 }
 #pragma endregion
 

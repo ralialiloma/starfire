@@ -1,10 +1,10 @@
-﻿#include "DebugSettings.h"
+﻿#include "SF_DebugSettings.h"
 
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
 
 
 #if WITH_EDITOR
-void UDebugSettings::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+void USF_DebugSettings::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 	USf_FunctionLibrary::ValidateAndUpdateEnumMap<EDebugType,FGameplayTagContainer>(ShownDebugs);
@@ -12,7 +12,7 @@ void UDebugSettings::PostEditChangeProperty(FPropertyChangedEvent& PropertyChang
 }
 #endif
 
-TArray<FGameplayTag> UDebugSettings::GetAllDebugTags(const EDebugType DebugType) const
+TArray<FGameplayTag> USF_DebugSettings::GetAllDebugTags(const EDebugType DebugType) const
 {
 	TArray<TMap<EDebugType, FGameplayTagContainer>> AllGameplayTagContainers = GetAllGameplayTagContainers();
 
@@ -34,7 +34,7 @@ TArray<FGameplayTag> UDebugSettings::GetAllDebugTags(const EDebugType DebugType)
 	return AllTags;
 }
 
-bool UDebugSettings::ShouldShowDebugType (const EDebugType DebugTypeIn) const
+bool USF_DebugSettings::ShouldShowDebugType (const EDebugType DebugTypeIn) const
 {
 	if (bHideAllDebugs)
 		return false;
@@ -50,7 +50,7 @@ bool UDebugSettings::ShouldShowDebugType (const EDebugType DebugTypeIn) const
 	return FoundDebugSetting;
 }
 
-bool UDebugSettings::ShouldDebug(const FGameplayTag DebugTagIn, const EDebugType DebugTypeIn) const
+bool USF_DebugSettings::ShouldDebug(const FGameplayTag DebugTagIn, const EDebugType DebugTypeIn) const
 {
 	if(bHideAllDebugs)
 		return false;
@@ -73,7 +73,7 @@ bool UDebugSettings::ShouldDebug(const FGameplayTag DebugTagIn, const EDebugType
 	});
 }
 
-TArray<TMap<EDebugType, FGameplayTagContainer>> UDebugSettings::GetAllGameplayTagContainers() const
+TArray<TMap<EDebugType, FGameplayTagContainer>> USF_DebugSettings::GetAllGameplayTagContainers() const
 {
 	return {ShownDebugs};
 }

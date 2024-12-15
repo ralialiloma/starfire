@@ -13,7 +13,7 @@ class ASf_TP_Character;
 DECLARE_LOG_CATEGORY_EXTERN(LogEnemySpawner, Log, All);
 
 
-UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
+UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent), PrioritizeCategories = "Settings")
 class STARFIRE_API AEnemySpawner : public AManagerActor
 {
 	GENERATED_BODY()
@@ -43,22 +43,22 @@ protected:
 
 protected:
 	
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = Settings)
 	TSubclassOf<ASf_TP_Character> SpawnedEnemyClass = nullptr;
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = Settings)
 	int MaxEnemies = 10;
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = Settings)
 	float SpawnDelay = 5.f;
-	// UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	// UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = Settings)
 	// int EnemiesPerVein = 3;
-	// UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	// UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = Settings)
 	// bool bWaitForVeins = true;
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (EditCondition = "bWaitForVeins"))
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (EditCondition = "bWaitForVeins"), Category = Settings)
 	bool bStartWithMax = true;
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = Settings)
 	bool bDisableSpawning = true;
 	
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = Settings)
 	TArray<FString> PossibleEnemyNames { 
 		FString("Tony"), 
 		FString("Victor"), 

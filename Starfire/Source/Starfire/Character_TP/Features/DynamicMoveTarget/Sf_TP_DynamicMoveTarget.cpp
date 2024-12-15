@@ -3,7 +3,7 @@
 
 #include "SF_TP_DynamicMoveTarget.h"
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
-#include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
+#include "Starfire/Utility/Debug/SF_DebugFunctionLibrary.h"
 
 
 ASf_TP_DynamicMoveTarget::ASf_TP_DynamicMoveTarget()

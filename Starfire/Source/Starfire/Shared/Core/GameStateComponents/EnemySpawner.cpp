@@ -5,7 +5,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Starfire/Character_TP/Features/Death/CF_Death.h"
 #include "Starfire/Character_TP/PatrolArea/Sf_PatrolAreaManager.h"
-#include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
+#include "DebugFunctionLibrary.h"
 #include "Starfire/StarFireGameplayTags.h"
 
 DEFINE_LOG_CATEGORY(LogEnemySpawner);
@@ -30,12 +30,12 @@ void AEnemySpawner::DelayedStartGame()
 	UGameplayStatics::GetAllActorsOfClass(this, ASf_PatrolArea::StaticClass(), OutActors);
 	if (MaxEnemies > OutActors.Num())
 	{
-		SF_SIMPLE_DEBUG(
+		DEBUG_SIMPLE(
 			LogEnemySpawner,
 			Warning,
 			FColor::Orange,
 			*FString::Printf(TEXT("MaxEnemies changed from %i to %i"), MaxEnemies, OutActors.Num()),
-			Spawning::Enemies);
+			Sf_GameplayTags::Debug::Spawning::Enemies);
 
 		MaxEnemies = OutActors.Num();
 	}
@@ -68,22 +68,22 @@ void AEnemySpawner::DelayedStartGame()
 
 void AEnemySpawner::SpawnEnemy(const FTransform& Transform)
 {
-    SF_SIMPLE_DEBUG(
+    DEBUG_SIMPLE(
         LogEnemySpawner,
         Warning,
         FColor::White,
         *FString::Printf(TEXT("Spawning Enemy")),
-        Spawning::Enemies);
+        Sf_GameplayTags::Debug::Spawning::Enemies);
 
     UClass* EnemyClass = EvaluateSpawnedEnemyClass();
     if (!EnemyClass)
     {
-        SF_SIMPLE_DEBUG(
+        DEBUG_SIMPLE(
             LogEnemySpawner,
             Error,
             FColor::Red,
             *FString::Printf(TEXT("Spawning Class Invalid!")),
-            Spawning::Enemies);
+            Sf_GameplayTags::Debug::Spawning::Enemies);
         return;
     }
 
@@ -94,12 +94,12 @@ void AEnemySpawner::SpawnEnemy(const FTransform& Transform)
     const ASf_TP_Character* DefaultEnemy = EnemyClass->GetDefaultObject<ASf_TP_Character>();
     if (!DefaultEnemy)
     {
-        SF_SIMPLE_DEBUG(
+        DEBUG_SIMPLE(
             LogEnemySpawner,
             Error,
             FColor::Red,
             *FString::Printf(TEXT("Failed to retrieve default object for enemy class!")),
-            Spawning::Enemies);
+            Sf_GameplayTags::Debug::Spawning::Enemies);
         return;
     }
 
@@ -107,12 +107,12 @@ void AEnemySpawner::SpawnEnemy(const FTransform& Transform)
     const UCapsuleComponent* Capsule = DefaultEnemy->GetCapsuleComponent();
     if (!Capsule)
     {
-        SF_SIMPLE_DEBUG(
+        DEBUG_SIMPLE(
             LogEnemySpawner,
             Error,
             FColor::Red,
             *FString::Printf(TEXT("Enemy class does not have a capsule component!")),
-            Spawning::Enemies);
+            Sf_GameplayTags::Debug::Spawning::Enemies);
         return;
     }
 
@@ -129,12 +129,12 @@ void AEnemySpawner::SpawnEnemy(const FTransform& Transform)
 
     if (!Enemy)
     {
-        SF_SIMPLE_DEBUG(
+        DEBUG_SIMPLE(
             LogEnemySpawner,
             Error,
             FColor::Red,
             *FString::Printf(TEXT("Enemy spawn failed!")),
-            Spawning::Enemies);
+            Sf_GameplayTags::Debug::Spawning::Enemies);
         return;
     }
 
@@ -159,18 +159,18 @@ void AEnemySpawner::SpawnEnemyRandom()
 
 void AEnemySpawner::RegisterEnemy(ASf_TP_Character* Enemy)
 {
-	SF_SIMPLE_DEBUG(LogEnemySpawner, Log, FColor::White, *FString::Printf(TEXT("Register Enemy")), Spawning::Enemies);
+	DEBUG_SIMPLE(LogEnemySpawner, Log, FColor::White, *FString::Printf(TEXT("Register Enemy")), Sf_GameplayTags::Debug::Spawning::Enemies);
 
 	if(Enemy && Enemy->GetFeatureByClass<UCF_Death>())
 	{
 		Enemy->GetFeatureByClass<UCF_Death>()->OnDeath_CPP.AddLambda([this, Enemy]()
 		{
-			SF_SIMPLE_DEBUG(
+			DEBUG_SIMPLE(
 				LogEnemySpawner, 
 				Warning, 
 				FColor::White, 
 				*FString::Printf(TEXT("On Death Triggered")), 
-				Spawning::Enemies);
+				Sf_GameplayTags::Debug::Spawning::Enemies);
 			EnemiesToBeSpawned++;
 			UsedEnemyNames.Remove(Enemy->GetName());
 			FString ModifiedName = GetIncrementedName(Enemy->GetName());
@@ -189,7 +189,7 @@ void AEnemySpawner::RequestNewEnemy()
 		return;
 	}
 	
-	SF_SIMPLE_DEBUG(LogEnemySpawner, Log, FColor::White, *FString::Printf(TEXT("New Enemy Request process")), Spawning::Enemies);
+	DEBUG_SIMPLE(LogEnemySpawner, Log, FColor::White, *FString::Printf(TEXT("New Enemy Request process")), Sf_GameplayTags::Debug::Spawning::Enemies);
 
 	if (EnemiesToBeSpawned > 0)
 	{

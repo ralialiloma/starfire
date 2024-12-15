@@ -3,7 +3,7 @@
 #include "Navigation/PathFollowingComponent.h"
 #include "Starfire/Character_TP/Sf_TP_Character.h"
 #include "Starfire/Character_TP/EQS/TetherPointSystem/Sf_TetherPointSubsystem.h"
-#include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
+#include "Starfire/Utility/Debug/SF_DebugFunctionLibrary.h"
 
 
 void UCF_Locomotion::Initialize(ASf_TP_Character* Holder, const USf_CharacterFeature_Config* InConfig)
@@ -23,7 +23,7 @@ bool UCF_Locomotion::MoveToLocation(const F_SF_MoveRequest MoveRequest)
 	{
 		if(!IsValid(MoveRequest.TargetActor))
 		{
-			UDebugFunctionLibrary::Sf_ThrowError(this, "Target Actor is invalid");
+			USF_DebugFunctionLibrary::Sf_ThrowError(this, "Target Actor is invalid");
 			//UE_LOG(EF_Locomotion, Error, TEXT("Target Actor is invalid"))
 			return false;
 		}
@@ -51,7 +51,7 @@ bool UCF_Locomotion::MoveToLocation(const F_SF_MoveRequest MoveRequest)
 		if (!bProjected)
 		{
 			const FString ErrorString = FString::Printf(TEXT("Failed to project location with radius: %f"),MoveRequest.ProjectionRadius);
-			UDebugFunctionLibrary::Sf_ThrowError(this, ErrorString);
+			USF_DebugFunctionLibrary::Sf_ThrowError(this, ErrorString);
 			//UE_LOG(EF_Locomotion, Warning, TEXT("Faild to project location"))
 			return false;
 		}
@@ -85,8 +85,8 @@ bool UCF_Locomotion::MoveToLocation(const F_SF_MoveRequest MoveRequest)
 		OnMoveFailed_BP.Broadcast();
 		OnMoveFailed_CPP.Broadcast();
 		StopMovement();
-		UDebugFunctionLibrary::Sf_ThrowError(this, "Failed path request");
-		UDebugFunctionLibrary::Sf_DrawDebugSphere(
+		USF_DebugFunctionLibrary::Sf_ThrowError(this, "Failed path request");
+		USF_DebugFunctionLibrary::Sf_DrawDebugSphere(
 			this,
 			Sf_GameplayTags::Debug::TP::CharacterFeatures::Locomotion,
 			MoveRequest.Destination,

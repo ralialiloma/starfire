@@ -8,7 +8,7 @@
 #include "Starfire/Character_TP/PatrolArea/Sf_PatrolAreaManager.h"
 #include "Starfire/Utility/AsyncUtility.h"
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
-#include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
+#include "Starfire/Utility/Debug/SF_DebugFunctionLibrary.h"
 
 
 UTetherPoint::UTetherPoint(): CenterLocation(FVector::ZeroVector),

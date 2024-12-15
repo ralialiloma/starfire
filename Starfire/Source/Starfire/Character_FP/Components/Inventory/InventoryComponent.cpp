@@ -1,7 +1,8 @@
 ﻿#include "InventoryComponent.h"
 
 #include "ResourceCraftingDefinition.h"
-#include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
+#include "DebugFunctionLibrary.h"
+#include "Starfire/StarFireGameplayTags.h"
 
 DEFINE_LOG_CATEGORY(LogInventoryComponent);
 
@@ -28,7 +29,7 @@ int UInventoryComponent::AddResource(FGameplayTag ItemTag, int AddQuantity)
 		
 
 	FString DebugString("Added " + FString::FromInt(AddQuantity - ReturnQuantity) + " of Item: " + ItemTag.ToString());
-	SF_SIMPLE_DEBUG(LogInventoryComponent, Log, FColor::White, *DebugString, Inventory::Name);
+	DEBUG_SIMPLE(LogInventoryComponent, Log, FColor::White, *DebugString, Sf_GameplayTags::Debug::Inventory::Name);
 
 	return ReturnQuantity;
 }
@@ -60,7 +61,7 @@ bool UInventoryComponent::ConsumeResource(FGameplayTag ItemTag, int Quantity)
 	ItemQuantity -= Quantity;
 
 	FString DebugString("Consumed " + FString::FromInt(Quantity) + " of Item: " + ItemTag.ToString());
-	SF_SIMPLE_DEBUG(LogInventoryComponent, Log, FColor::White, *DebugString, Inventory::Name);
+	DEBUG_SIMPLE(LogInventoryComponent, Log, FColor::White, *DebugString, Sf_GameplayTags::Debug::Inventory::Name);
 	return true;
 }
 

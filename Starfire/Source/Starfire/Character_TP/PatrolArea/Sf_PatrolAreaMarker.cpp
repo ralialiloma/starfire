@@ -3,7 +3,7 @@
 #include "Sf_PatrolAreaMarker.h"
 #include "NavigationSystem.h"
 #include "Chaos/CollisionResolution.h"
-#include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
+#include "Starfire/Utility/Debug/SF_DebugFunctionLibrary.h"
 
 
 ASf_PatrolAreaMarker::ASf_PatrolAreaMarker()

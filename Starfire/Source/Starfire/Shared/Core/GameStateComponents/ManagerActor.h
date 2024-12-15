@@ -3,7 +3,8 @@
 #include "CoreMinimal.h"
 #include "ManagerActor.generated.h"
 
-UCLASS(Blueprintable)
+UCLASS(Blueprintable, HideCategories = ("Replication", "Rendering", "Collision", "Actor", "Input", "HLOD", "Physics", "LevelInstance", "Cooking", 
+"WorldPartition", "DataLayers", "Networking"), AutoCollapseCategories = ("Actor Tick", "Events"), PrioritizeCategories = ("Settings"))
 class STARFIRE_API AManagerActor : public AActor
 {
 	GENERATED_BODY()

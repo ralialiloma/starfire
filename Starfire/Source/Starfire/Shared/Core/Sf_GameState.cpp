@@ -6,7 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Starfire/StarFireGameplayTags.h"
 #include "Starfire/Shared/Respawn/CheckPoint.h"
-#include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
+#include "Starfire/Utility/Debug/SF_DebugFunctionLibrary.h"
 
 DEFINE_LOG_CATEGORY(LogSFGameState);
 

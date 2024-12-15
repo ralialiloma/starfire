@@ -5,10 +5,10 @@
 #include "DebugType.h"
 #include "Engine/DeveloperSettings.h"
 #include "Starfire/Utility/Sf_GameplayTagUtil.h"
-#include "DebugSettings.generated.h"
+#include "SF_DebugSettings.generated.h"
 
 UCLASS(config = Game, DefaultConfig, meta = (DisplayName = "Debug Settings"))
-class STARFIRE_API UDebugSettings : public UDeveloperSettings
+class STARFIRE_API USF_DebugSettings : public UDeveloperSettings
 {
 	GENERATED_BODY()
 

@@ -25,7 +25,8 @@ public class Starfire : ModuleRules
 			"UMG", 
 			"Slate", 
 			"SlateCore", 
-			"ApplicationCore"
+			"ApplicationCore", 
+			"DebugSystem"
 		});
 
 		if (Target.bBuildEditor)

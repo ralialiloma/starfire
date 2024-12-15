@@ -13,7 +13,7 @@
 #include "Features/Locomotion/CF_Locomotion_Config.h"
 #include "Starfire/Shared/CharacterFeature/Sf_CharacterFeature.h"
 #include "Starfire/Shared/Weapon/WeaponBase.h"
-#include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
+#include "Starfire/Utility/Debug/SF_DebugFunctionLibrary.h"
 
 ASf_TP_Character::ASf_TP_Character(const FObjectInitializer& ObjectInitializer): Super(
 		  ObjectInitializer.SetDefaultSubobjectClass<USf_TP_CharacterMovementComponent>(ACharacter::CharacterMovementComponentName))

@@ -149,7 +149,7 @@ protected:
 	TArray<TSharedPtr<FResourceSpawn>> Spawns {};
 };
 
-UCLASS(Blueprintable, meta = (BlueprintSpawnableComponent))
+UCLASS(Blueprintable, meta = (BlueprintSpawnableComponent), PrioritizeCategories = "Settings")
 class STARFIRE_API AResourceSpawner : public AManagerActor
 {
 	GENERATED_BODY()
@@ -174,17 +174,17 @@ protected:
 
 protected:
 
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Settings")
 	TSubclassOf<AResource> ResourceClass;
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Settings")
 	float SpawnDelay = 10;
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Settings")
 	int MaxSpawnedVeins = 5;
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Settings")
 	int SpawnedPerVein = 3;
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Settings")
 	bool StartWithMax = true;
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Settings")
 	int NoSpawnCooldown = 2;
 
 

@@ -1,16 +1,16 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "DebugFunctionLibrary.h"
-#include "DebugSettings.h"
+#include "SF_DebugFunctionLibrary.h"
+#include "SF_DebugSettings.h"
 #include "Kismet/KismetSystemLibrary.h"
 
-bool UDebugFunctionLibrary::ShouldDebug(const FGameplayTag DebugTag, const EDebugType DebugType)
+bool USF_DebugFunctionLibrary::ShouldDebug(const FGameplayTag DebugTag, const EDebugType DebugType)
 {
-	return GetDefault<UDebugSettings>() && GetDefault<UDebugSettings>()->ShouldDebug(DebugTag,DebugType);
+	return GetDefault<USF_DebugSettings>() && GetDefault<USF_DebugSettings>()->ShouldDebug(DebugTag,DebugType);
 }
 
-void UDebugFunctionLibrary::Sf_PrintString(
+void USF_DebugFunctionLibrary::Sf_PrintString(
 	const UObject* WorldContextObject,
 	const FString& InString,
 	const FGameplayTag InDebugTag,
@@ -34,7 +34,7 @@ void UDebugFunctionLibrary::Sf_PrintString(
 }
 
 
-void UDebugFunctionLibrary::Sf_ThrowError(
+void USF_DebugFunctionLibrary::Sf_ThrowError(
 	const UObject* WorldContextObject,
 	const FString& ErrorMessage,
 	const bool bPrintToScreen,
@@ -62,7 +62,7 @@ void UDebugFunctionLibrary::Sf_ThrowError(
 	UKismetSystemLibrary::PrintString(WorldContextObject,StringToPrint,bPrintToScreen,bPrintToLog,TextColor,Duration);
 }
 
-auto UDebugFunctionLibrary::Sf_DrawDebugSphere(
+auto USF_DebugFunctionLibrary::Sf_DrawDebugSphere(
 	const UObject* WorldContextObject,
 	const FGameplayTag DebugTag,
 	const FVector Center,
@@ -76,7 +76,7 @@ auto UDebugFunctionLibrary::Sf_DrawDebugSphere(
 		UKismetSystemLibrary::DrawDebugSphere(WorldContextObject,Center,Radius,Segments,LineColor,Duration,Thickness);
 }
 
-void UDebugFunctionLibrary::Sf_DrawDebugString(const UObject* WorldContextObject, const FGameplayTag DebugTag, const FVector TextLocation,
+void USF_DebugFunctionLibrary::Sf_DrawDebugString(const UObject* WorldContextObject, const FGameplayTag DebugTag, const FVector TextLocation,
 	const FString& Text, AActor* TestBaseActor, const FLinearColor TextColor, const float Duration)
 {
 	if (ShouldDebug(DebugTag,EDebugType::Visual))

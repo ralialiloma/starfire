@@ -10,7 +10,7 @@
 #include "Starfire/Animation/Sf_AnimHelper.h"
 
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
-#include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
+#include "Starfire/Utility/Debug/SF_DebugFunctionLibrary.h"
 
 
 AWeaponBase::AWeaponBase(const FObjectInitializer& ObjectInitializer)
@@ -81,7 +81,7 @@ bool AWeaponBase::Fire(const EInputSignalType InputSignal, EFireType FireType, F
 {
 	if (!CanFire(InputSignal,FireType,OutFireBlock))
 	{
-		if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::Weapon::FireBlocks,EDebugType::Print))
+		if (USF_DebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::Weapon::FireBlocks,EDebugType::Print))
 		{
 			const FString FireBlockString = USf_FunctionLibrary::GetEnumAsString<EFireBlock>(OutFireBlock);
 			GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Green, "Could not fire due to "+FireBlockString);
@@ -122,7 +122,7 @@ void AWeaponBase::TraceALongFireTransform(FHitResult& OutHitResult)
 	GetTracePoints(FireTransform,Start,End);
 
 	//Debug
-	bool bShouldDebug = UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::Weapon::Name,EDebugType::Visual) ;
+	bool bShouldDebug = USF_DebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::Weapon::Name,EDebugType::Visual) ;
 	const EDrawDebugTrace::Type DebugType =
 		bShouldDebug? EDrawDebugTrace::ForDuration : EDrawDebugTrace::None;
 	
@@ -449,7 +449,7 @@ void AWeaponBase::ApplyMeleeToActor(AActor* ActorToApplyMeleeTo)
 		WeaponConfig.TraceTypeQuery,
 		false,
 		TArray<AActor*>{this,WeaponOwner},
-		UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::Weapon::Name,EDebugType::Visual)?EDrawDebugTrace::Persistent:EDrawDebugTrace::None,
+		USF_DebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::Weapon::Name,EDebugType::Visual)?EDrawDebugTrace::Persistent:EDrawDebugTrace::None,
 		HitResult,
 		true,
 		FLinearColor::Blue,

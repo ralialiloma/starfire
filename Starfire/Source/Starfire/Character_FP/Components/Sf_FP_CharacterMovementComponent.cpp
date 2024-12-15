@@ -3,35 +3,35 @@
 
 #include "Sf_FP_CharacterMovementComponent.h"
 
+#include "DebugFunctionLibrary.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/Character.h"
 #include "DrawDebugHelpers.h"
 #include "Kismet/KismetStringLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
-#include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
 
 #pragma region HelperMacros
 #if 1
 float MacroDuration = 100.f;
 #define PRINT(x)  \
-	if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::FP::Movement::Name, EDebugType::Print)) \
+	if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::FP::Movement::Name, EDebugDisplayType::Print)) \
 		GEngine->AddOnScreenDebugMessage(-1, MacroDuration ? MacroDuration : -1.f, FColor::Yellow, x); \
-	if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::FP::Movement::Name,EDebugType::Log)) \
+	if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::FP::Movement::Name,EDebugDisplayType::Log)) \
 		UE_LOG(SF_FP_CharacterMovement, Log, TEXT("%s"), *x);
 #define PRINTCOLOR(x,c)  \
-	if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::FP::Movement::Name, EDebugType::Print)) \
+	if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::FP::Movement::Name, EDebugDisplayType::Print)) \
 		GEngine->AddOnScreenDebugMessage(-1, MacroDuration ? MacroDuration : -1.f, c, x); \
-	if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::FP::Movement::Name,EDebugType::Log)) \
+	if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::FP::Movement::Name,EDebugDisplayType::Log)) \
 		UE_LOG(SF_FP_CharacterMovement, Log, TEXT("%s"), *x);
 #define POINT(x, c)  \
-	if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::FP::Movement::Name, EDebugType::Visual)) \
+	if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::FP::Movement::Name, EDebugDisplayType::Visual)) \
 		DrawDebugPoint(GetWorld(), x, 10, c, !MacroDuration, MacroDuration);
 #define LINE(x1, x2, c) \
-	if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::FP::Movement::Name, EDebugType::Visual)) \
+	if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::FP::Movement::Name, EDebugDisplayType::Visual)) \
 		DrawDebugLine(GetWorld(), x1, x2, c, !MacroDuration, MacroDuration);
 #define CAPSULE(x, c) \
-	if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::FP::Movement::Name, EDebugType::Visual)) \
+	if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::FP::Movement::Name, EDebugDisplayType::Visual)) \
 		DrawDebugCapsule(GetWorld(), x, CharacterOwner->GetCapsuleComponent()->GetScaledCapsuleHalfHeight(), CharacterOwner->GetCapsuleComponent()->GetScaledCapsuleRadius(), FQuat::Identity, c, !MacroDuration, MacroDuration);
 #else
 #define PRINT(x)
@@ -250,7 +250,7 @@ void USf_FP_CharacterMovementComponent::SetMovementMode(EMovementMode NewMovemen
 			DashCount = 0;
 
 			//Debug Message
-			if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::FP::Movement::Dash,EDebugType::Print))
+			if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::FP::Movement::Dash,EDebugDisplayType::Print))
 			{
 				FString EnumName ="";
 				if (NewMovementMode == MOVE_Custom)
@@ -559,7 +559,7 @@ void USf_FP_CharacterMovementComponent::JumpOffWall()
 	if (JumpTowardsPlayerForward)
 	{
 		Velocity = Velocity.RotateAngleAxis(GetVectorAngleOn(InputDir, Velocity) * (Saved_bWallRunIsRight ? -1 : 1), FVector::UpVector) * WallJumpForceMultiplier;
-		if (SHOULD_DEBUG(FP::Movement::Wallrun, EDebugType::Visual) || true)
+		if (SHOULD_DEBUG(Sf_GameplayTags::Debug::FP::Movement::Wallrun, EDebugDisplayType::Visual) || true)
 		{
 			UKismetSystemLibrary::DrawDebugArrow(
 			this,
@@ -578,7 +578,7 @@ void USf_FP_CharacterMovementComponent::JumpOffWall()
 		
 		FVector WallJumpOffVector = FMath::Lerp(InputDir, WallHit.Normal,WallNormalJumpOffInfluence).GetSafeNormal();
 		Velocity += WallJumpOffVector * WallJumpOffForce;
-		if (SHOULD_DEBUG(FP::Movement::Wallrun, EDebugType::Visual) || true)
+		if (SHOULD_DEBUG(Sf_GameplayTags::Debug::FP::Movement::Wallrun, EDebugDisplayType::Visual) || true)
 		{
 			UKismetSystemLibrary::DrawDebugArrow(
 			this,

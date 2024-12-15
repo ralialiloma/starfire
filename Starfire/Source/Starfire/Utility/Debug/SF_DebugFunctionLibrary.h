@@ -3,13 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "DebugSettings.h"
+#include "SF_DebugSettings.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Subsystems/GameInstanceSubsystem.h"
-#include "DebugFunctionLibrary.generated.h"
+#include "SF_DebugFunctionLibrary.generated.h"
 
 #define SHOULD_DEBUG(Tag, DebugType) \
-(UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::Tag, DebugType))
+(USF_DebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::Tag, DebugType))
 
 #define SF_LOG(LogType, LogCategory, Text, DebugTag) \
 if (SHOULD_DEBUG(DebugTag, EDebugType::Log))    \
@@ -32,7 +32,7 @@ if (SHOULD_DEBUG(DebugTag, EDebugType::Print))                                  
 	SF_PRINT_TO_SCREEN(-1, 4, Color, Text, DebugTag)
 
 UCLASS()
-class STARFIRE_API UDebugFunctionLibrary : public UBlueprintFunctionLibrary
+class STARFIRE_API USF_DebugFunctionLibrary : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 

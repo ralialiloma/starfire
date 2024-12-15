@@ -11,7 +11,7 @@
 #include "Perception/AISense_Touch.h"
 #include "Starfire/Sf_Bases/Components/Sf_PathFollowingComponent.h"
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
-#include "Starfire/Utility/Debug/DebugFunctionLibrary.h"
+#include "Starfire/Utility/Debug/SF_DebugFunctionLibrary.h"
 
 DEFINE_LOG_CATEGORY_STATIC(Sf_Log_TP_Controller, Display, Display);
 
