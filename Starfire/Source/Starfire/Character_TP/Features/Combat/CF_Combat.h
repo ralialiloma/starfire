@@ -14,7 +14,8 @@ enum class EStopFireReason: uint8
 	FireBlock = 1,
 	ManualInput = 2,
 	HitOtherNPC = 3,
-	StartedReload = 4
+	StartedReload = 4,
+	CannotHitPlayer = 5,
 };
 
 USTRUCT(BlueprintType)
@@ -78,7 +79,8 @@ private:
 	void StopFire(FStopFireInfo StopFireInfo);
 	void DoFire(EInputSignalType InputSignalType, bool bScoped);
 	bool OtherNPCWouldBeHit();
-	static bool OtherNPCWouldBeHit(FHitResult HitResult);
+	static bool WouldHitPlayer(const FHitResult& HitResult);
+	bool WouldHitNPC(const FHitResult& HitResult);
 
 #pragma endregion
 	

@@ -162,7 +162,6 @@ void ASf_TP_Character::Tick(float DeltaTime)
 void ASf_TP_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
 }
 
 void ASf_TP_Character::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -196,12 +195,9 @@ USf_AnimHelper* ASf_TP_Character::GetAnimDataHelper_Implementation() const
 
 FTransform ASf_TP_Character::GetFireTransform_Implementation() const
 {
-	//if (SfEquipmentComponent->IsEquipped())
-	//	return SfEquipmentComponent->GetActiveWeapon()->GetMuzzleTransform();
-
-	return FTransform(GetControlRotation(),GetActorLocation()+FVector(0,0,30),GetActorScale());
-	
-	//return FTransform::Identity;
+	FRotator AdjustedRotation = GetControlRotation();
+	AdjustedRotation.Pitch += 15.0f;
+	return FTransform(AdjustedRotation, GetActorLocation() + FVector(0, 0, 50), GetActorScale());
 }
 
 FMeleeInfo ASf_TP_Character::GetMeleeInfo_Implementation() const

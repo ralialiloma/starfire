@@ -345,7 +345,7 @@ bool USf_Equipment::CanActivateWeapons() const
 	return IS_ACTION_ALLOWED(EquippedWeapon,ActivateWeapon);
 }
 
-bool USf_Equipment::Fire(EInputSignalType InputSignal, EFireType FireType, FHitResult& OutHitResult, EFireBlock& OutFireBlock)
+bool USf_Equipment::Fire(const EInputSignalType InputSignal, const EFireType FireType, FHitResult& OutHitResult, EFireBlock& OutFireBlock)
 {
 	if (!IsEquipped())
 	{

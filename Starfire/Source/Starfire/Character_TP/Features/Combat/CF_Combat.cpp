@@ -1,7 +1,6 @@
 ﻿#include "CF_Combat.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Starfire/Character_TP/Sf_TP_Character.h"
-#include "Starfire/Character_TP/EQS/TetherPointSystem/Sf_TetherPointGen.h"
 #include "Starfire/Shared/Weapon/WeaponBase.h"
 #include "Starfire/Shared/Weapon/StructsAndEnums/WeaponConfig.h"
 #include "Starfire/Utility/AsyncUtility.h"
@@ -46,16 +45,29 @@ bool UCF_Combat::OtherNPCWouldBeHit()
 		ShowDebug?1:0
 	);
 
-	return OtherNPCWouldBeHit(HitResult);
-
+	return true;
 }
-
-bool UCF_Combat::OtherNPCWouldBeHit(FHitResult HitResult)
+bool UCF_Combat::WouldHitPlayer(const FHitResult& HitResult)
 {
 	if (!HitResult.bBlockingHit)
 		return false;
 
-	AActor* HitActor = HitResult.GetActor();
+	const AActor* HitActor = HitResult.GetActor();
+	if (!IsValid(HitActor))
+		return false;
+
+	if (!HitActor->IsA(ASf_FP_Character::StaticClass()))
+		return false;
+
+	return true;
+}
+
+bool UCF_Combat::WouldHitNPC(const FHitResult& HitResult)
+{
+	if (!HitResult.bBlockingHit)
+		return false;
+
+	const AActor* HitActor = HitResult.GetActor();
 	if (!IsValid(HitActor))
 		return false;
 
@@ -64,7 +76,6 @@ bool UCF_Combat::OtherNPCWouldBeHit(FHitResult HitResult)
 
 	return true;
 }
-
 
 FStopFireInfo::FStopFireInfo(): StopFireReason(EStopFireReason::None)
                                 , FireBlock(EFireBlock::None)
@@ -173,9 +184,15 @@ void UCF_Combat::DoFire(const EInputSignalType InputSignalType, const bool bScop
 	EFireBlock FireBlock;
 	const bool bHasFired = Equipment->Fire(InputSignalType,FireType,HitResult,FireBlock);
 	
-	if (OtherNPCWouldBeHit(HitResult))
+	if (WouldHitNPC(HitResult))
 	{
 		StopFire(FStopFireInfo(EStopFireReason::HitOtherNPC));
+		return;
+	}
+
+	if (!WouldHitPlayer(HitResult))
+	{
+		StopFire(FStopFireInfo(EStopFireReason::CannotHitPlayer));
 		return;
 	}
 	
