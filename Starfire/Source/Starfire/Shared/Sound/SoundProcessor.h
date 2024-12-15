@@ -3,7 +3,7 @@
 #include "CoreMinimal.h"
 #include "SoundProcessor.generated.h"
 
-UCLASS(DefaultToInstanced, EditInlineNew, Abstract)
+UCLASS(BlueprintType ,Blueprintable, DefaultToInstanced, EditInlineNew, Abstract)
 class USoundProcessor : public UObject
 {
 	GENERATED_BODY()
