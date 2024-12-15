@@ -8,17 +8,17 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "SF_DebugFunctionLibrary.generated.h"
 
-#define SHOULD_DEBUG(Tag, DebugType) \
+#define SF_SHOULD_DEBUG(Tag, DebugType) \
 (USF_DebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::Tag, DebugType))
 
 #define SF_LOG(LogType, LogCategory, Text, DebugTag) \
-if (SHOULD_DEBUG(DebugTag, EDebugType::Log))    \
+if (SF_SHOULD_DEBUG(DebugTag, EDebugType::Log))    \
 {                                               \
 UE_LOG(LogType, LogCategory, TEXT("%s"), *FString(Text)); \
 }
 
 #define SF_PRINT_TO_SCREEN(Key, DisplayTime, Color, Text, DebugTag)               \
-if (SHOULD_DEBUG(DebugTag, EDebugType::Print))                                    \
+if (SF_SHOULD_DEBUG(DebugTag, EDebugType::Print))                                    \
 {                                                                                 \
 	if (GEngine)                                                                  \
 	{                                                                             \

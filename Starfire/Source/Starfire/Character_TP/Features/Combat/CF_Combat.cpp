@@ -103,9 +103,9 @@ bool UCF_Combat::StartFire(bool bScoped, const bool bInClearFocusAfterFiring)
 	bCLearFocusAfterFiring = bInClearFocusAfterFiring;
 	if (bIsFiring)
 		return false;
-	if (SHOULD_DEBUG(TP::CharacterFeatures::Combat,EDebugType::Log))
+	if (SF_SHOULD_DEBUG(TP::CharacterFeatures::Combat,EDebugType::Log))
 		UE_LOG(EF_Combat, Log, TEXT("%s started firing"), *GetOwningActor()->GetName())
-	if (SHOULD_DEBUG(TP::CharacterFeatures::Combat,EDebugType::Print))
+	if (SF_SHOULD_DEBUG(TP::CharacterFeatures::Combat,EDebugType::Print))
 		GEngine->AddOnScreenDebugMessage(-1, 2,
 			FColor::Yellow,
 			FString::Printf( TEXT("%s started firing"),

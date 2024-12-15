@@ -27,7 +27,7 @@ ASf_TP_DynamicMoveTarget::ASf_TP_DynamicMoveTarget()
 void ASf_TP_DynamicMoveTarget::BeginPlay()
 {
 	Super::BeginPlay();
-	DebugBox->SetVisibility(SHOULD_DEBUG(TP::DynamicMoveTarget,EDebugType::Visual));
+	DebugBox->SetVisibility(SF_SHOULD_DEBUG(TP::DynamicMoveTarget,EDebugType::Visual));
 	
 }
 

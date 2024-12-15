@@ -461,7 +461,7 @@ void ASf_TetherPointGen::UpdateTetherPoints()
 		LocalTetherPointsToProcess[i]->UpdateScore(PlayerLocation, this, IgnoredActors, TraceTypeQuery);
 		TetherPointsToProcess.Remove(LocalTetherPointsToProcess[i]);
 		
-		if (SHOULD_DEBUG(TP::EQS::TetherPointGen,EDebugType::Visual))
+		if (SF_SHOULD_DEBUG(TP::EQS::TetherPointGen,EDebugType::Visual))
 		{
 			FLinearColor InterpolatedColor = FLinearColor::LerpUsingHSV(FColor::Red, FColor::Green, LocalTetherPointsToProcess[i]->CoverPotential);
 			FColor DrawColor = InterpolatedColor.ToFColor(true);
