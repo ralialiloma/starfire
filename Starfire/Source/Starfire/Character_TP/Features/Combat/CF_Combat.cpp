@@ -109,7 +109,7 @@ void UCF_Combat::OnEndPlay(const EEndPlayReason::Type EndPlayReason)
 	}
 }
 
-bool UCF_Combat::StartFire(bool bScoped, const bool bInClearFocusAfterFiring)
+bool UCF_Combat::StartFire(const int MaxMissedBulletsBeforeStop, const bool bInClearFocusAfterFiring)
 {
 	bCLearFocusAfterFiring = bInClearFocusAfterFiring;
 	if (bIsFiring)
@@ -124,16 +124,16 @@ bool UCF_Combat::StartFire(bool bScoped, const bool bInClearFocusAfterFiring)
 	bIsFiring = true;
 	GetOwningCharacter()->UnCrouch();
 	GetOwningAIController()->SetFocus(USf_FunctionLibrary::GetSfPlayerpawn(this));
-	DoFire(EInputSignalType::InputSignal_Started,bScoped);
+	DoFire(EInputSignalType::InputSignal_Started,MaxMissedBulletsBeforeStop);
 	const float FireDelay = GetOwningSfEquipment()->GetWeaponConfig().FireDelay+0.01f;
 	UE_LOG(EF_Combat, Log, TEXT("Starting timer with this rate %f"),FireDelay);
 	GetWorld()->GetTimerManager().ClearTimer(FireHandle);
 	GetWorld()->GetTimerManager().SetTimer(
 		FireHandle,
-		[this, bScoped]()
+		[this,MaxMissedBulletsBeforeStop]()
 		{
 			if (this)	
-				DoFire(EInputSignalType::InputSignal_Triggered,bScoped);
+				DoFire(EInputSignalType::InputSignal_Triggered,MaxMissedBulletsBeforeStop);
 		},
 		FireDelay,
 		true,
@@ -152,8 +152,11 @@ void UCF_Combat::StopFire(FStopFireInfo StopFireInfo)
 	GetWorld()->GetTimerManager().ClearTimer(FireHandle);
 	if (!bIsFiring)
 		return;
+
+	LastFireStopInfo = StopFireInfo;
 	
 	FiredBullets = 0;
+	MissedBullets = 0;
 
 	if (bCLearFocusAfterFiring)
 		GetOwningAIController()->ClearFocus(EAIFocusPriority::Gameplay);
@@ -172,14 +175,14 @@ void UCF_Combat::StopFire(FStopFireInfo StopFireInfo)
 	OnFireStopped_BP.Broadcast();
 }
 
-void UCF_Combat::DoFire(const EInputSignalType InputSignalType, const bool bScoped)
+void UCF_Combat::DoFire(const EInputSignalType InputSignalType, int MissedBulletsBeforeStop)
 {
 	USf_Equipment* Equipment = GetOwningSfEquipment();
 
 	if(!IsValid(Equipment))
 		return;
 	
-	const EFireType FireType = bScoped?EFireType::FireType_Scoped:EFireType::FireType_Default;
+	const EFireType FireType = EFireType::FireType_Default;
 	FHitResult HitResult;
 	EFireBlock FireBlock;
 	const bool bHasFired = Equipment->Fire(InputSignalType,FireType,HitResult,FireBlock);
@@ -192,7 +195,11 @@ void UCF_Combat::DoFire(const EInputSignalType InputSignalType, const bool bScop
 
 	if (!WouldHitPlayer(HitResult))
 	{
-		StopFire(FStopFireInfo(EStopFireReason::CannotHitPlayer));
+		MissedBullets++;
+		if(MissedBullets>=MissedBulletsBeforeStop)
+		{
+			StopFire(FStopFireInfo(EStopFireReason::CannotHitPlayer));
+		}
 		return;
 	}
 	
@@ -202,7 +209,7 @@ void UCF_Combat::DoFire(const EInputSignalType InputSignalType, const bool bScop
 		return;
 	}
 
-	StopFire(FStopFireInfo(EStopFireReason::FireBlock,FireBlock));
+	//StopFire(FStopFireInfo(EStopFireReason::FireBlock,FireBlock));
 };
 
 void UCF_Combat::StartReload()
@@ -229,7 +236,6 @@ void UCF_Combat::StartReload()
 	//On Reload Stopped
 	OnReloadStoppedHandle = ActiveWeapon->OnReloadStopped_CPP.AddLambda([this,ActiveWeapon]()->void
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Black, "Reload Stopped");
 		if (IsValid(ActiveWeapon))
 		{
 			ActiveWeapon->OnReloadStopped_CPP.Remove(OnReloadStoppedHandle);
@@ -279,4 +285,9 @@ bool UCF_Combat::Melee()
 	const FVector PlayerLocation =  USf_FunctionLibrary::GetPlayerLocation(this);
 	GetOwningAIController()->SetFocalPoint(PlayerLocation);
 	return  Equipment->Melee();
+}
+
+FStopFireInfo UCF_Combat::GetLastStopFireInfo()
+{
+	return LastFireStopInfo;
 }

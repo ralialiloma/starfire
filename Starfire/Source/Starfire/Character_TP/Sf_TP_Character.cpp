@@ -195,9 +195,10 @@ USf_AnimHelper* ASf_TP_Character::GetAnimDataHelper_Implementation() const
 
 FTransform ASf_TP_Character::GetFireTransform_Implementation() const
 {
-	FRotator AdjustedRotation = GetControlRotation();
-	AdjustedRotation.Pitch += 15.0f;
-	return FTransform(AdjustedRotation, GetActorLocation() + FVector(0, 0, 50), GetActorScale());
+	const FVector Location = GetActorLocation();
+	const FVector PlayerLocation = USf_FunctionLibrary::GetPlayerLocation(this)+FVector(0,0,10);
+	const FRotator Rotation = (PlayerLocation-Location).ToOrientationRotator();
+	return FTransform(Rotation, GetActorLocation() + FVector(0, 0, 40), GetActorScale());
 }
 
 FMeleeInfo ASf_TP_Character::GetMeleeInfo_Implementation() const

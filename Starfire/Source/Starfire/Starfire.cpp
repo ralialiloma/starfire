@@ -8,7 +8,7 @@
 #include "Editor/Player/Sf_CharacterEditor.h"
 #endif
 
-IMPLEMENT_PRIMARY_GAME_MODULE( FDefaultGameModuleImpl, Project, "Starfire" );
+IMPLEMENT_PRIMARY_GAME_MODULE( FDefaultGameModuleImpl, Starfire, "Starfire" );
 
 void FStarfire::StartupModule()
 {

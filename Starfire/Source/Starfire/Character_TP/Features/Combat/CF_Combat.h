@@ -35,8 +35,6 @@ public:
 	explicit FStopFireInfo(EStopFireReason InStopFireReason, EFireBlock InFireBlock = EFireBlock::None);
 
 	FString ToString();
-
-	
 };
 #pragma endregion
 
@@ -51,7 +49,7 @@ public:
 	virtual void OnEndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	
 	UFUNCTION(BlueprintCallable, Category = "EnemyFeature|Combat")
-	bool StartFire(bool bScoped, bool bInClearFocusAfterFiring = true);
+	bool StartFire(int MaxMissedBulletsBeforeStop, bool bInClearFocusAfterFiring = true);
 
 	UFUNCTION(BlueprintCallable, Category = "EnemyFeature|Combat")
 	void StopFire();
@@ -71,13 +69,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "EnemyFeature|Combat")
 	bool Melee();
 
-protected:
+	UFUNCTION(BlueprintPure, Category = "EnemyFeature|Combat")
+	FStopFireInfo GetLastStopFireInfo();
 
-	
+protected:
 
 private:
 	void StopFire(FStopFireInfo StopFireInfo);
-	void DoFire(EInputSignalType InputSignalType, bool bScoped);
+	void DoFire(const EInputSignalType InputSignalType, int MissedBulletsBeforeStop);
 	bool OtherNPCWouldBeHit();
 	static bool WouldHitPlayer(const FHitResult& HitResult);
 	bool WouldHitNPC(const FHitResult& HitResult);
@@ -102,6 +101,8 @@ public:
 	FDelegateHandle OnReloadStoppedHandle = FDelegateHandle();
 
 private:
+	int MissedBullets = 0;
+	FStopFireInfo LastFireStopInfo;
 	FTimerHandle FireHandle;
 	bool bIsFiring;
 	int FiredBullets;
