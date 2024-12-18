@@ -586,14 +586,7 @@ void USf_FP_CharacterMovementComponent::PhysWallRun(float deltaTime, int32 Itera
 	    PreviousWallNormal = CurrentWallNormal2D;
 	}
 
-	FHitResult WallHit = CheckForWall(PreviousWallNormal);
-	// LINE(WallHit.TraceStart, WallHit.IsValidBlockingHit() ? WallHit.Location : WallHit.TraceEnd, FColor::Green);
-	// if (WallHit.IsValidBlockingHit())
-	// {
-	//     LINE(WallHit.Location, WallHit.TraceEnd, FColor::Red);
-	//     POINT(WallHit.Location, FColor::Red);
-	// }
-	
+	FHitResult WallHit = CheckForWall(PreviousWallNormal);	
 	FHitResult FloorHit = CheckFromPlayer(FVector::DownVector * (CapHalfHeight() + MinWallRunHeight * .5f));
 	if (FloorHit.IsValidBlockingHit())
 	{
