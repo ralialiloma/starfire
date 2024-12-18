@@ -13,20 +13,20 @@
 
 #pragma region HelperMacros
 #if 1
-float MacroDuration = 100.f;
 #define PRINT(x)  \
 	DEBUG_SIMPLE(SF_FP_CharacterMovement, Log, FColor::Yellow, x, Sf_GameplayTags::Debug::FP::Movement::Name)
 #define PRINTCOLOR(x,c)  \
 	DEBUG_SIMPLE(SF_FP_CharacterMovement, Log, c, FString::Printf(x), Sf_GameplayTags::Debug::FP::Movement::Name)
 #define POINT(x, c)  \
 	if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::FP::Movement::Name, EDebugDisplayType::Visual)) \
-		DrawDebugPoint(GetWorld(), x, 10, c, !MacroDuration, MacroDuration);
+		DrawDebugPoint(GetWorld(), x, 10, c, false, UDebugFunctionLibrary::GetDebugDuration(Sf_GameplayTags::Debug::FP::Movement::Name, EDebugDisplayType::Visual));
 #define LINE(x1, x2, c) \
 	if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::FP::Movement::Name, EDebugDisplayType::Visual)) \
-		DrawDebugLine(GetWorld(), x1, x2, c, !MacroDuration, MacroDuration);
+		DrawDebugLine(GetWorld(), x1, x2, c, false, UDebugFunctionLibrary::GetDebugDuration(Sf_GameplayTags::Debug::FP::Movement::Name, EDebugDisplayType::Visual));
 #define CAPSULE(x, c) \
 	if (UDebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::FP::Movement::Name, EDebugDisplayType::Visual)) \
-		DrawDebugCapsule(GetWorld(), x, CharacterOwner->GetCapsuleComponent()->GetScaledCapsuleHalfHeight(), CharacterOwner->GetCapsuleComponent()->GetScaledCapsuleRadius(), FQuat::Identity, c, !MacroDuration, MacroDuration);
+		DrawDebugCapsule(GetWorld(), x, CharacterOwner->GetCapsuleComponent()->GetScaledCapsuleHalfHeight(), CharacterOwner->GetCapsuleComponent() \
+		->GetScaledCapsuleRadius(), FQuat::Identity, c, false, UDebugFunctionLibrary::GetDebugDuration(Sf_GameplayTags::Debug::FP::Movement::Name, EDebugDisplayType::Visual));
 #else
 #define PRINT(x)
 #define PRINTCOLOR(x,c)
@@ -365,57 +365,115 @@ FHitResult USf_FP_CharacterMovementComponent::CheckFromPlayer(const FVector& Cas
 bool USf_FP_CharacterMovementComponent::TryWallRun()
 {
 	//Check Falling
-	if (!IsFalling())
-		return false;
+    if (!IsFalling())
+        return false;
 
-	//Check Min 2D Speed
-	if (HasMinWallRunSpeed)
-	{
-		if (Velocity.SizeSquared2D() < pow(MinWallRunSpeed,2))
-			return false;
-	}
-	
-	//Check Player Height
-	const FHitResult FloorHit = CheckFromPlayer(FVector::DownVector*(CapHalfHeight()+MinWallRunHeight));
-	if (FloorHit.IsValidBlockingHit())
-		return false;
+    //Check Min 2D Speed
+    if (HasMinWallRunSpeed && Velocity.SizeSquared2D() < FMath::Square(MinWallRunSpeed))
+        return false;
 
-	FVector PlayerRightCheck = UpdatedComponent->GetRightVector()*CapRadius()*2;
-	FHitResult WallHit = CheckFromPlayer(-PlayerRightCheck);
+    //Check Player Height - ensure we are not too close to the ground
+    const FHitResult FloorHit = CheckFromPlayer(FVector::DownVector * (CapHalfHeight() + MinWallRunHeight));
+    if (FloorHit.IsValidBlockingHit())
+        return false;
+
+    // Directions to check
+    const FVector PlayerForward = UpdatedComponent->GetForwardVector();
+    const FVector PlayerRight = UpdatedComponent->GetRightVector();
+    const float TraceDist = CapRadius() * 2.0f;
+
+    // We'll store our candidate wall hit here
+    FHitResult WallHit;
+    bool bFoundWall = false;
+    bool bIsRightSide = false;
+
+    auto IsWallRunnable = [&](const FHitResult& Hit) -> bool
+    {
+        return Hit.IsValidBlockingHit() 
+            && CheckWallSteepness(Hit.Normal) 
+            && ((Velocity | Hit.Normal) < 0);
+    };
+
+    // Forward check
+    FHitResult ForwardHit = CheckFromPlayer(PlayerForward * TraceDist);
+    if (IsWallRunnable(ForwardHit))
+    {
+        WallHit = ForwardHit;
+        bFoundWall = true;
+    	
+        float DotRight = FVector::DotProduct(WallHit.Normal.GetSafeNormal2D(), PlayerRight);
+        bIsRightSide = DotRight < 0.0f; 
+    }
+
+    // Left check
+    if (!bFoundWall)
+    {
+        FHitResult LeftHit = CheckFromPlayer(-PlayerRight * TraceDist);
+        if (IsWallRunnable(LeftHit))
+        {
+            WallHit = LeftHit;
+            bFoundWall = true;
+            bIsRightSide = false;
+        }
+    }
+
+    // Right check
+    if (!bFoundWall)
+    {
+        FHitResult RightHit = CheckFromPlayer(PlayerRight * TraceDist);
+        if (IsWallRunnable(RightHit))
+        {
+            WallHit = RightHit;
+            bFoundWall = true;
+            bIsRightSide = true;
+        }
+    }
 	
-	//Left Check
-	if (WallHit.IsValidBlockingHit() && CheckWallSteepness(WallHit.Normal) && (Velocity | WallHit.Normal) < 0)
+    if (!bFoundWall)
+    {
+        return false;
+    }
+	
+    Saved_bWallRunIsRight = bIsRightSide;
+    PreviousWallNormal = FVector2D(WallHit.Normal.GetSafeNormal2D());
+	
+    FVector ProjectedVelocity = FVector::VectorPlaneProject(Velocity, WallHit.Normal);
+	
+    if (HasMinWallRunSpeed && ProjectedVelocity.SizeSquared2D() < FMath::Square(MinWallRunSpeed))
+        return false;
+	
+    Velocity = ProjectedVelocity;
+    Velocity.Z = FMath::Clamp(Velocity.Z, 0.0f, MaxVerticalWallRunSpeed);
+    SetMovementMode(MOVE_Custom, CMOVE_WallRun);
+
+    return true;
+}
+
+void USf_FP_CharacterMovementComponent::AdjustForWallDistance(const FHitResult& WallHit)
+{
+	if (WallHit.IsValidBlockingHit())
 	{
-		Saved_bWallRunIsRight = false;
-	}
-	else
-	{
-		//Right Cast
-		WallHit = CheckFromPlayer(PlayerRightCheck);
-		if (WallHit.IsValidBlockingHit() && CheckWallSteepness(WallHit.Normal) && (Velocity | WallHit.Normal) < 0)
+		float CapsuleRadius, CapsuleHalfHeight;
+		CharacterOwner->GetCapsuleComponent()->GetScaledCapsuleSize(CapsuleRadius, CapsuleHalfHeight);
+		
+		const float DesiredDistance = CapsuleRadius + WallDistanceToCapsule;
+
+		// Calculate the perpendicular distance to the wall:
+		// Project the vector from the wall hit location to the player location onto the wall normal.
+		FVector FromWallToPlayer = UpdatedComponent->GetComponentLocation() - WallHit.Location;
+		float CurrentPerpDist = FVector::DotProduct(FromWallToPlayer, WallHit.Normal);
+		
+		float DistanceError = DesiredDistance - CurrentPerpDist;
+		
+		if (!FMath::IsNearlyZero(DistanceError, KINDA_SMALL_NUMBER))
 		{
-			Saved_bWallRunIsRight = true;
-		}
-		else
-		{
-			return false;
+			const FVector CorrectionDelta = WallHit.Normal * DistanceError;
+			FHitResult Hit;
+			SafeMoveUpdatedComponent(CorrectionDelta, UpdatedComponent->GetComponentQuat(), true, Hit);
+			LINE(Hit.TraceStart, Hit.TraceEnd, FColor::Red);
+			POINT(Hit.TraceStart, FColor::Green);
 		}
 	}
-	PreviousWallNormal = FVector2D(WallHit.Normal.GetSafeNormal2D());
-	
-	FVector ProjectedVelocity = FVector::VectorPlaneProject(Velocity, WallHit.Normal);
-	if (HasMinWallRunSpeed)
-	{
-		//Check Projected Velocity
-		if (ProjectedVelocity.SizeSquared2D() < pow(MinWallRunSpeed, 2))
-			return false;
-	}
-
-	//Passed all conditions
-	Velocity = ProjectedVelocity;
-	Velocity.Z = FMath::Clamp(Velocity.Z, 0, MaxVerticalWallRunSpeed);
-	SetMovementMode(MOVE_Custom, CMOVE_WallRun);
-	return true;
 }
 
 #define EXIT_WALLRUNPHYS(ReasonString) \
@@ -428,121 +486,128 @@ void USf_FP_CharacterMovementComponent::PhysWallRun(float deltaTime, int32 Itera
 {
 	if (deltaTime < MIN_TICK_TIME)
 	{
-		return;
+	    return;
 	}
 
-	if (!CharacterOwner||
-		(!CharacterOwner->Controller
-			&& !bRunPhysicsWithNoController
-			&&!HasAnimRootMotion()
-			&&!CurrentRootMotion.HasOverrideVelocity()
-			&& (CharacterOwner->GetLocalRole() == ROLE_SimulatedProxy)))
+	if (!CharacterOwner ||
+	    (!CharacterOwner->Controller
+	        && !bRunPhysicsWithNoController
+	        && !HasAnimRootMotion()
+	        && !CurrentRootMotion.HasOverrideVelocity()
+	        && (CharacterOwner->GetLocalRole() == ROLE_SimulatedProxy)))
 	{
-		Acceleration = FVector::ZeroVector;
-		Velocity = FVector::ZeroVector;
-		return;
+	    Acceleration = FVector::ZeroVector;
+	    Velocity = FVector::ZeroVector;
+	    return;
 	}
 
 	if (!IsValid(WallRunGravityScaleCurve))
 	{
-		UE_LOG(SF_FP_CharacterMovement, Error, TEXT("Missing WallRunGravityScaleCurve"))
-		Acceleration = FVector::ZeroVector;
-		Velocity = FVector::ZeroVector;
-		return;
+	    UE_LOG(SF_FP_CharacterMovement, Error, TEXT("Missing WallRunGravityScaleCurve"))
+	    Acceleration = FVector::ZeroVector;
+	    Velocity = FVector::ZeroVector;
+	    return;
 	}
 
 	bJustTeleported = false;
 	float RemainingTime = deltaTime;
 
 	while ((RemainingTime >= MIN_TICK_TIME)
-		&& (Iterations < MaxSimulationIterations)
-		&& CharacterOwner
-		&& (CharacterOwner->Controller
-			|| bRunPhysicsWithNoController
-			|| (CharacterOwner->GetLocalRole() == ROLE_SimulatedProxy)))
+	    && (Iterations < MaxSimulationIterations)
+	    && CharacterOwner
+	    && (CharacterOwner->Controller
+	        || bRunPhysicsWithNoController
+	        || (CharacterOwner->GetLocalRole() == ROLE_SimulatedProxy)))
 	{
-		Iterations++;
-		bJustTeleported = false;
-		const float IterationTime = GetSimulationTimeStep(RemainingTime, Iterations);
-		RemainingTime -= IterationTime;
-		const FVector OldLocation = UpdatedComponent->GetComponentLocation();
-		
-		FHitResult WallHit = CheckForWall(PreviousWallNormal);
-		if (!CheckWallSteepness(WallHit.Normal))
-		{
-			EXIT_WALLRUNPHYS("Too Steep");
-		}
-		
-		FVector2D CurrentWallNormal2D = FVector2D(WallHit.Normal.GetSafeNormal2D());
-		FVector2D WallForward2D = CurrentWallNormal2D.GetRotated(Saved_bWallRunIsRight ? 90 : -90);
-		// LINE(UpdatedComponent->GetComponentLocation(),UpdatedComponent->GetComponentLocation()+ FVector(WallForward2D.X, WallForward2D.Y,0), FColor::Yellow)
-		float PlayerAngleToForward = GetVectorAngleOn(UpdatedComponent->GetForwardVector(), FVector(WallForward2D,0));
-		bool AngleExceedsLimit = HasWallPullAwayAngle && (FMath::Abs(PlayerAngleToForward) > WallRunPullAwayAngle);
-		
-		bool bWantToPullAway = !WallHit.IsValidBlockingHit() || Acceleration.IsNearlyZero() || AngleExceedsLimit;
-		if (bWantToPullAway)
-		{
-			EXIT_WALLRUNPHYS("Wants to pull away.");
-		}
+	    Iterations++;
+	    bJustTeleported = false;
+	    const float IterationTime = GetSimulationTimeStep(RemainingTime, Iterations);
+	    RemainingTime -= IterationTime;
+	    const FVector OldLocation = UpdatedComponent->GetComponentLocation();
+	    
+	    FHitResult WallHit = CheckForWall(PreviousWallNormal);
+	    if (!CheckWallSteepness(WallHit.Normal))
+	    {
+	        EXIT_WALLRUNPHYS("Too Steep");
+	    }
+	    
+	    FVector2D CurrentWallNormal2D = FVector2D(WallHit.Normal.GetSafeNormal2D());
+	    FVector2D WallForward2D = CurrentWallNormal2D.GetRotated(Saved_bWallRunIsRight ? 90 : -90);
+	    float PlayerAngleToForward = GetVectorAngleOn(UpdatedComponent->GetForwardVector(), FVector(WallForward2D,0));
+	    bool AngleExceedsLimit = HasWallPullAwayAngle && (FMath::Abs(PlayerAngleToForward) > WallRunPullAwayAngle);
+	    
+	    bool bWantToPullAway = !WallHit.IsValidBlockingHit() || Acceleration.IsNearlyZero() || AngleExceedsLimit;
+	    if (bWantToPullAway)
+	    {
+	        EXIT_WALLRUNPHYS("Wants to pull away.");
+	    }
 
-		float InputMagnitude = Acceleration.Length();
-		FVector2D Acceleration2D = WallForward2D * InputMagnitude;
-		Acceleration = FVector(Acceleration2D, 0);
-		
-		CalcVelocity(IterationTime, 0, false, GetMaxBrakingDeceleration());
-		Velocity = FVector::VectorPlaneProject(Velocity, WallHit.Normal);
-		
-		float TangentAccel = Acceleration.GetSafeNormal() | Velocity.GetSafeNormal2D();
-		bool bVelUp = Velocity.Z > 0.f;
-		Velocity.Z += GetGravityZ() * WallRunGravityScaleCurve->GetFloatValue(bVelUp ? 0.f : TangentAccel) * IterationTime;
+	    float InputMagnitude = Acceleration.Length();
+	    FVector2D Acceleration2D = WallForward2D * InputMagnitude;
+	    Acceleration = FVector(Acceleration2D, 0);
+	    
+	    CalcVelocity(IterationTime, 0, false, GetMaxBrakingDeceleration());
+	    Velocity = FVector::VectorPlaneProject(Velocity, WallHit.Normal);
+	    
+	    float TangentAccel = Acceleration.GetSafeNormal() | Velocity.GetSafeNormal2D();
+	    bool bVelUp = Velocity.Z > 0.f;
+	    Velocity.Z += GetGravityZ() * WallRunGravityScaleCurve->GetFloatValue(bVelUp ? 0.f : TangentAccel) * IterationTime;
 
-		if (HasMinWallRunSpeed)
-		{
-			if (Velocity.SizeSquared2D() < pow(MinWallRunSpeed,2) || Velocity.Z < -MaxVerticalWallRunSpeed)
-			{
-				EXIT_WALLRUNPHYS("Wallrun too Slow");
-			}
-		}
-		
-		//Compute move parameter
-		const FVector Delta = IterationTime * Velocity;
-		if (Delta.IsNearlyZero())
-		{
-			RemainingTime = 0.f;
-		}
-		else
-		{
-			FHitResult Hit;
-			SafeMoveUpdatedComponent(Delta, UpdatedComponent->GetComponentQuat(),true,Hit);
-			// FVector WallAttractionDelta = -WallHit.Normal * WallAttractionForce * IterationTime;
-			// SafeMoveUpdatedComponent(WallAttractionDelta,UpdatedComponent->GetComponentQuat(),true,Hit);
-		}
+	    if (HasMinWallRunSpeed)
+	    {
+	        if (Velocity.SizeSquared2D() < FMath::Square(MinWallRunSpeed) || Velocity.Z < -MaxVerticalWallRunSpeed)
+	        {
+	            EXIT_WALLRUNPHYS("Wallrun too Slow");
+	        }
+	    }
+	    
+	    // Compute move parameter
+	    const FVector Delta = IterationTime * Velocity;
+	    if (Delta.IsNearlyZero())
+	    {
+	        RemainingTime = 0.f;
+	    }
+	    else
+	    {
+	        FHitResult Hit;
+	        SafeMoveUpdatedComponent(Delta, UpdatedComponent->GetComponentQuat(), true, Hit);
 
-		if (UpdatedComponent->GetComponentLocation() == OldLocation)
-		{
-			RemainingTime = 0.f;
-		}
-		Velocity = (UpdatedComponent->GetComponentLocation() - OldLocation) / IterationTime; //v = dx/dt
-		PreviousWallNormal = CurrentWallNormal2D;
+	    	AdjustForWallDistance(WallHit);
+	    }
+
+	    if (UpdatedComponent->GetComponentLocation() == OldLocation)
+	    {
+	        RemainingTime = 0.f;
+	    }
+
+		LINE(OldLocation, UpdatedComponent->GetComponentLocation(), FColor::Orange)
+
+	    Velocity = (UpdatedComponent->GetComponentLocation() - OldLocation) / IterationTime; //v = dx/dt
+	    PreviousWallNormal = CurrentWallNormal2D;
 	}
 
 	FHitResult WallHit = CheckForWall(PreviousWallNormal);
+	// LINE(WallHit.TraceStart, WallHit.IsValidBlockingHit() ? WallHit.Location : WallHit.TraceEnd, FColor::Green);
+	// if (WallHit.IsValidBlockingHit())
+	// {
+	//     LINE(WallHit.Location, WallHit.TraceEnd, FColor::Red);
+	//     POINT(WallHit.Location, FColor::Red);
+	// }
+	
 	FHitResult FloorHit = CheckFromPlayer(FVector::DownVector * (CapHalfHeight() + MinWallRunHeight * .5f));
 	if (FloorHit.IsValidBlockingHit())
 	{
-		EXIT_WALLRUNPHYS("Floor Found.");
+	    EXIT_WALLRUNPHYS("Floor Found.");
 	}
 	if (!WallHit.IsValidBlockingHit())
 	{
-		EXIT_WALLRUNPHYS("No more wall.");
+	    EXIT_WALLRUNPHYS("No more wall.");
 	}
-	if (HasMinWallRunSpeed && (Velocity.SizeSquared2D() < pow(MinWallRunSpeed, 2)))
+	if (HasMinWallRunSpeed && (Velocity.SizeSquared2D() < FMath::Square(MinWallRunSpeed)))
 	{
-		EXIT_WALLRUNPHYS("To Slow.");
+	    EXIT_WALLRUNPHYS("To Slow.");
 	}
 }
-
-
 
 void USf_FP_CharacterMovementComponent::JumpOffWall()
 {
@@ -584,8 +649,6 @@ void USf_FP_CharacterMovementComponent::JumpOffWall()
 			2);
 		}
 	}
-	
-
 }
 
 bool USf_FP_CharacterMovementComponent::CanMantle() const
@@ -621,7 +684,7 @@ bool USf_FP_CharacterMovementComponent::TryMantle()
 	FVector FrontStart = MantleGroundLocation + FVector::UpVector * AdditiveBottomOffset;
 	for (int i = 0; i < 6; i++)
 	{
-		LINE(FrontStart, FrontStart + MantleForward * CheckDistance, FColor::Red)
+		// LINE(FrontStart, FrontStart + MantleForward * CheckDistance, FColor::Red)
 		if (GetWorld()->LineTraceSingleByProfile(FrontHit, FrontStart, FrontStart + MantleForward * CheckDistance, "BlockAll", Params))
 			break;
 		FrontStart += FVector::UpVector * (2.f * CapHalfHeight() - AdditiveBottomOffset) / 5;
@@ -633,7 +696,7 @@ bool USf_FP_CharacterMovementComponent::TryMantle()
 	if (FMath::Abs(CosWallSteepnessAngle) > CosMinWallAngle || (MantleForward | -FrontHit.Normal) < CosAlignmentAngle)
 		return false;
 
-	POINT(FrontHit.Location, FColor::Red);
+	// POINT(FrontHit.Location, FColor::Red);
 	
 	// Check Top
 	TArray<FHitResult> HeightHits;
@@ -642,7 +705,7 @@ bool USf_FP_CharacterMovementComponent::TryMantle()
 	float WallCos = FVector::UpVector | FrontHit.Normal;
 	float WallSin = FMath::Sqrt(1 - WallCos * WallCos);
 	FVector TraceStart = FrontHit.Location + MantleForward + WallUp * (MantleMaxHeight - AdditiveBottomOffset) / WallSin;
-	LINE(TraceStart, FrontHit.Location + MantleForward, FColor::Orange)
+	// LINE(TraceStart, FrontHit.Location + MantleForward, FColor::Orange)
 	if (!GetWorld()->LineTraceMultiByProfile(HeightHits, TraceStart, FrontHit.Location + MantleForward, "BlockAll", Params))
 		return false;
 	for (const FHitResult& Hit : HeightHits)
@@ -658,8 +721,8 @@ bool USf_FP_CharacterMovementComponent::TryMantle()
 		return false;
 	float Height = (SurfaceHit.Location - MantleGroundLocation) | FVector::UpVector;
 
-	PRINT(FString::Printf(TEXT("Height: %f"), Height))
-	POINT(SurfaceHit.Location, FColor::Blue);
+	// PRINT(FString::Printf(TEXT("Height: %f"), Height))
+	// POINT(SurfaceHit.Location, FColor::Blue);
 	
 	if (Height > MantleMaxHeight)
 		return false;

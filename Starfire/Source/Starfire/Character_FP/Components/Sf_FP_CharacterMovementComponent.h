@@ -147,6 +147,7 @@ private:
 	FHitResult CheckFromPlayer(const FVector& CastDelta, const FVector& Offset = FVector::Zero()) const;
 	
 	bool TryWallRun();
+	void AdjustForWallDistance(const FHitResult& WallHit);
 	void PhysWallRun(float deltaTime, int32 Iterations);
 	void JumpOffWall();
 #pragma endregion
@@ -180,9 +181,8 @@ protected:
 	float WallNormalJumpOffInfluence= 0.5f;
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun|Jump", meta =(CustomConfig,ClampMin=0, ClampMax=1, EditConditionHides = "JumpTowardsPlayerForward"))
 	float WallJumpForceMultiplier= 0.8f;
-
-	// UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun", meta =(CustomConfig))
-	// float WallAttractionForce = 200.0f;
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun", meta =(CustomConfig))
+	float WallDistanceToCapsule = 5.0f;
 
 private:
 	FVector2D PreviousWallNormal = FVector2D::ZeroVector;
