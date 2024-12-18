@@ -449,33 +449,6 @@ bool USf_FP_CharacterMovementComponent::TryWallRun()
     return true;
 }
 
-void USf_FP_CharacterMovementComponent::AdjustForWallDistance(const FHitResult& WallHit)
-{
-	if (WallHit.IsValidBlockingHit())
-	{
-		float CapsuleRadius, CapsuleHalfHeight;
-		CharacterOwner->GetCapsuleComponent()->GetScaledCapsuleSize(CapsuleRadius, CapsuleHalfHeight);
-		
-		const float DesiredDistance = CapsuleRadius + WallDistanceToCapsule;
-
-		// Calculate the perpendicular distance to the wall:
-		// Project the vector from the wall hit location to the player location onto the wall normal.
-		FVector FromWallToPlayer = UpdatedComponent->GetComponentLocation() - WallHit.Location;
-		float CurrentPerpDist = FVector::DotProduct(FromWallToPlayer, WallHit.Normal);
-		
-		float DistanceError = DesiredDistance - CurrentPerpDist;
-		
-		if (!FMath::IsNearlyZero(DistanceError, KINDA_SMALL_NUMBER))
-		{
-			const FVector CorrectionDelta = WallHit.Normal * DistanceError;
-			FHitResult Hit;
-			SafeMoveUpdatedComponent(CorrectionDelta, UpdatedComponent->GetComponentQuat(), true, Hit);
-			LINE(Hit.TraceStart, Hit.TraceEnd, FColor::Red);
-			POINT(Hit.TraceStart, FColor::Green);
-		}
-	}
-}
-
 #define EXIT_WALLRUNPHYS(ReasonString) \
 	SetMovementMode(MOVE_Falling); \
 	StartNewPhysics(RemainingTime, Iterations); \
@@ -599,6 +572,34 @@ void USf_FP_CharacterMovementComponent::PhysWallRun(float deltaTime, int32 Itera
 	if (HasMinWallRunSpeed && (Velocity.SizeSquared2D() < FMath::Square(MinWallRunSpeed)))
 	{
 	    EXIT_WALLRUNPHYS("To Slow.");
+	}
+}
+
+
+void USf_FP_CharacterMovementComponent::AdjustForWallDistance(const FHitResult& WallHit)
+{
+	if (WallHit.IsValidBlockingHit())
+	{
+		float CapsuleRadius, CapsuleHalfHeight;
+		CharacterOwner->GetCapsuleComponent()->GetScaledCapsuleSize(CapsuleRadius, CapsuleHalfHeight);
+		
+		const float DesiredDistance = CapsuleRadius + WallDistanceToCapsule;
+
+		// Calculate the perpendicular distance to the wall:
+		// Project the vector from the wall hit location to the player location onto the wall normal.
+		FVector FromWallToPlayer = UpdatedComponent->GetComponentLocation() - WallHit.Location;
+		float CurrentPerpDist = FVector::DotProduct(FromWallToPlayer, WallHit.Normal);
+		
+		float DistanceError = DesiredDistance - CurrentPerpDist;
+		
+		if (!FMath::IsNearlyZero(DistanceError, KINDA_SMALL_NUMBER))
+		{
+			const FVector CorrectionDelta = WallHit.Normal * DistanceError;
+			FHitResult Hit;
+			SafeMoveUpdatedComponent(CorrectionDelta, UpdatedComponent->GetComponentQuat(), true, Hit);
+			LINE(Hit.TraceStart, Hit.TraceEnd, FColor::Red);
+			POINT(Hit.TraceStart, FColor::Green);
+		}
 	}
 }
 

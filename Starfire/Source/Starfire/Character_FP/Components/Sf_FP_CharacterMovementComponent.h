@@ -147,8 +147,8 @@ private:
 	FHitResult CheckFromPlayer(const FVector& CastDelta, const FVector& Offset = FVector::Zero()) const;
 	
 	bool TryWallRun();
-	void AdjustForWallDistance(const FHitResult& WallHit);
 	void PhysWallRun(float deltaTime, int32 Iterations);
+	void AdjustForWallDistance(const FHitResult& WallHit);
 	void JumpOffWall();
 #pragma endregion
 	
