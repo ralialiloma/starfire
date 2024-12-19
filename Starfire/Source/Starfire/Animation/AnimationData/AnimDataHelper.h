@@ -19,6 +19,11 @@ public:
 	static UAnimSequence* GetSafeAnimationSequence_TP(
 		const FWeaponAnimData_TP AnimData,
 		UPARAM(meta=(Categories="Animation.Character.TP.AnimSequence"))const FGameplayTag Tag, UAnimSequence* BackupSequence);
+
+	UFUNCTION(BlueprintCallable,Category = "WeaponAnimation")
+	void ReplaceEmptyWithDefaultsTP(FWeaponAnimData_TP AnimData, UAnimSequence* DefautAnimSequene, UBlendSpace* DefaultBlendSpace);
+	UFUNCTION(BlueprintCallable,Category = "WeaponAnimation")
+	static  void ReplaceEmptyWithDefaults(UPARAM(ref)FWeaponAnimData_TP& AnimData, UAnimSequence* DefaultAnimSequence, UBlendSpace* DefaultBlendSpace);
 	UFUNCTION(BlueprintCallable,BlueprintPure,Category = "WeaponAnimation",meta = (BlueprintThreadSafe))
 	static UAnimMontage* GetAnimationMontage_TP(
 		const FWeaponAnimData_TP AnimData,

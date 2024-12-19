@@ -50,6 +50,45 @@ UAnimSequence* UAnimDataHelper::GetSafeAnimationSequence_TP(const FWeaponAnimDat
 	return BackupSequence;
 }
 
+void UAnimDataHelper::ReplaceEmptyWithDefaultsTP(FWeaponAnimData_TP AnimData, UAnimSequence* DefautAnimSequene, UBlendSpace* DefaultBlendSpace)
+{
+	
+}
+
+void UAnimDataHelper::ReplaceEmptyWithDefaults(FWeaponAnimData_TP& AnimData, UAnimSequence* DefaultAnimSequence, UBlendSpace* DefaultBlendSpace)
+{
+	for (TTuple<FGameplayTag, UAnimSequence*>& Entry : AnimData.AnimationSequences_FB)
+	{
+		if (!Entry.Value)
+		{
+			Entry.Value = DefaultAnimSequence;
+		}
+	}
+	for (TTuple<FGameplayTag, UAnimSequence*>& Entry : AnimData.AnimationSequences_LB)
+	{
+		if (!Entry.Value)
+		{
+			Entry.Value = DefaultAnimSequence;
+		}
+	}
+
+	for (TTuple<FGameplayTag, UAnimSequence*>& Entry : AnimData.AnimationSequences_UB)
+	{
+		if (!Entry.Value)
+		{
+			Entry.Value = DefaultAnimSequence;
+		}
+	}
+	
+	for (TTuple<FGameplayTag, UBlendSpace*>& Entry : AnimData.Blendspaces)
+	{
+		if (!Entry.Value)
+		{
+			Entry.Value = DefaultBlendSpace;
+		}
+	}
+}
+
 UAnimMontage* UAnimDataHelper::GetAnimationMontage_TP(FWeaponAnimData_TP AnimData, const FGameplayTag AssetType, bool &bIsValid)
 {
 	UAnimMontage* FoundMontage = nullptr;
