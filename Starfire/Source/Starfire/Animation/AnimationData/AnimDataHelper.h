@@ -13,16 +13,24 @@ public:
 	
 	UFUNCTION(BlueprintCallable,BlueprintPure,Category = "WeaponAnimation",meta = (BlueprintThreadSafe))
 	static UAnimSequence* GetAnimationSequence_TP(
-		FWeaponAnimData_TP AnimData,
-		UPARAM(meta=(Categories="Animation.Character.TP.AnimSequence"))FGameplayTag Tag);
+		const FWeaponAnimData_TP AnimData,
+		UPARAM(meta=(Categories="Animation.Character.TP.AnimSequence"))const FGameplayTag Tag, bool& bIsValid);
+	UFUNCTION(BlueprintCallable,BlueprintPure,Category = "WeaponAnimation",meta = (BlueprintThreadSafe))
+	static UAnimSequence* GetSafeAnimationSequence_TP(
+		const FWeaponAnimData_TP AnimData,
+		UPARAM(meta=(Categories="Animation.Character.TP.AnimSequence"))const FGameplayTag Tag, UAnimSequence* BackupSequence);
 	UFUNCTION(BlueprintCallable,BlueprintPure,Category = "WeaponAnimation",meta = (BlueprintThreadSafe))
 	static UAnimMontage* GetAnimationMontage_TP(
-		FWeaponAnimData_TP AnimData,
-		UPARAM(meta=(Categories="Animation.Character.TP.Montage"))FGameplayTag AssetType);
+		const FWeaponAnimData_TP AnimData,
+		UPARAM(meta=(Categories="Animation.Character.TP.Montage"))const FGameplayTag AssetType, bool& bIsValid);
 	UFUNCTION(BlueprintCallable,BlueprintPure,Category = "WeaponAnimation",meta = (BlueprintThreadSafe))
 	static UBlendSpace* GetBlendspace_TP(
 		FWeaponAnimData_TP AnimData,
-		UPARAM(meta=(Categories="Animation.Character.TP.Blendspace"))FGameplayTag AssetType);
+		UPARAM(meta=(Categories="Animation.Character.TP.Blendspace"))FGameplayTag AssetType, bool& bIsValid);
+	UFUNCTION(BlueprintCallable,BlueprintPure,Category = "WeaponAnimation",meta = (BlueprintThreadSafe))
+	static UBlendSpace* GetSafeBlendspace_TP(
+		const FWeaponAnimData_TP& AnimData,
+		UPARAM(meta=(Categories="Animation.Character.TP.Blendspace"))const FGameplayTag AssetType, UBlendSpace* BackupBlendSpace);
 	
 	
 	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "WeaponAnimation",meta = (BlueprintThreadSafe))

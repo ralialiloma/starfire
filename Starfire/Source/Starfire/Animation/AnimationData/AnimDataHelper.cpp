@@ -31,29 +31,50 @@ UBlendSpace* UAnimDataHelper::GetBlendspace_FP(FWeaponAnimData_FP AnimData, FGam
 }
 
 
-UAnimSequence* UAnimDataHelper::GetAnimationSequence_TP(FWeaponAnimData_TP AnimData, FGameplayTag Tag)
+UAnimSequence* UAnimDataHelper::GetAnimationSequence_TP(const FWeaponAnimData_TP AnimData, const FGameplayTag Tag, bool &bIsValid)
 {
 	UAnimSequence* FoundSequence = nullptr;
 	UAnimSequence** FoundSequencePtr = AnimData.GetAllSequences().Find(Tag);
 	if (FoundSequencePtr!=nullptr)
 		FoundSequence = *FoundSequencePtr;
+	bIsValid  = FoundSequence != nullptr;
 	return FoundSequence;
 }
 
-UAnimMontage* UAnimDataHelper::GetAnimationMontage_TP(FWeaponAnimData_TP AnimData, FGameplayTag AssetType)
+UAnimSequence* UAnimDataHelper::GetSafeAnimationSequence_TP(const FWeaponAnimData_TP AnimData, const FGameplayTag Tag, UAnimSequence* BackupSequence)
+{
+	bool bIsValid = false;
+	UAnimSequence* FoundSequence =  GetAnimationSequence_TP(AnimData, Tag,  bIsValid);
+	if (bIsValid)
+		return FoundSequence;
+	return BackupSequence;
+}
+
+UAnimMontage* UAnimDataHelper::GetAnimationMontage_TP(FWeaponAnimData_TP AnimData, const FGameplayTag AssetType, bool &bIsValid)
 {
 	UAnimMontage* FoundMontage = nullptr;
 	UAnimMontage** FoundSequencePtr = AnimData.AnimationMontages.Find(AssetType);
 	if (FoundSequencePtr!=nullptr)
 		FoundMontage = *FoundSequencePtr;
+	bIsValid  = FoundMontage != nullptr;
 	return FoundMontage;
 }
 
-UBlendSpace* UAnimDataHelper::GetBlendspace_TP(FWeaponAnimData_TP AnimData, FGameplayTag AssetType)
+UBlendSpace* UAnimDataHelper::GetSafeBlendspace_TP(const FWeaponAnimData_TP& AnimData, const FGameplayTag AssetType,UBlendSpace* BackupBlendSpace)
+{
+	bool bIsValid = false;
+	UBlendSpace* FoundBlendspace =  GetBlendspace_TP(AnimData, AssetType,  bIsValid);
+	if (bIsValid)
+		return FoundBlendspace;
+	return BackupBlendSpace;
+}
+
+UBlendSpace* UAnimDataHelper::GetBlendspace_TP(FWeaponAnimData_TP AnimData, const FGameplayTag AssetType,bool &bIsValid)
 {
 	UBlendSpace* FoundBlendspace = nullptr;
 	UBlendSpace** FoundBlendSpacePointer = AnimData.Blendspaces.Find(AssetType);
 	if (FoundBlendSpacePointer!=nullptr)
 		FoundBlendspace = *FoundBlendSpacePointer;
+	bIsValid  = FoundBlendspace != nullptr;
 	return FoundBlendspace;
 }

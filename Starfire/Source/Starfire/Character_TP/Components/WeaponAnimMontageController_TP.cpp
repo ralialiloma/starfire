@@ -46,7 +46,8 @@ float USf_WeaponAnimMontageController_TP::RunAnimation(FWeaponMontageEventPackag
 
 float USf_WeaponAnimMontageController_TP::PlayFPMontage(const FWeaponAnimData_TP& AnimData_TP, const FGameplayTag MontageType)
 {
-	UAnimMontage* AnimMontage =  UAnimDataHelper::GetAnimationMontage_TP(AnimData_TP,MontageType);
+	bool bFoundMontage;
+	UAnimMontage* AnimMontage =  UAnimDataHelper::GetAnimationMontage_TP(AnimData_TP,MontageType, bFoundMontage);
 	if (!IsValid(AnimMontage))
 	{
 		UE_LOG(Sf_WeaponAnimMontageController_FP, Warning, TEXT("Could not find montage to play for %s"),*MontageType.GetTagName().ToString())
@@ -58,7 +59,8 @@ float USf_WeaponAnimMontageController_TP::PlayFPMontage(const FWeaponAnimData_TP
 
 void USf_WeaponAnimMontageController_TP::StopFPMontage(const FWeaponAnimData_TP& AnimData_FP, const FGameplayTag MontageType)
 {
-	UAnimMontage* AnimMontage =  UAnimDataHelper::GetAnimationMontage_TP(AnimData_FP,MontageType);
+	bool bFoundMontage;
+	UAnimMontage* AnimMontage =  UAnimDataHelper::GetAnimationMontage_TP(AnimData_FP,MontageType, bFoundMontage);
 	if (!IsValid(AnimMontage))
 	{
 		UE_LOG(Sf_WeaponAnimMontageController_FP, Warning, TEXT("Could not find montage to stop for %s"),*MontageType.GetTagName().ToString())
