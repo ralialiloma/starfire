@@ -196,7 +196,16 @@ USf_AnimHelper* ASf_TP_Character::GetAnimDataHelper_Implementation() const
 FTransform ASf_TP_Character::GetFireTransform_Implementation() const
 {
 	const FVector Location = GetActorLocation();
-	const FVector PlayerLocation = USf_FunctionLibrary::GetPlayerLocation(this)+FVector(0,0,10);
+
+	AAIController* AIController = Cast<AAIController>(GetController());
+	if (!IsValid(AIController))
+		return FTransform();
+	 UBlackboardComponent* BlackboardComponent =  AIController->GetBlackboardComponent();
+	if (!IsValid(BlackboardComponent))
+		return FTransform();
+	FVector PlayerLocation =  UBlackboardKeyHelperLibrary::GetVectorValue(BlackboardComponent,ELocationBlackboardKey::LastPlayerLocation);
+	PlayerLocation += FVector(0,0,10);
+	
 	const FRotator Rotation = (PlayerLocation-Location).ToOrientationRotator();
 	return FTransform(Rotation, GetActorLocation() + FVector(0, 0, 40), GetActorScale());
 }

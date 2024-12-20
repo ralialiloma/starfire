@@ -41,12 +41,15 @@ UAnimSequence* UAnimDataHelper::GetAnimationSequence_TP(const FWeaponAnimData_TP
 	return FoundSequence;
 }
 
-UAnimSequence* UAnimDataHelper::GetSafeAnimationSequence_TP(const FWeaponAnimData_TP AnimData, const FGameplayTag Tag, UAnimSequence* BackupSequence)
+UAnimSequence* UAnimDataHelper::GetSafeAnimationSequence_TP(const FWeaponAnimData_TP AnimData, const FGameplayTag Tag,  UAnimSequence* BackupSequence)
 {
 	bool bIsValid = false;
 	UAnimSequence* FoundSequence =  GetAnimationSequence_TP(AnimData, Tag,  bIsValid);
 	if (bIsValid)
+	{
 		return FoundSequence;
+	}
+
 	return BackupSequence;
 }
 
