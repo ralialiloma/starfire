@@ -239,10 +239,33 @@ namespace Sf_GameplayTags
 					DEFINE_GAMEPLAY_TAG_AUTO(Animation.Character.FP.AnimSequence,Jump,"");
 					DEFINE_GAMEPLAY_TAG_AUTO(Animation.Character.FP.AnimSequence,Falling,"");
 					DEFINE_GAMEPLAY_TAG_AUTO(Animation.Character.FP.AnimSequence,Land,"");
-					}
 				}
 			}
 		}
+	}
+	namespace Effects
+	{
+		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects", "");
+
+		namespace FX
+		{
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.FX", "");
+
+			namespace SoundsFX
+			{
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.FX.SoundFX", "");
+			}
+			namespace VisualFX
+			{
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.FX.VisualFX", "");
+			}
+		}
+		namespace Messages
+		{
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.Messages", "");
+		}
+	}
+
 	
 	FGameplayTag FindTagByString(const FString& TagString, bool bMatchPartialString)
 	{

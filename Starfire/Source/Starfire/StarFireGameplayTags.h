@@ -234,4 +234,27 @@ namespace Sf_GameplayTags
 			}
 		}
 	}
+	namespace Effects
+	{
+		STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+
+		namespace FX
+		{
+			namespace SoundsFX
+			{
+				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+			}
+			namespace VisualFX
+			{
+				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+			
+			}
+		}
+
+		namespace Messages
+		{
+			STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+			
+		}
+	}
 }
