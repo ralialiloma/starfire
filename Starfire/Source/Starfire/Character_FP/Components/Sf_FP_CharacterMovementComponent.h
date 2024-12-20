@@ -148,12 +148,15 @@ private:
 	
 	bool TryWallRun();
 	void PhysWallRun(float deltaTime, int32 Iterations);
-	void AdjustForWallDistance(const FHitResult& WallHit);
+	void AdjustForWallDistance(const FHitResult& WallHit, const FVector& SmoothedWallNormal3D);
 	void JumpOffWall();
 #pragma endregion
 	
 #pragma region Properties
 protected:
+
+	// Add a member variable to your character movement component's header file, for example:
+	FVector2D SmoothedWallNormal = FVector2D::ZeroVector; // This will hold the currently smoothed wall normal.
 	
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun", meta =(CustomConfig, InlineEditConditionToggle))
 	bool HasMinWallRunSpeed = false;
