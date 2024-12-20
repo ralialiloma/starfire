@@ -148,11 +148,15 @@ private:
 	
 	bool TryWallRun();
 	void PhysWallRun(float deltaTime, int32 Iterations);
+	void AdjustForWallDistance(const FHitResult& WallHit, const FVector& SmoothedWallNormal3D);
 	void JumpOffWall();
 #pragma endregion
 	
 #pragma region Properties
 protected:
+
+	// Add a member variable to your character movement component's header file, for example:
+	FVector2D SmoothedWallNormal = FVector2D::ZeroVector; // This will hold the currently smoothed wall normal.
 	
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun", meta =(CustomConfig, InlineEditConditionToggle))
 	bool HasMinWallRunSpeed = false;
@@ -180,9 +184,8 @@ protected:
 	float WallNormalJumpOffInfluence= 0.5f;
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun|Jump", meta =(CustomConfig,ClampMin=0, ClampMax=1, EditConditionHides = "JumpTowardsPlayerForward"))
 	float WallJumpForceMultiplier= 0.8f;
-
-	// UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun", meta =(CustomConfig))
-	// float WallAttractionForce = 200.0f;
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun", meta =(CustomConfig))
+	float WallDistanceToCapsule = 5.0f;
 
 private:
 	FVector2D PreviousWallNormal = FVector2D::ZeroVector;
