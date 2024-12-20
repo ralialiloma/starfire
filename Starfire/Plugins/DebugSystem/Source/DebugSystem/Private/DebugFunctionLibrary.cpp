@@ -7,7 +7,21 @@
 
 bool UDebugFunctionLibrary::ShouldDebug(const FGameplayTag DebugTag, const EDebugDisplayType DebugType)
 {
-	return GetDefault<UDebugSettings>() && GetDefault<UDebugSettings>()->ShouldDebug(DebugTag,DebugType);
+#if WITH_EDITOR
+	return GetDefault<UDebugSettings>() && GetDefault<UDebugSettings>()->ShouldDebug(DebugTag, DebugType);
+#else
+	switch (DebugType)
+	{
+		case EDebugDisplayType::Log:
+			return true;
+		case EDebugDisplayType::Print:
+		case EDebugDisplayType::Visual:
+		case EDebugDisplayType::Sound:
+			return false;
+		default:
+			return false;
+	}
+#endif
 }
 
 float UDebugFunctionLibrary::GetDebugDuration(FGameplayTag DebugTag, EDebugDisplayType DebugType)
