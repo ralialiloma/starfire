@@ -478,6 +478,7 @@ bool USf_FP_CharacterMovementComponent::TryWallRun()
 
 	Velocity = ProjectedVelocity;
 	Velocity.Z = FMath::Clamp(Velocity.Z, 0.0f, MaxVerticalWallRunSpeed);
+	SmoothedWallNormal = FVector2D::Zero();
 	SetMovementMode(MOVE_Custom, CMOVE_WallRun);
 
 	return true;
