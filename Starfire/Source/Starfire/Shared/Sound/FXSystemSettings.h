@@ -19,8 +19,8 @@ class STARFIRE_API UFXSystemSettings : public UDeveloperSettings
 
 public:
 
-	UPROPERTY(EditAnywhere, Config, Category="Sound System")
+	UPROPERTY(EditAnywhere, Config, Category="FX System")
 	TArray<TSoftObjectPtr<UFXDataAssetBase>> FXDataAssets;
-	UPROPERTY(EditAnywhere, Config, Category="Sound System")
+	UPROPERTY(EditAnywhere, Config, Category="FX System")
 	TSoftObjectPtr<UMessageFXPairingDataAsset> MessageFXPairings;
 };

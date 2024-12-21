@@ -9,6 +9,7 @@
 #include "DrawDebugHelpers.h"
 #include "Kismet/KismetStringLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Starfire/Shared/Sound/FXSubsystem.h"
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
 
 #pragma region HelperMacros
@@ -103,11 +104,18 @@ bool USf_FP_CharacterMovementComponent::DoJump(bool bReplayingMoves)
 		return false;
 	}
 
+	//Jump FX
+	if (IsMovementMode(MOVE_Walking))
+	{
+		UFXSubsystem::Get(this)->PlayFXOn(Sf_GameplayTags::Effects::Messages::Character::Jump, GetOwner()->GetRootComponent());
+	}
+
 	if (Super::DoJump(bReplayingMoves))
 	{
 		if (bWasWallRunning || bWasWallRunningBeforeAllowance)
 		{
 			JumpOffWall();
+			UFXSubsystem::Get(this)->PlayFXOn(Sf_GameplayTags::Effects::Messages::Character::Jump, GetOwner()->GetRootComponent());
 		}
 
 		return true;

@@ -77,6 +77,8 @@ class STARFIRE_API UFXSubsystem : public UWorldSubsystem
 	GENERATED_BODY()
 
 public:
+
+	static UFXSubsystem* Get(const UObject* WorldContext);
 	
 	UFUNCTION(BlueprintCallable, Category="FXSystem")
 	FFXHandle PlayFX(UPARAM(meta=(Categories="Effects.Messages")) FGameplayTag FXTag);

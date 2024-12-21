@@ -8,6 +8,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Starfire/Animation/WeaponMontageEventPackage.h"
 #include "Starfire/Animation/Sf_AnimHelper.h"
+#include "Starfire/Shared/Sound/FXSubsystem.h"
 
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
 #include "Starfire/Utility/Debug/SF_DebugFunctionLibrary.h"
@@ -86,6 +87,7 @@ bool AWeaponBase::Fire(const EInputSignalType InputSignal, EFireType FireType, F
 			const FString FireBlockString = USf_FunctionLibrary::GetEnumAsString<EFireBlock>(OutFireBlock);
 			GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Green, "Could not fire due to "+FireBlockString);
 		}
+		
 		return false;
 	}
 
@@ -93,6 +95,9 @@ bool AWeaponBase::Fire(const EInputSignalType InputSignal, EFireType FireType, F
 	
 	DoFire(OutHitResult);
 	ApplyRecoil();
+
+	UFXSubsystem::Get(this)->PlayFXOn(GetWeaponConfig().FXFireTag, GetRootComponent());
+	
 	return true;
 }
 

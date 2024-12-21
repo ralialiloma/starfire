@@ -7,6 +7,14 @@
 #include "MessageFXPairingDataAsset.h"
 #include "Visual/VisualFXDataAsset.h"
 
+UFXSubsystem* UFXSubsystem::Get(const UObject* WorldContext)
+{
+	if (!WorldContext || !WorldContext->GetWorld())
+		return nullptr;
+
+	return WorldContext->GetWorld()->GetSubsystem<UFXSubsystem>();
+}
+
 FFXHandle UFXSubsystem::PlayFX(FGameplayTag FXTag)
 {
 	if (!AllReferencesValid())
@@ -112,7 +120,10 @@ void UFXSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 					FXDataAssets.Add(FXDataAsset.LoadSynchronous());
 			}
 		}
-
+		else
+		{
+			UDebugFunctionLibrary::DebugError(this, FString::Printf(TEXT("No FX Data Tables Assigned!")));
+		}
 	}
 	else
 	{

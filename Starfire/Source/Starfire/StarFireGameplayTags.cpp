@@ -274,7 +274,7 @@ namespace Sf_GameplayTags
 			namespace Character
 			{
 				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.Messages.Character", "");
-				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Fire, "Effects.Messages.Character.Jump", "");
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Jump, "Effects.Messages.Character.Jump", "");
 				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Footstep, "Effects.Messages.Character.Footstep", "");
 				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Dash, "Effects.Messages.Character.Dash", "");
 				UE_DEFINE_GAMEPLAY_TAG_COMMENT(WallRun, "Effects.Messages.Character.WallRun", "");
