@@ -25,9 +25,7 @@ void ASf_BreakerPillar::BeginPlay()
 
 	DamageController->OnZeroHealth_CPP.AddLambda([this]()
 	{
-		OnBreak();
-		OnBreak_BP.Broadcast();
-		OnBreak_CPP.Broadcast();
+		BreakPillar();
 	});
 }
 
@@ -68,6 +66,13 @@ void ASf_BreakerPillar::FullRestore()
 	DamageController->Reset();
 	DamageController->SetHealth(1);
 	OnRestore();
+}
+
+void ASf_BreakerPillar::BreakPillar()
+{
+	OnBreak();
+	OnBreak_BP.Broadcast();
+	OnBreak_CPP.Broadcast();
 }
 
 void ASf_BreakerPillar::OnBreak_Implementation()

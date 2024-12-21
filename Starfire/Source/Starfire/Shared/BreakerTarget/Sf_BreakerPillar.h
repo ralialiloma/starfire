@@ -33,6 +33,9 @@ protected:
 	UFUNCTION(BlueprintNativeEvent)
 	void OnRestoreProgress(float Alpha);
 
+	UFUNCTION()
+	void BreakPillar();
+
 public:
 
 	UPROPERTY(BlueprintAssignable)
