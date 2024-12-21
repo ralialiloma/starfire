@@ -23,7 +23,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSprintChange,bool, Pressed);
 
 DEFINE_LOG_CATEGORY_STATIC(SF_FP_CharacterMovement, Display, Display);
 
-UCLASS()
+UCLASS(Blueprintable)
 class STARFIRE_API USf_FP_CharacterMovementComponent : public USf_CharacterMovementComponent
 {
 	GENERATED_BODY()
