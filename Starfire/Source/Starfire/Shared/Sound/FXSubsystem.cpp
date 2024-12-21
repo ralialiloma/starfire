@@ -75,19 +75,19 @@ bool UFXSubsystem::AllReferencesValid() const
 {
 	if (!MessageFXPairings)
 	{
-		UDebugFunctionLibrary::DebugError(this, FString::Printf(TEXT("No MessageFXPairs set on FXSubsystem.")));
+		// UDebugFunctionLibrary::DebugError(this, FString::Printf(TEXT("No MessageFXPairs set on FXSubsystem.")));
 		return false;
 	}
 
 	if (!GetWorld())
 	{
-		UDebugFunctionLibrary::DebugError(this, FString::Printf(TEXT("No Valid World.")));
+		// UDebugFunctionLibrary::DebugError(this, FString::Printf(TEXT("No Valid World.")));
 		return false;
 	}
 
 	if (FXDataAssets.Num() <= 0)
 	{
-		UDebugFunctionLibrary::DebugError(this, FString::Printf(TEXT("No FX Data Tables Assigned!")));
+		// UDebugFunctionLibrary::DebugError(this, FString::Printf(TEXT("No FX Data Tables Assigned!")));
 		return false;
 	}
 	
