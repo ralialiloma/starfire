@@ -78,6 +78,9 @@ public:
 	UPROPERTY(BlueprintReadOnly,BlueprintAssignable, Category = "Damage Receiver")
 	FSf_VoidDelegate_BP OnHealthChanged_BP;
 	FSf_VoidDelegate_CPP OnHealthChanged_CPP;
+	UPROPERTY(BlueprintReadOnly,BlueprintAssignable, Category = "Damage Receiver")
+	FSf_VoidDelegate_BP OnDeathDamage_BP;
+	FSf_VoidDelegate_CPP OnDeathDamage_CPP;
 	
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "Damage Receiver", meta = (CustomConfig))
 	bool bStartWithMaxHealth = true;

@@ -127,14 +127,25 @@ void ASf_BreakerCore::UpdateProgress(float Value)
 	while (RestoreProgress > 0)
 	{
 		if (!ChargingPillar)
+		{
 			ChargingPillar = GetRandomInactivePillar();
+			ChargingDamageHandle = ChargingPillar->DamageController->OnDeathDamage_CPP.AddLambda([this]()
+			{
+				UpdateProgress(-GetPillarProgress());
+				float RemainingProgress = 0;
+				ChargingPillar->SetRestore(0, RemainingProgress);
+			});
+		}
 
 		if (!ChargingPillar)
 			break;
 
 		float RemainingProgress = 0;
 		if (ChargingPillar->SetRestore(RestoreProgress, RemainingProgress))
+		{
+			ChargingPillar->DamageController->OnDeathDamage_CPP.Remove(ChargingDamageHandle);
 			ChargingPillar = nullptr;
+		}
 		
 		RestoreProgress = RemainingProgress;
 	}

@@ -89,6 +89,8 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly)
 	ASf_BreakerPillar* ChargingPillar = nullptr;
+
+	FDelegateHandle ChargingDamageHandle {};
 	
 #pragma endregion
 };

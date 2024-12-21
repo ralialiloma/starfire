@@ -44,7 +44,11 @@ float USf_DamageController::ApplyDamage(
 		return 0;
 	
 	if (CurrentHealth<=0)
+	{
+		OnDeathDamage_BP.Broadcast();
+		OnDeathDamage_CPP.Broadcast();
 		return 0;
+	}
 	
 	//Get Hitbox
 	const USf_Hitbox* Hitbox =  Cast<USf_Hitbox>(HitComponent);
