@@ -36,7 +36,8 @@ void USoundFXDataAsset::ExecuteFX_Implementation(UObject* WorldContext, FFXParam
 					FoundSound->SoundFile,
 					FoundSound->Volume,
 					FoundSound->Pitch,
-					FoundSound->StartTime);
+					FoundSound->StartTime,
+					FoundSound->Concurrency);
 				break;
 			case EFXPlayType::FX_Location:
 				AudioComp = UGameplayStatics::SpawnSoundAtLocation(
@@ -47,7 +48,8 @@ void USoundFXDataAsset::ExecuteFX_Implementation(UObject* WorldContext, FFXParam
 					FoundSound->Volume,
 					FoundSound->Pitch,
 					FoundSound->StartTime,
-					FoundSound->Attenuation);
+					FoundSound->Attenuation,
+					FoundSound->Concurrency);
 				break;
 			case EFXPlayType::FX_Attached:
 				AudioComp = UGameplayStatics::SpawnSoundAttached(
@@ -61,7 +63,8 @@ void USoundFXDataAsset::ExecuteFX_Implementation(UObject* WorldContext, FFXParam
 					FoundSound->Volume,
 					FoundSound->Pitch,
 					FoundSound->StartTime,
-					FoundSound->Attenuation);
+					FoundSound->Attenuation,
+					FoundSound->Concurrency);
 				break;
 		}
 		

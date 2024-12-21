@@ -17,9 +17,12 @@ struct FSoundFXSettings
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	USoundBase* SoundFile = nullptr;
-
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	USoundAttenuation* Attenuation = nullptr;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	USoundConcurrency* Concurrency = nullptr;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	float Volume = 1.f;
