@@ -5,12 +5,13 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "Engine/DataAsset.h"
-#include "SoundDataAsset.generated.h"
+#include "Starfire/Shared/Sound/FXDataAssetBase.h"
+#include "SoundFXDataAsset.generated.h"
 
-class USoundProcessor;
+class USoundFXProcessor;
 
 USTRUCT(BlueprintType)
-struct FSoundSettings
+struct FSoundFXSettings
 {
 	GENERATED_BODY()
 
@@ -30,7 +31,7 @@ struct FSoundSettings
 	float StartTime = 0.f;
 
 	UPROPERTY(Instanced, EditAnywhere, BlueprintReadWrite)
-	TArray<USoundProcessor*> SoundProcessors {};
+	TArray<USoundFXProcessor*> Processors {};
 
 	bool IsValid() const
 	{
@@ -39,17 +40,19 @@ struct FSoundSettings
 };
 
 UCLASS()
-class STARFIRE_API USoundDataAsset : public UPrimaryDataAsset
+class STARFIRE_API USoundFXDataAsset : public UFXDataAssetBase
 {
 	GENERATED_BODY()
 
 public:
 	
-	FSoundSettings* GetSoundSettings(FGameplayTag Tag);
+	FSoundFXSettings* GetSoundFXSettings(FGameplayTag Tag);
+
+	virtual void ExecuteFX_Implementation(UObject* WorldContext, FFXParams Params) override;
 
 protected:
 
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
-	TMap<FGameplayTag, FSoundSettings> SoundMap;
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (Categories = "Effects.FX.SoundFX", ForceInlineRow))
+	TMap<FGameplayTag, FSoundFXSettings> FXMap;
 	
 };

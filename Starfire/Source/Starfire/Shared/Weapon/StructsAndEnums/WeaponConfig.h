@@ -107,6 +107,12 @@ public:
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Animation")
 	FTransform AimOffset = FTransform();
+
+	//Sound
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Sound", meta = (Categories = "Effects.Messages"))
+	FGameplayTag FXFireTag = Sf_GameplayTags::Effects::Messages::Weapon::Fire;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Sound", meta = (Categories = "Effects.Messages"))
+	FGameplayTag FXEmptyTag = Sf_GameplayTags::Effects::Messages::Weapon::Empty;
 	
 };
 

@@ -234,4 +234,41 @@ namespace Sf_GameplayTags
 			}
 		}
 	}
+	namespace Effects
+	{
+		STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+
+		namespace FX
+		{
+			namespace SoundsFX
+			{
+				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+			}
+			namespace VisualFX
+			{
+				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+			
+			}
+		}
+
+		namespace Messages
+		{
+			STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+			namespace Weapon
+			{
+				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Fire);
+				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Empty);
+
+			}
+			namespace Character
+			{
+				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Jump);
+				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Footstep);
+				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Dash);
+				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(WallRun);
+			}
+		}
+	}
 }

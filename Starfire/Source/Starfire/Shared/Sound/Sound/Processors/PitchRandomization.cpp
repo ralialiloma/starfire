@@ -5,9 +5,9 @@
 
 #include "Components/AudioComponent.h"
 
-void UPitchRandomization::ModifyAudio_Implementation(UAudioComponent* AudioComponent) const
+void UPitchRandomization::ModifyFX_Implementation(UAudioComponent* AudioComponent) const
 {
-	Super::ModifyAudio_Implementation(AudioComponent);
+	Super::ModifyFX_Implementation(AudioComponent);
 
 	AudioComponent->SetPitchMultiplier(FMath::RandRange(MinPitch, MaxPitch));
 }
