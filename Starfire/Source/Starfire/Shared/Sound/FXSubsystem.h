@@ -7,37 +7,98 @@
 #include "GameplayTagContainer.h"
 #include "FXSubsystem.generated.h"
 
+class UFXDataAssetBase;
 class UVisualFXDataAsset;
 class UMessageFXPairingDataAsset;
 class USoundFXDataAsset;
 class USoundBase;
 
-UCLASS()
-class STARFIRE_API UFXSubsystem : public UGameInstanceSubsystem
+USTRUCT(BlueprintType)
+struct FFXHandle
 {
 	GENERATED_BODY()
 
 public:
+	
+	FFXHandle()
+		: Handle(NAME_None)
+	{
+	}
+	
+	explicit FFXHandle(const FName& InHandle)
+		: Handle(InHandle)
+	{
+	}
 
-	UFUNCTION(BlueprintCallable, Category="SoundSystem")
-	void PlayFX(UPARAM(meta=(Categories="Effects.Messages")) FGameplayTag FXTag);
+	static FFXHandle GenerateNewHandle()
+	{
+		return FFXHandle(FName(*FString::Printf(TEXT("FXHandle_%d"), FMath::Rand())));
+	}
+	
+	FName GetHandle() const
+	{
+		return Handle;
+	}
+	
+	void Invalidate()
+	{
+		Handle = NAME_None;
+	}
 
-	UFUNCTION(BlueprintCallable, Category="SoundSystem")
-	void PlayFXAt(UPARAM(meta = (Categories = "Effects.Messages")) FGameplayTag FXTag, FVector Location);
+	bool IsValid() const
+	{
+		return Handle != NAME_None;
+	}
 
-	UFUNCTION(BlueprintCallable, Category="SoundSystem", meta = (AdvancedDisplay = "2"))
-	void PlayFXOn(UPARAM(meta = (Categories = "Effects.Messages")) FGameplayTag FXTag, USceneComponent* Component, FName Bone = NAME_None, FVector Offset = FVector::ZeroVector);
+	bool operator==(const FFXHandle& Other) const
+	{
+		return Handle == Other.Handle;
+	}
+
+	bool operator!=(const FFXHandle& Other) const
+	{
+		return !(*this == Other);
+	}
+
+	friend uint32 GetTypeHash(const FFXHandle& FXHandle)
+	{
+		return GetTypeHash(FXHandle.Handle);
+	}
+
+private:
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	FName Handle;
+};
+
+UCLASS()
+class STARFIRE_API UFXSubsystem : public UWorldSubsystem
+{
+	GENERATED_BODY()
+
+public:
+	
+	UFUNCTION(BlueprintCallable, Category="FXSystem")
+	FFXHandle PlayFX(UPARAM(meta=(Categories="Effects.Messages")) FGameplayTag FXTag);
+
+	UFUNCTION(BlueprintCallable, Category="FXSystem")
+	FFXHandle PlayFXAt(UPARAM(meta = (Categories = "Effects.Messages")) FGameplayTag FXTag, FVector Location);
+
+	UFUNCTION(BlueprintCallable, Category="FXSystem", meta = (AdvancedDisplay = "2"))
+	FFXHandle PlayFXOn(UPARAM(meta = (Categories = "Effects.Messages")) FGameplayTag FXTag, USceneComponent* Component, FName Bone = NAME_None, FVector Offset = FVector::ZeroVector);
+
+	UFUNCTION(BlueprintCallable, Category="FXSystem")
+	bool CancelFX(FFXHandle Handle);
 
 protected:
-
+	
 	FGameplayTagContainer GetFXByMessageTag(FGameplayTag MessageTag) const;
-
+	bool AllReferencesValid() const;
+	
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="SoundSystem")
-	USoundFXDataAsset* SoundFXDataAsset;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="SoundSystem")
-	UVisualFXDataAsset* VisualFXDataAsset;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="SoundSystem")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="FXSystem")
+	TArray<UFXDataAssetBase*> FXDataAssets;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="FXSystem")
 	UMessageFXPairingDataAsset* MessageFXPairings;
 };

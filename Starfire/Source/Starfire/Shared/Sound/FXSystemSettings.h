@@ -6,6 +6,7 @@
 #include "Engine/DeveloperSettings.h"
 #include "FXSystemSettings.generated.h"
 
+class UFXDataAssetBase;
 class UMessageFXPairingDataAsset;
 class UVisualFXDataAsset;
 class USoundFXDataAsset;
@@ -17,10 +18,9 @@ class STARFIRE_API UFXSystemSettings : public UDeveloperSettings
 	GENERATED_BODY()
 
 public:
+
 	UPROPERTY(EditAnywhere, Config, Category="Sound System")
-	TSoftObjectPtr<USoundFXDataAsset> DefaultSoundFXDataAsset;
-	UPROPERTY(EditAnywhere, Config, Category="Sound System")
-	TSoftObjectPtr<UVisualFXDataAsset> DefaultVisualFXDataAsset;
+	TArray<TSoftObjectPtr<UFXDataAssetBase>> FXDataAssets;
 	UPROPERTY(EditAnywhere, Config, Category="Sound System")
 	TSoftObjectPtr<UMessageFXPairingDataAsset> MessageFXPairings;
 };

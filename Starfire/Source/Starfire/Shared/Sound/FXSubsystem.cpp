@@ -5,159 +5,85 @@
 #include "DebugFunctionLibrary.h"
 #include "FXSystemSettings.h"
 #include "MessageFXPairingDataAsset.h"
-#include "Kismet/GameplayStatics.h"
-#include "Sound/SoundFXDataAsset.h"
-#include "Sound/SoundFXProcessor.h"
+#include "Visual/VisualFXDataAsset.h"
 
-void UFXSubsystem::PlayFX(FGameplayTag FXTag)
+FFXHandle UFXSubsystem::PlayFX(FGameplayTag FXTag)
 {
-	if (!SoundFXDataAsset)
-	{
-		UDebugFunctionLibrary::DebugError(this, FString::Printf(TEXT("No SoundDataAsset set on SoundSystemSubsystem.")));
-		return;
-	}
+	if (!AllReferencesValid())
+		return FFXHandle();
 
-	if (!GetWorld())
+	for (auto FXDataAsset : FXDataAssets)
 	{
-		UDebugFunctionLibrary::DebugError(this, FString::Printf(TEXT("No Valid World.")));
-		return;
-	}
-
-	FGameplayTagContainer FXTags = GetFXByMessageTag(FXTag);
-	for (auto Tag : FXTags)
-	{
-		if (FSoundFXSettings* FoundSound = SoundFXDataAsset->GetFXSettings(Tag))
+		for (auto FX : MessageFXPairings->GetMappedFX(FXTag))
 		{
-			if (!FoundSound->IsValid())
-			{
-				UDebugFunctionLibrary::DebugError(this, FString::Printf(TEXT("Found sound data is invalid for GameplayTag: %s"), *FXTag.ToString()));
-				return;
-			}
-	
-			UAudioComponent* AudioComp = UGameplayStatics::SpawnSound2D(
-				GetWorld(),
-				FoundSound->SoundFile,
-				FoundSound->Volume,
-				FoundSound->Pitch,
-				FoundSound->StartTime);
-
-			for (auto Processor : FoundSound->SoundProcessors)
-			{
-				if (!Processor)
-					continue;
-			
-				Processor->ModifyFX(AudioComp);
-			}
+			FXDataAsset->ExecuteFX(this, FX);
 		}
-		else
-		{
-			UDebugFunctionLibrary::DebugError(this, FString::Printf(TEXT("No sound found for GameplayTag: %s"), *FXTag.ToString()));
-		}
-		//TODO: VFX
 	}
+
+	//TODO
+	return FFXHandle::GenerateNewHandle();
 }
 
-void UFXSubsystem::PlayFXAt(FGameplayTag FXTag, FVector Location)
+FFXHandle UFXSubsystem::PlayFXAt(FGameplayTag FXTag, FVector Location)
 {
-	if (!SoundFXDataAsset)
-	{
-		UDebugFunctionLibrary::DebugError(this, FString::Printf(TEXT("No SoundDataAsset set on SoundSystemSubsystem.")));
-		return;
-	}
+	if (!AllReferencesValid())
+		return FFXHandle();
 
-	if (!GetWorld())
+	for (auto FXDataAsset : FXDataAssets)
 	{
-		UDebugFunctionLibrary::DebugError(this, FString::Printf(TEXT("No Valid World.")));
-		return;
-	}
-
-	FGameplayTagContainer FXTags = GetFXByMessageTag(FXTag);
-	for (auto Tag : FXTags)
-	{
-		if (FSoundFXSettings* FoundSound = SoundFXDataAsset->GetFXSettings(Tag))
+		for (auto FX : MessageFXPairings->GetMappedFX(FXTag))
 		{
-			if (!FoundSound->IsValid())
-			{
-				UDebugFunctionLibrary::DebugError(this, FString::Printf(TEXT("Found sound data is invalid for GameplayTag: %s"), *FXTag.ToString()));
-				return;
-			}
-	
-			UAudioComponent* AudioComp = UGameplayStatics::SpawnSoundAtLocation(GetWorld(),
-				FoundSound->SoundFile,
-				Location,
-				FRotator::ZeroRotator, 
-				FoundSound->Volume,
-				FoundSound->Pitch,
-				FoundSound->StartTime,
-				FoundSound->Attenuation);
-
-			for (auto Processor : FoundSound->SoundProcessors)
-			{
-				if (!Processor)
-					continue;
-			
-				Processor->ModifyFX(AudioComp);
-			}
-		}
-		else
-		{
-			UDebugFunctionLibrary::DebugError(this, FString::Printf(TEXT("No sound found for GameplayTag: %s"), *FXTag.ToString()));
+			FXDataAsset->ExecuteFX(this, FFXParams(FX, Location));
 		}
 	}
+
+	//TODO
+	return FFXHandle::GenerateNewHandle();
 }
 
-void UFXSubsystem::PlayFXOn(FGameplayTag FXTag, USceneComponent* Component, FName Bone, FVector Offset)
+FFXHandle UFXSubsystem::PlayFXOn(FGameplayTag FXTag, USceneComponent* Component, FName Bone, FVector Offset)
 {
-	if (!SoundFXDataAsset)
+	if (!AllReferencesValid())
+		return FFXHandle();
+
+	for (auto FXDataAsset : FXDataAssets)
 	{
-		UDebugFunctionLibrary::DebugError(this, FString::Printf(TEXT("No SoundDataAsset set on SoundSystemSubsystem.")));
-		return;
+		for (auto FX : MessageFXPairings->GetMappedFX(FXTag))
+		{
+			FXDataAsset->ExecuteFX(this, FFXParams(FX, Component, Bone, Offset));
+		}
+	}
+	
+	//TODO
+	return FFXHandle::GenerateNewHandle();
+}
+
+bool UFXSubsystem::CancelFX(FFXHandle Handle)
+{
+	return false;
+}
+
+bool UFXSubsystem::AllReferencesValid() const
+{
+	if (!MessageFXPairings)
+	{
+		UDebugFunctionLibrary::DebugError(this, FString::Printf(TEXT("No MessageFXPairs set on FXSubsystem.")));
+		return false;
 	}
 
 	if (!GetWorld())
 	{
 		UDebugFunctionLibrary::DebugError(this, FString::Printf(TEXT("No Valid World.")));
-		return;
+		return false;
+	}
+
+	if (FXDataAssets.Num() <= 0)
+	{
+		UDebugFunctionLibrary::DebugError(this, FString::Printf(TEXT("No FX Data Tables Assigned!")));
+		return false;
 	}
 	
-	FGameplayTagContainer FXTags = GetFXByMessageTag(FXTag);
-	for (auto Tag : FXTags)
-	{
-		if (FSoundFXSettings* FoundSound = SoundFXDataAsset->GetFXSettings(Tag))
-		{
-			if (!FoundSound->IsValid())
-			{
-				UDebugFunctionLibrary::DebugError(this, FString::Printf(TEXT("Found sound data is invalid for GameplayTag: %s"), *FXTag.ToString()));
-				return;
-			}
-		
-			UAudioComponent* AudioComp = UGameplayStatics::SpawnSoundAttached(
-				FoundSound->SoundFile,
-				Component,
-				Bone,
-				Offset,
-				FRotator::ZeroRotator,
-				EAttachLocation::KeepRelativeOffset,
-				false,
-				FoundSound->Volume,
-				FoundSound->Pitch,
-				FoundSound->StartTime,
-				FoundSound->Attenuation);
-
-			for (auto Processor : FoundSound->SoundProcessors)
-			{
-				if (!Processor)
-					continue;
-				
-				Processor->ModifyFX(AudioComp);
-			}
-		}
-		else
-		{
-			UDebugFunctionLibrary::DebugError(this, FString::Printf(TEXT("No sound found for GameplayTag: %s"), *FXTag.ToString()));
-		}
-		//TODO: VFX
-	}
+	return true;
 }
 
 FGameplayTagContainer UFXSubsystem::GetFXByMessageTag(FGameplayTag MessageTag) const
@@ -173,9 +99,20 @@ void UFXSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	Super::Initialize(Collection);
 
 	const UFXSystemSettings* Settings = GetDefault<UFXSystemSettings>();
-	if (Settings && Settings->DefaultSoundFXDataAsset.IsValid())
+	if (Settings)
 	{
-		SoundFXDataAsset = Settings->DefaultSoundFXDataAsset.LoadSynchronous();
+		if (Settings->MessageFXPairings.IsValid())
+			MessageFXPairings = Settings->MessageFXPairings.LoadSynchronous();
+
+		if (Settings->FXDataAssets.Num() > 0)
+		{			
+			for (auto FXDataAsset : Settings->FXDataAssets)
+			{
+				if (FXDataAsset.IsValid())
+					FXDataAssets.Add(FXDataAsset.LoadSynchronous());
+			}
+		}
+
 	}
 	else
 	{
