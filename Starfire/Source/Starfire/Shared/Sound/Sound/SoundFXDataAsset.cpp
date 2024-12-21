@@ -67,6 +67,11 @@ void USoundFXDataAsset::ExecuteFX_Implementation(UObject* WorldContext, FFXParam
 					FoundSound->Concurrency);
 				break;
 		}
+
+		if (!AudioComp)
+		{
+			return;
+		}
 		
 		for (auto Processor : FoundSound->Processors)
 		{
