@@ -75,19 +75,19 @@ bool UFXSubsystem::AllReferencesValid() const
 {
 	if (!MessageFXPairings)
 	{
-		// UDebugFunctionLibrary::DebugError(this, FString::Printf(TEXT("No MessageFXPairs set on FXSubsystem.")));
+		UDebugFunctionLibrary::DebugError(this, FString::Printf(TEXT("No MessageFXPairs set on FXSubsystem.")));
 		return false;
 	}
 
 	if (!GetWorld())
 	{
-		// UDebugFunctionLibrary::DebugError(this, FString::Printf(TEXT("No Valid World.")));
+		UDebugFunctionLibrary::DebugError(this, FString::Printf(TEXT("No Valid World.")));
 		return false;
 	}
 
 	if (FXDataAssets.Num() <= 0)
 	{
-		// UDebugFunctionLibrary::DebugError(this, FString::Printf(TEXT("No FX Data Tables Assigned!")));
+		UDebugFunctionLibrary::DebugError(this, FString::Printf(TEXT("No FX Data Tables Assigned!")));
 		return false;
 	}
 	
@@ -109,15 +109,13 @@ void UFXSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	const UFXSystemSettings* Settings = GetDefault<UFXSystemSettings>();
 	if (Settings)
 	{
-		if (Settings->MessageFXPairings.IsValid())
-			MessageFXPairings = Settings->MessageFXPairings.LoadSynchronous();
+		MessageFXPairings = Settings->MessageFXPairings.LoadSynchronous();
 
 		if (Settings->FXDataAssets.Num() > 0)
 		{			
 			for (auto FXDataAsset : Settings->FXDataAssets)
 			{
-				if (FXDataAsset.IsValid())
-					FXDataAssets.Add(FXDataAsset.LoadSynchronous());
+				FXDataAssets.Add(FXDataAsset.LoadSynchronous());
 			}
 		}
 		else
