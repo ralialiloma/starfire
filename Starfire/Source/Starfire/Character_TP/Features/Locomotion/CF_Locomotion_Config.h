@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include "CoreMinimal.h"
 #include "Starfire/Shared/CharacterFeature/Sf_CharacterFeature_Config.h"
-#include "Starfire/Shared/Interact/Interactables/Resource.h"
 #include "CF_Locomotion_Config.generated.h"
 
 UCLASS(Blueprintable)

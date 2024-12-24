@@ -3,7 +3,6 @@
 #include "DebugFunctionLibrary.h"
 #include "Algo/RandomShuffle.h"
 #include "Kismet/GameplayStatics.h"
-#include "Starfire/Shared/Interact/Interactables/ResourceSpawnLocation.h"
 
 DEFINE_LOG_CATEGORY(LogResourceSpawner)
 
@@ -46,6 +45,7 @@ bool FResourceVein::AddResource(AResource* Resource)
 
 	int RandomSpawnIndex = FMath::RandRange(0, ViableSpawns.Num() - 1);
 	TSharedPtr<FResourceSpawn> Spawn = Spawns[ViableSpawns[RandomSpawnIndex]];
+	
 	Spawn->SetItem(Resource);
 	Resource->OnCollectDelegate_CPP.AddLambda([this](AResource* Resource)
 	{
@@ -129,7 +129,7 @@ void AResourceSpawner::StartGame()
 		});
 		
 		if (Vein)
-			Vein->Get()->AddSpawn( MakeShared<FResourceSpawn>(FResourceSpawn(ResourceSpawnLocation)));
+			Vein->Get()->AddSpawn(MakeShared<FResourceSpawn>(FResourceSpawn(ResourceSpawnLocation)));
 		else
 		{
 			TSharedPtr<FResourceVein> NewVein = MakeShared<FResourceVein>(FResourceVein(ResourceSpawnLocation->GetVeinGroup(), { MakeShared<FResourceSpawn>(FResourceSpawn(ResourceSpawnLocation)) }));
@@ -175,7 +175,7 @@ void AResourceSpawner::SpawnResourceVeinRandom(bool QueueNewVein)
 	{
 		AResource* Resource = GetWorld()->SpawnActor<AResource>(ResourceClass, FTransform());
 		if (!Spawn->AddResource(Resource))
-			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, "Somthing Went Wrong Resource Spawner");
+			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, "Something Went Wrong Resource Spawner");
 	}
 	
 	OccupiedVeins.Add(Spawn);

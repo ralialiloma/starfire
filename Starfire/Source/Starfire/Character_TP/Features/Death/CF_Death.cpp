@@ -2,7 +2,7 @@
 #include "Starfire/Character_TP/Sf_TP_Character.h"
 #include "Starfire/Character_TP/Features/Combat/CF_Combat.h"
 #include "Starfire/Character_TP/Features/Locomotion/CF_Locomotion.h"
-#include "Starfire/Shared/Interact/Interactables/Resource.h"
+#include "Starfire/Shared/Resources/Resource.h"
 
 
 void UCF_Death::Initialize(ASf_TP_Character* Holder, const USf_CharacterFeature_Config* InConfig)
@@ -58,8 +58,7 @@ void UCF_Death::Kill()
 	}
 
 	//Spawn Loot
-	const TSubclassOf<AResource> DroppedResourceClass = Death_Config->DroppedResourceClass;
-	if (DroppedResourceClass)
+	if (const TSubclassOf<AResource> DroppedResourceClass = Death_Config->DroppedResourceClass)
 		GetOwningSfEquipment()->GetWorld()->SpawnActor(DroppedResourceClass, &GetOwningActor()->GetActorTransform());
 	
 	//Pawn Message

@@ -3,8 +3,8 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "ManagerActor.h"
-#include "Starfire/Shared/Interact/Interactables/Resource.h"
-#include "Starfire/Shared/Interact/Interactables/ResourceSpawnLocation.h"
+#include "Starfire/Shared/Resources/Resource.h"
+#include "Starfire/Shared/Resources/ResourceSpawnLocation.h"
 #include "ResourceSpawner.generated.h"
 
 USTRUCT(BlueprintType)
