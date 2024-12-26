@@ -8,7 +8,7 @@ struct STARFIRE_API FWeaponAnimData_TP:public FTableRowBase
 	GENERATED_BODY()
 	
 	FWeaponAnimData_TP();
-
+	
 	void UpdateEntries();
 	
 	TMap<FGameplayTag ,UAnimSequence*> GetAllSequences() const;
@@ -37,12 +37,17 @@ class STARFIRE_API UWeaponAnimationAsset_TP:public UDataAsset
 
 public:
 	UWeaponAnimationAsset_TP();
+
+
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FWeaponAnimData_TP WeaponAnimData;
 
 #if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+
+	UFUNCTION(CallInEditor)
+	void Refresh();
 #endif
 	
 };

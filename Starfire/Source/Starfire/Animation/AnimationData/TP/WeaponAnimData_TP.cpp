@@ -52,6 +52,11 @@ void UWeaponAnimationAsset_TP::PostEditChangeProperty(FPropertyChangedEvent& Pro
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 	WeaponAnimData.UpdateEntries();
 }
+
+void UWeaponAnimationAsset_TP::Refresh()
+{
+	WeaponAnimData.UpdateEntries();
+}
 #endif
 
 
