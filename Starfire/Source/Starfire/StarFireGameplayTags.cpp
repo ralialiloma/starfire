@@ -196,14 +196,12 @@ namespace Sf_GameplayTags
 					{
 						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Animation.Character.TP.AnimSequence.UpperBody", "")
 						DEFINE_GAMEPLAY_TAG_AUTO(Animation.Character.TP.AnimSequence.UpperBody,Idle,"");
-						DEFINE_GAMEPLAY_TAG_AUTO(Animation.Character.TP.AnimSequence.UpperBody,Aim,"");
 					}
 					namespace LowerBody
 					{
 						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Animation.Character.TP.AnimSequence.LowerBody", "")
 						DEFINE_GAMEPLAY_TAG_AUTO(Animation.Character.TP.AnimSequence.LowerBody,Idle,"");
 						DEFINE_GAMEPLAY_TAG_AUTO(Animation.Character.TP.AnimSequence.LowerBody,IdleCrouch,"");
-						DEFINE_GAMEPLAY_TAG_AUTO(Animation.Character.TP.AnimSequence.LowerBody,Fall,"");
 						DEFINE_GAMEPLAY_TAG_AUTO(Animation.Character.TP.AnimSequence.LowerBody,StandToCrouch,"");
 						DEFINE_GAMEPLAY_TAG_AUTO(Animation.Character.TP.AnimSequence.LowerBody,CrouchToStand,"");
 					}
