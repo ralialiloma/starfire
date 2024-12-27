@@ -12,6 +12,7 @@
 
 class ASf_TP_Character;
 class USf_CharacterFeature_Config;
+class ASf_TP_Controller;
 
 DEFINE_LOG_CATEGORY_STATIC(SfLog_CharacterFeature, Display, Display);
 
@@ -32,9 +33,12 @@ class STARFIRE_API USf_CharacterFeature : public USf_Object
 #pragma region Functions
 public:
 	virtual void Initialize(ASf_TP_Character* OwningCharacterIn, const USf_CharacterFeature_Config* InConfig);
-	virtual void OnBeginPlay();
-	virtual void OnTick(float OnTick);
-	virtual void OnEndPlay(const EEndPlayReason::Type EndPlayReason);
+	UFUNCTION(BlueprintNativeEvent)
+	void OnBeginPlay();
+	UFUNCTION(BlueprintNativeEvent)
+	void OnTick(float OnTick);
+	UFUNCTION(BlueprintNativeEvent)
+	void OnEndPlay(const EEndPlayReason::Type EndPlayReason);
 protected:
 	UFUNCTION(BlueprintCallable, Category = "Blackboard|Setters")
 	void SetBlackboardFloatValue(EFloatBlackboardKey FloatBlackboardKey, float Value);
@@ -45,7 +49,7 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "Blackboard|Setters")
 	void SetBlackboardVectorValue(ELocationBlackboardKey ActorBlackboardKey, FVector Value);
 
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "EnemyFeatures", meta = (DeterminesOutputType = "Class"))
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Character Feature", meta = (DeterminesOutputType = "Class"))
 	USf_CharacterFeature* GetFeatureByClass(TSubclassOf<USf_CharacterFeature> Class);
 	
 	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "Character")
@@ -54,6 +58,10 @@ protected:
 	ASf_TP_Character* GetOwningCharacter() const;
 	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "Character")
 	AAIController* GetOwningAIController();
+	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "Character")
+	ASf_TP_Controller* GetOwningTPController();
+
+	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "Character Feature")
 	const USf_CharacterFeature_Config* GetConfig() const;
 
 	UFUNCTION(BlueprintCallable,BlueprintPure , Category = "Character")      

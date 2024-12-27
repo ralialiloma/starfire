@@ -3,11 +3,10 @@
 #include "Starfire/Utility/Debug/SF_DebugFunctionLibrary.h"
 
 
-TSubclassOf<USf_CharacterFeature> USf_CharacterFeature_Config::GetFeatureType() const
+TSubclassOf<USf_CharacterFeature> USf_CharacterFeature_Config::GetFeatureType_Implementation() const
 {
 	return nullptr;
 }
-
 
 USf_CharacterFeature* USf_CharacterFeature_Config::MakeFeature(ASf_TP_Character* OwningCharacter) const
 {

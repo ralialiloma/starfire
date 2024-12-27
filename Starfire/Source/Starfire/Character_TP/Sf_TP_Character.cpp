@@ -166,8 +166,6 @@ void ASf_TP_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void ASf_TP_Character::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	Super::EndPlay(EndPlayReason);
-
 	for (USf_CharacterFeature* Feature: FeaturesNew)
 		Feature->OnEndPlay(EndPlayReason);
 }

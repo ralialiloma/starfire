@@ -43,9 +43,11 @@ private:
 
 #pragma region Properties
 public:
+	UPROPERTY(BlueprintAssignable)
 	FSf_VoidDelegate_BP OnPlayerDetected_BP;
 	FSf_VoidDelegate_CPP OnPlayerDetected_CPP;
 
+	UPROPERTY(BlueprintAssignable)
 	FSf_VoidDelegate_BP OnPlayerForgotten_BP;
 	FSf_VoidDelegate_CPP OnPlayerForgotten_CPP;
 protected:

@@ -3,7 +3,7 @@
 #include "CF_Death.h"
 
 
-TSubclassOf<USf_CharacterFeature> UCF_Death_Config::GetFeatureType() const
+TSubclassOf<USf_CharacterFeature> UCF_Death_Config::GetFeatureType_Implementation() const
 {
 	return UCF_Death::StaticClass();
 }

@@ -17,14 +17,15 @@ class STARFIRE_API UCF_DynamicMoveTarget : public USf_CharacterFeature
 
 public:
 	virtual void Initialize(ASf_TP_Character* Holder, const USf_CharacterFeature_Config* InConfig) override;
-	virtual void OnBeginPlay() override;
-	virtual void OnTick(float DeltaTime) override;
+	virtual void OnBeginPlay_Implementation() override;
+	virtual void OnTick_Implementation(float DeltaTime) override;
 
 	UFUNCTION(BlueprintCallable,BlueprintPure)
 	ASf_TP_DynamicMoveTarget* GetMoveTarget() const;
 
 #pragma region Functions
-
+protected:
+	bool TrySetTarget(float DeltaTime);
 #pragma endregion
 	
 #pragma region Properties
@@ -37,7 +38,7 @@ protected:
 	const UCF_DynamicMoveTarget_Config* DynamicMoveTargetConfig;
 
 	UPROPERTY()
-	bool bRegisteredForTetherPointGen  = false;
+	bool bHasReachablePoint;
 private:
 	float TimeSinceLastUpdate = 0.0f;
 #pragma endregion

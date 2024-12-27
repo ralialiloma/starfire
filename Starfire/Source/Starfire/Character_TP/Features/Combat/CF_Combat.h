@@ -46,7 +46,7 @@ class STARFIRE_API UCF_Combat : public USf_CharacterFeature
 #pragma region Functions
 public:
 
-	virtual void OnEndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	virtual void OnEndPlay_Implementation(const EEndPlayReason::Type EndPlayReason) override;
 	
 	UFUNCTION(BlueprintCallable, Category = "EnemyFeature|Combat")
 	bool StartFire(int MaxMissedBulletsBeforeStop, bool bInClearFocusAfterFiring = true);

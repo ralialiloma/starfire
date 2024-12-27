@@ -8,7 +8,7 @@ class STARFIRE_API UCF_EQSData_Config : public USf_CharacterFeature_Config
 	GENERATED_BODY()
 
 public:
-	virtual TSubclassOf<USf_CharacterFeature> GetFeatureType() const override;
+	virtual TSubclassOf<USf_CharacterFeature> GetFeatureType_Implementation() const override;
 	
 #pragma region Properties
 #pragma endregion

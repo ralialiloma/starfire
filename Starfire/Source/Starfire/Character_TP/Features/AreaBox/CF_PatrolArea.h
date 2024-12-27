@@ -17,7 +17,7 @@ class STARFIRE_API UCF_PatrolArea : public USf_CharacterFeature
 #pragma region Functions
 public:
 	virtual void Initialize(ASf_TP_Character* Holder, const USf_CharacterFeature_Config* InConfig) override;
-	virtual void OnBeginPlay() override;
+	virtual void OnBeginPlay_Implementation() override;
 
 	void OnMoveFinished();
 

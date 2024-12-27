@@ -4,10 +4,11 @@
 #include "Sf_CharacterFeature.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Starfire/Character_TP/Sf_TP_Character.h"
+#include "Starfire/Character_TP/Sf_TP_Controller.h"
 #include "Starfire/Character_TP/Behaviour/BlackboardKeyHelperLibrary.h"
 #include "Starfire/Utility/Debug/SF_DebugFunctionLibrary.h"
 
-void USf_CharacterFeature::Initialize(ASf_TP_Character* OwningCharacterIn,const USf_CharacterFeature_Config* InConfig)
+auto USf_CharacterFeature::Initialize(ASf_TP_Character* OwningCharacterIn, const USf_CharacterFeature_Config* InConfig) -> void
 {
 	OwningCharacter = OwningCharacterIn;
 	AController* Controller = OwningCharacter->GetController();
@@ -31,17 +32,16 @@ void USf_CharacterFeature::Initialize(ASf_TP_Character* OwningCharacterIn,const 
 	}
 }
 
+void USf_CharacterFeature::OnTick_Implementation(float OnTick)
+{
+}
 
-void USf_CharacterFeature::OnBeginPlay()
+void USf_CharacterFeature::OnBeginPlay_Implementation()
 {
 }
 
 
-void USf_CharacterFeature::OnTick(float OnTick)
-{
-}
-
-void USf_CharacterFeature::OnEndPlay(const EEndPlayReason::Type EndPlayReason)
+void USf_CharacterFeature::OnEndPlay_Implementation(const EEndPlayReason::Type EndPlayReason)
 {
 }
 
@@ -100,6 +100,11 @@ ASf_TP_Character* USf_CharacterFeature::GetOwningCharacter() const
 AAIController* USf_CharacterFeature::GetOwningAIController()
 {
 	return OwningAIController;
+}
+
+ASf_TP_Controller* USf_CharacterFeature::GetOwningTPController()
+{
+	return Cast<ASf_TP_Controller>(OwningAIController);
 }
 
 FVector USf_CharacterFeature::GetOwnerLocation() const

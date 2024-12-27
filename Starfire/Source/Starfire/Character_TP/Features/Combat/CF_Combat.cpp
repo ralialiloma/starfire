@@ -99,10 +99,8 @@ FString FStopFireInfo::ToString()
 		return  FString::Printf(TEXT("StopFireReason: %s"), *StopFireReasonString);
 }
 
-void UCF_Combat::OnEndPlay(const EEndPlayReason::Type EndPlayReason)
+void UCF_Combat::OnEndPlay_Implementation(const EEndPlayReason::Type EndPlayReason)
 {
-	Super::OnEndPlay(EndPlayReason);
-
 	if (GetWorld())
 	{
 		GetWorld()->GetTimerManager().ClearTimer(FireHandle);

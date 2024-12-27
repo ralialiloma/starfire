@@ -3,7 +3,7 @@
 #include "CF_Locomotion.h"
 
 
-TSubclassOf<USf_CharacterFeature> UCF_Locomotion_Config::GetFeatureType() const
+TSubclassOf<USf_CharacterFeature> UCF_Locomotion_Config::GetFeatureType_Implementation() const
 {
 	return UCF_Locomotion::StaticClass();
 }

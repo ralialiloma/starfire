@@ -9,10 +9,14 @@ class STARFIRE_API UCF_DynamicMoveTarget_Config : public USf_CharacterFeature_Co
 	GENERATED_BODY()
 
 public:
-	virtual TSubclassOf<USf_CharacterFeature> GetFeatureType() const override;
+	virtual TSubclassOf<USf_CharacterFeature> GetFeatureType_Implementation() const override;
 	
 #pragma region Properties
 public:
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UNavigationQueryFilter> NavigationFilterClass;
+	
 	UPROPERTY(EditDefaultsOnly)
 	float FrameRate = 5;
 

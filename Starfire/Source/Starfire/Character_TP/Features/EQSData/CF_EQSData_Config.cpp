@@ -3,7 +3,7 @@
 #include "CF_EQSData.h"
 
 
-TSubclassOf<USf_CharacterFeature> UCF_EQSData_Config::GetFeatureType() const
+TSubclassOf<USf_CharacterFeature> UCF_EQSData_Config::GetFeatureType_Implementation() const
 {
 	return UCF_EQS_Data::StaticClass();
 }

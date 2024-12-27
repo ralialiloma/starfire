@@ -11,7 +11,8 @@ class STARFIRE_API USf_CharacterFeature_Config : public USf_Object
 	GENERATED_BODY()
 	
 public:
-	virtual TSubclassOf<USf_CharacterFeature> GetFeatureType() const;
+	UFUNCTION(BlueprintNativeEvent)
+	TSubclassOf<USf_CharacterFeature> GetFeatureType() const;
 	USf_CharacterFeature* MakeFeature(ASf_TP_Character* OwningCharacter) const;
 	
 };

@@ -6,7 +6,6 @@ void UCF_EQS_Data::Initialize(ASf_TP_Character* Holder, const USf_CharacterFeatu
 	Super::Initialize(Holder, InConfig);
 }
 
-void UCF_EQS_Data::OnBeginPlay()
+void UCF_EQS_Data::OnBeginPlay_Implementation()
 {
-	Super::OnBeginPlay();
 }

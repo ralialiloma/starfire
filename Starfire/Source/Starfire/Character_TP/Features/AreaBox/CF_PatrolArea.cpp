@@ -12,10 +12,8 @@ void UCF_PatrolArea::Initialize(ASf_TP_Character* Holder, const USf_CharacterFea
 	VALIDATE_CONFIG(UCF_PatrolArea_Config,AreaBox_Config)
 }
 
-void UCF_PatrolArea::OnBeginPlay()
+void UCF_PatrolArea::OnBeginPlay_Implementation()
 {
-	Super::OnBeginPlay();
-
 	bool bFound = false;
 	CurrentPatrolArea =  USf_PatrolAreaManager::Get(GetWorld())->FindPatrolAreaForLocation(GetOwnerLocation(),bFound);
 	
