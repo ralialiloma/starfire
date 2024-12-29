@@ -84,6 +84,9 @@ bool ASf_TP_Character::TryAddFeature(const USf_CharacterFeature_Config* FeatureC
 	}
 	
 	const TSubclassOf<USf_CharacterFeature> NewFeatureType{FeatureConfig->GetFeatureType()};
+
+	if (!IsValid(NewFeatureType))
+		return false;
 	
 	if (!IsValid(FeatureConfig)|| NewFeatureType->HasAnyClassFlags(CLASS_Abstract))
 	{
