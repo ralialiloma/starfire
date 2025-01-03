@@ -40,6 +40,7 @@ float USf_AnimDataController_FP::RunAnimation(const FWeaponMontageEventPackage W
 		StopFPMontage(WeaponAnimationUpdateData.AnimData_FP,*MontageType);
 		return 0;
 	}
+	
 
 	return PlayFPMontage(WeaponAnimationUpdateData.AnimData_FP,*MontageType);
 }
