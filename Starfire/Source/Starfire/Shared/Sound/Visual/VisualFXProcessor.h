@@ -11,6 +11,6 @@ class UVisualFXProcessor : public UObject
 public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void ModifyFX(UObject* FX) const;
+	void ModifyFX(UParticleSystemComponent* FX) const;
 	
 };

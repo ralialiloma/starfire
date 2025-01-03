@@ -28,17 +28,17 @@ struct FFXParams
 		FXTag = InFXTag;
 		PlayType = EFXPlayType::FX_2D;
 	}
-	FFXParams(const FGameplayTag InFXTag, const FVector& InLocation)
+	FFXParams(const FGameplayTag InFXTag, const FTransform& InTransform)
 	{
 		FXTag = InFXTag;
 		PlayType = EFXPlayType::FX_Location;
-		Location = InLocation;
+		Transform = InTransform;
 	}
-	FFXParams(const FGameplayTag InFXTag, USceneComponent* InAttachComponent, FName InBone = NAME_None, const FVector& InOffset = FVector::ZeroVector)
+	FFXParams(const FGameplayTag InFXTag, USceneComponent* InAttachComponent, FName InBone = NAME_None, const FTransform& InOffset = FTransform())
 	{
 		FXTag = InFXTag;
 		PlayType = EFXPlayType::FX_Attached;
-		Location = InOffset;
+		Transform = InOffset;
 		AttacheSceneComponent = InAttachComponent;
 		Bone = InBone;
 	}
@@ -51,7 +51,7 @@ struct FFXParams
 	EFXPlayType PlayType = EFXPlayType::FX_2D;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	FVector Location = FVector::ZeroVector;
+	FTransform Transform = FTransform();
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	USceneComponent* AttacheSceneComponent = nullptr;

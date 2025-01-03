@@ -105,8 +105,22 @@ void UDebugFunctionLibrary::DebugDrawSphere(
 			Thickness);
 }
 
+void UDebugFunctionLibrary::DebugDrawArrow(const UObject* WorldContextObject, const FGameplayTag DebugTag, const FVector Start, const FVector End, 
+int32 Segments, FLinearColor LineColor, float Thickness)
+{
+	if (ShouldDebug(DebugTag, EDebugDisplayType::Visual))
+		UKismetSystemLibrary::DrawDebugArrow(
+			WorldContextObject,
+			Start,
+			End,
+			Segments,
+			LineColor,
+			GetDebugDuration(DebugTag, EDebugDisplayType::Visual),
+			Thickness);
+}
+
 void UDebugFunctionLibrary::DebugDrawString(const UObject* WorldContextObject, const FGameplayTag DebugTag, const FVector TextLocation,
-	const FString& Text, AActor* TestBaseActor, const FLinearColor TextColor, const float Duration)
+                                            const FString& Text, AActor* TestBaseActor, const FLinearColor TextColor, const float Duration)
 {
 	if (ShouldDebug(DebugTag, EDebugDisplayType::Visual))
 		UKismetSystemLibrary::DrawDebugString(WorldContextObject,TextLocation,Text,TestBaseActor,TextColor,Duration);

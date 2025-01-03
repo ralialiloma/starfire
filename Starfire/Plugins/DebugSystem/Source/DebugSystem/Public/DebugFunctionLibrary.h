@@ -69,6 +69,17 @@ public:
 		FLinearColor LineColor = FLinearColor::White,
 		// float Duration = 0.f,
 		float Thickness = 0.f);
+	
+	UFUNCTION(BlueprintCallable, Category="Debug|Rendering", meta=(WorldContext="WorldContextObject", DevelopmentOnly))
+	static void DebugDrawArrow(
+		const UObject* WorldContextObject,
+		const FGameplayTag DebugTag,
+		const FVector Start,
+		const FVector End,
+		int32 Segments = 12,
+		FLinearColor LineColor = FLinearColor::White,
+		// float Duration = 0.f,
+		float Thickness = 0.f);
 
 	UFUNCTION(BlueprintCallable, Category="Debug|Rendering", meta=(WorldContext="WorldContextObject", DevelopmentOnly))
 	static void DebugDrawString(

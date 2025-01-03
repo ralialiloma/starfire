@@ -19,6 +19,9 @@ struct FVisualFXSettings
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	UParticleSystem* ParticleSystem = nullptr;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FTransform AdditiveTransform = FTransform();
+
 	UPROPERTY(Instanced, EditAnywhere, BlueprintReadWrite)
 	TArray<UVisualFXProcessor*> Processors {};
 
@@ -35,7 +38,7 @@ class STARFIRE_API UVisualFXDataAsset : public UFXDataAssetBase
 
 public:
 	
-	FVisualFXSettings* GetFXSettings(FGameplayTag Tag);
+	FVisualFXSettings* GetVisualFXSettings(FGameplayTag Tag);
 
 	virtual void ExecuteFX_Implementation(UObject* WorldContext, FFXParams Params) override;
 

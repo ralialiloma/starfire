@@ -95,10 +95,25 @@ bool AWeaponBase::Fire(const EInputSignalType InputSignal, EFireType FireType, F
 	
 	DoFire(OutHitResult);
 	ApplyRecoil();
-
-	UFXSubsystem::Get(this)->PlayFXOn(GetWeaponConfig().FXFireTag, GetRootComponent());
+	
+	FTransform FireTransform = IWeaponOwner::Execute_GetFireTransform(WeaponOwner);
+	if (!FireTransform.Equals(FTransform::Identity))
+	{
+		//Make Fire Transform relative to the root component
+		FireTransform = GetRootComponent()->GetComponentTransform().GetRelativeTransform(FireTransform);
+	}
+	USceneComponent* FXAttachPoint = GetMuzzleSceneComponent();
+	if (!FXAttachPoint)
+		FXAttachPoint = GetRootComponent();
+	
+	UFXSubsystem::Get(this)->PlayFXOn(GetWeaponConfig().FXFireTag, FXAttachPoint);
 	
 	return true;
+}
+
+USceneComponent* AWeaponBase::GetMuzzleSceneComponent_Implementation() const
+{
+	return nullptr;
 }
 
 void AWeaponBase::FireTraces(FHitResult& OutHitResult)

@@ -5,6 +5,7 @@
 #include "DebugFunctionLibrary.h"
 #include "FXSystemSettings.h"
 #include "MessageFXPairingDataAsset.h"
+#include "Starfire/StarFireGameplayTags.h"
 #include "Visual/VisualFXDataAsset.h"
 
 UFXSubsystem* UFXSubsystem::Get(const UObject* WorldContext)
@@ -32,7 +33,7 @@ FFXHandle UFXSubsystem::PlayFX(FGameplayTag FXTag)
 	return FFXHandle::GenerateNewHandle();
 }
 
-FFXHandle UFXSubsystem::PlayFXAt(FGameplayTag FXTag, FVector Location)
+FFXHandle UFXSubsystem::PlayFXAt(FGameplayTag FXTag, FTransform Transform)
 {
 	if (!AllReferencesValid())
 		return FFXHandle();
@@ -41,7 +42,7 @@ FFXHandle UFXSubsystem::PlayFXAt(FGameplayTag FXTag, FVector Location)
 	{
 		for (auto FX : MessageFXPairings->GetMappedFX(FXTag))
 		{
-			FXDataAsset->ExecuteFX(this, FFXParams(FX, Location));
+			FXDataAsset->ExecuteFX(this, FFXParams(FX, Transform));
 		}
 	}
 
@@ -49,7 +50,7 @@ FFXHandle UFXSubsystem::PlayFXAt(FGameplayTag FXTag, FVector Location)
 	return FFXHandle::GenerateNewHandle();
 }
 
-FFXHandle UFXSubsystem::PlayFXOn(FGameplayTag FXTag, USceneComponent* Component, FName Bone, FVector Offset)
+FFXHandle UFXSubsystem::PlayFXOn(FGameplayTag FXTag, USceneComponent* Component, FName Bone, FTransform Offset)
 {
 	if (!AllReferencesValid())
 		return FFXHandle();
@@ -61,6 +62,11 @@ FFXHandle UFXSubsystem::PlayFXOn(FGameplayTag FXTag, USceneComponent* Component,
 			FXDataAsset->ExecuteFX(this, FFXParams(FX, Component, Bone, Offset));
 		}
 	}
+
+	const FVector Start = Component->GetComponentTransform().GetLocation() + Offset.GetLocation();
+	const FVector End = Component->GetComponentTransform().GetLocation() + Offset.GetLocation() +
+		(Component->GetComponentTransform().GetRotation() * Offset.GetRotation()).GetForwardVector() * 50;
+	UDebugFunctionLibrary::DebugDrawArrow(this, Sf_GameplayTags::Effects::Name, Start, End, 12, FColor::Silver, 1);
 	
 	//TODO
 	return FFXHandle::GenerateNewHandle();

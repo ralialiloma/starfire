@@ -142,6 +142,9 @@ public:
 	bool Fire(const EInputSignalType InputSignal, EFireType FireType, FHitResult& OutHitResult, EFireBlock& OutFireBlock);
 
 protected:
+	UFUNCTION(BlueprintNativeEvent,Category="WeaponBase")
+	USceneComponent* GetMuzzleSceneComponent() const;
+	
 	void GetTracePoints(const FTransform& InFireTransform, FVector& OutStart, FVector& OutEnd) const;
 	bool CheckInputSignalType(EInputSignalType InputSignalType);
 	

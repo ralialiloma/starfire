@@ -84,10 +84,10 @@ public:
 	FFXHandle PlayFX(UPARAM(meta=(Categories="Effects.Messages")) FGameplayTag FXTag);
 
 	UFUNCTION(BlueprintCallable, Category="FXSystem")
-	FFXHandle PlayFXAt(UPARAM(meta = (Categories = "Effects.Messages")) FGameplayTag FXTag, FVector Location);
+	FFXHandle PlayFXAt(UPARAM(meta = (Categories = "Effects.Messages")) FGameplayTag FXTag, FTransform Transform);
 
 	UFUNCTION(BlueprintCallable, Category="FXSystem", meta = (AdvancedDisplay = "2"))
-	FFXHandle PlayFXOn(UPARAM(meta = (Categories = "Effects.Messages")) FGameplayTag FXTag, USceneComponent* Component, FName Bone = NAME_None, FVector Offset = FVector::ZeroVector);
+	FFXHandle PlayFXOn(UPARAM(meta = (Categories = "Effects.Messages")) FGameplayTag FXTag, USceneComponent* Component, FName Bone = NAME_None, FTransform Offset = FTransform());
 
 	UFUNCTION(BlueprintCallable, Category="FXSystem")
 	bool CancelFX(FFXHandle Handle);
