@@ -156,6 +156,16 @@ namespace Sf_GameplayTags
 		namespace Weapon
 		{
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Animation.Weapon", "")
+
+			namespace Montage
+			{
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Animation.Weapon.Montage", "")
+				DEFINE_GAMEPLAY_TAG_AUTO(Animation.Weapon.Montage, Fire, "");
+				DEFINE_GAMEPLAY_TAG_AUTO(Animation.Weapon.Montage, Melee, "");
+				DEFINE_GAMEPLAY_TAG_AUTO(Animation.Weapon.Montage, Reload, "");
+				DEFINE_GAMEPLAY_TAG_AUTO(Animation.Weapon.Montage, Aim, "");
+				DEFINE_GAMEPLAY_TAG_AUTO(Animation.Weapon.Montage, Equip, "");
+			}
 			namespace Event
 			{
 				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Animation.Weapon.Event", "")

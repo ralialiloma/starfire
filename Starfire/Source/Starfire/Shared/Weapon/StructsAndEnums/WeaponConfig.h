@@ -2,6 +2,7 @@
 #include "Starfire/StarFireGameplayTags.h"
 #include "Starfire/Animation/AnimationData/FP/WeaponAnimData_FP.h"
 #include "Starfire/Animation/AnimationData/TP/WeaponAnimData_TP.h"
+#include "Starfire/Animation/AnimationData/Weapon/WeaponAnimData_Weapon.h"
 #include "Starfire/Utility/InputSignalType.h"
 #include "WeaponConfig.generated.h"
 
@@ -24,6 +25,8 @@ public:
 	FWeaponAnimData_FP GetAnimData_FP() const;
 
 	FWeaponAnimData_TP GetAnimData_TP() const;
+	
+	FWeaponAnimData_Weapon GetAnimData_Weapon() const;
 
 public:
 	
@@ -104,6 +107,12 @@ public:
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Animation")
 	UWeaponAnimationAsset_TP* WeaponAnimationAsset_TP = nullptr;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Animation")
+	UWeaponAnimationAsset_Weapon* WeaponAnimationAsset_Weapon = nullptr;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Animation")
+	UWeaponAnimationAsset_FP* WeaponAnimationSelf = nullptr;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Animation")
 	FTransform AimOffset = FTransform();

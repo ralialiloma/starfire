@@ -200,8 +200,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="WeaponBase")
 	bool IsAiming();
-
-
+	
 	UFUNCTION(BlueprintCallable, Category="WeaponBase")
 	virtual  bool CanAim();
 		
@@ -214,7 +213,6 @@ public:
 	
 #pragma region Melee
 public:
-	
 	UFUNCTION(BlueprintCallable,Category="WeaponBase")
 	bool IsOnMeleeCooldown();
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category="WeaponBase")
@@ -245,6 +243,12 @@ protected:
 	void DoMelee();
 	void ApplyMeleeToActor(AActor* ActorToApplyMeleeTo);
 
+#pragma endregion
+
+#pragma region Animation
+public:
+	UFUNCTION(BlueprintCallable, Category="WeaponBase")
+	void PlayWeaponAnimation(EWeaponAnimationEventType EventType) const;
 #pragma endregion
 	
 };
