@@ -61,7 +61,7 @@ FWeaponAnimData_TP FWeaponConfig::GetAnimData_TP() const
 
 FWeaponAnimData_Weapon FWeaponConfig::GetAnimData_Weapon() const
 {
-	if (!IsValid(WeaponAnimationAsset_TP))
+	if (!IsValid(WeaponAnimationAsset_Weapon))
 	{
 		UE_LOG(WeaponConfig, Log, TEXT("Missing Animation Asset"))
 		return FWeaponAnimData_Weapon();

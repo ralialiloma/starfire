@@ -506,25 +506,25 @@ void AWeaponBase::ApplyMeleeToActor(AActor* ActorToApplyMeleeTo)
 	Melee);
 }
 
-void AWeaponBase::PlayWeaponAnimation(EWeaponAnimationEventType EventType) const
+void AWeaponBase::PlayWeaponAnimation(const EWeaponAnimationEventType EventType) const
 {
 	FGameplayTag AnimationTag = FGameplayTag::EmptyTag;
 	switch (EventType)
 	{
 		case  EWeaponAnimationEventType::Reload:
-				AnimationTag = Sf_GameplayTags::Animation::Weapon::Montage::Reload;
+				AnimationTag = Sf_GameplayTags::Animation::Weapon::Montage::Reload.GetTag();
 			break;
 		case  EWeaponAnimationEventType::Fire:
-				AnimationTag = Sf_GameplayTags::Animation::Weapon::Montage::Fire;
+				AnimationTag = Sf_GameplayTags::Animation::Weapon::Montage::Fire.GetTag();
 			break;
 		case EWeaponAnimationEventType::Equip:
-			AnimationTag = Sf_GameplayTags::Animation::Weapon::Montage::Equip;
+			AnimationTag = Sf_GameplayTags::Animation::Weapon::Montage::Equip.GetTag();
 			break;
 		case EWeaponAnimationEventType::Aim:
-			AnimationTag = Sf_GameplayTags::Animation::Weapon::Montage::Aim;
+			AnimationTag = Sf_GameplayTags::Animation::Weapon::Montage::Aim.GetTag();
 			break;
 		case EWeaponAnimationEventType::Melee:
-			AnimationTag = Sf_GameplayTags::Animation::Weapon::Montage::Melee;
+			AnimationTag = Sf_GameplayTags::Animation::Weapon::Montage::Melee.GetTag();
 			break;
 		case EWeaponAnimationEventType::None:
 			break;
@@ -534,8 +534,15 @@ void AWeaponBase::PlayWeaponAnimation(EWeaponAnimationEventType EventType) const
 	
 	UAnimMontage** WeaponMontageRef =
 		GetWeaponConfig().GetAnimData_Weapon().AnimationMontages.Find(AnimationTag);
-	if (WeaponMontageRef)
-		SkeletalMesh->GetAnimInstance()->Montage_Play(*WeaponMontageRef);
+	if (!WeaponMontageRef)
+		return;
+	UAnimMontage* FoundMontage = *WeaponMontageRef;
+	if (!IsValid(FoundMontage))
+	{
+		return;	
+	}
+	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, (FoundMontage->GetName()));
+	SkeletalMesh->GetAnimInstance()->Montage_Play(*WeaponMontageRef);
 }
 
 
