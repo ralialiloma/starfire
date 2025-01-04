@@ -378,7 +378,7 @@ bool AWeaponBase::Reload()
 
 bool AWeaponBase::CanReload()
 {
-	return !IsReloading();
+	return !IsReloading() && CurrentClip<GetWeaponConfig().MaxClipSize;
 }
 
 bool AWeaponBase::Reload(float& OutMontageTime)
@@ -541,7 +541,6 @@ void AWeaponBase::PlayWeaponAnimation(const EWeaponAnimationEventType EventType)
 	{
 		return;	
 	}
-	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, (FoundMontage->GetName()));
 	SkeletalMesh->GetAnimInstance()->Montage_Play(*WeaponMontageRef);
 }
 
