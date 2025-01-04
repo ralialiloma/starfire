@@ -250,7 +250,7 @@ void AWeaponBase::DoMelee()
 
 
 
-float AWeaponBase::ExecuteAnimationAndReturnAnimLength(EWeaponAnimationEventType WeaponAnimationEventType, const bool bIsStarting) const
+float AWeaponBase::ExecuteAnimationAndReturnAnimLength(const EWeaponAnimationEventType WeaponAnimationEventType, const bool bIsStarting) const
 {
 	TArray<UActorComponent*> Components;
 	GetComponents(Components);
@@ -278,6 +278,10 @@ float AWeaponBase::ExecuteAnimationAndReturnAnimLength(EWeaponAnimationEventType
 		bIsStarting,
 		GetWeaponConfig().GetAnimData_FP(),
 		GetWeaponConfig().GetAnimData_TP());
+
+	//Play Montage On Weapon itself
+	PlayWeaponAnimation(WeaponAnimationEventType);
+	
 	return AnimMontageController->RunAnimation(WeaponAnimationUpdateData);
 	
 }
@@ -500,6 +504,38 @@ void AWeaponBase::ApplyMeleeToActor(AActor* ActorToApplyMeleeTo)
 	HitResult.Normal,
 	HitResult.Component.Get(),
 	Melee);
+}
+
+void AWeaponBase::PlayWeaponAnimation(EWeaponAnimationEventType EventType) const
+{
+	FGameplayTag AnimationTag = FGameplayTag::EmptyTag;
+	switch (EventType)
+	{
+		case  EWeaponAnimationEventType::Reload:
+				AnimationTag = Sf_GameplayTags::Animation::Weapon::Montage::Reload;
+			break;
+		case  EWeaponAnimationEventType::Fire:
+				AnimationTag = Sf_GameplayTags::Animation::Weapon::Montage::Fire;
+			break;
+		case EWeaponAnimationEventType::Equip:
+			AnimationTag = Sf_GameplayTags::Animation::Weapon::Montage::Equip;
+			break;
+		case EWeaponAnimationEventType::Aim:
+			AnimationTag = Sf_GameplayTags::Animation::Weapon::Montage::Aim;
+			break;
+		case EWeaponAnimationEventType::Melee:
+			AnimationTag = Sf_GameplayTags::Animation::Weapon::Montage::Melee;
+			break;
+		case EWeaponAnimationEventType::None:
+			break;
+		default:
+			break;
+	}
+	
+	UAnimMontage** WeaponMontageRef =
+		GetWeaponConfig().GetAnimData_Weapon().AnimationMontages.Find(AnimationTag);
+	if (WeaponMontageRef)
+		SkeletalMesh->GetAnimInstance()->Montage_Play(*WeaponMontageRef);
 }
 
 

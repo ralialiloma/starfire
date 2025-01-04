@@ -1,6 +1,7 @@
 ﻿#include "WeaponConfig.h"
 
 #include "Kismet/KismetMathLibrary.h"
+#include "Starfire/Animation/AnimationData/Weapon/WeaponAnimData_Weapon.h"
 
 DEFINE_LOG_CATEGORY_STATIC(WeaponConfig, Display, Display);
 
@@ -56,4 +57,14 @@ FWeaponAnimData_TP FWeaponConfig::GetAnimData_TP() const
 		return FWeaponAnimData_TP();
 	}
 	return WeaponAnimationAsset_TP->WeaponAnimData;
+}
+
+FWeaponAnimData_Weapon FWeaponConfig::GetAnimData_Weapon() const
+{
+	if (!IsValid(WeaponAnimationAsset_TP))
+	{
+		UE_LOG(WeaponConfig, Log, TEXT("Missing Animation Asset"))
+		return FWeaponAnimData_Weapon();
+	}
+	return WeaponAnimationAsset_Weapon->WeaponAnimData;
 }
