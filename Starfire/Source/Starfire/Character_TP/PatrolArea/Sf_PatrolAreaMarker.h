@@ -14,6 +14,7 @@ class STARFIRE_API ASf_PatrolAreaMarker: public AActor
 public:
 	ASf_PatrolAreaMarker();
 	virtual void OnConstruction(const FTransform& Transform) override;
+	virtual void BeginPlay() override;
 
 #pragma region Functions
 public:
