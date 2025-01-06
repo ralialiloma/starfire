@@ -343,6 +343,8 @@ bool AWeaponBase::IsAiming()
 
 bool AWeaponBase::CanAim()
 {
+	if (IsReloading())
+		return false;
 	return true;
 }
 
@@ -385,6 +387,9 @@ bool AWeaponBase::Reload(float& OutMontageTime)
 {
 	if (!CanReload())
 		return false;
+
+	//Stop Aiming on Reload
+	StopAiming();
 	
 	//float MontageTime = PlayMontage(EWeaponAnimationMontageType_FP::Reload);
 	const float MontageTime = ExecuteAnimationAndReturnAnimLength(EWeaponAnimationEventType::Reload,true);
@@ -532,16 +537,14 @@ void AWeaponBase::PlayWeaponAnimation(const EWeaponAnimationEventType EventType)
 			break;
 	}
 	
-	UAnimMontage** WeaponMontageRef =
+	/*UAnimMontage** WeaponMontageRef =
 		GetWeaponConfig().GetAnimData_Weapon().AnimationMontages.Find(AnimationTag);
 	if (!WeaponMontageRef)
 		return;
 	UAnimMontage* FoundMontage = *WeaponMontageRef;
 	if (!IsValid(FoundMontage))
-	{
 		return;	
-	}
-	SkeletalMesh->GetAnimInstance()->Montage_Play(*WeaponMontageRef);
+	SkeletalMesh->GetAnimInstance()->Montage_Play(FoundMontage);*/
 }
 
 
@@ -649,6 +652,12 @@ bool AWeaponBase::CanFire(const EInputSignalType InputSignal, EFireType FireType
 	if (IsOnMeleeCooldown())
 	{
 		OutBlock = EFireBlock::MeleeCooldown;
+		return false;
+	}
+
+	if (IsReloading() && GetAmmoCount()<=0)
+	{
+		OutBlock = EFireBlock::Reload;
 		return false;
 	}
 
