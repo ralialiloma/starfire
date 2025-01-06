@@ -21,8 +21,12 @@ void AResource::OnCollect_Implementation(FVector CollectLocation, APawn* Trigger
 	OnCollectDelegate_CPP.Broadcast(this);
 
 	bool Collected = false;
-	if (auto PlayerPawn = UGameplayStatics::GetPlayerPawn(this, 0))
-		Collected = AddSelfToInventory(PlayerPawn->GetComponentByClass<UInventoryComponent>());
+	if (TriggeringPawn)
+	{
+		APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(this, 0);
+		if (PlayerPawn == TriggeringPawn)
+			Collected = AddSelfToInventory(PlayerPawn->GetComponentByClass<UInventoryComponent>());
+	}
 
 	bHasBeenCollected = Collected;
 

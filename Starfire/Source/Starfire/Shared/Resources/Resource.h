@@ -23,7 +23,7 @@ public:
 	
 	AResource();
 
-	UFUNCTION(BlueprintNativeEvent)
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void OnCollect(FVector CollectLocation, APawn* TriggeringPawn);
 
 	UFUNCTION(BlueprintCallable)

@@ -75,6 +75,41 @@ int UInventoryComponent::GetItemMaxStack(FGameplayTag ItemTag) const
 	return CraftingDefinitions->GetMaxStack(ItemTag);
 }
 
+void UInventoryComponent::GetItemCraftingRequirements(FGameplayTag CraftingItem, TArray<FItemQuantityDefinition>& RequiredItems) const
+{
+	RequiredItems = TArray<FItemQuantityDefinition>();
+	
+	if (!CraftingDefinitions)
+	{
+		return;
+	}
+	
+	FCraftingData CraftData = CraftingDefinitions->GetCraftingData(CraftingItem);
+	if (!CraftData.IsValid())
+	{
+		return;
+	}
+
+	RequiredItems = CraftData.RequiredResources;
+}
+
+int UInventoryComponent::GetItemCraftingRequirementsOfItem(FGameplayTag CraftingItem, FGameplayTag Resource) const
+{
+	if (!Resource.IsValid())
+		return 0;
+	
+	TArray<FItemQuantityDefinition> CraftingData {};
+	GetItemCraftingRequirements(CraftingItem, CraftingData);
+
+	for (auto Data : CraftingData)
+	{
+		if (Data.ItemTag == Resource)
+			return Data.Quantity;
+	}
+
+	return 0;
+}
+
 bool UInventoryComponent::CraftItem_Implementation(FGameplayTag ItemTag)
 {
 	if (!CraftingDefinitions)

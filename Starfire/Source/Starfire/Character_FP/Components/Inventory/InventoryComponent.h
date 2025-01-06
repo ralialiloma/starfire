@@ -36,6 +36,12 @@ public:
 
 	UFUNCTION(BlueprintCallable, meta = (Categories = "Gameplay.Resource"))
 	int GetItemMaxStack(FGameplayTag ItemTag) const;
+
+	UFUNCTION(BlueprintCallable, meta = (Categories = "Gameplay.Resource"))
+	void GetItemCraftingRequirements(FGameplayTag CraftingItem, TArray<FItemQuantityDefinition>& RequiredItems) const;
+
+	UFUNCTION(BlueprintCallable, meta = (Categories = "Gameplay.Resource"))
+	int GetItemCraftingRequirementsOfItem(FGameplayTag CraftingItem, FGameplayTag Resource) const;
 	
 protected:
 
