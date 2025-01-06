@@ -12,7 +12,7 @@ struct STARFIRE_API FWeaponAnimData_Weapon:public FTableRowBase
 	void UpdateEntries();
 
 	UPROPERTY(BlueprintReadWrite,EditAnywhere,meta=(ReadOnlyKeys,ForceInlineRow))
-	TMap<FGameplayTag, UAnimMontage*> AnimationMontages = TMap<FGameplayTag, UAnimMontage*>();
+	TMap<FGameplayTag, UAnimMontage*> AnimationMontages = TMap<FGameplayTag, UAnimMontage*>{};
 };
 
 

@@ -5,7 +5,7 @@
 
 FWeaponAnimData_Weapon::FWeaponAnimData_Weapon()
 {
-	TMap<FGameplayTag, UAnimMontage*>();
+	AnimationMontages = TMap<FGameplayTag, UAnimMontage*>{};
 	UpdateEntries();
 }
 

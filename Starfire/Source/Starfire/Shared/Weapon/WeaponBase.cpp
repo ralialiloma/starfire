@@ -537,14 +537,14 @@ void AWeaponBase::PlayWeaponAnimation(const EWeaponAnimationEventType EventType)
 			break;
 	}
 	
-	/*UAnimMontage** WeaponMontageRef =
+	UAnimMontage** WeaponMontageRef =
 		GetWeaponConfig().GetAnimData_Weapon().AnimationMontages.Find(AnimationTag);
-	if (!WeaponMontageRef)
+	if (WeaponMontageRef == nullptr)
 		return;
 	UAnimMontage* FoundMontage = *WeaponMontageRef;
-	if (!IsValid(FoundMontage))
+	if (FoundMontage == nullptr||!IsValid(FoundMontage))
 		return;	
-	SkeletalMesh->GetAnimInstance()->Montage_Play(FoundMontage);*/
+	SkeletalMesh->GetAnimInstance()->Montage_Play(FoundMontage);
 }
 
 
