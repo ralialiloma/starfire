@@ -6,7 +6,6 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Starfire/Character_TP/Sf_TP_Character.h"
 #include "Starfire/Character_TP/PatrolArea/Sf_PatrolAreaManager.h"
-#include "Starfire/Utility/AsyncUtility.h"
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
 #include "Starfire/Utility/Debug/SF_DebugFunctionLibrary.h"
 
@@ -461,7 +460,7 @@ void ASf_TetherPointGen::UpdateTetherPoints()
 		LocalTetherPointsToProcess[i]->UpdateScore(PlayerLocation, this, IgnoredActors, TraceTypeQuery);
 		TetherPointsToProcess.Remove(LocalTetherPointsToProcess[i]);
 		
-		if (SF_SHOULD_DEBUG(TP::EQS::TetherPointGen,EDebugType::Visual))
+		if (SF_SHOULD_DEBUG(TP::EQS::TetherPointGen,EDebugVisualType::Visual))
 		{
 			FLinearColor InterpolatedColor = FLinearColor::LerpUsingHSV(FColor::Red, FColor::Green, LocalTetherPointsToProcess[i]->CoverPotential);
 			FColor DrawColor = InterpolatedColor.ToFColor(true);

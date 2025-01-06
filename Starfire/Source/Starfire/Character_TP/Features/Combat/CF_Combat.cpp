@@ -3,7 +3,6 @@
 #include "Starfire/Character_TP/Sf_TP_Character.h"
 #include "Starfire/Shared/Weapon/WeaponBase.h"
 #include "Starfire/Shared/Weapon/StructsAndEnums/WeaponConfig.h"
-#include "Starfire/Utility/AsyncUtility.h"
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
 #include "Starfire/Utility/Debug/SF_DebugFunctionLibrary.h"
 
@@ -28,7 +27,7 @@ bool UCF_Combat::OtherNPCWouldBeHit()
 	FVector End = ForwardVector*(WeaponRange+0.01f);
 	FHitResult HitResult;
 	TArray<AActor*> ActorsToIgnore{};
-	bool ShowDebug = USF_DebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::TP::CharacterFeatures::Combat,EDebugType::Visual); 
+	bool ShowDebug = USF_DebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::TP::CharacterFeatures::Combat,EDebugVisualType::Visual); 
 
 	UKismetSystemLibrary::LineTraceSingleByProfile(
 		this,
@@ -112,9 +111,9 @@ bool UCF_Combat::StartFire(const int MaxMissedBulletsBeforeStop, const bool bInC
 	bCLearFocusAfterFiring = bInClearFocusAfterFiring;
 	if (bIsFiring)
 		return false;
-	if (SF_SHOULD_DEBUG(TP::CharacterFeatures::Combat,EDebugType::Log))
+	if (SF_SHOULD_DEBUG(TP::CharacterFeatures::Combat,EDebugVisualType::Log))
 		UE_LOG(EF_Combat, Log, TEXT("%s started firing"), *GetOwningActor()->GetName())
-	if (SF_SHOULD_DEBUG(TP::CharacterFeatures::Combat,EDebugType::Print))
+	if (SF_SHOULD_DEBUG(TP::CharacterFeatures::Combat,EDebugVisualType::Print))
 		GEngine->AddOnScreenDebugMessage(-1, 2,
 			FColor::Yellow,
 			FString::Printf( TEXT("%s started firing"),
@@ -159,9 +158,9 @@ void UCF_Combat::StopFire(FStopFireInfo StopFireInfo)
 	if (bCLearFocusAfterFiring)
 		GetOwningAIController()->ClearFocus(EAIFocusPriority::Gameplay);
 
-	if (USF_DebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::TP::CharacterFeatures::Combat, EDebugType::Log))
+	if (USF_DebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::TP::CharacterFeatures::Combat, EDebugVisualType::Log))
 		UE_LOG(EF_Combat, Log, TEXT("Stopped Firing due to %s"), *StopFireInfo.ToString());
-	if (USF_DebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::TP::CharacterFeatures::Combat, EDebugType::Print) && GEngine)
+	if (USF_DebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::TP::CharacterFeatures::Combat, EDebugVisualType::Print) && GEngine)
 		GEngine->AddOnScreenDebugMessage(
 			-1,
 			2,

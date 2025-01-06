@@ -12,10 +12,10 @@ namespace Sf_GameplayTags
 	namespace Gameplay
 	{
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay", "")
-		namespace PatrolAreaMarkerTypes
+
+		namespace ActionLogger
 		{
-			STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
-			STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(FirePlayer);
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay.ActionLogger", "")
 		}
 
 		namespace PatrolAreaMarkerTypes

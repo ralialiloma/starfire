@@ -3,7 +3,6 @@
 #include "Sf_EQS_Scheduler.h"
 
 #include "EnvironmentQuery/EnvQueryManager.h"
-#include "Starfire/Utility/AsyncUtility.h"
 #include "Starfire/Utility/Debug/SF_DebugFunctionLibrary.h"
 
 

@@ -5,7 +5,7 @@
 #include "SF_DebugSettings.h"
 #include "Kismet/KismetSystemLibrary.h"
 
-bool USF_DebugFunctionLibrary::ShouldDebug(const FGameplayTag DebugTag, const EDebugType DebugType)
+bool USF_DebugFunctionLibrary::ShouldDebug(const FGameplayTag DebugTag, const EDebugVisualType DebugType)
 {
 	return GetDefault<USF_DebugSettings>() && GetDefault<USF_DebugSettings>()->ShouldDebug(DebugTag,DebugType);
 }
@@ -21,8 +21,8 @@ void USF_DebugFunctionLibrary::Sf_PrintString(
 	const FName Key) 
 {
 	const FGameplayTag DebugTag = InDebugTag.IsValid() ? InDebugTag : Sf_GameplayTags::Debug::Name;
-	const bool bShouldPrintToScreen = bPrintToScreen && ShouldDebug(DebugTag,EDebugType::Print);
-	const bool bShouldPrintToLog = bPrintToLog && ShouldDebug(DebugTag,EDebugType::Log);
+	const bool bShouldPrintToScreen = bPrintToScreen && ShouldDebug(DebugTag,EDebugVisualType::Print);
+	const bool bShouldPrintToLog = bPrintToLog && ShouldDebug(DebugTag,EDebugVisualType::Log);
 	if (!bShouldPrintToScreen && !bPrintToLog)
 		return;
 
@@ -72,14 +72,14 @@ auto USF_DebugFunctionLibrary::Sf_DrawDebugSphere(
 	const float Duration,
 	const float Thickness) -> void
 {
-	if (ShouldDebug(DebugTag,EDebugType::Visual))
+	if (ShouldDebug(DebugTag,EDebugVisualType::Visual))
 		UKismetSystemLibrary::DrawDebugSphere(WorldContextObject,Center,Radius,Segments,LineColor,Duration,Thickness);
 }
 
 void USF_DebugFunctionLibrary::Sf_DrawDebugString(const UObject* WorldContextObject, const FGameplayTag DebugTag, const FVector TextLocation,
 	const FString& Text, AActor* TestBaseActor, const FLinearColor TextColor, const float Duration)
 {
-	if (ShouldDebug(DebugTag,EDebugType::Visual))
+	if (ShouldDebug(DebugTag,EDebugVisualType::Visual))
 		UKismetSystemLibrary::DrawDebugString(WorldContextObject,TextLocation,Text,TestBaseActor,TextColor,Duration);
 }
 

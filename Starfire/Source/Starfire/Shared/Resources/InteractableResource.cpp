@@ -11,9 +11,9 @@ void AInteractableResource::OnInteractStart_Implementation(UInteractComponent* I
 
 	if (!ItemTag.IsValid())
 	{
-		if (USF_DebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::Interactables::Name, EDebugType::Log))
+		if (USF_DebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::Interactables::Name, EDebugVisualType::Log))
 			UE_LOG(SFCollectable, Error, TEXT("Collectable item has invalid item tag {%s}"), *ItemTag.ToString());
-		if (USF_DebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::Interactables::Name, EDebugType::Print))
+		if (USF_DebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::Interactables::Name, EDebugVisualType::Print))
 			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, "Collectable item has invalid item tag {" + ItemTag.ToString() + "}");
 	}
 
@@ -25,9 +25,9 @@ void AInteractableResource::OnInteractStart_Implementation(UInteractComponent* I
 	if (RemainingCollections == CollectAmount)
 		return;
 
-	if (USF_DebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::Interactables::Name, EDebugType::Log))
+	if (USF_DebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::Interactables::Name, EDebugVisualType::Log))
 		UE_LOG(SFCollectable, Log, TEXT("Collecting Collectable."));
-	if (USF_DebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::Interactables::Name, EDebugType::Print))
+	if (USF_DebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::Interactables::Name, EDebugVisualType::Print))
 		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, "Collecting Collectable.");
 
 

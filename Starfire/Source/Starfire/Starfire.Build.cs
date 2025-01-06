@@ -26,7 +26,8 @@ public class Starfire : ModuleRules
 			"Slate", 
 			"SlateCore", 
 			"ApplicationCore", 
-			"DebugSystem"
+			"DebugSystem", 
+			"ObjectExtensions"
 		});
 
 		if (Target.bBuildEditor)

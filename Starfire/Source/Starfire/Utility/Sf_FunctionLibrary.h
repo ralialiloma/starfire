@@ -31,6 +31,10 @@ class STARFIRE_API USf_FunctionLibrary : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 
 	public:
+
+	UFUNCTION(BlueprintCallable)
+	static FString RemoveParentTagsFromTag(FGameplayTag SourceTag, FGameplayTag ParentToRemove);
+	
 	UFUNCTION(BlueprintCallable,meta  = (ExpandEnumAsExecs = "SignalType"))
 	static EInputSignalType ConvertToInputSignalType(EInputSignalType SignalType);
 

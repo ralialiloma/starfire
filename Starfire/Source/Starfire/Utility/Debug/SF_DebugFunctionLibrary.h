@@ -12,13 +12,13 @@
 (USF_DebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::Tag, DebugType))
 
 #define SF_LOG(LogType, LogCategory, Text, DebugTag) \
-if (SF_SHOULD_DEBUG(DebugTag, EDebugType::Log))    \
+if (SF_SHOULD_DEBUG(DebugTag, EDebugVisualType::Log))    \
 {                                               \
 UE_LOG(LogType, LogCategory, TEXT("%s"), *FString(Text)); \
 }
 
 #define SF_PRINT_TO_SCREEN(Key, DisplayTime, Color, Text, DebugTag)               \
-if (SF_SHOULD_DEBUG(DebugTag, EDebugType::Print))                                    \
+if (SF_SHOULD_DEBUG(DebugTag, EDebugVisualType::Print))                                    \
 {                                                                                 \
 	if (GEngine)                                                                  \
 	{                                                                             \
@@ -39,7 +39,7 @@ class STARFIRE_API USF_DebugFunctionLibrary : public UBlueprintFunctionLibrary
 public:
 	
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	static bool ShouldDebug(UPARAM(meta=(Categories="Debug"))FGameplayTag DebugTag, EDebugType DebugType);
+	static bool ShouldDebug(UPARAM(meta=(Categories="Debug"))FGameplayTag DebugTag, EDebugVisualType DebugType);
 
 
 	UFUNCTION(BlueprintCallable, meta=(WorldContext="WorldContextObject", CallableWithoutWorldContext, Keywords = "log print", AdvancedDisplay = "3", DevelopmentOnly), Category="Development")

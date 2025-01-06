@@ -15,7 +15,7 @@ DEFINE_LOG_CATEGORY_STATIC(AsyncUtility,Display,Display);
  * A utility class for handling asynchronous operations in Unreal Engine.
  */
 USTRUCT()
-struct STARFIRE_API FAsyncUtility
+struct OBJECTEXTENSIONS_API FAsyncUtility
 {
 
 	GENERATED_BODY();
@@ -37,14 +37,13 @@ public:
 	 * @param WorldContextObject The context object to check for validity.
 	 * @param CheckInterval The interval, in seconds, to wait between checks. Defaults to 0.01 seconds.
 	 * @param MaxWaitTime
-	 * @param Debug
 	 * @param DebugName
 	 */
 	template<typename Result>
 	static void Wait(
 	const TFuture<Result>& Future,
 	const TWeakObjectPtr<UObject>& WorldContextObject,
-	const float CheckInterval = 0.01f,
+	const float CheckInterval = 0.1f,
 	float MaxWaitTime = 2,
 	const FString DebugName = "DefaultDebugName");
 
@@ -52,7 +51,7 @@ public:
 	static void Wait(
 	const FGraphEventRef GameThreadTask,
 	const TWeakObjectPtr<UObject>& WorldContextObject,
-	const float CheckInterval = 0.01f,
+	const float CheckInterval = 0.1f,
 	const float MaxWaitTime = 2,
 	FString DebugName  = "DefaultDebug");
 
@@ -71,7 +70,7 @@ public:
 	static TFuture<std::conditional_t<std::is_void_v<ResultType>, void, TArray<ResultType>>> WaitForFutures(
 		TArray<TFuture<ResultType>> Futures,
 		TWeakObjectPtr<UObject> WorldContextObject,
-		const float CheckInterval = 0.01f,
+		const float CheckInterval = 0.1f,
 		const float MaxWaitTime = 2,
 		FString DebugName = "WaitForFuturesDebugName");
 	
@@ -97,7 +96,7 @@ public:
 	static void Wait(
 	const TFunction<bool()>& ConditionFunc,
 	const TWeakObjectPtr<UObject>& WorldContextObject,
-	const float CheckInterval = 0.01f,
+	const float CheckInterval = 0.1f,
 	const float MaxWaitTime = 2.f,
 	const FString& DebugString = "DefaultDebugString");
 	
@@ -138,12 +137,12 @@ public:
 	template <class ThreadSafetyMode,typename... VarTypes>
 	static void WaitForEventBlocking(const TWeakObjectPtr<UObject>& WorldContextObject,
 	                  TBaseDynamicMulticastDelegate<ThreadSafetyMode,void,VarTypes...>& DelegateToWaitFor,
-	                  float CheckInterval = 0.01f);;
+	                  float CheckInterval = 0.1f);;
 	
 	template <class ThreadSafetyMode, class ... VarTypes>
 	static  TFuture<void> WaitForEvent(
 		const TWeakObjectPtr<UObject>& WorldContextObject,
-		TBaseDynamicMulticastDelegate<ThreadSafetyMode,void,VarTypes...>& DelegateToWaitFor, float CheckInterval = 0.01f);
+		TBaseDynamicMulticastDelegate<ThreadSafetyMode,void,VarTypes...>& DelegateToWaitFor, float CheckInterval = 0.1f);
 
 
 	template <class ResultType>
@@ -275,7 +274,7 @@ auto FAsyncUtility::WaitForFutures(
 			for (auto& Future : Futures)
 			{
 				FAsyncUtility::Wait(Future,WorldContextObject, CheckInterval,MaxWaitTime,DebugName);
-				Results.Add(Future.Get(Future));
+				Results.Add(Future.Get());
 				if(!FAsyncUtility::IsGameRunning(WorldContextObject))
 					return Results;
 			}
@@ -285,7 +284,7 @@ auto FAsyncUtility::WaitForFutures(
 }
 
 UCLASS()
-class UEventWaitHelper : public UObject
+class OBJECTEXTENSIONS_API UEventWaitHelper : public UObject
 {
 	GENERATED_BODY()
 
@@ -298,7 +297,6 @@ public:
 	UFUNCTION()
 	void OnEventTriggered()
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, "Event Triggered");
 		bEventTriggered = true;
 	}
 	
@@ -371,7 +369,7 @@ TFuture<void> FAsyncUtility::WaitForEvent(const TWeakObjectPtr<UObject>& WorldCo
 			
 		}, TStatId(),
 		nullptr,
-		ENamedThreads::AnyThread);
+		ENamedThreads::AnyBackgroundThreadNormalTask);
 
 	return Future;
 }
@@ -468,7 +466,7 @@ TFuture<ResultType> FAsyncUtility::RunOnAnyThread(TWeakObjectPtr<UObject> WorldC
 		},
 		TStatId(),
 		nullptr,
-		ENamedThreads::AnyHiPriThreadNormalTask );
+		ENamedThreads::AnyBackgroundThreadNormalTask);
 
 	return Future;
 }

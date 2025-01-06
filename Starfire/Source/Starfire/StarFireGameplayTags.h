@@ -9,6 +9,11 @@ namespace Sf_GameplayTags
 	namespace Gameplay
 	{
 		STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+
+		namespace ActionLogger
+		{
+			STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+		}
 		namespace PatrolAreaMarkerTypes
 		{
 			STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);

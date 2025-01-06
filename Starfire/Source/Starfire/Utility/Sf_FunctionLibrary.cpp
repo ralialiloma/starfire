@@ -6,6 +6,33 @@
 #include "Starfire/Character_FP/Sf_FP_Character.h"
 
 
+FString USf_FunctionLibrary::RemoveParentTagsFromTag(FGameplayTag SourceTag, FGameplayTag ParentToRemove)
+{
+	const FString SourceString = SourceTag.ToString();
+	const FString ParentString = ParentToRemove.ToString();
+	
+	if (!SourceString.StartsWith(ParentString))
+	{
+		return SourceString;
+	}
+	
+	if (SourceString.Equals(ParentString, ESearchCase::CaseSensitive))
+	{
+		return SourceString;
+	}
+	
+	const int32 ParentLen = ParentString.Len();
+
+
+	int32 RemoveLen = ParentLen;
+	if (SourceString.IsValidIndex(ParentLen) && SourceString[ParentLen] == TEXT('.'))
+	{
+		RemoveLen = ParentLen + 1;
+	}
+	
+	return SourceString.Mid(RemoveLen);
+}
+
 EInputSignalType USf_FunctionLibrary::ConvertToInputSignalType(EInputSignalType SignalType)
 {
 	return  SignalType;

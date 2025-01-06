@@ -46,7 +46,7 @@ void UBaseStateFeature::RunAction(ECallInput CallInput, const FStateModuleDataSt
 	}
 	
 
-	if (USF_DebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::FP::HSM::Name,EDebugType::Log))
+	if (USF_DebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::FP::HSM::Name,EDebugVisualType::Log))
 	{
 		FString CallInputString = USf_FunctionLibrary::GetEnumAsString<ECallInput>(CallInput);
 		UE_LOG(SF_BaseStateFeature, Log, TEXT("%s Feature: %s"), *CallInputString, *GetClass()->GetName());

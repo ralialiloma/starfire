@@ -1,8 +1,8 @@
 ﻿#pragma once
-#include "DebugType.generated.h"
+#include "DebugVisualType.generated.h"
 
 UENUM(BlueprintType,meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
-enum class EDebugType: uint8
+enum class EDebugVisualType: uint8
 {
 	None    = 0,
 	Print =  1 << 0,

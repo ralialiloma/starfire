@@ -17,13 +17,13 @@ void ASf_PatrolAreaMarker::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 	ProjectToNavigation();
-	SetActorHiddenInGame(!SF_SHOULD_DEBUG(TP::PatrolArea::PatrolMarker,EDebugType::Visual));
+	SetActorHiddenInGame(!SF_SHOULD_DEBUG(TP::PatrolArea::PatrolMarker,EDebugVisualType::Visual));
 }
 
 void ASf_PatrolAreaMarker::BeginPlay()
 {
 	Super::BeginPlay();
-	SetActorHiddenInGame(!SF_SHOULD_DEBUG(TP::PatrolArea::PatrolMarker,EDebugType::Visual));
+	SetActorHiddenInGame(!SF_SHOULD_DEBUG(TP::PatrolArea::PatrolMarker,EDebugVisualType::Visual));
 }
 
 bool ASf_PatrolAreaMarker::ShouldBeTetherPoint() const

@@ -7,17 +7,17 @@
 void USF_DebugSettings::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
-	USf_FunctionLibrary::ValidateAndUpdateEnumMap<EDebugType,FGameplayTagContainer>(ShownDebugs);
-		USf_FunctionLibrary::ValidateAndUpdateEnumMap<EDebugType,bool>(ShownDebugTypes);
+	USf_FunctionLibrary::ValidateAndUpdateEnumMap<EDebugVisualType,FGameplayTagContainer>(ShownDebugs);
+		USf_FunctionLibrary::ValidateAndUpdateEnumMap<EDebugVisualType,bool>(ShownDebugTypes);
 }
 #endif
 
-TArray<FGameplayTag> USF_DebugSettings::GetAllDebugTags(const EDebugType DebugType) const
+TArray<FGameplayTag> USF_DebugSettings::GetAllDebugTags(const EDebugVisualType DebugType) const
 {
-	TArray<TMap<EDebugType, FGameplayTagContainer>> AllGameplayTagContainers = GetAllGameplayTagContainers();
+	TArray<TMap<EDebugVisualType, FGameplayTagContainer>> AllGameplayTagContainers = GetAllGameplayTagContainers();
 
 	TArray<FGameplayTagContainer> DebugContainers{};
-	for (TMap<EDebugType, FGameplayTagContainer> ContainerMap: AllGameplayTagContainers)
+	for (TMap<EDebugVisualType, FGameplayTagContainer> ContainerMap: AllGameplayTagContainers)
 	{
 		const FGameplayTagContainer* FoundContainerPtr =  ContainerMap.Find(DebugType);
 		if (FoundContainerPtr == nullptr)
@@ -34,7 +34,7 @@ TArray<FGameplayTag> USF_DebugSettings::GetAllDebugTags(const EDebugType DebugTy
 	return AllTags;
 }
 
-bool USF_DebugSettings::ShouldShowDebugType (const EDebugType DebugTypeIn) const
+bool USF_DebugSettings::ShouldShowDebugType (const EDebugVisualType DebugTypeIn) const
 {
 	if (bHideAllDebugs)
 		return false;
@@ -50,7 +50,7 @@ bool USF_DebugSettings::ShouldShowDebugType (const EDebugType DebugTypeIn) const
 	return FoundDebugSetting;
 }
 
-bool USF_DebugSettings::ShouldDebug(const FGameplayTag DebugTagIn, const EDebugType DebugTypeIn) const
+bool USF_DebugSettings::ShouldDebug(const FGameplayTag DebugTagIn, const EDebugVisualType DebugTypeIn) const
 {
 	if(bHideAllDebugs)
 		return false;
@@ -73,7 +73,7 @@ bool USF_DebugSettings::ShouldDebug(const FGameplayTag DebugTagIn, const EDebugT
 	});
 }
 
-TArray<TMap<EDebugType, FGameplayTagContainer>> USF_DebugSettings::GetAllGameplayTagContainers() const
+TArray<TMap<EDebugVisualType, FGameplayTagContainer>> USF_DebugSettings::GetAllGameplayTagContainers() const
 {
 	return {ShownDebugs};
 }

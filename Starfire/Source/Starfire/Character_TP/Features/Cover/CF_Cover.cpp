@@ -30,7 +30,7 @@ bool UCF_Cover::EnterCover()
 	const bool bInHighCover = !CanBeHitByPlayer(CoverConfig->MinCoverHeight);
 	if (bInHighCover)
 	{
-		if (USF_DebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::TP::CharacterFeatures::Cover,EDebugType::Print))
+		if (USF_DebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::TP::CharacterFeatures::Cover,EDebugVisualType::Print))
 			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Green, "Character is in high cover");
 		bIsInHighCoverState = true;
 		bIsInLowCoverState = false;
@@ -40,7 +40,7 @@ bool UCF_Cover::EnterCover()
 	const bool bInLowCover = !CanBeHitByPlayer(CoverConfig->MaxCrouchCoverHeight+0.001f);
 	if (bInLowCover)
 	{
-		if (USF_DebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::TP::CharacterFeatures::Cover,EDebugType::Print))
+		if (USF_DebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::TP::CharacterFeatures::Cover,EDebugVisualType::Print))
 			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Green, "Character is in low cover");
 		GetOwningCharacter()->GetSf_TP_CharacterMovement()->bWantsToCrouch = true;
 		bIsInLowCoverState = true;
@@ -48,7 +48,7 @@ bool UCF_Cover::EnterCover()
 		return true;
 	}
 
-	if (USF_DebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::TP::CharacterFeatures::Cover,EDebugType::Print))
+	if (USF_DebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::TP::CharacterFeatures::Cover,EDebugVisualType::Print))
 		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, "Failed to enter cover");
 	ExitCover();
 	bIsInHighCoverState = false;
@@ -104,7 +104,7 @@ bool UCF_Cover::CanBeHitByPlayer(FVector LocationToVerify) const
 	FVector End = USf_FunctionLibrary::GetPlayerLocation(this);
 	FHitResult HitResult;
 	TArray<AActor*> ActorsToIgnore{};
-	bool ShowDebug = USF_DebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::TP::CharacterFeatures::Cover,EDebugType::Visual);
+	bool ShowDebug = USF_DebugFunctionLibrary::ShouldDebug(Sf_GameplayTags::Debug::TP::CharacterFeatures::Cover,EDebugVisualType::Visual);
 
 	ETraceTypeQuery TraceType = UEngineTypes::ConvertToTraceType(EEC_BULLETTRACES);
 

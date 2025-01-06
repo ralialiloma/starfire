@@ -2,7 +2,7 @@
 
 #pragma once
 #include "CoreMinimal.h"
-#include "DebugType.h"
+#include "DebugVisualType.h"
 #include "Engine/DeveloperSettings.h"
 #include "Starfire/Utility/Sf_GameplayTagUtil.h"
 #include "SF_DebugSettings.generated.h"
@@ -20,11 +20,11 @@ public:
 #pragma region Functions
 public:
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	bool ShouldDebug(UPARAM(meta=(Categories="Debug"))FGameplayTag DebugTagIn, EDebugType DebugTypeIn) const;
+	bool ShouldDebug(UPARAM(meta=(Categories="Debug"))FGameplayTag DebugTagIn, EDebugVisualType DebugTypeIn) const;
 private:
-	TArray<TMap<EDebugType, FGameplayTagContainer>> GetAllGameplayTagContainers() const;
-	TArray<FGameplayTag> GetAllDebugTags(EDebugType DebugType) const;
-	bool ShouldShowDebugType(EDebugType DebugTypeIn) const;
+	TArray<TMap<EDebugVisualType, FGameplayTagContainer>> GetAllGameplayTagContainers() const;
+	TArray<FGameplayTag> GetAllDebugTags(EDebugVisualType DebugType) const;
+	bool ShouldShowDebugType(EDebugVisualType DebugTypeIn) const;
 #pragma endregion
 
 #pragma region Properties
@@ -33,16 +33,16 @@ public:
 	bool bHideAllDebugs = false;
 	
 	UPROPERTY(BlueprintReadOnly,Config, EditAnywhere,meta=(ForceInlineRow,ReadOnlyKeys))
-	TMap<EDebugType, bool> ShownDebugTypes =
+	TMap<EDebugVisualType, bool> ShownDebugTypes =
 		{
-		TTuple<EDebugType,bool>(EDebugType::Log,true),
-		TTuple<EDebugType,bool>(EDebugType::Print,true),
-		TTuple<EDebugType,bool>(EDebugType::Visual,true),
-		TTuple<EDebugType,bool>(EDebugType::Sound,true),
+		TTuple<EDebugVisualType,bool>(EDebugVisualType::Log,true),
+		TTuple<EDebugVisualType,bool>(EDebugVisualType::Print,true),
+		TTuple<EDebugVisualType,bool>(EDebugVisualType::Visual,true),
+		TTuple<EDebugVisualType,bool>(EDebugVisualType::Sound,true),
 		};
 	
 	UPROPERTY(BlueprintReadOnly,Config, EditAnywhere,meta=(ForceInlineRow,Categories="Debug",ReadOnlyKeys))
-	TMap<EDebugType,FGameplayTagContainer> ShownDebugs;
+	TMap<EDebugVisualType,FGameplayTagContainer> ShownDebugs;
 #pragma endregion
 };
 

@@ -1,4 +1,4 @@
-﻿#include "AsyncUtility.h"
+﻿#include "Extensions/AsyncUtility.h"
 #include "UObject/EnumProperty.h"
 #include "Kismet/KismetStringLibrary.h"
 
@@ -197,7 +197,7 @@ TFuture<ULevelStreamingDynamic*> FAsyncUtility::TryStreamLevel(const FString& Na
 					StreamLevel(Name, InteriorLevel, Location, Rotation, WorldContextObject, bSetInvisible,
 				                                                                 MaxLevelWaitTime);
 				FString DebugName = "Waiting For Level To Spawn";
-				FAsyncUtility::Wait(StreamLevelFuture,WorldContextObject,0.01f,MaxLevelWaitTime,DebugName);
+				FAsyncUtility::Wait(StreamLevelFuture,WorldContextObject,0.1f,MaxLevelWaitTime,DebugName);
 				if(!StreamLevelFuture.IsValid())
 					continue;
 				LevelStreamingDynamic = StreamLevelFuture.Get();
@@ -240,7 +240,7 @@ TFuture<ULevelStreamingDynamic*> FAsyncUtility::StreamLevel(const FString& Name,
 				{
 					return GameThreadLevelSpawn(Name,InteriorLevel,Location,Rotation, WorldContextObject, bSetInvisible);
 				});
-			FAsyncUtility::Wait(LevelSpawnFuture,WorldContextObject, 0.01,4,"LevelSpawnFuture");
+			FAsyncUtility::Wait(LevelSpawnFuture,WorldContextObject, 0.1f,MaxLevelWaitTime,"LevelSpawnFuture");
 
 			if (!IsGameRunning(WorldContextObject))
 				return nullptr;
