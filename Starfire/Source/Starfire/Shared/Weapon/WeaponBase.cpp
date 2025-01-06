@@ -539,11 +539,38 @@ void AWeaponBase::PlayWeaponAnimation(const EWeaponAnimationEventType EventType)
 	
 	UAnimMontage** WeaponMontageRef =
 		GetWeaponConfig().GetAnimData_Weapon().AnimationMontages.Find(AnimationTag);
+	
 	if (WeaponMontageRef == nullptr)
+	{
 		return;
+	}
 	UAnimMontage* FoundMontage = *WeaponMontageRef;
-	if (FoundMontage == nullptr||!IsValid(FoundMontage))
-		return;	
+	if (FoundMontage == nullptr)
+	{
+		return;
+	}
+	// Check if the montage is valid
+	if (!IsValid(FoundMontage))
+	{
+		return;
+	}
+	
+	if (!SkeletalMesh)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AnimDebugging: SkeletalMesh is nullptr. Cannot play montage: %s"), *FoundMontage->GetName());
+		return;
+	}
+
+	// Log if the AnimInstance is null
+	if (!SkeletalMesh->GetAnimInstance())
+	{
+		UE_LOG(LogTemp, Error, TEXT("AnimDebugging: AnimInstance is nullptr for SkeletalMesh. Cannot play montage: %s"), *FoundMontage->GetName());
+		return;
+	}
+
+	// Play the montage and log success
+	SkeletalMesh->GetAnimInstance()->Montage_Play(FoundMontage);
+	UE_LOG(LogTemp, Warning, TEXT("AnimDebugging: Montage_Play called successfully for montage: %s"), *FoundMontage->GetName());
 	SkeletalMesh->GetAnimInstance()->Montage_Play(FoundMontage);
 }
 
