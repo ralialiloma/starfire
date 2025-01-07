@@ -17,16 +17,17 @@ int UInventoryComponent::AddResource(FGameplayTag ItemTag, int AddQuantity)
 	
 	int NewItemQuantity = ItemQuantity + AddQuantity;
 	int MaxItemStack = GetItemMaxStack(ItemTag);
-	if (MaxItemStack <= 0 || NewItemQuantity < MaxItemStack)
+	if (MaxItemStack <= 0 || NewItemQuantity <= MaxItemStack)
 	{
 		ItemQuantity = NewItemQuantity;
+		OnRessourceAdded.Broadcast(ItemTag,ItemQuantity);
+		UpdateAvailableCraftables();
 	}
 	else
 	{
 		ItemQuantity = MaxItemStack;
 		ReturnQuantity = NewItemQuantity - MaxItemStack;
 	}
-		
 
 	FString DebugString("Added " + FString::FromInt(AddQuantity - ReturnQuantity) + " of Item: " + ItemTag.ToString());
 	DEBUG_SIMPLE(LogInventoryComponent, Log, FColor::White, *DebugString, Sf_GameplayTags::Debug::Inventory::Name);
@@ -60,8 +61,25 @@ bool UInventoryComponent::ConsumeResource(FGameplayTag ItemTag, int Quantity)
 	int& ItemQuantity = ResourceMap.FindOrAdd(ItemTag);
 	ItemQuantity -= Quantity;
 
+	for (int i = 0; i < Quantity; ++i)
+	{
+		OnRessourceRemoved.Broadcast(ItemTag,ItemQuantity);
+	}
+	
 	FString DebugString("Consumed " + FString::FromInt(Quantity) + " of Item: " + ItemTag.ToString());
 	DEBUG_SIMPLE(LogInventoryComponent, Log, FColor::White, *DebugString, Sf_GameplayTags::Debug::Inventory::Name);
+	return true;
+}
+
+bool UInventoryComponent::CanCraftItem_Implementation(FGameplayTag ItemTag)
+{
+	const FCraftingData CraftData = CraftingDefinitions->GetCraftingData(ItemTag);
+	if (!CraftData.IsValid())
+		return false;
+
+	if (!CanCraftItem(CraftData))
+		return false;
+
 	return true;
 }
 
@@ -110,25 +128,57 @@ int UInventoryComponent::GetItemCraftingRequirementsOfItem(FGameplayTag Crafting
 	return 0;
 }
 
-bool UInventoryComponent::CraftItem_Implementation(FGameplayTag ItemTag)
+int UInventoryComponent::GetAmountOfRequiredRessourceOfType(FGameplayTag ItemToCraft, FGameplayTag Resource) const
+{
+	FCraftingData CraftData = CraftingDefinitions->GetCraftingData(ItemToCraft);
+	for (FItemQuantityDefinition CurrentDefintion : CraftData.RequiredResources)
+	{
+		if (CurrentDefintion.ItemTag == Resource)
+		{
+			return CurrentDefintion.Quantity;
+		}
+	}
+	return  0;
+}
+
+bool UInventoryComponent::CanCraftItem(FCraftingData CraftingData) const
+{
+	for (FItemQuantityDefinition Resource : CraftingData.RequiredResources)
+	{
+		if (!HasQuantity(Resource.ItemTag, Resource.Quantity))
+			return false;
+	}
+
+	return true;
+}
+
+void UInventoryComponent::UpdateAvailableCraftables()
+{
+	
+	if (IsValid(CraftingDefinitions))
+	{
+		for ( const FCraftingData& CraftingData : CraftingDefinitions->GetAllCraftingData())
+		{
+			if(CanCraftItem(CraftingData) && CraftingData.bAutoCraft)
+			{
+				CraftItem(CraftingData.CraftedItem.ItemTag);
+			}
+		}
+	}
+	
+}
+
+bool UInventoryComponent::CraftItem_Implementation(const FGameplayTag ItemTag)
 {
 	if (!CraftingDefinitions)
 	{
 		return false;
 	}
 
+	if (!CanCraftItem(ItemTag))
+		return false; 
+
 	FCraftingData CraftData = CraftingDefinitions->GetCraftingData(ItemTag);
-	if (!CraftData.IsValid())
-	{
-		return false;
-	}
-
-	for (auto Resource : CraftData.RequiredResources)
-	{
-		if (!HasQuantity(Resource.ItemTag, Resource.Quantity))
-			return false;
-	}
-
 	for (auto Resource : CraftData.RequiredResources)
 	{
 		ConsumeResource(Resource.ItemTag, Resource.Quantity);

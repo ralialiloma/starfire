@@ -20,6 +20,11 @@ FCraftingData UResourceCraftingDefinition::GetCraftingData(FGameplayTag ItemTag)
 	return *Data;
 }
 
+TArray<FCraftingData> UResourceCraftingDefinition::GetAllCraftingData()
+{
+	return CraftingData;
+}
+
 int UResourceCraftingDefinition::GetMaxStack(FGameplayTag ItemTag)
 {
 	FItemQuantityDefinition* ItemQuantityDefinition = MaxStackData.FindByPredicate(

@@ -9,6 +9,8 @@ class UResourceCraftingDefinition;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogInventoryComponent, Log, All);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnRessourceChange, FGameplayTag, Ressource, int, RemainingQuantity);
+
 UCLASS(Blueprintable)
 class STARFIRE_API UInventoryComponent : public UActorComponent
 {
@@ -32,6 +34,9 @@ public:
 	bool CraftItem(FGameplayTag ItemTag);
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, meta = (Categories = "Gameplay.Resource"))
+	bool CanCraftItem(FGameplayTag ItemTag);
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, meta = (Categories = "Gameplay.Resource"))
 	int CraftItems(FGameplayTag ItemTag, int Quantity, bool CraftMax = true);
 
 	UFUNCTION(BlueprintCallable, meta = (Categories = "Gameplay.Resource"))
@@ -42,9 +47,25 @@ public:
 
 	UFUNCTION(BlueprintCallable, meta = (Categories = "Gameplay.Resource"))
 	int GetItemCraftingRequirementsOfItem(FGameplayTag CraftingItem, FGameplayTag Resource) const;
+
+	UFUNCTION(BlueprintCallable, meta = (Categories = "Gameplay.Resource"))
+	int GetAmountOfRequiredRessourceOfType(
+		UPARAM(meta = (Categories = "Gameplay.Resource")) FGameplayTag ItemToCraft,
+		UPARAM(meta = (Categories = "Gameplay.Resource"))FGameplayTag Resource) const;
+
+protected:
+	bool CanCraftItem(FCraftingData CraftingData) const;
+	void UpdateAvailableCraftables();
+
+public:
+
+	UPROPERTY(BlueprintAssignable)
+	FOnRessourceChange OnRessourceAdded;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnRessourceChange OnRessourceRemoved;
 	
 protected:
-
 	UPROPERTY(BlueprintReadOnly, SaveGame)
 	TMap<FGameplayTag, int> ResourceMap;
 

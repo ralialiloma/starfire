@@ -10,6 +10,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Starfire/Shared/Core/Sf_GameState.h"
 #include "Starfire/Shared/Interact/InteractComponent.h"
+#include "Starfire/Shared/Sound/FXSubsystem.h"
 #include "Starfire/Utility/ConfigLoader.h"
 
 DEFINE_LOG_CATEGORY_STATIC(SF_Character_Log, Display, Display);
@@ -328,6 +329,8 @@ void ASf_FP_Character::Respawn()
 
 		GetController<APlayerController>()->SetControlRotation(SpawnTransform.Rotator());
 		SetActorTransform(SpawnTransform);
+		GetWorld()->GetSubsystem<UFXSubsystem>()->PlayFX(Sf_GameplayTags::Effects::Messages::Character::Respawn);
 		GetSfDamageController()->Reset();
+		
 	}
 }

@@ -30,6 +30,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FItemQuantityDefinition> RequiredResources;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bAutoCraft = false;
+
 	bool IsValid() const;
 	
 };
@@ -43,6 +46,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	FCraftingData GetCraftingData(FGameplayTag ItemTag);
+
+	UFUNCTION(BlueprintCallable)
+	TArray<FCraftingData> GetAllCraftingData();
 
 	UFUNCTION(BlueprintCallable)
 	int GetMaxStack(FGameplayTag ItemTag);
