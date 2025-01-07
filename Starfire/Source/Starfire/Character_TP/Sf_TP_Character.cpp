@@ -46,7 +46,7 @@ void ASf_TP_Character::PostInitializeComponents()
 		for (USf_CharacterFeature_Config* Config: FeatureConfigs)
 			TryAddFeature(Config);
 
-		//Necessary FeaturesNew
+		//Necessary Features
 		for (TSubclassOf<USf_CharacterFeature_Config> ConfigType: GetAllStartConfigs())
 		{
 			TryAddFeatureByConfigClass(ConfigType);

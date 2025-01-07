@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "WeaponFeature.h"
 #include "GameFramework/Actor.h"
 #include "Starfire/Animation/WeaponMontageEventPackage.h"
 #include "Starfire/Utility/InputSignalType.h"
@@ -13,7 +14,7 @@
 #include "StructsAndEnums/WeaponConfig.h"
 #include "WeaponBase.generated.h"
 
-
+class UWeaponFeatureConfig;
 class USf_Equipment;
 DEFINE_LOG_CATEGORY_STATIC(SF_Weapon, Display, Display);
 
@@ -30,11 +31,23 @@ public:
 	AWeaponBase(const FObjectInitializer& ObjectInitializer);
 	
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	virtual void PostInitProperties() override;
+	virtual void PostInitializeComponents() override;
+	
+	bool TryAddFeatureByConfigClass(const TSubclassOf<UWeaponFeatureConfig> FeatureConfigType);
+	bool TryAddFeature(UWeaponFeatureConfig* ComponentConfig);
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Weapon", meta = (DeterminesOutputType = "Class"))
+	UWeaponFeature* GetFeatureByClass(const TSubclassOf<UWeaponFeature> Class);
+	template <typename FeatureType>
+	FeatureType* GetFeatureByClass();
+	
+	
 	virtual void Tick(float DeltaSeconds) override;
 	virtual void NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit) override;
 
-protected:
+private:
+	static TSet<TSubclassOf<UWeaponFeatureConfig>> GetAllStartConfigs();
 	virtual void OnInteractStart_Implementation(UInteractComponent* InteractComponent, APawn* TriggeringPawn) override;
 
 #pragma region Functions
@@ -96,6 +109,12 @@ protected:
 
 	UPROPERTY(meta=(Categories="Gameplay.Weapon.Action"))
 	TSet<FGameplayTag> ForbiddenActions;
+
+	UPROPERTY(EditDefaultsOnly, Instanced)
+	TArray<UWeaponFeatureConfig*> FeatueConfigs = TArray<UWeaponFeatureConfig* >();
+
+	UPROPERTY()
+	TArray<UWeaponFeature*> Features = TArray<UWeaponFeature* >();
 
 private:
 	//States
@@ -252,3 +271,13 @@ public:
 #pragma endregion
 	
 };
+
+template <typename FeatureType>
+FeatureType* AWeaponBase::GetFeatureByClass()
+{
+	static_assert(TIsDerivedFrom<FeatureType, UWeaponFeature>::IsDerived, "FeatureType must be derived from UWepaonFeature");
+	UWeaponFeature* FoundFeature =  GetFeatureByClass(FeatureType::StaticClass());
+	if (!IsValid(FoundFeature))
+		return nullptr;
+	return Cast<FeatureType>(FoundFeature);
+}

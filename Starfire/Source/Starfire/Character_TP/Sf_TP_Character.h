@@ -70,7 +70,6 @@ public:
 	
 	template <typename FeatureType>
 	FeatureType* GetFeatureByClass();
-
 	UFUNCTION(BlueprintCallable, Category = "Character FeaturesNew")
 	bool TryAddFeature(const USf_CharacterFeature_Config* FeatureConfig);
 	UFUNCTION(BlueprintCallable, Category = "Character FeaturesNew")

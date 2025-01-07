@@ -2,7 +2,6 @@
 
 
 #include "WeaponBase.h"
-
 #include "Interfaces/KnockbackReceiver.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -10,9 +9,10 @@
 #include "Starfire/Animation/Sf_AnimHelper.h"
 #include "Starfire/Animation/AnimationData/AnimDataHelper.h"
 #include "Starfire/Shared/Sound/FXSubsystem.h"
-
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
 #include "Starfire/Utility/Debug/SF_DebugFunctionLibrary.h"
+#include "WeaponFeature.h"
+#include "WeaponFeatureConfig.h"
 
 
 AWeaponBase::AWeaponBase(const FObjectInitializer& ObjectInitializer)
@@ -38,21 +38,120 @@ AWeaponBase::AWeaponBase(const FObjectInitializer& ObjectInitializer)
 void AWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
 	CurrentClip = WeaponConfig.MaxClipSize;
 
+	for (UWeaponFeature* Feature: Features)
+	{
+		if (IsValid(Feature))
+			Feature->OnBeginPlay();
+	}
+}
+
+void AWeaponBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	for (UWeaponFeature* Feature: Features)
+	{
+		if (IsValid(Feature))
+			Feature->OnEndPlay(EndPlayReason);
+	}
+	Super::EndPlay(EndPlayReason);
 }
 
 void AWeaponBase::PostInitProperties()
 {
 	Super::PostInitProperties();
-	
 	CurrentClip = WeaponConfig.MaxClipSize; 
+}
+
+void AWeaponBase::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	if (GetWorld() && GetWorld()->GetGameInstance())
+	{
+		//User defined features
+		for (UWeaponFeatureConfig* Config: FeatueConfigs)
+			TryAddFeature(Config);
+
+		//Necessary FeaturesNew
+		for (TSubclassOf<UWeaponFeatureConfig> ConfigType: GetAllStartConfigs())
+		{
+			TryAddFeatureByConfigClass(ConfigType);
+		}
+	}
+}
+
+UWeaponFeature* AWeaponBase::GetFeatureByClass(const TSubclassOf<UWeaponFeature> Class)
+{
+	if(!IsValid(Class))
+		return nullptr;
+	
+	for (UWeaponFeature* Element : Features)
+	{
+		if (!IsValid(Element))
+			continue;
+		
+		if (Element->GetClass()->IsChildOf(Class))
+		{
+			return Element;
+		}
+	}
+
+	return nullptr;
+}
+
+bool AWeaponBase::TryAddFeatureByConfigClass(const TSubclassOf<UWeaponFeatureConfig> FeatureConfigType)
+{
+	if (!IsValid(FeatureConfigType)|| FeatureConfigType->HasAnyClassFlags(CLASS_Abstract))
+	{
+		return false;
+	}
+	
+	UWeaponFeatureConfig* NewConfig = NewObject<UWeaponFeatureConfig>(this,FeatureConfigType);
+	return TryAddFeature(NewConfig);
+}
+
+bool AWeaponBase::TryAddFeature(UWeaponFeatureConfig* ComponentConfig)
+{
+	if (!IsValid(ComponentConfig))
+	{
+		return false;
+	}
+	
+	const TSubclassOf<UWeaponFeature> NewFeatureType{ComponentConfig->GetFeatureType()};
+
+	if (!IsValid(NewFeatureType))
+		return false;
+	
+	if (!IsValid(ComponentConfig)|| NewFeatureType->HasAnyClassFlags(CLASS_Abstract))
+	{
+		return false;
+	}
+	
+	for (auto Element : Features)
+	{
+		if (!IsValid(Element))
+			continue;
+		
+		if (Element->GetClass()->IsChildOf(NewFeatureType) || NewFeatureType->IsChildOf(Element->GetClass()))
+		{
+			return false;
+		}
+	}
+	
+	Features.Add(ComponentConfig->MakeWeaponComponent(this));
+	SF_LOG(LogTemp,Log,FString::Printf(TEXT("Added Componnent %s"),*ComponentConfig->GetName()),Weapon::Name);
+	return true;
 }
 
 void AWeaponBase::Tick(const float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+	for (UWeaponFeature* Feature: Features)
+	{
+		if (IsValid(Feature))
+			Feature->OnTick(DeltaSeconds);
+	}
 }
 
 void AWeaponBase::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation,
@@ -63,6 +162,11 @@ void AWeaponBase::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimiti
 	
 	if (bDestroyOnCollision)
 		Destroy();
+}
+
+TSet<TSubclassOf<UWeaponFeatureConfig>> AWeaponBase::GetAllStartConfigs()
+{
+	return TSet<TSubclassOf<UWeaponFeatureConfig>>{};
 }
 
 void AWeaponBase::OnInteractStart_Implementation(UInteractComponent* InteractComponent, APawn* TriggeringPawn)
@@ -371,6 +475,13 @@ void AWeaponBase::DoFire(FHitResult& OutHitResult)
 
 	//Play Shoot Montage
 	ExecuteAnimation(EWeaponAnimationEventType::Fire);
+
+	
+	for (UWeaponFeature* Feature: Features)
+	{
+		if (IsValid(Feature))
+			Feature->OnFire();
+	}
 }
 
 bool AWeaponBase::Reload()
