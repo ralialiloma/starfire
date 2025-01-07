@@ -1,6 +1,5 @@
 ﻿#include "WeaponAnimData_Weapon.h"
 #include "Starfire/StarFireGameplayTags.h"
-#include "Starfire/Utility/Sf_FunctionLibrary.h"
 #include "Starfire/Utility/Sf_GameplayTagUtil.h"
 
 FWeaponAnimData_Weapon::FWeaponAnimData_Weapon()

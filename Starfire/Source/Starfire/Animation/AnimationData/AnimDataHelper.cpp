@@ -1,8 +1,10 @@
 ﻿#include "AnimDataHelper.h"
 
+#include "Weapon/WeaponAnimData_Weapon.h"
+
 
 UAnimSequenceBase* UAnimDataHelper::GetAnimationSequence_FP(FWeaponAnimData_FP AnimData,
-															   FGameplayTag AssetType)
+                                                            FGameplayTag AssetType)
 {
 	UAnimSequence* FoundSequence = nullptr;
 	UAnimSequence** FoundSequencePtr = AnimData.AnimationSequences.Find(AssetType);
@@ -12,6 +14,16 @@ UAnimSequenceBase* UAnimDataHelper::GetAnimationSequence_FP(FWeaponAnimData_FP A
 }
 
 UAnimMontage* UAnimDataHelper::GetAnimationMontage_FP(FWeaponAnimData_FP AnimData,
+	FGameplayTag AssetType)
+{
+	UAnimMontage* FoundMontage = nullptr;
+	UAnimMontage** FoundSequencePtr = AnimData.AnimationMontages.Find(AssetType);
+	if (FoundSequencePtr!=nullptr)
+		FoundMontage = *FoundSequencePtr;
+	return FoundMontage;
+}
+
+UAnimMontage* UAnimDataHelper::GetAnimationMontage_Weapon(FWeaponAnimData_Weapon AnimData,
 	FGameplayTag AssetType)
 {
 	UAnimMontage* FoundMontage = nullptr;

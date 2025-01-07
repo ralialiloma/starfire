@@ -8,6 +8,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Starfire/Animation/WeaponMontageEventPackage.h"
 #include "Starfire/Animation/Sf_AnimHelper.h"
+#include "Starfire/Animation/AnimationData/AnimDataHelper.h"
 #include "Starfire/Shared/Sound/FXSubsystem.h"
 
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
@@ -495,7 +496,6 @@ void AWeaponBase::ApplyMeleeToActor(AActor* ActorToApplyMeleeTo)
 	//Apply Knockback
 	if (ActorToApplyMeleeTo->Implements<UKnockbackReceiver>())
 		IKnockbackReceiver:: Execute_ReceiveKnockback(ActorToApplyMeleeTo,KnockbackDirection*GetWeaponConfig().MeleeKnockbackForce);
-	
 
 	//Get Damage Receiver
 	USf_DamageController* DamageReceiver =  ActorToApplyMeleeTo->GetComponentByClass<USf_DamageController>();
@@ -534,13 +534,13 @@ void AWeaponBase::PlayWeaponAnimation(const EWeaponAnimationEventType EventType)
 		case EWeaponAnimationEventType::None:
 			break;
 		default:
-			break;
+			return;
 	}
 	
-	UAnimMontage** WeaponMontageRef =
-		GetWeaponConfig().GetAnimData_Weapon().AnimationMontages.Find(AnimationTag);
+	//UAnimMontage** WeaponMontageRef =
+		//GetWeaponConfig().GetAnimData_Weapon().AnimationMontages.Find(AnimationTag);
 	
-	if (WeaponMontageRef == nullptr)
+	/*if (WeaponMontageRef == nullptr)
 	{
 		return;
 	}
@@ -549,12 +549,13 @@ void AWeaponBase::PlayWeaponAnimation(const EWeaponAnimationEventType EventType)
 	{
 		return;
 	}
-	// Check if the montage is valid
+*/
+	
+	UAnimMontage* FoundMontage =  UAnimDataHelper::GetAnimationMontage_Weapon(WeaponConfig.GetAnimData_Weapon(),AnimationTag);
 	if (!IsValid(FoundMontage))
 	{
 		return;
 	}
-	
 	if (!SkeletalMesh)
 	{
 		UE_LOG(LogTemp, Error, TEXT("AnimDebugging: SkeletalMesh is nullptr. Cannot play montage: %s"), *FoundMontage->GetName());

@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "FP/WeaponAnimData_FP.h"
 #include "TP/WeaponAnimData_TP.h"
+#include "Weapon/WeaponAnimData_Weapon.h"
 #include "AnimDataHelper.generated.h"
 
 
@@ -46,6 +47,11 @@ public:
 	static UAnimMontage* GetAnimationMontage_FP(
 		FWeaponAnimData_FP AnimData,
 		UPARAM(meta=(Categories="Animation.Character.FP.Montage"))FGameplayTag AssetType);
+	
+	 static UAnimMontage* GetAnimationMontage_Weapon(FWeaponAnimData_Weapon AnimData,
+	 	UPARAM(meta=(Categories="Animation.Weapon.Montage"))FGameplayTag AssetType);
+
+	
 	UFUNCTION(BlueprintCallable,BlueprintPure,Category = "WeaponAnimation", meta = (BlueprintThreadSafe))
 	static UBlendSpace* GetBlendspace_FP(
 		FWeaponAnimData_FP AnimData,

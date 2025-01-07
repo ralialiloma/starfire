@@ -29,7 +29,7 @@ void FSf_GameplayTagUtil::ValidateAndUpdateGameplayTagMap(TMap<FGameplayTag, Val
 	{
 		if (!Map.Contains(Tag))
 		{
-			Map.Add(Tag, ValueType());
+			Map.Add(Tag, nullptr);
 		}
 	}
 
