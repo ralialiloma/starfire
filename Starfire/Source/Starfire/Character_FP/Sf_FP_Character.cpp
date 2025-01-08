@@ -329,7 +329,7 @@ void ASf_FP_Character::Respawn()
 
 		GetController<APlayerController>()->SetControlRotation(SpawnTransform.Rotator());
 		SetActorTransform(SpawnTransform);
-		GetWorld()->GetSubsystem<UFXSubsystem>()->PlayFX(Sf_GameplayTags::Effects::Messages::Character::Respawn);
+		GetWorld()->GetSubsystem<UFXSubsystem>()->PlayFX(Sf_GameplayTags::Effects::Messages::FP::Respawn);
 		GetSfDamageController()->Reset();
 		
 	}

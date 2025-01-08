@@ -271,27 +271,42 @@ namespace Sf_GameplayTags
 		namespace Messages
 		{
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.Messages", "");
-			namespace Weapon
+			namespace FP
 			{
-				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.Messages.Weapon", "");
-				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Fire, "Effects.Messages.Weapon.Fire", "");
-				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Empty, "Effects.Messages.Weapon.Empty", "");
-
-
-			}
-			namespace Character
-			{
-				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.Messages.Character", "");
-				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Respawn, "Effects.Messages.Character.Respawn", "");
-				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Jump, "Effects.Messages.Character.Jump", "");
-				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Footstep, "Effects.Messages.Character.Footstep", "");
-				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Dash, "Effects.Messages.Character.Dash", "");
-				UE_DEFINE_GAMEPLAY_TAG_COMMENT(WallRun, "Effects.Messages.Character.WallRun", "");
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Respawn, "Effects.Messages.FP.Respawn", "");
+				namespace Movement
+				{
+					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.Messages.FP.Movement", "");
+					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Jump, "Effects.Messages.FP.Movement.Jump", "");
+					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Footstep, "Effects.Messages.FP.Movement.Footstep", "");
+					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Dash, "Effects.Messages.FP.Movement.Dash", "");
+					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Mantle, "Effects.Messages.FP.Movement.Mantle", "");
+					namespace WallRun
+					{
+						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Respawn, "Effects.Messages.FP.Movement.WallRun", "");
+						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Start, "Effects.Messages.FP.Movement.Start", "");
+						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Step, "Effects.Messages.FP.Movement.Step", "");
+					}
+				}
+				namespace Equipment
+				{
+					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.Messages.FP.Equipment", "");
+					namespace Rifle
+					{
+						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.Messages.FP.Equipment.Rifle", "");
+						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Fire, "Effects.Messages.FP.Equipment.Rifle.Fire", "");
+						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Reload, "Effects.Messages.FP.Equipment.Rifle.Reload", "");
+					}
+					namespace Grenade
+					{
+						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.Messages.FP.Equipment.Grenade", "");
+						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Contact, "Effects.Messages.FP.Equipment.Grenade.Contact", "");
+					}
+				}
 			}
 		}
 	}
-
-	
+		
 	FGameplayTag FindTagByString(const FString& TagString, bool bMatchPartialString)
 	{
 		const UGameplayTagsManager& Manager = UGameplayTagsManager::Get();

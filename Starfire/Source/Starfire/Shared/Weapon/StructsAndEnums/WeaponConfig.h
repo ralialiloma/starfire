@@ -119,9 +119,9 @@ public:
 
 	//Sound
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Sound", meta = (Categories = "Effects.Messages"))
-	FGameplayTag FXFireTag = Sf_GameplayTags::Effects::Messages::Weapon::Fire;
+	FGameplayTag FXFireTag;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Sound", meta = (Categories = "Effects.Messages"))
-	FGameplayTag FXEmptyTag = Sf_GameplayTags::Effects::Messages::Weapon::Empty;
+	FGameplayTag FXEmptyTag;
 	
 };
 

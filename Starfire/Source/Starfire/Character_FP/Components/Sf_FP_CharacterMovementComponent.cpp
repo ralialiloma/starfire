@@ -107,7 +107,7 @@ bool USf_FP_CharacterMovementComponent::DoJump(bool bReplayingMoves)
 	//Jump FX
 	if (IsMovementMode(MOVE_Walking))
 	{
-		UFXSubsystem::Get(this)->PlayFXOn(Sf_GameplayTags::Effects::Messages::Character::Jump, GetOwner()->GetRootComponent());
+		UFXSubsystem::Get(this)->PlayFXOn(Sf_GameplayTags::Effects::Messages::FP::Movement::Jump, GetOwner()->GetRootComponent());
 	}
 
 	if (Super::DoJump(bReplayingMoves))
@@ -115,7 +115,7 @@ bool USf_FP_CharacterMovementComponent::DoJump(bool bReplayingMoves)
 		if (bWasWallRunning || bWasWallRunningBeforeAllowance)
 		{
 			JumpOffWall();
-			UFXSubsystem::Get(this)->PlayFXOn(Sf_GameplayTags::Effects::Messages::Character::Jump, GetOwner()->GetRootComponent());
+			UFXSubsystem::Get(this)->PlayFXOn(Sf_GameplayTags::Effects::Messages::FP::Movement::Jump, GetOwner()->GetRootComponent());
 		}
 
 		return true;
@@ -203,6 +203,7 @@ void USf_FP_CharacterMovementComponent::UpdateCharacterStateBeforeMovement(float
 		if (TryDash())
 		{
 			SetMovementMode(MOVE_Custom, CMOVE_Dash);
+			UFXSubsystem::Get(this)->PlayFXOn(Sf_GameplayTags::Effects::Messages::FP::Movement::Dash, GetOwner()->GetRootComponent());
 			DashDuration = MaxDashDuration;
 			DashCount++;
 			SfCharacterOwner->bCustomJumpPressed = false;
@@ -213,6 +214,8 @@ void USf_FP_CharacterMovementComponent::UpdateCharacterStateBeforeMovement(float
 			ElapsedMantleTime = 0;
 			MantleStartingVelocity = Velocity;
 			StopMovementImmediately();
+
+			UFXSubsystem::Get(this)->PlayFXOn(Sf_GameplayTags::Effects::Messages::FP::Movement::Mantle, GetOwner()->GetRootComponent());
 		}
 		else
 		{
@@ -489,6 +492,8 @@ bool USf_FP_CharacterMovementComponent::TryWallRun()
 	SmoothedWallNormal = FVector2D::Zero();
 	SetMovementMode(MOVE_Custom, CMOVE_WallRun);
 
+	UFXSubsystem::Get(this)->PlayFXOn(Sf_GameplayTags::Effects::Messages::FP::Movement::WallRun::Start, GetOwner()->GetRootComponent());
+
 	return true;
 }
 
@@ -585,7 +590,7 @@ void USf_FP_CharacterMovementComponent::PhysWallRun(float deltaTime, int32 Itera
 		{
 			if (Velocity.SizeSquared2D() < FMath::Square(MinWallRunSpeed) || Velocity.Z < -MaxVerticalWallRunSpeed)
 			{
-				EXIT_WALLRUNPHYS("Wallrun too Slow");
+				EXIT_WALLRUNPHYS("WallRun too Slow");
 			}
 		}
 
