@@ -739,7 +739,7 @@ bool USf_FP_CharacterMovementComponent::TryMantle()
 	for (int i = 0; i < 6; i++)
 	{
 		// LINE(FrontStart, FrontStart + MantleForward * CheckDistance, FColor::Red)
-		if (GetWorld()->LineTraceSingleByProfile(FrontHit, FrontStart, FrontStart + MantleForward * CheckDistance, "BlockAll", Params))
+		if (GetWorld()->LineTraceSingleByProfile(FrontHit, FrontStart, FrontStart + MantleForward * CheckDistance, "MovementTrace", Params))
 		{
 			break;
 		}
