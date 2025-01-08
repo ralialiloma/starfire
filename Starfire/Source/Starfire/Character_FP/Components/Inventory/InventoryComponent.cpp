@@ -20,14 +20,15 @@ int UInventoryComponent::AddResource(FGameplayTag ItemTag, int AddQuantity)
 	if (MaxItemStack <= 0 || NewItemQuantity <= MaxItemStack)
 	{
 		ItemQuantity = NewItemQuantity;
-		OnResourceAdded.Broadcast(ItemTag,ItemQuantity);
-		UpdateAvailableCraftables();
 	}
 	else
 	{
 		ItemQuantity = MaxItemStack;
 		ReturnQuantity = NewItemQuantity - MaxItemStack;
 	}
+	
+	OnResourceAdded.Broadcast(ItemTag,ItemQuantity);
+	UpdateAvailableCraftables();
 	
 	FString DebugString("Added " + FString::FromInt(AddQuantity - ReturnQuantity) + " of Item: " + ItemTag.ToString());
 	DEBUG_SIMPLE(LogInventoryComponent, Warning, FColor::White, *DebugString, Sf_GameplayTags::Debug::Inventory::Name);
