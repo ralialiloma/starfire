@@ -73,6 +73,11 @@ public:
 	FStopFireInfo GetLastStopFireInfo();
 
 protected:
+	UFUNCTION()
+	void OnReloadStopped();
+
+	UFUNCTION()
+	void OnReloadFinish();
 
 private:
 	void StopFire(FStopFireInfo StopFireInfo);

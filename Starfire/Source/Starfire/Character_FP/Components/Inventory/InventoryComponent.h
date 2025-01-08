@@ -7,7 +7,7 @@
 
 class UResourceCraftingDefinition;
 
-DECLARE_LOG_CATEGORY_EXTERN(LogInventoryComponent, Log, All);
+DECLARE_LOG_CATEGORY_EXTERN(LogInventoryComponent, Display, All);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnRessourceChange, FGameplayTag, Ressource, int, RemainingQuantity);
 
@@ -41,6 +41,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, meta = (Categories = "Gameplay.Resource"))
 	int GetItemMaxStack(FGameplayTag ItemTag) const;
+
+	UFUNCTION(BlueprintCallable, meta = (Categories = "Gameplay.Resource"))
+	bool IsFull(FGameplayTag ItemTag) const;
 
 	UFUNCTION(BlueprintCallable, meta = (Categories = "Gameplay.Resource"))
 	void GetItemCraftingRequirements(FGameplayTag CraftingItem, TArray<FItemQuantityDefinition>& RequiredItems) const;

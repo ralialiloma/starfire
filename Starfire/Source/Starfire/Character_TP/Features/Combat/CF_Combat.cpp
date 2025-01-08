@@ -211,44 +211,25 @@ void UCF_Combat::DoFire(const EInputSignalType InputSignalType, int MissedBullet
 
 void UCF_Combat::StartReload()
 {
-	USf_Equipment* Equipment = GetOwningSfEquipment();
+	
 
 	if (bIsFiring)
 		StopFire(FStopFireInfo(EStopFireReason::StartedReload));
 	
-	//On Reload Finish
+	USf_Equipment* Equipment = GetOwningSfEquipment();
+	if (!IsValid(Equipment))
+		return;
 	AWeaponBase* ActiveWeapon = Equipment->GetActiveWeapon();
-	OnReloadFinishHandle = ActiveWeapon->OnReloadFinish_CPP.AddLambda([this,ActiveWeapon]()->void
-	{
-		if (IsValid(ActiveWeapon))
-		{
-			ActiveWeapon->OnReloadFinish_CPP.Remove(OnReloadFinishHandle);
-			ActiveWeapon->OnReloadStopped_CPP.Remove(OnReloadStoppedHandle);
-		}
-
-		OnReloadFinish_CPP.Broadcast();
-		OnReloadFinish_BP.Broadcast();
-	});
-
-	//On Reload Stopped
-	OnReloadStoppedHandle = ActiveWeapon->OnReloadStopped_CPP.AddLambda([this,ActiveWeapon]()->void
-	{
-		if (IsValid(ActiveWeapon))
-		{
-			ActiveWeapon->OnReloadStopped_CPP.Remove(OnReloadStoppedHandle);
-			ActiveWeapon->OnReloadFinish_CPP.Remove(OnReloadFinishHandle);
-		}
-
-		OnReloadStopped_CPP.Broadcast();
-		OnReloadStopped_BP.Broadcast();
-	});
+	if (!IsValid(ActiveWeapon))
+		return;
+	ActiveWeapon->OnReloadFinish_BP.AddUniqueDynamic(this, &UCF_Combat::OnReloadFinish);
+	ActiveWeapon->OnReloadStopped_BP.AddUniqueDynamic(this, &UCF_Combat::OnReloadStopped);
 
 	float OutMontageTime  = 0;
 	const bool bReloadSuccess =  Equipment->Reload(OutMontageTime);
 	if (!bReloadSuccess)
 	{
 		StopReload();
-		return;
 	}
 
 }
@@ -287,4 +268,39 @@ bool UCF_Combat::Melee()
 FStopFireInfo UCF_Combat::GetLastStopFireInfo()
 {
 	return LastFireStopInfo;
+}
+
+void UCF_Combat::OnReloadStopped()
+{
+	USf_Equipment* Equipment = GetOwningSfEquipment();
+	if (IsValid(Equipment))
+	{
+		AWeaponBase* ActiveWeapon = Equipment->GetActiveWeapon();
+		if (IsValid(ActiveWeapon))
+		{
+			if (OnReloadStoppedHandle.IsValid())
+				ActiveWeapon->OnReloadStopped_CPP.Remove(OnReloadStoppedHandle);
+			if (OnReloadFinishHandle.IsValid())
+				ActiveWeapon->OnReloadFinish_CPP.Remove(OnReloadFinishHandle);
+		}
+	}
+	OnReloadStopped_CPP.Broadcast();
+	OnReloadStopped_BP.Broadcast();
+}
+
+void UCF_Combat::OnReloadFinish()
+{
+	USf_Equipment* Equipment = GetOwningSfEquipment();
+
+	if (IsValid(Equipment))
+	{
+		AWeaponBase* ActiveWeapon = Equipment->GetActiveWeapon();
+		if (IsValid(ActiveWeapon))
+		{
+			ActiveWeapon->OnReloadFinish_BP.RemoveDynamic(this, &UCF_Combat::OnReloadFinish);
+			ActiveWeapon->OnReloadStopped_BP.RemoveDynamic(this, &UCF_Combat::OnReloadStopped);
+		}
+	}
+	OnReloadFinish_CPP.Broadcast();
+	OnReloadFinish_BP.Broadcast();
 }

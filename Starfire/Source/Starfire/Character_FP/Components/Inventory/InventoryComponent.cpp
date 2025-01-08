@@ -14,9 +14,9 @@ int UInventoryComponent::AddResource(FGameplayTag ItemTag, int AddQuantity)
 	AddQuantity = FMath::Max(0, AddQuantity);
 	int ReturnQuantity = 0;
 	int& ItemQuantity = ResourceMap.FindOrAdd(ItemTag);
-	
-	int NewItemQuantity = ItemQuantity + AddQuantity;
-	int MaxItemStack = GetItemMaxStack(ItemTag);
+
+	const int NewItemQuantity = ItemQuantity + AddQuantity;
+	const int MaxItemStack = GetItemMaxStack(ItemTag);
 	if (MaxItemStack <= 0 || NewItemQuantity <= MaxItemStack)
 	{
 		ItemQuantity = NewItemQuantity;
@@ -28,11 +28,12 @@ int UInventoryComponent::AddResource(FGameplayTag ItemTag, int AddQuantity)
 		ItemQuantity = MaxItemStack;
 		ReturnQuantity = NewItemQuantity - MaxItemStack;
 	}
-
+	
 	FString DebugString("Added " + FString::FromInt(AddQuantity - ReturnQuantity) + " of Item: " + ItemTag.ToString());
-	DEBUG_SIMPLE(LogInventoryComponent, Log, FColor::White, *DebugString, Sf_GameplayTags::Debug::Inventory::Name);
+	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, DebugString);
+	DEBUG_SIMPLE(LogInventoryComponent, Warning, FColor::White, *DebugString, Sf_GameplayTags::Debug::Inventory::Name);
 
-	return ReturnQuantity;
+	return GetQuantity(ItemTag);
 }
 
 bool UInventoryComponent::HasQuantity(FGameplayTag ItemTag, int Quantity) const
@@ -60,14 +61,13 @@ bool UInventoryComponent::ConsumeResource(FGameplayTag ItemTag, int Quantity)
 	Quantity = FMath::Max(0, Quantity);
 	int& ItemQuantity = ResourceMap.FindOrAdd(ItemTag);
 	ItemQuantity -= Quantity;
-
-	for (int i = 0; i < Quantity; ++i)
-	{
-		OnRessourceRemoved.Broadcast(ItemTag,ItemQuantity);
-	}
 	
 	FString DebugString("Consumed " + FString::FromInt(Quantity) + " of Item: " + ItemTag.ToString());
-	DEBUG_SIMPLE(LogInventoryComponent, Log, FColor::White, *DebugString, Sf_GameplayTags::Debug::Inventory::Name);
+	DEBUG_SIMPLE(LogInventoryComponent, Warning, FColor::White, *DebugString, Sf_GameplayTags::Debug::Inventory::Name);
+
+	OnRessourceRemoved.Broadcast(ItemTag,ItemQuantity);
+	UpdateAvailableCraftables();
+	
 	return true;
 }
 
@@ -91,6 +91,11 @@ int UInventoryComponent::GetItemMaxStack(FGameplayTag ItemTag) const
 	}
 
 	return CraftingDefinitions->GetMaxStack(ItemTag);
+}
+
+bool UInventoryComponent::IsFull(FGameplayTag ItemTag) const
+{
+	return GetQuantity(ItemTag) >= GetItemMaxStack(ItemTag);
 }
 
 void UInventoryComponent::GetItemCraftingRequirements(FGameplayTag CraftingItem, TArray<FItemQuantityDefinition>& RequiredItems) const
@@ -154,18 +159,18 @@ bool UInventoryComponent::CanCraftItem(FCraftingData CraftingData) const
 
 void UInventoryComponent::UpdateAvailableCraftables()
 {
-	
 	if (IsValid(CraftingDefinitions))
 	{
 		for ( const FCraftingData& CraftingData : CraftingDefinitions->GetAllCraftingData())
 		{
-			if(CanCraftItem(CraftingData) && CraftingData.bAutoCraft)
+			FGameplayTag ItemTag = CraftingData.CraftedItem.ItemTag;
+			const bool bHasSpaceForItem = GetQuantity(ItemTag)<GetItemMaxStack(ItemTag);
+			if(CanCraftItem(CraftingData) && CraftingData.bAutoCraft && bHasSpaceForItem)
 			{
-				CraftItem(CraftingData.CraftedItem.ItemTag);
+				CraftItem(ItemTag);
 			}
 		}
 	}
-	
 }
 
 bool UInventoryComponent::CraftItem_Implementation(const FGameplayTag ItemTag)
@@ -176,14 +181,16 @@ bool UInventoryComponent::CraftItem_Implementation(const FGameplayTag ItemTag)
 	}
 
 	if (!CanCraftItem(ItemTag))
+	{
 		return false; 
-
+	}
+	
 	FCraftingData CraftData = CraftingDefinitions->GetCraftingData(ItemTag);
 	for (auto Resource : CraftData.RequiredResources)
 	{
 		ConsumeResource(Resource.ItemTag, Resource.Quantity);
 	}
-
+	
 	AddResource(CraftData.CraftedItem.ItemTag, CraftData.CraftedItem.Quantity);
 	return true;
 }

@@ -4,6 +4,7 @@
 
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Starfire/Character_FP/Components/Inventory/InventoryComponent.h"
 
 AAutoCollectResource::AAutoCollectResource()
 {
@@ -43,6 +44,14 @@ void AAutoCollectResource::Tick(float DeltaSeconds)
 	
 	if (!IsPlayerContained())
 		return;
+
+	//Check if inventory still has place
+	const UInventoryComponent* InventoryComponent = ContainedPawn->GetComponentByClass<UInventoryComponent>();
+	if (IsValid(InventoryComponent))
+	{
+		if(InventoryComponent->IsFull(ItemTag))
+			return;
+	}
 	
 	FVector VectorToPlayer = ContainedPawn->GetActorLocation() - GetActorLocation();
 	if (!bPhysicsBased)
