@@ -262,6 +262,58 @@ namespace Sf_GameplayTags
 			namespace SoundsFX
 			{
 				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.FX.SoundFX", "");
+				namespace FP
+			{
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Respawn, "Effects.FX.SoundFX.FP.Respawn", "");
+				namespace Movement
+				{
+					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.FX.SoundFX.FP.Movement", "");
+					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Jump, "Effects.FX.SoundFX.FP.Movement.Jump", "");
+					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Footstep, "Effects.FX.SoundFX.FP.Movement.Footstep", "");
+					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Dash, "Effects.FX.SoundFX.FP.Movement.Dash", "");
+					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Mantle, "Effects.FX.SoundFX.FP.Movement.Mantle", "");
+					namespace WallRun
+					{
+						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Respawn, "Effects.FX.SoundFX.FP.Movement.WallRun", "");
+						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Start, "Effects.FX.SoundFX.FP.Movement.WallRun.Start", "");
+						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Step, "Effects.FX.SoundFX.FP.Movement.WallRun.Step", "");
+					}
+				}
+				namespace Equipment
+				{
+					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.FX.SoundFX.FP.Equipment", "");
+					namespace Rifle
+					{
+						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.FX.SoundFX.FP.Equipment.Rifle", "");
+						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Fire, "Effects.FX.SoundFX.FP.Equipment.Rifle.Fire", "");
+						namespace Reload
+						{
+							UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.FX.SoundFX.FP.Equipment.Rifle.Reload", "");
+							namespace SafetyLock
+							{
+								UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.FX.SoundFX.FP.Equipment.Rifle.Reload.SafetyLock", "");
+								namespace SafetyLock
+								{
+									UE_DEFINE_GAMEPLAY_TAG_COMMENT(Open, "Effects.FX.SoundFX.FP.Equipment.Rifle.Reload.SafetyLock.Open", "");
+									UE_DEFINE_GAMEPLAY_TAG_COMMENT(Close, "Effects.FX.SoundFX.FP.Equipment.Rifle.Reload.SafetyLock.Close", "");
+								}
+							}
+							namespace AmmoPack
+							{
+								UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.FX.SoundFX.FP.Equipment.Rifle.Reload.AmmoPack", "");
+								UE_DEFINE_GAMEPLAY_TAG_COMMENT(RemoveFromShaft, "Effects.FX.SoundFX.FP.Equipment.Rifle.Reload.AmmoPack.RemoveFromShaft", "");
+								UE_DEFINE_GAMEPLAY_TAG_COMMENT(FailedAttemtToAddToShaft, "Effects.FX.SoundFX.FP.Equipment.Rifle.Reload.AmmoPack.FailedAttemtToAddToShaft", "");
+								UE_DEFINE_GAMEPLAY_TAG_COMMENT(AddToShaft, "Effects.FX.SoundFX.FP.Equipment.Rifle.Reload.AmmoPack.AddToShaft", "");
+							}
+						}
+					}
+					namespace Grenade
+					{
+						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.FX.SoundFX.FP.Equipment.Grenade", "");
+						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Contact, "Effects.FX.SoundFX.FP.Equipment.Grenade.Contact", "");
+					}
+				}
+			}
 			}
 			namespace VisualFX
 			{
@@ -283,9 +335,9 @@ namespace Sf_GameplayTags
 					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Mantle, "Effects.Messages.FP.Movement.Mantle", "");
 					namespace WallRun
 					{
-						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Respawn, "Effects.Messages.FP.Movement.WallRun", "");
-						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Start, "Effects.Messages.FP.Movement.Start", "");
-						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Step, "Effects.Messages.FP.Movement.Step", "");
+						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.Messages.FP.Movement.WallRun", "");
+						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Start, "Effects.Messages.FP.Movement.WallRun.Start", "");
+						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Step, "Effects.Messages.FP.Movement.WallRun.Step", "");
 					}
 				}
 				namespace Equipment
@@ -295,7 +347,23 @@ namespace Sf_GameplayTags
 					{
 						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.Messages.FP.Equipment.Rifle", "");
 						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Fire, "Effects.Messages.FP.Equipment.Rifle.Fire", "");
-						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Reload, "Effects.Messages.FP.Equipment.Rifle.Reload", "");
+						namespace Reload
+						{
+							UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.Messages.FP.Equipment.Rifle.Reload", "");
+							namespace SafetyLock
+							{
+								UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.Messages.FP.Equipment.Rifle.Reload.SafetyLock", "");
+								UE_DEFINE_GAMEPLAY_TAG_COMMENT(Open, "Effects.Messages.FP.Equipment.Rifle.Reload.SafetyLock.Open", "");
+								UE_DEFINE_GAMEPLAY_TAG_COMMENT(Close, "Effects.Messages.FP.Equipment.Rifle.Reload.SafetyLock.Close", "");
+							}
+							namespace AmmoPack
+							{
+								UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.Messages.FP.Equipment.Rifle.Reload.AmmoPack", "");
+								UE_DEFINE_GAMEPLAY_TAG_COMMENT(RemoveFromShaft, "Effects.Messages.FP.Equipment.Rifle.Reload.AmmoPack.RemoveFromShaft", "");
+								UE_DEFINE_GAMEPLAY_TAG_COMMENT(FailedAttemtToAddToShaft, "Effects.Messages.FP.Equipment.Rifle.Reload.AmmoPack.FailedAttemtToAddToShaft", "");
+								UE_DEFINE_GAMEPLAY_TAG_COMMENT(AddToShaft, "Effects.Messages.FP.Equipment.Rifle.Reload.AmmoPack.AddToShaft", "");
+							}
+						}
 					}
 					namespace Grenade
 					{

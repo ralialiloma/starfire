@@ -254,6 +254,55 @@ namespace Sf_GameplayTags
 			namespace SoundsFX
 			{
 				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+				namespace FP
+				{
+					STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Respawn);
+					namespace Movement
+					{
+						STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+						STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Jump);
+						STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Footstep);
+						STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Dash);
+						STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Mantle);
+						namespace WallRun
+						{
+							STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+							STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Start);
+							STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Step);
+						}
+					}
+					namespace Equipment
+					{
+						STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+						namespace Rifle
+						{
+							STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+							STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Fire);
+							namespace Reload
+							{
+								STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+								namespace SafetyLock
+								{
+									STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+									STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Open);
+									STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Close);
+								}
+								namespace AmmoPack
+								{
+									STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+									STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(RemoveFromShaft);
+									STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(FailedAttemtToAddToShaft);
+									STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(AddToShaft);
+								}
+							}
+						}
+						namespace Grenade
+						{
+							STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+							STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Contact);
+						}
+					}
+				}
 			}
 			namespace VisualFX
 			{
@@ -281,7 +330,6 @@ namespace Sf_GameplayTags
 						STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Step);
 					}
 				}
-
 				namespace Equipment
 				{
 					STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
@@ -289,7 +337,23 @@ namespace Sf_GameplayTags
 					{
 						STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
 						STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Fire);
-						STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Reload);
+						namespace Reload
+						{
+							STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+							namespace SafetyLock
+							{
+								STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+								STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Open);
+								STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Close);
+							}
+							namespace AmmoPack
+							{
+								STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+								STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(RemoveFromShaft);
+								STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(FailedAttemtToAddToShaft);
+								STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(AddToShaft);
+							}
+						}
 					}
 					namespace Grenade
 					{

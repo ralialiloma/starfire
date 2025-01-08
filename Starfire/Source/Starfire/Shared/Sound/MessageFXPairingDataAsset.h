@@ -48,12 +48,16 @@ class STARFIRE_API UMessageFXPairingDataAsset : public UPrimaryDataAsset
 	GENERATED_BODY()
 
 public:
+
+#if WITH_EDITOR
+	UFUNCTION(CallInEditor)
+	void CleanUp();
+#endif
 	
 	FGameplayTagContainer GetMappedFX(FGameplayTag Tag);
-
 protected:
 
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
-	TSet<FMessageFXPairings> MappedFXs;
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly,meta = (TitleProperty = "{MessageFX}"))
+	TArray<FMessageFXPairings> MappedFXs;
 	
 };
