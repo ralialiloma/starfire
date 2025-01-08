@@ -20,7 +20,7 @@ int UInventoryComponent::AddResource(FGameplayTag ItemTag, int AddQuantity)
 	if (MaxItemStack <= 0 || NewItemQuantity <= MaxItemStack)
 	{
 		ItemQuantity = NewItemQuantity;
-		OnRessourceAdded.Broadcast(ItemTag,ItemQuantity);
+		OnResourceAdded.Broadcast(ItemTag,ItemQuantity);
 		UpdateAvailableCraftables();
 	}
 	else
@@ -30,10 +30,9 @@ int UInventoryComponent::AddResource(FGameplayTag ItemTag, int AddQuantity)
 	}
 	
 	FString DebugString("Added " + FString::FromInt(AddQuantity - ReturnQuantity) + " of Item: " + ItemTag.ToString());
-	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, DebugString);
 	DEBUG_SIMPLE(LogInventoryComponent, Warning, FColor::White, *DebugString, Sf_GameplayTags::Debug::Inventory::Name);
 
-	return GetQuantity(ItemTag);
+	return ReturnQuantity;
 }
 
 bool UInventoryComponent::HasQuantity(FGameplayTag ItemTag, int Quantity) const
@@ -65,7 +64,7 @@ bool UInventoryComponent::ConsumeResource(FGameplayTag ItemTag, int Quantity)
 	FString DebugString("Consumed " + FString::FromInt(Quantity) + " of Item: " + ItemTag.ToString());
 	DEBUG_SIMPLE(LogInventoryComponent, Warning, FColor::White, *DebugString, Sf_GameplayTags::Debug::Inventory::Name);
 
-	OnRessourceRemoved.Broadcast(ItemTag,ItemQuantity);
+	OnResourceRemoved.Broadcast(ItemTag,ItemQuantity);
 	UpdateAvailableCraftables();
 	
 	return true;
@@ -118,7 +117,7 @@ void UInventoryComponent::GetItemCraftingRequirements(FGameplayTag CraftingItem,
 
 int UInventoryComponent::GetItemCraftingRequirementsOfItem(FGameplayTag CraftingItem, FGameplayTag Resource) const
 {
-	if (!Resource.IsValid())
+	if (!Resource.IsValid() || !CraftingItem.IsValid())
 		return 0;
 	
 	TArray<FItemQuantityDefinition> CraftingData {};
@@ -131,19 +130,6 @@ int UInventoryComponent::GetItemCraftingRequirementsOfItem(FGameplayTag Crafting
 	}
 
 	return 0;
-}
-
-int UInventoryComponent::GetAmountOfRequiredRessourceOfType(FGameplayTag ItemToCraft, FGameplayTag Resource) const
-{
-	FCraftingData CraftData = CraftingDefinitions->GetCraftingData(ItemToCraft);
-	for (FItemQuantityDefinition CurrentDefintion : CraftData.RequiredResources)
-	{
-		if (CurrentDefintion.ItemTag == Resource)
-		{
-			return CurrentDefintion.Quantity;
-		}
-	}
-	return  0;
 }
 
 bool UInventoryComponent::CanCraftItem(FCraftingData CraftingData) const
@@ -161,7 +147,7 @@ void UInventoryComponent::UpdateAvailableCraftables()
 {
 	if (IsValid(CraftingDefinitions))
 	{
-		for ( const FCraftingData& CraftingData : CraftingDefinitions->GetAllCraftingData())
+		for (const FCraftingData& CraftingData : CraftingDefinitions->GetAllCraftingData())
 		{
 			FGameplayTag ItemTag = CraftingData.CraftedItem.ItemTag;
 			const bool bHasSpaceForItem = GetQuantity(ItemTag)<GetItemMaxStack(ItemTag);

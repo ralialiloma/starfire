@@ -49,12 +49,9 @@ public:
 	void GetItemCraftingRequirements(FGameplayTag CraftingItem, TArray<FItemQuantityDefinition>& RequiredItems) const;
 
 	UFUNCTION(BlueprintCallable, meta = (Categories = "Gameplay.Resource"))
-	int GetItemCraftingRequirementsOfItem(FGameplayTag CraftingItem, FGameplayTag Resource) const;
-
-	UFUNCTION(BlueprintCallable, meta = (Categories = "Gameplay.Resource"))
-	int GetAmountOfRequiredRessourceOfType(
-		UPARAM(meta = (Categories = "Gameplay.Resource")) FGameplayTag ItemToCraft,
-		UPARAM(meta = (Categories = "Gameplay.Resource"))FGameplayTag Resource) const;
+	int GetItemCraftingRequirementsOfItem(
+		UPARAM(meta = (Categories = "Gameplay.Resource")) FGameplayTag CraftingItem,
+		UPARAM(meta = (Categories = "Gameplay.Resource")) FGameplayTag Resource) const;
 
 protected:
 	bool CanCraftItem(FCraftingData CraftingData) const;
@@ -63,10 +60,10 @@ protected:
 public:
 
 	UPROPERTY(BlueprintAssignable)
-	FOnRessourceChange OnRessourceAdded;
+	FOnRessourceChange OnResourceAdded;
 
 	UPROPERTY(BlueprintAssignable)
-	FOnRessourceChange OnRessourceRemoved;
+	FOnRessourceChange OnResourceRemoved;
 	
 protected:
 	UPROPERTY(BlueprintReadOnly, SaveGame)
