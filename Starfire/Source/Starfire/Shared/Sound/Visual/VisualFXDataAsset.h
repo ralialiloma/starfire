@@ -31,6 +31,8 @@ struct FVisualFXSettings
 	}
 };
 
+DECLARE_LOG_CATEGORY_EXTERN(LogVisualFX, Log, All);
+
 UCLASS()
 class STARFIRE_API UVisualFXDataAsset : public UFXDataAssetBase
 {

@@ -5,6 +5,9 @@
 #include "DebugFunctionLibrary.h"
 #include "VisualFXProcessor.h"
 #include "Kismet/GameplayStatics.h"
+#include "Starfire/StarFireGameplayTags.h"
+
+DEFINE_LOG_CATEGORY(LogVisualFX);
 
 FVisualFXSettings* UVisualFXDataAsset::GetVisualFXSettings(FGameplayTag Tag)
 {
@@ -26,6 +29,8 @@ void UVisualFXDataAsset::ExecuteFX_Implementation(UObject* WorldContext, FFXPara
             UDebugFunctionLibrary::DebugError(this, FString::Printf(TEXT("Found visual effect data is invalid for GameplayTag: %s"), *Params.FXTag.ToString()));
             return;
         }
+        
+        DEBUG_SIMPLE(LogVisualFX, Log, FColor::White, FString::Printf(TEXT("Playing %s"), *Params.FXTag.ToString()), Sf_GameplayTags::Effects::FX::VisualFX::Name);
 
         UParticleSystemComponent* ParticleComp = nullptr;
         switch (Params.PlayType)

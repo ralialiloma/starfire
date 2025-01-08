@@ -3,10 +3,12 @@
 
 #include "FXSubsystem.h"
 #include "DebugFunctionLibrary.h"
+#include "FXDataAssetBase.h"
 #include "FXSystemSettings.h"
 #include "MessageFXPairingDataAsset.h"
 #include "Starfire/StarFireGameplayTags.h"
-#include "Visual/VisualFXDataAsset.h"
+
+DEFINE_LOG_CATEGORY(LogFXSubsystem);
 
 UFXSubsystem* UFXSubsystem::Get(const UObject* WorldContext)
 {
@@ -20,6 +22,14 @@ FFXHandle UFXSubsystem::PlayFX(FGameplayTag FXTag)
 {
 	if (!AllReferencesValid())
 		return FFXHandle();
+	
+	DEBUG_SIMPLE(
+	LogFXSubsystem, 
+	Log, 
+	FColor::White, 
+	FString::Printf(TEXT("Requested 2D %s"), *FXTag.ToString()), 
+	Sf_GameplayTags::Effects::Name);
+
 
 	for (auto FXDataAsset : FXDataAssets)
 	{
@@ -38,6 +48,13 @@ FFXHandle UFXSubsystem::PlayFXAt(FGameplayTag FXTag, FTransform Transform)
 	if (!AllReferencesValid())
 		return FFXHandle();
 
+	DEBUG_SIMPLE(
+		LogFXSubsystem, 
+		Log, 
+		FColor::White, 
+		FString::Printf(TEXT("Requested %s at %s"), *FXTag.ToString(), *Transform.ToString()), 
+		Sf_GameplayTags::Effects::Name);
+
 	for (auto FXDataAsset : FXDataAssets)
 	{
 		for (auto FX : MessageFXPairings->GetMappedFX(FXTag))
@@ -54,6 +71,16 @@ FFXHandle UFXSubsystem::PlayFXOn(FGameplayTag FXTag, USceneComponent* Component,
 {
 	if (!AllReferencesValid())
 		return FFXHandle();
+
+	if (!Component)
+		return FFXHandle();
+
+	DEBUG_SIMPLE(
+	LogFXSubsystem, 
+	Log, 
+	FColor::White, 
+	FString::Printf(TEXT("Requested %s on %s (%s with offset %s)"), *FXTag.ToString(), *Component->GetName(), *Bone.ToString(), *Offset.ToString()), 
+	Sf_GameplayTags::Effects::Name);
 
 	for (auto FXDataAsset : FXDataAssets)
 	{

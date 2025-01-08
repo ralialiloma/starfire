@@ -54,12 +54,15 @@ protected:
 	bool bAutoDestroyOnCollect = true;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "ItemSettings", meta = (Categories="Gameplay.Resource"))
 	FGameplayTag ItemTag;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "ItemSettings", meta = (Categories="Effects.Messages"))
+	FGameplayTag FXCollectMessage;
 
 	//Components
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UStaticMeshComponent* Mesh;
 
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly)
+	//Not Exposeds
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Transient)
 	bool bHasBeenCollected = false;
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly)
 	uint8 VeinGroup;
