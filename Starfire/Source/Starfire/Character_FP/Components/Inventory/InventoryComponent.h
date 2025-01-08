@@ -49,9 +49,7 @@ public:
 	void GetItemCraftingRequirements(FGameplayTag CraftingItem, TArray<FItemQuantityDefinition>& RequiredItems) const;
 
 	UFUNCTION(BlueprintCallable, meta = (Categories = "Gameplay.Resource"))
-	int GetItemCraftingRequirementsOfItem(
-		UPARAM(meta = (Categories = "Gameplay.Resource")) FGameplayTag CraftingItem,
-		UPARAM(meta = (Categories = "Gameplay.Resource")) FGameplayTag Resource) const;
+	int GetItemCraftingRequirementsOfItem(FGameplayTag CraftingItem,FGameplayTag Resource) const;
 
 protected:
 	bool CanCraftItem(FCraftingData CraftingData) const;
