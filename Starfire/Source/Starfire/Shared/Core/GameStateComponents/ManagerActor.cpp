@@ -1,25 +1,18 @@
 ﻿#include "ManagerActor.h"
 
+#include "Starfire/Shared/WorldExecutionManager.h"
+
 void AManagerActor::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	if (GetWorld()->GetBegunPlay())
-	{
-		StartGame();
-	}
-	else
-	{
-		StartGameDelegateHandle = GetWorld()->OnWorldBeginPlay.AddLambda([this]()
+
+	GetWorld()->GetSubsystem<UWorldExecutionManager>()->RegisterOnAllLevelsLoaded([this]()
 		{
 			StartGame();
 		});
-	}
 }
 
 void AManagerActor::StartGame()
-{
-	GetWorld()->OnWorldBeginPlay.Remove(StartGameDelegateHandle);
-	
+{	
 	StartGameEvent();
 }

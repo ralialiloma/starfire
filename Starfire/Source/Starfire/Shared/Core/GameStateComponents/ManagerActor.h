@@ -17,7 +17,4 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, DisplayName = "StartGame")
 	void StartGameEvent();
 
-private:
-	FDelegateHandle StartGameDelegateHandle;
-
 };
