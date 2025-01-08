@@ -395,7 +395,7 @@ FHitResult USf_FP_CharacterMovementComponent::CheckFromPlayer(const FVector& Cas
 	FVector End = Start + CastDelta;
 	auto Params = SfCharacterOwner->GetIgnoreCharacterParams();
 	FHitResult WallHit;
-	GetWorld()->LineTraceSingleByProfile(WallHit, Start, End, "BlockAll", Params);
+	GetWorld()->LineTraceSingleByProfile(WallHit, Start, End, "MovementTrace", Params);
 	return WallHit;
 }
 
