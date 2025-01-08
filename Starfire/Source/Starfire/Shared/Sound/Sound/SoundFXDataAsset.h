@@ -42,6 +42,8 @@ struct FSoundFXSettings
 	}
 };
 
+DECLARE_LOG_CATEGORY_EXTERN(LogSoundFX, Log, All);
+
 UCLASS()
 class STARFIRE_API USoundFXDataAsset : public UFXDataAssetBase
 {

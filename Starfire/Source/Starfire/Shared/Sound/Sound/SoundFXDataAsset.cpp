@@ -6,6 +6,9 @@
 #include "DebugFunctionLibrary.h"
 #include "SoundFXProcessor.h"
 #include "Kismet/GameplayStatics.h"
+#include "Starfire/StarFireGameplayTags.h"
+
+DEFINE_LOG_CATEGORY(LogSoundFX);
 
 FSoundFXSettings* USoundFXDataAsset::GetSoundFXSettings(FGameplayTag Tag)
 {
@@ -27,6 +30,8 @@ void USoundFXDataAsset::ExecuteFX_Implementation(UObject* WorldContext, FFXParam
 			UDebugFunctionLibrary::DebugError(this, FString::Printf(TEXT("Found sound data is invalid for GameplayTag: %s"), *Params.FXTag.ToString()));
 			return;
 		}
+
+		DEBUG_SIMPLE(LogSoundFX, Log, FColor::White, FString::Printf(TEXT("Playing %s"), *Params.FXTag.ToString()), Sf_GameplayTags::Effects::FX::SoundsFX::Name);
 
 		UAudioComponent* AudioComp = nullptr;
 		switch (Params.PlayType) {

@@ -5,6 +5,7 @@
 #include "Starfire/Character_FP/Sf_FP_Character.h"
 #include "Starfire/Character_FP/Components/Inventory/InventoryComponent.h"
 #include "Starfire/Sf_Bases/Components/Sf_Equipment.h"
+#include "Starfire/Shared/Sound/FXSubsystem.h"
 #include "Starfire/Utility/Debug/SF_DebugFunctionLibrary.h"
 
 DEFINE_LOG_CATEGORY(SFCollectable);
@@ -27,8 +28,11 @@ void AResource::OnCollect_Implementation(FVector CollectLocation, APawn* Trigger
 		if (PlayerPawn == TriggeringPawn)
 			Collected = AddSelfToInventory(PlayerPawn->GetComponentByClass<UInventoryComponent>());
 	}
-
+	
 	bHasBeenCollected = Collected;
+
+	UFXSubsystem* FXSubsystem = UFXSubsystem::Get(this);
+	FXSubsystem->PlayFXAt(FXCollectMessage, GetActorTransform());
 
 	if (bAutoDestroyOnCollect)
 		Destroy();

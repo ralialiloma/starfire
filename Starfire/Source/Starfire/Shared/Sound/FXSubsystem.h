@@ -13,6 +13,8 @@ class UMessageFXPairingDataAsset;
 class USoundFXDataAsset;
 class USoundBase;
 
+DECLARE_LOG_CATEGORY_EXTERN(LogFXSubsystem, Log, All);
+
 USTRUCT(BlueprintType)
 struct FFXHandle
 {
