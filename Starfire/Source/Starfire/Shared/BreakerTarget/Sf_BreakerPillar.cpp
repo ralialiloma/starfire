@@ -43,6 +43,9 @@ bool ASf_BreakerPillar::IsActive() const
 
 bool ASf_BreakerPillar::SetRestore(float RestoreValue, float& OutRemainingValue)
 {
+	if (!IsValid(this))
+		return false;
+	
 	OutRemainingValue = RestoreValue;
 	
 	if (IsActive())
