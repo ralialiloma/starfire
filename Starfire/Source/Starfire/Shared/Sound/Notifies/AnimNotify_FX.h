@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimNotifies/AnimNotify.h"
+#include "Starfire/StarFireGameplayTags.h"
 #include "Starfire/Shared/Sound/FXDataAssetBase.h"
 #include "AnimNotify_FX.generated.h"
 
@@ -23,6 +24,8 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (Categories = "Effects.Messages"))
 	FGameplayTag FXTag = FGameplayTag();
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, AdvancedDisplay, meta = (Categories = "Effects.Messages"))
+	FGameplayTag HiddenFXTag = Sf_GameplayTags::Effects::Messages::Name;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (InvalidEnumValues = "FX_Location"))
 	EFXPlayType PlayType = EFXPlayType::FX_Attached;
 

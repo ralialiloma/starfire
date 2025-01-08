@@ -10,12 +10,9 @@
 
 DEFINE_LOG_CATEGORY(LogFXSubsystem);
 
-UFXSubsystem* UFXSubsystem::Get(const UObject* WorldContext)
+UFXSubsystem* UFXSubsystem::Get()
 {
-	if (!WorldContext || !WorldContext->GetWorld())
-		return nullptr;
-
-	return WorldContext->GetWorld()->GetSubsystem<UFXSubsystem>();
+	return GEngine->GetEngineSubsystem<UFXSubsystem>();
 }
 
 FFXHandle UFXSubsystem::PlayFX(FGameplayTag FXTag)
@@ -125,6 +122,22 @@ bool UFXSubsystem::AllReferencesValid() const
 	}
 	
 	return true;
+}
+
+UWorld* UFXSubsystem::GetWorld() const
+{
+	if (GEngine)
+	{
+		for (const FWorldContext& WorldContext : GEngine->GetWorldContexts())
+		{
+			if (WorldContext.World())
+			{
+				return WorldContext.World();
+			}
+		}
+	}
+
+	return nullptr; 
 }
 
 FGameplayTagContainer UFXSubsystem::GetFXByMessageTag(FGameplayTag MessageTag) const

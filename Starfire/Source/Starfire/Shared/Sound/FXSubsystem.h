@@ -74,13 +74,13 @@ private:
 };
 
 UCLASS()
-class STARFIRE_API UFXSubsystem : public UWorldSubsystem
+class STARFIRE_API UFXSubsystem : public UEngineSubsystem
 {
 	GENERATED_BODY()
 
 public:
 
-	static UFXSubsystem* Get(const UObject* WorldContext);
+	static UFXSubsystem* Get();
 	
 	UFUNCTION(BlueprintCallable, Category="FXSystem")
 	FFXHandle PlayFX(UPARAM(meta=(Categories="Effects.Messages")) FGameplayTag FXTag);
@@ -98,6 +98,7 @@ protected:
 	
 	FGameplayTagContainer GetFXByMessageTag(FGameplayTag MessageTag) const;
 	bool AllReferencesValid() const;
+	virtual class UWorld* GetWorld() const override;
 	
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	

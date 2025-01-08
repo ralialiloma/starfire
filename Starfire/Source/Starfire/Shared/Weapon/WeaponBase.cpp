@@ -211,7 +211,7 @@ bool AWeaponBase::Fire(const EInputSignalType InputSignal, EFireType FireType, F
 	if (!FXAttachPoint)
 		FXAttachPoint = GetRootComponent();
 	
-	UFXSubsystem::Get(this)->PlayFXOn(GetWeaponConfig().FXFireTag, FXAttachPoint);
+	UFXSubsystem::Get()->PlayFXOn(GetWeaponConfig().FXFireTag, FXAttachPoint);
 	
 	return true;
 }

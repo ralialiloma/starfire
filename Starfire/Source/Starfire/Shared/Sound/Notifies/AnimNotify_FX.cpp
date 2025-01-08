@@ -16,17 +16,12 @@ UAnimNotify_FX::UAnimNotify_FX()
 
 FString UAnimNotify_FX::GetNotifyName_Implementation() const
 {
-	
-	return FString::Printf(TEXT("FX [%s]"),*USf_FunctionLibrary::RemoveParentTagsFromTag(FXTag, Sf_GameplayTags::Effects::Messages::Name)); 
+	return FString::Printf(TEXT("FX [%s]"),*USf_FunctionLibrary::RemoveParentTagsFromTag(FXTag, HiddenFXTag)); 
 }
 
 void UAnimNotify_FX::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
-{
-	if (!GetWorld())
-		return;
-
-	;
-	UFXSubsystem* FXSubsystem = UFXSubsystem::Get(GetWorld());
+{	
+	UFXSubsystem* FXSubsystem = UFXSubsystem::Get();
 	if (!FXSubsystem)
 		return;
 
