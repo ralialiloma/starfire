@@ -105,5 +105,5 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="FXSystem")
 	TArray<UFXDataAssetBase*> FXDataAssets;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="FXSystem")
-	UMessageFXPairingDataAsset* MessageFXPairings;
+	TArray<UMessageFXPairingDataAsset*> MessageFXPairings;
 };

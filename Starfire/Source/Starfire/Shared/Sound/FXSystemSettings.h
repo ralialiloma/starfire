@@ -22,5 +22,5 @@ public:
 	UPROPERTY(EditAnywhere, Config, Category="FX System")
 	TArray<TSoftObjectPtr<UFXDataAssetBase>> FXDataAssets;
 	UPROPERTY(EditAnywhere, Config, Category="FX System")
-	TSoftObjectPtr<UMessageFXPairingDataAsset> MessageFXPairings;
+	TArray<TSoftObjectPtr<UMessageFXPairingDataAsset>> MessageFXPairings;
 };

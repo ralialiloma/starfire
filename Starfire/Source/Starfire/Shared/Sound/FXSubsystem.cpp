@@ -27,10 +27,11 @@ FFXHandle UFXSubsystem::PlayFX(FGameplayTag FXTag)
 	FString::Printf(TEXT("Requested 2D %s"), *FXTag.ToString()), 
 	Sf_GameplayTags::Effects::Name);
 
-
+	FGameplayTagContainer FXTags = GetFXByMessageTag(FXTag);
+	
 	for (auto FXDataAsset : FXDataAssets)
 	{
-		for (auto FX : MessageFXPairings->GetMappedFX(FXTag))
+		for (auto FX : FXTags)
 		{
 			FXDataAsset->ExecuteFX(this, FX);
 		}
@@ -52,9 +53,11 @@ FFXHandle UFXSubsystem::PlayFXAt(FGameplayTag FXTag, FTransform Transform)
 		FString::Printf(TEXT("Requested %s at %s"), *FXTag.ToString(), *Transform.ToString()), 
 		Sf_GameplayTags::Effects::Name);
 
+	FGameplayTagContainer FXTags = GetFXByMessageTag(FXTag);
+
 	for (auto FXDataAsset : FXDataAssets)
 	{
-		for (auto FX : MessageFXPairings->GetMappedFX(FXTag))
+		for (auto FX : FXTags)
 		{
 			FXDataAsset->ExecuteFX(this, FFXParams(FX, Transform));
 		}
@@ -79,9 +82,11 @@ FFXHandle UFXSubsystem::PlayFXOn(FGameplayTag FXTag, USceneComponent* Component,
 	FString::Printf(TEXT("Requested %s on %s (%s with offset %s)"), *FXTag.ToString(), *Component->GetName(), *Bone.ToString(), *Offset.ToString()), 
 	Sf_GameplayTags::Effects::Name);
 
+	FGameplayTagContainer FXTags = GetFXByMessageTag(FXTag);
+
 	for (auto FXDataAsset : FXDataAssets)
 	{
-		for (auto FX : MessageFXPairings->GetMappedFX(FXTag))
+		for (auto FX : FXTags)
 		{
 			FXDataAsset->ExecuteFX(this, FFXParams(FX, Component, Bone, Offset));
 		}
@@ -103,7 +108,7 @@ bool UFXSubsystem::CancelFX(FFXHandle Handle)
 
 bool UFXSubsystem::AllReferencesValid() const
 {
-	if (!MessageFXPairings)
+	if (MessageFXPairings.Num() <= 0)
 	{
 		UDebugFunctionLibrary::DebugError(this, FString::Printf(TEXT("No MessageFXPairs set on FXSubsystem.")));
 		return false;
@@ -142,10 +147,13 @@ UWorld* UFXSubsystem::GetWorld() const
 
 FGameplayTagContainer UFXSubsystem::GetFXByMessageTag(FGameplayTag MessageTag) const
 {
-	if (MessageFXPairings)
-		return MessageFXPairings->GetMappedFX(MessageTag);
+	FGameplayTagContainer FXTags {};
+	for (auto MessageFXPairing : MessageFXPairings)
+	{
+		FXTags.AppendTags(MessageFXPairing->GetMappedFX(MessageTag));
+	}
 	
-	return FGameplayTagContainer();
+	return FXTags;
 }
 
 void UFXSubsystem::Initialize(FSubsystemCollectionBase& Collection)
@@ -155,7 +163,10 @@ void UFXSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	const UFXSystemSettings* Settings = GetDefault<UFXSystemSettings>();
 	if (Settings)
 	{
-		MessageFXPairings = Settings->MessageFXPairings.LoadSynchronous();
+		for (auto MessageFXPairing : Settings->MessageFXPairings)
+		{
+			MessageFXPairings.Add(MessageFXPairing.LoadSynchronous());
+		}
 
 		if (Settings->FXDataAssets.Num() > 0)
 		{			
