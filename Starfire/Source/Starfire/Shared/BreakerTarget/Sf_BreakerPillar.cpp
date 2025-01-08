@@ -36,7 +36,9 @@ USf_DamageController* ASf_BreakerPillar::GetDamageController() const
 
 bool ASf_BreakerPillar::IsActive() const
 {
-	return !DamageController->IsZeroHealth();
+	if (IsValid(DamageController))
+		return !DamageController->IsZeroHealth();
+	return false;
 }
 
 bool ASf_BreakerPillar::SetRestore(float RestoreValue, float& OutRemainingValue)
