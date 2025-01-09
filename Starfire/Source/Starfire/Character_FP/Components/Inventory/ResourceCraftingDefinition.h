@@ -32,6 +32,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bAutoCraft = false;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Categories="Effects.Messages"))
+	FGameplayTag FXCraft;
 
 	bool IsValid() const;
 	

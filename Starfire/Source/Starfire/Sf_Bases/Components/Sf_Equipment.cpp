@@ -116,7 +116,7 @@ int USf_Equipment::GetActiveSlot() const
 	return Slot;
 }
 
-void USf_Equipment::AddWeapon(AWeaponBase* WeaponToAdd, const bool Equip, int &Slot)
+void USf_Equipment::AddWeapon(AWeaponBase* WeaponToAdd, const bool Equip, int &Slot, float& OutMontageTIme)
 {
 	if (!CanAddWeapon(WeaponToAdd))
 		return;
@@ -143,13 +143,14 @@ void USf_Equipment::AddWeapon(AWeaponBase* WeaponToAdd, const bool Equip, int &S
 		true);
 	WeaponToAdd->AttachToComponent(this, AttachRules, "None");
 
+	OutMontageTIme = 0;
 	if (Equip)
-		EquipWeaponByReference(WeaponToAdd);
+		EquipWeaponByReference(WeaponToAdd, OutMontageTIme);
 	else
 		SetWeaponActive(WeaponToAdd, EquippedWeapon, false);
 }
 
-void USf_Equipment::AddWeaponByClass(const TSubclassOf<AWeaponBase> WeaponClassToAdd, const bool Equip, int& Index)
+void USf_Equipment::AddWeaponByClass(const TSubclassOf<AWeaponBase> WeaponClassToAdd, const bool Equip, int& Index, float &OutMontageTIme)
 {
 	UWorld* World = GetWorld();
 	if (World == nullptr)
@@ -165,7 +166,7 @@ void USf_Equipment::AddWeaponByClass(const TSubclassOf<AWeaponBase> WeaponClassT
 	}
 
 	AWeaponBase* WeaponBase =  World->SpawnActor<AWeaponBase>(WeaponClassToAdd);
-	AddWeapon(WeaponBase, Equip, Index);
+	AddWeapon(WeaponBase, Equip, Index, OutMontageTIme);
 }
 
 bool USf_Equipment::CanAddWeapon(AWeaponBase* WeaponToAdd) const
@@ -205,7 +206,7 @@ bool USf_Equipment::CanRemoveWeapons() const
 }
 
 
-bool USf_Equipment::RemoveWeapon(AWeaponBase* WeaponToRemove)
+bool USf_Equipment::RemoveWeapon(AWeaponBase* WeaponToRemove, float &OutMontageTime)
 {
 	if (!CanRemoveWeapon(WeaponToRemove))
 		return false;
@@ -213,7 +214,7 @@ bool USf_Equipment::RemoveWeapon(AWeaponBase* WeaponToRemove)
 	OwnedWeapons.Remove(WeaponToRemove);
 
 	if (EquippedWeapon == WeaponToRemove)
-		UnequipWeapon(false);
+		UnequipWeapon(false,OutMontageTime);
 	
 	FDetachmentTransformRules DetachRules = FDetachmentTransformRules(EDetachmentRule::KeepWorld, false);
 	WeaponToRemove->DetachFromActor(DetachRules);
@@ -222,15 +223,15 @@ bool USf_Equipment::RemoveWeapon(AWeaponBase* WeaponToRemove)
 	return true;
 }
 
-bool USf_Equipment::RemoveWeaponActiveWeapon()
+bool USf_Equipment::RemoveWeaponActiveWeapon(float &OutMontageTime)
 {
 	if (!IsEquipped())
 		return false;
 
-	return  RemoveWeapon(GetActiveWeapon());
+	return  RemoveWeapon(GetActiveWeapon(), OutMontageTime);
 }
 
-bool USf_Equipment::RemoveWeaponByClass(TSubclassOf<AWeaponBase> WeaponClassToRemove)
+bool USf_Equipment::RemoveWeaponByClass(TSubclassOf<AWeaponBase> WeaponClassToRemove,float &OutMontageTime)
 {
 	if (!CanRemoveWeapons())
 		return false;
@@ -248,10 +249,10 @@ bool USf_Equipment::RemoveWeaponByClass(TSubclassOf<AWeaponBase> WeaponClassToRe
 		}
 	}
 
-	return RemoveWeapon(WeaponToRemove);
+	return RemoveWeapon(WeaponToRemove, OutMontageTime);
 }
 
-bool USf_Equipment::CycleWeapons(const ENavigationDirectionType Direction)
+bool USf_Equipment::CycleWeapons(const ENavigationDirectionType Direction,float& OutMontageTime)
 {
 	if (!bAllowCycling)
 		return false;
@@ -277,24 +278,24 @@ bool USf_Equipment::CycleWeapons(const ENavigationDirectionType Direction)
 		NextSlot = 0;
 	}
 
-	return EquipWeaponBySlot(NextSlot);
+	return EquipWeaponBySlot(NextSlot, OutMontageTime);
 }
 
-bool USf_Equipment::EquipWeaponByReference(AWeaponBase* Weapon)
+bool USf_Equipment::EquipWeaponByReference(AWeaponBase* Weapon,float& OutMontageTime)
 {
 	if (CanEquipWeapon(Weapon))
-		return ActivateWeapon(Weapon);
+		return ActivateWeapon(Weapon, OutMontageTime);
 	return false;
 }
 
-bool USf_Equipment::EquipWeaponBySlot(int Slot)
+bool USf_Equipment::EquipWeaponBySlot(int Slot, float& OutMontageTime)
 {
 	if (!CanEquipWeapons())
 		return false;
 	
 	AWeaponBase* Weapon = nullptr;
 	if (GetWeaponBySlot(Slot, Weapon))
-		return ActivateWeapon(Weapon);
+		return ActivateWeapon(Weapon, OutMontageTime);
 
 	UE_LOG(EquipmentComponent, Error, TEXT("The weapon slot you're trying to activate is invalid"));
 	return false;
@@ -321,7 +322,7 @@ bool USf_Equipment::CanUnequipWeapon() const
 	return IS_ACTION_ALLOWED(EquippedWeapon,UnequipWeapon);
 }
 
-bool USf_Equipment::UnequipWeapon(bool HideWeapon)
+bool USf_Equipment::UnequipWeapon(bool HideWeapon, float& OutMontageTime)
 {
 	if (!CanUnequipWeapon())
 		return false;
@@ -330,7 +331,7 @@ bool USf_Equipment::UnequipWeapon(bool HideWeapon)
 		return false;
 
 	AWeaponBase* OldWeapon = EquippedWeapon;
-	EquippedWeapon->OnUnequip();
+	EquippedWeapon->OnUnequip(OutMontageTime);
 	if (HideWeapon)
 		SetWeaponActive(EquippedWeapon, nullptr, false);
 	
@@ -523,7 +524,7 @@ void USf_Equipment::SetWeaponActive(AWeaponBase* Weapon,AWeaponBase* OtherWeapon
 	Weapon->SetWeaponActive(Active, OtherWeapon);
 }
 
-bool USf_Equipment::ActivateWeapon(AWeaponBase* Weapon)
+bool USf_Equipment::ActivateWeapon(AWeaponBase* Weapon, float& OutTotalMontageTime)
 {
 	if (!CanActivateWeapons())
 	{
@@ -539,16 +540,24 @@ bool USf_Equipment::ActivateWeapon(AWeaponBase* Weapon)
 	{
 		return false;
 	}
+
+
+	OutTotalMontageTime = 0;
 		
 	AWeaponBase* OldWeapon = EquippedWeapon;
 	if (OldWeapon)
 	{
-		OldWeapon->OnUnequip();
+		float UnequipTime = 0;
+		OldWeapon->OnUnequip(UnequipTime);
 		SetWeaponActive(OldWeapon, Weapon, false);
+		OutTotalMontageTime+=UnequipTime;
 	}
-	
+
+	//ToDo Play ANnimatin After Unequip
 	EquippedWeapon = Weapon;
-	EquippedWeapon->OnEquip();
+	float EquipTime = 0;
+	EquippedWeapon->OnEquip(OutTotalMontageTime);
+	OutTotalMontageTime+=EquipTime;
 	SetWeaponActive(EquippedWeapon, OldWeapon,true);
 
 	OnWeaponChange.Broadcast(EquippedWeapon, OldWeapon);

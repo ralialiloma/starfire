@@ -13,6 +13,7 @@ enum class EWeaponAnimationEventType : uint8
 	Aim = 3 UMETA(DisplayName = "Aim"),
 	Equip = 4 UMETA(DisplayName = "Equip"),
 	Melee = 5 UMETA(DisplayName = "Melee"),
+	Unequip = 6 UMETA(DisplayName = "Unequip"),
 };
 
 

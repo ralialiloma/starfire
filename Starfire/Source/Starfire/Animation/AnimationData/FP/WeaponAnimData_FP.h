@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "GameplayTagContainer.h"
+#include "Starfire/StarFireGameplayTags.h"
 #include "WeaponAnimData_FP.generated.h"
 
 USTRUCT(Blueprintable)

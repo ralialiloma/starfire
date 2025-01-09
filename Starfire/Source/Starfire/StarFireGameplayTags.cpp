@@ -234,6 +234,7 @@ namespace Sf_GameplayTags
 					DEFINE_GAMEPLAY_TAG_AUTO(Animation.Character.FP.Montage,Melee,"");
 					DEFINE_GAMEPLAY_TAG_AUTO(Animation.Character.FP.Montage,Reload,"");
 					DEFINE_GAMEPLAY_TAG_AUTO(Animation.Character.FP.Montage,Equip,"");
+					DEFINE_GAMEPLAY_TAG_AUTO(Animation.Character.FP.Montage,Unequip, "");
 				}
 				namespace Blendspace
 				{

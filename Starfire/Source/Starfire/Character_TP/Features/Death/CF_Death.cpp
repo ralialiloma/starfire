@@ -53,7 +53,8 @@ void UCF_Death::Kill()
 	if (GetOwningSfEquipment()->IsEquipped())
 	{
 		EquippedWeapon = GetOwningSfEquipment()->GetActiveWeapon();
-		GetOwningSfEquipment()->RemoveWeaponActiveWeapon();
+		float MontageTime;
+		GetOwningSfEquipment()->RemoveWeaponActiveWeapon(MontageTime);
 		EquippedWeapon->Destroy();
 	}
 

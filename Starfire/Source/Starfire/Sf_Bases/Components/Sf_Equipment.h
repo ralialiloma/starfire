@@ -80,9 +80,9 @@ public:
 
 	//Weapon Management
 	UFUNCTION(BlueprintCallable)
-	void AddWeapon(AWeaponBase* WeaponToAdd, bool Equip, int& Slot);
+	void AddWeapon(AWeaponBase* WeaponToAdd, const bool Equip, int& Slot, float& OutMontageTIme);
 	UFUNCTION(BlueprintCallable)
-	void AddWeaponByClass(TSubclassOf<AWeaponBase> WeaponClassToAdd, bool Equip, int& Index);
+	void AddWeaponByClass(const TSubclassOf<AWeaponBase> WeaponClassToAdd, const bool Equip, int& Index, float& OutMontageTIme);
 
 	UFUNCTION(BlueprintCallable)
 	bool CanAddWeapon(AWeaponBase* WeaponToAdd) const;
@@ -95,31 +95,32 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool CanRemoveWeapons() const;
 	UFUNCTION(BlueprintCallable)
-	bool RemoveWeapon(AWeaponBase* WeaponToRemove);
+	bool RemoveWeapon(AWeaponBase* WeaponToRemove, float& OutMontageTime);
 	UFUNCTION(BlueprintCallable)
-	bool RemoveWeaponActiveWeapon();
+	bool RemoveWeaponActiveWeapon(float& OutMontageTime);
 	UFUNCTION(BlueprintCallable)
-	bool RemoveWeaponByClass(TSubclassOf<AWeaponBase> WeaponClassToRemove);
+	bool RemoveWeaponByClass(TSubclassOf<AWeaponBase> WeaponClassToRemove, float& OutMontageTime);
 	UFUNCTION(BlueprintCallable)
-	bool CycleWeapons(ENavigationDirectionType Direction);
+	bool CycleWeapons(const ENavigationDirectionType Direction, float& OutMontageTime);
 
 	UFUNCTION(BlueprintCallable)
-	bool EquipWeaponByReference(AWeaponBase* Weapon);
+	bool EquipWeaponByReference(AWeaponBase* Weapon, float& OutMontageTime);
 	UFUNCTION(BlueprintCallable)
-	bool EquipWeaponBySlot(int Slot);
+	bool EquipWeaponBySlot(int Slot, float& OutMontageTime);
 	UFUNCTION(BlueprintCallable,BlueprintPure)
 	bool CanEquipWeapon(const AWeaponBase* WeaponToEquip)const;
 	UFUNCTION(BlueprintCallable,BlueprintPure)
 	bool CanEquipWeapons()const;
 	UFUNCTION(BlueprintCallable)
 	bool CanUnequipWeapon() const;
+
 	UFUNCTION(BlueprintCallable)
-    bool UnequipWeapon(bool HideWeapon = true);
+	bool UnequipWeapon(bool HideWeapon, float& OutMontageTime);
 
 	UFUNCTION(BlueprintCallable)
 	bool CanActivateWeapons() const;
 	UFUNCTION(BlueprintCallable)
-	bool ActivateWeapon(AWeaponBase* Weapon);
+	bool ActivateWeapon(AWeaponBase* Weapon, float& OutTotalMontageTime);
 
 	//Actions
 	UFUNCTION(BlueprintCallable)

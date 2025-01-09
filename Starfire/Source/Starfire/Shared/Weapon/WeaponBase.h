@@ -77,9 +77,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
 	void SetCollisionAndPhysics(bool bActive);
 	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
-	virtual  void OnEquip();
+	virtual  void OnEquip(float& OutMontageTime);
 	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
-	virtual void OnUnequip();
+	virtual void OnUnequip(float& OutMontageTime);
 
 	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
 	virtual bool IsActionAllowed(UPARAM(meta=(Categories="Gameplay.Weapon.Action"))FGameplayTag ActionType) const;

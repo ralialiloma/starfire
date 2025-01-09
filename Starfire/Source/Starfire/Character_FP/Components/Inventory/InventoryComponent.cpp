@@ -3,6 +3,7 @@
 #include "ResourceCraftingDefinition.h"
 #include "DebugFunctionLibrary.h"
 #include "Starfire/StarFireGameplayTags.h"
+#include "Starfire/Shared/Sound/FXSubsystem.h"
 
 DEFINE_LOG_CATEGORY(LogInventoryComponent);
 
@@ -179,6 +180,8 @@ bool UInventoryComponent::CraftItem_Implementation(const FGameplayTag ItemTag)
 	}
 	
 	AddResource(CraftData.CraftedItem.ItemTag, CraftData.CraftedItem.Quantity);
+
+	UFXSubsystem::Get()->PlayFX(CraftData.FXCraft);
 	return true;
 }
 

@@ -177,8 +177,9 @@ void AWeaponBase::OnInteractStart_Implementation(UInteractComponent* InteractCom
 	{
 		if (USf_Equipment* EquipmentComp = TriggeringPawn->GetComponentByClass<USf_Equipment>())
 		{
+			float MontageTime = 0;
 			int Slot = 0;
-			EquipmentComp->AddWeapon(this, true, Slot);
+			EquipmentComp->AddWeapon(this, true, Slot, MontageTime);
 		}
 	}
 }
@@ -207,11 +208,6 @@ bool AWeaponBase::Fire(const EInputSignalType InputSignal, EFireType FireType, F
 		//Make Fire Transform relative to the root component
 		FireTransform = GetRootComponent()->GetComponentTransform().GetRelativeTransform(FireTransform);
 	}
-	USceneComponent* FXAttachPoint = GetMuzzleSceneComponent();
-	if (!FXAttachPoint)
-		FXAttachPoint = GetRootComponent();
-	
-	UFXSubsystem::Get()->PlayFXOn(GetWeaponConfig().FXFireTag, FXAttachPoint);
 	
 	return true;
 }
@@ -482,6 +478,12 @@ void AWeaponBase::DoFire(FHitResult& OutHitResult)
 		if (IsValid(Feature))
 			Feature->OnFire();
 	}
+
+	USceneComponent* FXAttachPoint = GetMuzzleSceneComponent();
+	if (!FXAttachPoint)
+		FXAttachPoint = GetRootComponent();
+	
+	UFXSubsystem::Get()->PlayFXOn(GetWeaponConfig().FXFireTag, FXAttachPoint);
 }
 
 bool AWeaponBase::Reload()
@@ -736,15 +738,15 @@ void AWeaponBase::SetCollisionAndPhysics(const bool bActive)
 	SkeletalMesh->SetNotifyRigidBodyCollision(bActive); 
 }
 
-void AWeaponBase::OnEquip()
+void AWeaponBase::OnEquip(float& OutMontageTime)
 {
-	const float MontageTime = ExecuteAnimationAndReturnAnimLength(EWeaponAnimationEventType::Equip,true);
-	//PlayMontage(EWeaponAnimationMontageType_FP::Equip);
+	OutMontageTime= ExecuteAnimationAndReturnAnimLength(EWeaponAnimationEventType::Equip,true);
 	UE_LOG(SF_Weapon, Log, TEXT("Equipped %s"),*GetClass()->GetName())
 }
 
-void AWeaponBase::OnUnequip()
+void AWeaponBase::OnUnequip(float& OutMontageTime)
 {
+	OutMontageTime= ExecuteAnimationAndReturnAnimLength(EWeaponAnimationEventType::Unequip,true);
 	UE_LOG(SF_Weapon, Log, TEXT("Unequipped %s"),*GetClass()->GetName())
 }
 
