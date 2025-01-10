@@ -181,7 +181,7 @@ bool UInventoryComponent::CraftItem_Implementation(const FGameplayTag ItemTag)
 	
 	AddResource(CraftData.CraftedItem.ItemTag, CraftData.CraftedItem.Quantity);
 
-	UFXSubsystem::Get()->PlayFX(CraftData.FXCraft);
+	UFXSubsystem::Get()->PlayFX(this, CraftData.FXCraft);
 	return true;
 }
 

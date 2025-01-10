@@ -31,7 +31,12 @@ void USoundFXDataAsset::ExecuteFX_Implementation(UObject* WorldContext, FFXParam
 			return;
 		}
 
-		DEBUG_SIMPLE(LogSoundFX, Log, FColor::White, FString::Printf(TEXT("Playing %s"), *Params.FXTag.ToString()), Sf_GameplayTags::Effects::FX::SoundsFX::Name);
+		DEBUG_SIMPLE(
+			LogSoundFX, 
+			Log, 
+			FColor::White, 
+			FString::Printf(TEXT("Playing %s (%s)"), *Params.FXTag.ToString(), *UEnum::GetValueAsString(Params.PlayType)),
+			Sf_GameplayTags::Effects::FX::SoundsFX::Name);
 
 		UAudioComponent* AudioComp = nullptr;
 		switch (Params.PlayType) {

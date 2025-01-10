@@ -15,10 +15,12 @@ UFXSubsystem* UFXSubsystem::Get()
 	return GEngine->GetEngineSubsystem<UFXSubsystem>();
 }
 
-FFXHandle UFXSubsystem::PlayFX(FGameplayTag FXTag)
+FFXHandle UFXSubsystem::PlayFX(const UObject* WorldContext, FGameplayTag FXTag)
 {
 	if (!AllReferencesValid())
 		return FFXHandle();
+	
+	UWorld* World = WorldContext != nullptr ? WorldContext->GetWorld() : GetWorld();
 	
 	DEBUG_SIMPLE(
 	LogFXSubsystem, 
@@ -33,7 +35,7 @@ FFXHandle UFXSubsystem::PlayFX(FGameplayTag FXTag)
 	{
 		for (auto FX : FXTags)
 		{
-			FXDataAsset->ExecuteFX(this, FX);
+			FXDataAsset->ExecuteFX(World, FX);
 		}
 	}
 
@@ -41,10 +43,12 @@ FFXHandle UFXSubsystem::PlayFX(FGameplayTag FXTag)
 	return FFXHandle::GenerateNewHandle();
 }
 
-FFXHandle UFXSubsystem::PlayFXAt(FGameplayTag FXTag, FTransform Transform)
+FFXHandle UFXSubsystem::PlayFXAt(const UObject* WorldContext, FGameplayTag FXTag, FTransform Transform)
 {
 	if (!AllReferencesValid())
 		return FFXHandle();
+
+	UWorld* World = WorldContext != nullptr ? WorldContext->GetWorld() : GetWorld();
 
 	DEBUG_SIMPLE(
 		LogFXSubsystem, 
@@ -59,7 +63,7 @@ FFXHandle UFXSubsystem::PlayFXAt(FGameplayTag FXTag, FTransform Transform)
 	{
 		for (auto FX : FXTags)
 		{
-			FXDataAsset->ExecuteFX(this, FFXParams(FX, Transform));
+			FXDataAsset->ExecuteFX(World, FFXParams(FX, Transform));
 		}
 	}
 
@@ -67,13 +71,15 @@ FFXHandle UFXSubsystem::PlayFXAt(FGameplayTag FXTag, FTransform Transform)
 	return FFXHandle::GenerateNewHandle();
 }
 
-FFXHandle UFXSubsystem::PlayFXOn(FGameplayTag FXTag, USceneComponent* Component, FName Bone, FTransform Offset)
+FFXHandle UFXSubsystem::PlayFXOn(const UObject* WorldContext, FGameplayTag FXTag, USceneComponent* Component, FName Bone, FTransform Offset)
 {
 	if (!AllReferencesValid())
 		return FFXHandle();
 
 	if (!Component)
 		return FFXHandle();
+
+	UWorld* World = WorldContext != nullptr ? WorldContext->GetWorld() : GetWorld();
 
 	DEBUG_SIMPLE(
 	LogFXSubsystem, 
@@ -88,14 +94,14 @@ FFXHandle UFXSubsystem::PlayFXOn(FGameplayTag FXTag, USceneComponent* Component,
 	{
 		for (auto FX : FXTags)
 		{
-			FXDataAsset->ExecuteFX(this, FFXParams(FX, Component, Bone, Offset));
+			FXDataAsset->ExecuteFX(World, FFXParams(FX, Component, Bone, Offset));
 		}
 	}
 
 	const FVector Start = Component->GetComponentTransform().GetLocation() + Offset.GetLocation();
 	const FVector End = Component->GetComponentTransform().GetLocation() + Offset.GetLocation() +
 		(Component->GetComponentTransform().GetRotation() * Offset.GetRotation()).GetForwardVector() * 50;
-	UDebugFunctionLibrary::DebugDrawArrow(this, Sf_GameplayTags::Effects::Name, Start, End, 12, FColor::Silver, 1);
+	UDebugFunctionLibrary::DebugDrawArrow(World, Sf_GameplayTags::Effects::Name, Start, End, 12, FColor::Silver, 1);
 	
 	//TODO
 	return FFXHandle::GenerateNewHandle();

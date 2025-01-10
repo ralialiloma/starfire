@@ -32,7 +32,7 @@ void AResource::OnCollect_Implementation(FVector CollectLocation, APawn* Trigger
 	bHasBeenCollected = Collected;
 
 	UFXSubsystem* FXSubsystem = UFXSubsystem::Get();
-	FXSubsystem->PlayFXAt(FXCollectMessage, GetActorTransform());
+	FXSubsystem->PlayFXAt(this, FXCollectMessage, GetActorTransform());
 
 	if (bAutoDestroyOnCollect)
 		Destroy();
