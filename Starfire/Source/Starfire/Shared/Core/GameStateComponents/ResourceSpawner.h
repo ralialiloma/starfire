@@ -73,7 +73,10 @@ public:
 			return false;
 
 		ResourcePtr = NewResource;
-		NewResource->SetActorTransform(Transform);
+		NewResource->SetActorLocation(Transform.GetLocation());
+		NewResource->SetActorRotation(Transform.GetRotation());
+		FVector PreviousScale = NewResource->GetActorScale3D();
+		NewResource->SetActorScale3D(PreviousScale * Transform.GetScale3D());
 		return true;
 	}
 	void ClearItem(bool Destroy = false)
