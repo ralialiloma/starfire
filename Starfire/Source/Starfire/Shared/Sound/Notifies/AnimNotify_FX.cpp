@@ -32,12 +32,12 @@ void UAnimNotify_FX::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase*
 			{
 				if (MeshComp->GetBoneIndex(AttachBone) != INDEX_NONE)
 				{
-					FXSubsystem->PlayFXOn(FXTag, MeshComp, AttachBone);
+					FXSubsystem->PlayFXOn(this, FXTag, MeshComp, AttachBone);
 					break;
 				}
 			}
 		case EFXPlayType::FX_2D:
-			FXSubsystem->PlayFX(FXTag);
+			FXSubsystem->PlayFX(MeshComp, FXTag);
 			break;
 		default:
 			UDebugFunctionLibrary::DebugError(this, "Notify Play type not supported!");

@@ -82,14 +82,15 @@ public:
 
 	static UFXSubsystem* Get();
 	
-	UFUNCTION(BlueprintCallable, Category="FXSystem")
-	FFXHandle PlayFX(UPARAM(meta=(Categories="Effects.Messages")) FGameplayTag FXTag);
+	UFUNCTION(BlueprintCallable, Category="FXSystem", meta = (WorldContext = "WorldContext"))
+	FFXHandle PlayFX(const UObject* WorldContext, UPARAM(meta=(Categories="Effects.Messages")) FGameplayTag FXTag);
 
-	UFUNCTION(BlueprintCallable, Category="FXSystem")
-	FFXHandle PlayFXAt(UPARAM(meta = (Categories = "Effects.Messages")) FGameplayTag FXTag, FTransform Transform);
+	UFUNCTION(BlueprintCallable, Category="FXSystem", meta = (WorldContext = "WorldContext"))
+	FFXHandle PlayFXAt(const UObject* WorldContext, UPARAM(meta = (Categories = "Effects.Messages")) FGameplayTag FXTag, FTransform Transform);
 
-	UFUNCTION(BlueprintCallable, Category="FXSystem", meta = (AdvancedDisplay = "2"))
-	FFXHandle PlayFXOn(UPARAM(meta = (Categories = "Effects.Messages")) FGameplayTag FXTag, USceneComponent* Component, FName Bone = NAME_None, FTransform Offset = FTransform());
+	UFUNCTION(BlueprintCallable, Category="FXSystem", meta = (AdvancedDisplay = "2", WorldContext = "WorldContext"))
+	FFXHandle PlayFXOn(const UObject* WorldContext, UPARAM(meta = (Categories = "Effects.Messages")) FGameplayTag FXTag, USceneComponent* 
+	Component, FName Bone = NAME_None, FTransform Offset = FTransform());
 
 	UFUNCTION(BlueprintCallable, Category="FXSystem")
 	bool CancelFX(FFXHandle Handle);

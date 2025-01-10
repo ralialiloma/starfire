@@ -491,7 +491,7 @@ void AWeaponBase::DoFire(FHitResult& OutHitResult)
 	if (!FXAttachPoint)
 		FXAttachPoint = GetRootComponent();
 	
-	UFXSubsystem::Get()->PlayFXOn(GetWeaponConfig().FXFireTag, FXAttachPoint);
+	UFXSubsystem::Get()->PlayFXOn(this, GetWeaponConfig().FXFireTag, FXAttachPoint);
 }
 
 bool AWeaponBase::Reload()
