@@ -87,7 +87,8 @@ void USf_DamageController::Reset()
 	GetWorld()->GetTimerManager().ClearTimer(PassiveHealCooldown);
 	bShouldPassiveHeal = bEnablePassiveHealing;
 	CurrentArmor = MaxArmor;
-	CurrentHealth = bStartWithMaxHealth ? MaxHealth : 0;
+	//CurrentHealth = bStartWithMaxHealth ? MaxHealth : 0;
+	SetHealth(bStartWithMaxHealth ? MaxHealth : 0);
 }
 
 void USf_DamageController::Heal(const float AmountOfHeal, const bool bInternal)
@@ -161,7 +162,7 @@ void USf_DamageController::SetHealth(const float NewHealth)
 	}
 
 	//Broadcast Death
-	if (CurrentHealth<=0)
+	if (CurrentHealth<=0 && OldHealth>0)
 	{
 		OnZeroHealth_CPP.Broadcast();
 		OnZeroHealth_BP.Broadcast();
