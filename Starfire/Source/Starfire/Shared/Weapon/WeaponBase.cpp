@@ -230,7 +230,15 @@ void AWeaponBase::FireTraces(FHitResult& OutHitResult)
 	{
 		TraceALongFireTransform(OutHitResult);
 		ApplyDamage(OutHitResult);
-		//todo callHitEvent
+
+		if (OutHitResult.bBlockingHit)
+		{
+			for (UWeaponFeature* Feature: Features)
+			{
+				if (IsValid(Feature))
+					Feature->OnHitObject(OutHitResult);
+			}
+		}
 	}
 }
 

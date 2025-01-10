@@ -31,6 +31,10 @@ public:
 	
 	UFUNCTION(BlueprintNativeEvent)
 	void OnFire();
+
+	UFUNCTION(BlueprintNativeEvent)
+	void OnHitObject(FHitResult HitResult);
+	
 	UFUNCTION(BlueprintNativeEvent)
 	void OnReload();
 

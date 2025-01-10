@@ -7,6 +7,11 @@ void UWeaponFeature::Init(AWeaponBase* WeaponBase, UWeaponFeatureConfig* Config)
 	OnInit();
 }
 
+
+void UWeaponFeature::OnHitObject_Implementation(FHitResult HitResult)
+{
+}
+
 UWeaponFeatureConfig* UWeaponFeature::GetGenericConfig()
 {
 	return  GenericConfig;

@@ -17,6 +17,7 @@ public class Starfire : ModuleRules
 			"EnhancedInput" ,
 			"AIModule",
 			"NavigationSystem",
+			"PhysicsCore",
 			"GameplayTags"
 		});
 
