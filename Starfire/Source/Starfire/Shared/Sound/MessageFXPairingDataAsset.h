@@ -58,6 +58,6 @@ public:
 protected:
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly,meta = (TitleProperty = "{MessageFX}"))
-	TArray<FMessageFXPairings> MappedFXs;
+	TArray<FMessageFXPairings> MappedFXs = TArray<FMessageFXPairings>{};
 	
 };

@@ -154,9 +154,10 @@ UWorld* UFXSubsystem::GetWorld() const
 FGameplayTagContainer UFXSubsystem::GetFXByMessageTag(FGameplayTag MessageTag) const
 {
 	FGameplayTagContainer FXTags {};
-	for (auto MessageFXPairing : MessageFXPairings)
+	for (UMessageFXPairingDataAsset* MessageFXPairing : MessageFXPairings)
 	{
-		FXTags.AppendTags(MessageFXPairing->GetMappedFX(MessageTag));
+		if (IsValid(MessageFXPairing))
+			FXTags.AppendTags(MessageFXPairing->GetMappedFX(MessageTag));
 	}
 	
 	return FXTags;
