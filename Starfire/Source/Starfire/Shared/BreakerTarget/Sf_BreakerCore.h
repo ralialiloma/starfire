@@ -48,6 +48,9 @@ protected:
 	
 	void UpdateProgress(float Value);
 
+	UFUNCTION()
+	void OnDeathDamage();
+
 	float GetDividedPillarProgress() const;
 	int CalculateNumActivePillars() const;
 

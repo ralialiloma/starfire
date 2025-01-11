@@ -134,8 +134,10 @@ void ASf_BreakerCore::UpdateProgress(float Value)
 			USf_DamageController* DamageController = ChargingPillar->GetDamageController();
 			if (!IsValid(DamageController))
 				break;
-		
-			ChargingDamageHandle = DamageController->OnDeathDamage_CPP.AddLambda([this]()
+			
+			DamageController->OnDeathDamage_BP.AddDynamic(this,&ASf_BreakerCore::OnDeathDamage);
+			
+			/*ChargingDamageHandle = DamageController->OnDeathDamage_CPP.AddLambda([this]()
 			{
 				float RemainingProgress = 0;
 				ChargingPillar->SetRestore(0, RemainingProgress);
@@ -143,13 +145,14 @@ void ASf_BreakerCore::UpdateProgress(float Value)
 				ChargingPillar->DamageController->OnDeathDamage_CPP.Remove(ChargingDamageHandle);
 				ChargingPillar = nullptr;
 				UpdateProgress(-GetPillarProgress());
-			});
+			});*/
 		}
 
 		float RemainingProgress = 0;
 		if (ChargingPillar->SetRestore(RestoreProgress, RemainingProgress))
 		{
-			ChargingPillar->DamageController->OnDeathDamage_CPP.Remove(ChargingDamageHandle);
+			ChargingPillar->DamageController->OnDeathDamage_BP.RemoveDynamic(this,&ASf_BreakerCore::OnDeathDamage);
+			//ChargingPillar->DamageController->OnDeathDamage_CPP.Remove(ChargingDamageHandle);
 			ChargingPillar = nullptr;
 		}
 		
@@ -177,6 +180,19 @@ void ASf_BreakerCore::UpdateProgress(float Value)
 		OnProgressEmpty();
 		Stop();
 	}
+}
+
+void ASf_BreakerCore::OnDeathDamage()
+{
+	if (!IsValid(ChargingPillar))
+		return;
+	
+	float RemainingProgress = 0;
+	ChargingPillar->SetRestore(0, RemainingProgress);
+	ChargingPillar->BreakPillar();
+	ChargingPillar->DamageController->OnDeathDamage_BP.RemoveDynamic(this,&ASf_BreakerCore::OnDeathDamage);
+	ChargingPillar = nullptr;
+	UpdateProgress(-GetPillarProgress());
 }
 
 float ASf_BreakerCore::GetDividedPillarProgress() const
