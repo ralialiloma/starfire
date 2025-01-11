@@ -255,59 +255,73 @@ namespace Sf_GameplayTags
 	namespace Effects
 	{
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects", "");
-
 		namespace FX
 		{
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.FX", "");
-
 			namespace SoundsFX
 			{
 				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.FX.SoundFX", "");
 				namespace FP
-			{
-				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Respawn, "Effects.FX.SoundFX.FP.Respawn", "");
-				namespace Movement
 				{
-					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.FX.SoundFX.FP.Movement", "");
-					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Jump, "Effects.FX.SoundFX.FP.Movement.Jump", "");
-					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Footstep, "Effects.FX.SoundFX.FP.Movement.Footstep", "");
-					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Dash, "Effects.FX.SoundFX.FP.Movement.Dash", "");
-					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Mantle, "Effects.FX.SoundFX.FP.Movement.Mantle", "");
-					namespace WallRun
+					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Respawn, "Effects.FX.SoundFX.FP.Respawn", "");
+					namespace Health
 					{
-						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Respawn, "Effects.FX.SoundFX.FP.Movement.WallRun", "");
-						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Start, "Effects.FX.SoundFX.FP.Movement.WallRun.Start", "");
-						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Step, "Effects.FX.SoundFX.FP.Movement.WallRun.Step", "");
-					}
-				}
-				namespace Equipment
-				{
-					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.FX.SoundFX.FP.Equipment", "");
-					namespace Rifle
-					{
-						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.FX.SoundFX.FP.Equipment.Rifle", "");
-						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Fire, "Effects.FX.SoundFX.FP.Equipment.Rifle.Fire", "");
-						namespace Reload
+						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.FX.SoundFX.FP.Health", "");
+						DEFINE_GAMEPLAY_TAG_AUTO(Effects.FX.SoundFX.FP.Health,Low,"");
+						namespace Heal
 						{
-							UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.FX.SoundFX.FP.Equipment.Rifle.Reload", "");
-							namespace SafetyLock
-							{
-								UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.FX.SoundFX.FP.Equipment.Rifle.Reload.SafetyLock", "");
-								namespace SafetyLock
-								{
-									UE_DEFINE_GAMEPLAY_TAG_COMMENT(Open, "Effects.FX.SoundFX.FP.Equipment.Rifle.Reload.SafetyLock.Open", "");
-									UE_DEFINE_GAMEPLAY_TAG_COMMENT(Close, "Effects.FX.SoundFX.FP.Equipment.Rifle.Reload.SafetyLock.Close", "");
-								}
-							}
-							namespace AmmoPack
-							{
-								UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.FX.SoundFX.FP.Equipment.Rifle.Reload.AmmoPack", "");
-								UE_DEFINE_GAMEPLAY_TAG_COMMENT(RemoveFromShaft, "Effects.FX.SoundFX.FP.Equipment.Rifle.Reload.AmmoPack.RemoveFromShaft", "");
-								UE_DEFINE_GAMEPLAY_TAG_COMMENT(FailedAttemtToAddToShaft, "Effects.FX.SoundFX.FP.Equipment.Rifle.Reload.AmmoPack.FailedAttemtToAddToShaft", "");
-								UE_DEFINE_GAMEPLAY_TAG_COMMENT(AddToShaft, "Effects.FX.SoundFX.FP.Equipment.Rifle.Reload.AmmoPack.AddToShaft", "");
-							}
+							UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.FX.SoundFX.FP.Health.Heal", "");
+							DEFINE_GAMEPLAY_TAG_AUTO(Effects.FX.SoundFX.FP.Health,Start,"");
+							DEFINE_GAMEPLAY_TAG_AUTO(Effects.FX.SoundFX.FP.Health,Full,"");
 						}
 					}
+					namespace Movement
+					{
+						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.FX.SoundFX.FP.Movement", "");
+						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Jump, "Effects.FX.SoundFX.FP.Movement.Jump", "");
+						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Footstep, "Effects.FX.SoundFX.FP.Movement.Footstep", "");
+						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Dash, "Effects.FX.SoundFX.FP.Movement.Dash", "");
+						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Mantle, "Effects.FX.SoundFX.FP.Movement.Mantle", "");
+						namespace WallRun
+						{
+							UE_DEFINE_GAMEPLAY_TAG_COMMENT(Respawn, "Effects.FX.SoundFX.FP.Movement.WallRun", "");
+							UE_DEFINE_GAMEPLAY_TAG_COMMENT(Start, "Effects.FX.SoundFX.FP.Movement.WallRun.Start", "");
+							UE_DEFINE_GAMEPLAY_TAG_COMMENT(Step, "Effects.FX.SoundFX.FP.Movement.WallRun.Step", "");
+						}
+					}
+					namespace Equipment
+					{
+						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.FX.SoundFX.FP.Equipment", "");
+						namespace Rifle
+						{
+							UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.FX.SoundFX.FP.Equipment.Rifle", "");
+							UE_DEFINE_GAMEPLAY_TAG_COMMENT(Fire, "Effects.FX.SoundFX.FP.Equipment.Rifle.Fire", "");
+							namespace HitTarget
+							{
+								UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.FX.SoundFX.FP.Equipment.Rifle.HitTarget", "");
+								UE_DEFINE_GAMEPLAY_TAG_COMMENT(Pillar, "Effects.FX.SoundFX.FP.Equipment.Rifle.HitTarget.Pillar", "");
+							}
+							namespace Reload
+							{
+								UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.FX.SoundFX.FP.Equipment.Rifle.Reload", "");
+								namespace SafetyLock
+								{
+									UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.FX.SoundFX.FP.Equipment.Rifle.Reload.SafetyLock", "");
+									namespace SafetyLock
+									{
+										UE_DEFINE_GAMEPLAY_TAG_COMMENT(Open, "Effects.FX.SoundFX.FP.Equipment.Rifle.Reload.SafetyLock.Open", "");
+										UE_DEFINE_GAMEPLAY_TAG_COMMENT(Close, "Effects.FX.SoundFX.FP.Equipment.Rifle.Reload.SafetyLock.Close", "");
+									}
+								}
+								namespace AmmoPack
+								{
+									UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.FX.SoundFX.FP.Equipment.Rifle.Reload.AmmoPack", "");
+									UE_DEFINE_GAMEPLAY_TAG_COMMENT(RemoveFromShaft, "Effects.FX.SoundFX.FP.Equipment.Rifle.Reload.AmmoPack.RemoveFromShaft", "");
+									UE_DEFINE_GAMEPLAY_TAG_COMMENT(FailedAttemtToAddToShaft, "Effects.FX.SoundFX.FP.Equipment.Rifle.Reload.AmmoPack.FailedAttemtToAddToShaft", "");
+									UE_DEFINE_GAMEPLAY_TAG_COMMENT(AddToShaft, "Effects.FX.SoundFX.FP.Equipment.Rifle.Reload.AmmoPack.AddToShaft", "");
+								}
+							}
+						}
 					namespace Grenade
 					{
 						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.FX.SoundFX.FP.Equipment.Grenade", "");
@@ -324,6 +338,54 @@ namespace Sf_GameplayTags
 		namespace Messages
 		{
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.Messages", "");
+			namespace TP
+			{
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.Messages.TP", "");
+				DEFINE_GAMEPLAY_TAG_AUTO(Effects.Messages.TP,Death,"");
+				namespace Equipment
+				{
+					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.Messages.TP.Equipment", "");
+					namespace Rifle
+					{
+						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.Messages.TP.Equipment.Rifle", "");
+						DEFINE_GAMEPLAY_TAG_AUTO(Effects.Messages.TP.Equipment.Rifle,Melee,"");
+						DEFINE_GAMEPLAY_TAG_AUTO(Effects.Messages.TP.Equipment.Rifle,Fire,"");
+						DEFINE_GAMEPLAY_TAG_AUTO(Effects.Messages.TP.Equipment.Rifle,Reload,"");
+					}
+				}
+				namespace Movement
+				{
+					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.Messages.TP.Movement", "");
+					namespace Step
+					{
+						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.Messages.TP.Movement.Step", "");
+						DEFINE_GAMEPLAY_TAG_AUTO(Effects.Messages.TP.Movement.Step,Walk,"");
+						DEFINE_GAMEPLAY_TAG_AUTO(Effects.Messages.TP.Movement.Step,Sprint,"");
+					}
+				}
+			}
+			namespace Resources
+			{
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.Messages.Resources", "");
+				namespace Crystal
+				{
+					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.Messages.Resources.Crystal", "");
+					DEFINE_GAMEPLAY_TAG_AUTO(Effects.Messages.Resources.Crystal,Break,"");
+					DEFINE_GAMEPLAY_TAG_AUTO(Effects.Messages.Resources.Crystal,Pickup,"");
+					DEFINE_GAMEPLAY_TAG_AUTO(Effects.Messages.Resources.Crystal,Full,"");
+				}
+				namespace PowerCore
+				{
+					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.Messages.Resources.PowerCore", "");
+					DEFINE_GAMEPLAY_TAG_AUTO(Effects.Messages.Resources.PowerCore,Pickup,"");
+					DEFINE_GAMEPLAY_TAG_AUTO(Effects.Messages.Resources.PowerCore,Full,"");
+				}
+				namespace Grenade
+				{
+					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.Messages.Resources.Grenade", "");
+					DEFINE_GAMEPLAY_TAG_AUTO(Effects.Messages.Resources.Grenade,Craft,"");
+				}
+			}
 			namespace FP
 			{
 				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Respawn, "Effects.Messages.FP.Respawn", "");
@@ -334,6 +396,7 @@ namespace Sf_GameplayTags
 					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Footstep, "Effects.Messages.FP.Movement.Footstep", "");
 					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Dash, "Effects.Messages.FP.Movement.Dash", "");
 					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Mantle, "Effects.Messages.FP.Movement.Mantle", "");
+					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Land, "Effects.Messages.FP.Movement.Land", "");
 					namespace WallRun
 					{
 						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.Messages.FP.Movement.WallRun", "");
