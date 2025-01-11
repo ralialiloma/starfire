@@ -287,6 +287,8 @@ void AWeaponBase::ApplyDamage(const FHitResult& InHitResult) const
 
 	if (!InHitResult.Component.IsValid())
 		return;;
+
+	OnWeaponApplyDamage.Broadcast(InHitResult);
 	
 	DamageReceiver->ApplyDamage(WeaponConfig.Damage,InHitResult.Location,InHitResult.Normal,InHitResult.Component.Get(),
 		WeaponConfig.DamageType);

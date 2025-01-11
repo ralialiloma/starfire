@@ -21,6 +21,8 @@ DEFINE_LOG_CATEGORY_STATIC(SF_Weapon, Display, Display);
 #define IS_ACTION_ALLOWED(WeaponBase, ActionType) \
 ((WeaponBase) ? (WeaponBase)->IsActionAllowed(Sf_GameplayTags::Gameplay::Weapon::Action::ActionType) : true)
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWeaponHit, const FHitResult&, HitResult);
+
 UCLASS(BlueprintType)
 class STARFIRE_API AWeaponBase : public AActor, public IPrimaryInteract
 {
@@ -41,7 +43,6 @@ public:
 	UWeaponFeature* GetFeatureByClass(const TSubclassOf<UWeaponFeature> Class);
 	template <typename FeatureType>
 	FeatureType* GetFeatureByClass();
-	
 	
 	virtual void Tick(float DeltaSeconds) override;
 	virtual void NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit) override;
@@ -160,6 +161,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category="WeaponBase")
 	bool Fire(const EInputSignalType InputSignal, EFireType FireType, FHitResult& OutHitResult, EFireBlock& OutFireBlock);
 
+public:
+	UPROPERTY(BlueprintAssignable)
+	FOnWeaponHit OnWeaponApplyDamage;
 protected:
 	UFUNCTION(BlueprintNativeEvent,Category="WeaponBase")
 	USceneComponent* GetMuzzleSceneComponent() const;
@@ -176,7 +180,6 @@ protected:
 
 #pragma region Reload
 #pragma region Functions
-
 public:
 	UFUNCTION(BlueprintCallable, Category="WeaponBase")
 	bool IsReloading() const;
@@ -208,7 +211,6 @@ public:
 private:
 	UPROPERTY()
 	FTimerHandle ReloadTimer = FTimerHandle();
-
 #pragma endregion
 
 
