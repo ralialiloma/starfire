@@ -22,6 +22,7 @@ DEFINE_LOG_CATEGORY_STATIC(SF_Weapon, Display, Display);
 ((WeaponBase) ? (WeaponBase)->IsActionAllowed(Sf_GameplayTags::Gameplay::Weapon::Action::ActionType) : true)
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWeaponHit, const FHitResult&, HitResult);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWeaponAim,const bool, IsAiming);
 
 UCLASS(BlueprintType)
 class STARFIRE_API AWeaponBase : public AActor, public IPrimaryInteract
@@ -229,7 +230,10 @@ public:
 	void AimDownSight();
 	UFUNCTION(BlueprintCallable, Category="WeaponBase")
 	void StopAiming();
-	
+
+public:
+	UPROPERTY(BlueprintAssignable)
+	FOnWeaponAim OnWeaponAim;
 #pragma endregion
 	
 #pragma region Melee

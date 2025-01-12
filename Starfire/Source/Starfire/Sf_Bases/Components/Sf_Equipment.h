@@ -116,6 +116,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool UnequipWeapon(bool HideWeapon, float& OutMontageTime);
+	
+	bool UnequipWeaponInstant(bool HideWeapon);
 
 	UFUNCTION(BlueprintCallable)
 	bool CanActivateWeapons() const;
@@ -179,6 +181,9 @@ protected:
 	AWeaponBase* EquippedWeapon;
 	UPROPERTY()
 	int CurrentEquipmentFlags;
+
+	
+	FTimerHandle UnequipHandle;
 
 
 #pragma endregion

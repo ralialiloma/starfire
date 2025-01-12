@@ -321,6 +321,7 @@ void AWeaponBase::AimDownSight()
 	
 	ExecuteAnimation(EWeaponAnimationEventType::Aim,true);
 	bIsAiming = true;
+	OnWeaponAim.Broadcast(true);
 }
 
 void AWeaponBase::StopAiming()
@@ -329,6 +330,7 @@ void AWeaponBase::StopAiming()
 		return;
 	ExecuteAnimation(EWeaponAnimationEventType::Aim,false);
 	bIsAiming = false;
+	OnWeaponAim.Broadcast(false);
 }
 
 
@@ -758,6 +760,7 @@ void AWeaponBase::OnUnequip(float& OutMontageTime)
 {
 	OutMontageTime= ExecuteAnimationAndReturnAnimLength(EWeaponAnimationEventType::Unequip,true);
 	UE_LOG(SF_Weapon, Log, TEXT("Unequipped %s"),*GetClass()->GetName())
+	
 }
 
 bool AWeaponBase::IsActionAllowed(const FGameplayTag ActionType) const
@@ -852,3 +855,4 @@ void AWeaponBase::SetNewHolder(USf_Equipment* NewHolder)
 	MeleeInfo.BoxComponent->OnComponentBeginOverlap.AddDynamic(this,&AWeaponBase::HandleMeleeBeginOverlap);
 	MeleeInfo.BoxComponent->OnComponentEndOverlap.AddDynamic(this,&AWeaponBase::AWeaponBase::HandleMeleeEndOverlap);
 }
+

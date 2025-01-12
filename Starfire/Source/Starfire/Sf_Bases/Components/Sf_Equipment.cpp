@@ -330,14 +330,34 @@ bool USf_Equipment::UnequipWeapon(bool HideWeapon, float& OutMontageTime)
 	if (!IsValid(EquippedWeapon))
 		return false;
 
-	AWeaponBase* OldWeapon = EquippedWeapon;
 	EquippedWeapon->OnUnequip(OutMontageTime);
+	
+	UnequipWeaponInstant(HideWeapon);
+	
+	/*GetWorld()->GetTimerManager().SetTimer(
+		UnequipHandle,
+		[this,HideWeapon]()->void{UnequipWeaponInstant(HideWeapon);},
+		OutMontageTime,
+		true);*/
+
+	return true;
+}
+
+bool USf_Equipment::UnequipWeaponInstant(bool HideWeapon)
+{
+	if (!CanUnequipWeapon())
+		return false;
+	
+	if (!IsValid(EquippedWeapon))
+		return false;
+
+	AWeaponBase* OldWeapon = EquippedWeapon;
+
 	if (HideWeapon)
 		SetWeaponActive(EquippedWeapon, nullptr, false);
 	
 	EquippedWeapon = nullptr;
 	OnWeaponChange.Broadcast(nullptr, OldWeapon);
-
 	return true;
 }
 
@@ -540,10 +560,11 @@ bool USf_Equipment::ActivateWeapon(AWeaponBase* Weapon, float& OutTotalMontageTi
 	{
 		return false;
 	}
+	
 
 
 	OutTotalMontageTime = 0;
-		
+
 	AWeaponBase* OldWeapon = EquippedWeapon;
 	if (OldWeapon)
 	{
@@ -559,8 +580,8 @@ bool USf_Equipment::ActivateWeapon(AWeaponBase* Weapon, float& OutTotalMontageTi
 	EquippedWeapon->OnEquip(OutTotalMontageTime);
 	OutTotalMontageTime+=EquipTime;
 	SetWeaponActive(EquippedWeapon, OldWeapon,true);
-
 	OnWeaponChange.Broadcast(EquippedWeapon, OldWeapon);
+	
 	return true;
 }
 
