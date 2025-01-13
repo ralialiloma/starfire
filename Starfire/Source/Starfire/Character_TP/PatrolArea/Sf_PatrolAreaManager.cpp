@@ -2,6 +2,8 @@
 
 #include "Sf_PatrolAreaManager.h"
 
+#include "Kismet/GameplayStatics.h"
+
 
 USf_PatrolAreaManager::USf_PatrolAreaManager()
 {
@@ -96,7 +98,33 @@ TArray<ASf_PatrolArea*> USf_PatrolAreaManager::GetFreePatrolAreas() const
 		
 		if (PatrolArea->IsOccupied())
 			PatrolAreas.Remove(PatrolArea);
+		
+		if (PatrolArea->IsIndependent())
+			PatrolAreas.Remove(PatrolArea);
 	}
 	
+	return PatrolAreas;
+}
+
+TArray<ASf_PatrolArea*> USf_PatrolAreaManager::GetAllRegisteredPatrolAreas() const
+{
+	return RegisteredPatrolAreas;
+}
+
+TArray<ASf_PatrolArea*> USf_PatrolAreaManager::GetAllPatrolAreas(const UObject* WorldContext)
+{
+	TArray<ASf_PatrolArea*> PatrolAreas {};
+	TArray<AActor*> FoundActors {};
+	UGameplayStatics::GetAllActorsOfClass(WorldContext, ASf_PatrolArea::StaticClass(), FoundActors);
+	for (auto Area : FoundActors)
+	{
+		ASf_PatrolArea* PatrolArea = Cast<ASf_PatrolArea>(Area);
+		
+		if (!PatrolArea)
+			continue;
+		
+		if (!PatrolArea->IsIndependent())
+			PatrolAreas.AddUnique(PatrolArea);
+	}
 	return PatrolAreas;
 }

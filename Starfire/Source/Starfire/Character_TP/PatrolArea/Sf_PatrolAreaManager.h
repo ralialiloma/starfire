@@ -29,6 +29,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	TArray<ASf_PatrolArea*> GetFreePatrolAreas() const;
+	UFUNCTION(BlueprintCallable)
+	TArray<ASf_PatrolArea*> GetAllRegisteredPatrolAreas() const;
+	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContext"))
+	static TArray<ASf_PatrolArea*> GetAllPatrolAreas(const UObject* WorldContext);
 
 protected:
 

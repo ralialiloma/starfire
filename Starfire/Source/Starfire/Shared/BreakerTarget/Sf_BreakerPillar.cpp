@@ -26,6 +26,9 @@ void ASf_BreakerPillar::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (bIndependent)
+		FullRestore();
+
 	DamageController->OnZeroHealth_CPP.AddLambda([this]()
 	{
 		BreakPillar();

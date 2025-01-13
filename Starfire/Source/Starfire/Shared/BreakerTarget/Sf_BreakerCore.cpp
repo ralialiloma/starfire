@@ -53,7 +53,7 @@ void ASf_BreakerCore::Stop()
 void ASf_BreakerCore::RegisterPillar(ASf_BreakerPillar* PillarToRegister)
 {
 	if (!PillarToRegister)
-		return;;
+		return;
 	
 	if (BreakerPillars.Contains(PillarToRegister))
 		return;
@@ -237,6 +237,13 @@ void ASf_BreakerCore::ImportPillars()
 	for (AActor* Actor: FoundActors)
 	{
 		ASf_BreakerPillar* BreakerShard = Cast<ASf_BreakerPillar>(Actor);
+
+		if (!BreakerShard)
+			continue;
+
+		if (BreakerShard->bIndependent)
+			continue;
+		
 		RegisterPillar(BreakerShard);
 	}
 

@@ -28,6 +28,8 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool IsOccupied() const;
 	UFUNCTION(BlueprintCallable, BlueprintPure)
+	bool IsIndependent() const;
+	UFUNCTION(BlueprintCallable, BlueprintPure)
 	FTransform GetRandomMarkerTransform() const;
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	TArray<ASf_PatrolAreaMarker*> GetCurrentMarkers() const;
@@ -55,6 +57,10 @@ protected:
 	void GetActorsInsideBox(TArray<AActor*>& OutActors) const;
 
 protected:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bIndependent = false;
+	
 	UPROPERTY(BlueprintReadOnly,EditAnywhere)
 	UBoxComponent* Box;
 

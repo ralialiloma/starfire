@@ -26,18 +26,17 @@ void AEnemySpawner::StartGame()
 
 void AEnemySpawner::DelayedStartGame()
 {
-	TArray<AActor*> OutActors;
-	UGameplayStatics::GetAllActorsOfClass(this, ASf_PatrolArea::StaticClass(), OutActors);
-	if (MaxEnemies > OutActors.Num())
+	TArray<ASf_PatrolArea*> PatrolAreas = USf_PatrolAreaManager::GetAllPatrolAreas(this);
+	if (MaxEnemies > PatrolAreas.Num())
 	{
 		DEBUG_SIMPLE(
 			LogEnemySpawner,
 			Warning,
 			FColor::Orange,
-			*FString::Printf(TEXT("MaxEnemies changed from %i to %i"), MaxEnemies, OutActors.Num()),
+			*FString::Printf(TEXT("MaxEnemies changed from %i to %i"), MaxEnemies, PatrolAreas.Num()),
 			Sf_GameplayTags::Debug::Spawning::Enemies);
 
-		MaxEnemies = OutActors.Num();
+		MaxEnemies = PatrolAreas.Num();
 	}
 
 	// if (bWaitForVeins)

@@ -43,6 +43,9 @@ public:
 	FSf_VoidDelegate_CPP OnBreak_CPP;
 	
 protected:
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Settings")
+	bool bIndependent = false;
 	
 	UPROPERTY(BlueprintReadOnly)
 	float CurrentRestoreValue = 0;

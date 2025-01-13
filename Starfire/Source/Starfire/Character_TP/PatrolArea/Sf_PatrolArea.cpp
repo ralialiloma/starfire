@@ -40,7 +40,7 @@ void ASf_PatrolArea::PostInitializeComponents()
 		return;
 	
 	USf_PatrolAreaManager* PatrolAreaManager = USf_PatrolAreaManager::Get(GetWorld());
-	if (IsValid(PatrolAreaManager))
+	if (IsValid(PatrolAreaManager) && !IsIndependent())
 		PatrolAreaManager->RegisterPatrolArea(this);
 }
 
@@ -61,6 +61,11 @@ bool ASf_PatrolArea::IsInBox(const FVector& LocationToTest) const
 bool ASf_PatrolArea::IsOccupied() const
 {
 	return Character != nullptr;
+}
+
+bool ASf_PatrolArea::IsIndependent() const
+{
+	return bIndependent;
 }
 
 FTransform ASf_PatrolArea::GetRandomMarkerTransform() const
