@@ -288,13 +288,22 @@ void AWeaponBase::ApplyDamage(const FHitResult& InHitResult) const
 	if (!InHitResult.Component.IsValid())
 		return;;
 
-	OnWeaponApplyDamage.Broadcast(InHitResult);
-	
-	DamageReceiver->ApplyDamage(WeaponConfig.Damage,InHitResult.Location,InHitResult.Normal,InHitResult.Component.Get(),
+	const float AppliedDamage =  DamageReceiver->ApplyDamage(
+		WeaponConfig.Damage,
+		InHitResult.Location,
+		InHitResult.Normal,
+		InHitResult.Component.Get(),
 		WeaponConfig.DamageType);
+	
+	OnWeaponApplyDamage.Broadcast(
+		AppliedDamage,
+		WeaponConfig.DamageType,
+		InHitResult,
+		DamageReceiver
+		);
 }
 
-void AWeaponBase::ApplyRecoil(float Modifier) const
+void AWeaponBase::ApplyRecoil(const float Modifier) const
 {
 	if (!GetWeaponOwner() || !GetWeaponOwner()->GetController())
 		return;
@@ -517,7 +526,6 @@ bool AWeaponBase::Reload(float& OutMontageTime)
 	//Stop Aiming on Reload
 	StopAiming();
 	
-	//float MontageTime = PlayMontage(EWeaponAnimationMontageType_FP::Reload);
 	const float MontageTime = ExecuteAnimationAndReturnAnimLength(EWeaponAnimationEventType::Reload,true);
 
 	FTimerDelegate TimerDel;

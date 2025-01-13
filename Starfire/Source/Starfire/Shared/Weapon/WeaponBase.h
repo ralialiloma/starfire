@@ -8,6 +8,7 @@
 #include "Starfire/Animation/WeaponMontageEventPackage.h"
 #include "Starfire/Utility/InputSignalType.h"
 #include "Starfire/Sf_Bases/Sf_Delegate.h"
+#include "Starfire/Shared/Damage/Sf_DamageController.h"
 #include "Starfire/Shared/Interact/InteractInterfaces.h"
 #include "StructsAndEnums/FireBlocks.h"
 #include "StructsAndEnums/FireType.h"
@@ -21,7 +22,13 @@ DEFINE_LOG_CATEGORY_STATIC(SF_Weapon, Display, Display);
 #define IS_ACTION_ALLOWED(WeaponBase, ActionType) \
 ((WeaponBase) ? (WeaponBase)->IsActionAllowed(Sf_GameplayTags::Gameplay::Weapon::Action::ActionType) : true)
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWeaponHit, const FHitResult&, HitResult);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnWeaponHit,
+	const float, Damage,
+	FGameplayTag,DamageType,
+	FHitResult,HitResult,
+	USf_DamageController*, DamageController);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWeaponAim,const bool, IsAiming);
 
 UCLASS(BlueprintType)
