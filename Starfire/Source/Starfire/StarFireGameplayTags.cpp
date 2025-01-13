@@ -12,12 +12,80 @@ namespace Sf_GameplayTags
 	namespace Gameplay
 	{
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay", "")
-
 		namespace ActionLogger
 		{
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay.ActionLogger", "")
+			namespace PortalSystem
+			{
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay.ActionLogger.PortalSystem", "")
+				namespace Pillar
+				{
+					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay.ActionLogger.PortalSystem.Pillar", "")
+					DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ActionLogger.PortalSystem.Pillar,Break,"");
+					DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ActionLogger.PortalSystem.Pillar,Restore,"");
+					DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ActionLogger.PortalSystem.Pillar,RestoreProgress,"");
+				}
+			}
+			namespace FP
+			{
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay.ActionLogger.FP", "")
+				namespace Movement
+				{
+					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay.ActionLogger.FP.Movement", "")
+					DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ActionLogger.FP.Movement,Jump,"");
+					DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ActionLogger.FP.Movement,Dash,"");
+					DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ActionLogger.FP.Movement,Mantle,"");
+					namespace Sprint
+					{
+						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay.ActionLogger.FP.Movement.Sprint", "")
+						DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ActionLogger.FP.Movement.Sprint,Start,"");
+						DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ActionLogger.FP.Movement.Sprint,End,"");
+					}
+					namespace WallRun
+					{
+						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay.ActionLogger.FP.Movement.Wallrun", "")
+						DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ActionLogger.FP.Movement.Wallrun,Start,"");
+						DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ActionLogger.FP.Movement.Wallrun,Jump,"");
+						DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ActionLogger.FP.Movement.Wallrun,End,"");
+					}
+				}
+				namespace Equipment
+				{
+					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay.ActionLogger.FP.Equipment", "")
+					namespace Rifle
+					{
+						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay.ActionLogger.FP.Equipment.Rifle", "")
+						namespace Fire
+						{
+							UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay.ActionLogger.FP.Equipment.Rifle.Fire", "")
+							DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ActionLogger.FP.Equipment.Rifle.Fire,Start,"");
+							DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ActionLogger.FP.Equipment.Rifle.Fire,Tick,"");
+							DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ActionLogger.FP.Equipment.Rifle.Fire,End,"");
+							DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ActionLogger.FP.Equipment.Rifle.Fire,Kill,"");
+						}
+						namespace Reload
+						{
+							UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay.ActionLogger.FP.Equipment.Rifle.Fire.Reload", "")
+							DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ActionLogger.FP.Equipment.Rifle.Reload,Start,"");
+							DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ActionLogger.FP.Equipment.Rifle.Reload,End,"");
+						}
+					}
+					namespace Grenade
+					{
+						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay.ActionLogger.FP.Equipment.Grenade", "")
+						DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ActionLogger.FP.Equipment.Grenade,Craft,"");
+						DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ActionLogger.FP.Equipment.Grenade,Explode,"");
+						DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ActionLogger.FP.Equipment.Grenade,Kill,"");
+						namespace Throw
+						{
+							UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay.ActionLogger.FP.Equipment.Grenade.Throw", "")
+							DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ActionLogger.FP.Equipment.Grenade.Throw,Start,"");
+							DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ActionLogger.FP.Equipment.Grenade.Throw,End,"");
+						}
+					}
+				}
+			}
 		}
-
 		namespace PatrolAreaMarkerTypes
 		{
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay.PatrolAreaMarkerTypes", "")
@@ -338,6 +406,27 @@ namespace Sf_GameplayTags
 		namespace Messages
 		{
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.Messages", "");
+			namespace PortalSystem
+			{
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.Messages.PortalSystem", "");
+				namespace Pillar
+				{
+					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.Messages.PortalSystem.Pillar", "");
+					DEFINE_GAMEPLAY_TAG_AUTO(Effects.Messages.PortalSystem.Pillar,Break,"");
+					DEFINE_GAMEPLAY_TAG_AUTO(Effects.Messages.PortalSystem.Pillar,Restore,"");
+					DEFINE_GAMEPLAY_TAG_AUTO(Effects.Messages.PortalSystem.Pillar,RestoreProgress,"");
+					namespace Move
+					{
+						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.Messages.PortalSystem.Pillar.Move", "");
+						DEFINE_GAMEPLAY_TAG_AUTO(Effects.Messages.PortalSystem.Pillar.Move,Up,"");
+						DEFINE_GAMEPLAY_TAG_AUTO(Effects.Messages.PortalSystem.Pillar.Move,Down,"");
+					}
+				}
+				namespace Portal
+				{
+					STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+				}
+			}
 			namespace TP
 			{
 				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.Messages.TP", "");
@@ -411,6 +500,7 @@ namespace Sf_GameplayTags
 					{
 						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.Messages.FP.Equipment.Rifle", "");
 						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Fire, "Effects.Messages.FP.Equipment.Rifle.Fire", "");
+						UE_DEFINE_GAMEPLAY_TAG_COMMENT(EmptyClipFireAttempt, "Effects.Messages.FP.Equipment.Rifle.EmptyClipFireAttempt", "");
 						namespace Reload
 						{
 							UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.Messages.FP.Equipment.Rifle.Reload", "");

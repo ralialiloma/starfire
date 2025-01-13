@@ -31,6 +31,10 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnWeaponHit,
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWeaponAim,const bool, IsAiming);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnFailFire,const EFireBlock, FireBlock);
+
+
+
 UCLASS(BlueprintType)
 class STARFIRE_API AWeaponBase : public AActor, public IPrimaryInteract
 {
@@ -53,7 +57,15 @@ public:
 	FeatureType* GetFeatureByClass();
 	
 	virtual void Tick(float DeltaSeconds) override;
-	virtual void NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit) override;
+	virtual void NotifyHit(
+		UPrimitiveComponent* MyComp,
+		AActor* Other,
+		UPrimitiveComponent* OtherComp,
+		bool bSelfMoved,
+		FVector HitLocation,
+		FVector HitNormal,
+		FVector NormalImpulse,
+		const FHitResult& Hit) override;
 
 private:
 	static TSet<TSubclassOf<UWeaponFeatureConfig>> GetAllStartConfigs();
@@ -170,8 +182,14 @@ public:
 	bool Fire(const EInputSignalType InputSignal, EFireType FireType, FHitResult& OutHitResult, EFireBlock& OutFireBlock);
 
 public:
+	UPROPERTY()
+	FGameplayTag Tag;
+	
 	UPROPERTY(BlueprintAssignable)
 	FOnWeaponHit OnWeaponApplyDamage;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnFailFire OnFailFire;
 protected:
 	UFUNCTION(BlueprintNativeEvent,Category="WeaponBase")
 	USceneComponent* GetMuzzleSceneComponent() const;
@@ -209,6 +227,9 @@ public:
 
 #pragma region Properties
 public:
+	UPROPERTY(BlueprintAssignable)
+	FSf_VoidDelegate_BP OnReloadStart_BP;
+	
 	UPROPERTY(BlueprintAssignable)
 	FSf_VoidDelegate_BP OnReloadStopped_BP;
 	FSf_VoidDelegate_CPP OnReloadStopped_CPP;

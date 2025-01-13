@@ -9,6 +9,7 @@
 #include "DrawDebugHelpers.h"
 #include "Kismet/KismetStringLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Starfire/Shared/ActionLogger/ActionLogger.h"
 #include "Starfire/Shared/Sound/FXSubsystem.h"
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
 
@@ -107,7 +108,8 @@ bool USf_FP_CharacterMovementComponent::DoJump(bool bReplayingMoves)
 	//Jump FX
 	if (IsMovementMode(MOVE_Walking))
 	{
-		UFXSubsystem::Get()->PlayFXOn(this, Sf_GameplayTags::Effects::Messages::FP::Movement::Jump, GetOwner()->GetRootComponent());
+		UFXSubsystem::Get()->PlayFXOn(this, Sf_GameplayTags::Effects::Messages::FP::Movement::Jump , GetOwner()->GetRootComponent());
+		ReportAction(Sf_GameplayTags::Gameplay::ActionLogger::FP::Movement::Jump);
 	}
 
 	if (Super::DoJump(bReplayingMoves))
@@ -115,6 +117,7 @@ bool USf_FP_CharacterMovementComponent::DoJump(bool bReplayingMoves)
 		if (bWasWallRunning || bWasWallRunningBeforeAllowance)
 		{
 			JumpOffWall();
+			ReportAction(Sf_GameplayTags::Gameplay::ActionLogger::FP::Movement::WallRun::Jump);
 			UFXSubsystem::Get()->PlayFXOn(this, Sf_GameplayTags::Effects::Messages::FP::Movement::Jump, GetOwner()->GetRootComponent());
 		}
 
@@ -203,6 +206,7 @@ void USf_FP_CharacterMovementComponent::UpdateCharacterStateBeforeMovement(float
 		if (TryDash())
 		{
 			SetMovementMode(MOVE_Custom, CMOVE_Dash);
+			ReportAction(Sf_GameplayTags::Gameplay::ActionLogger::FP::Movement::Dash);
 			UFXSubsystem::Get()->PlayFXOn(this, Sf_GameplayTags::Effects::Messages::FP::Movement::Dash, GetOwner()->GetRootComponent());
 			DashDuration = MaxDashDuration;
 			DashCount++;
@@ -215,6 +219,7 @@ void USf_FP_CharacterMovementComponent::UpdateCharacterStateBeforeMovement(float
 			MantleStartingVelocity = Velocity;
 			StopMovementImmediately();
 
+			ReportAction(Sf_GameplayTags::Gameplay::ActionLogger::FP::Movement::Mantle);
 			UFXSubsystem::Get()->PlayFXOn(this, Sf_GameplayTags::Effects::Messages::FP::Movement::Mantle, GetOwner()->GetRootComponent());
 		}
 		else
@@ -338,6 +343,7 @@ void USf_FP_CharacterMovementComponent::SprintPressed()
 		return;
 	}
 
+	ReportAction(Sf_GameplayTags::Gameplay::ActionLogger::FP::Movement::Sprint::Start);
 	Safe_bWantsToSprint = true;
 	OnSprintChange.Broadcast(true);
 }
@@ -349,6 +355,7 @@ void USf_FP_CharacterMovementComponent::SprintReleased()
 		return;
 	}
 
+	ReportAction(Sf_GameplayTags::Gameplay::ActionLogger::FP::Movement::Sprint::End);
 	Safe_bWantsToSprint = false;
 	OnSprintChange.Broadcast(false);
 }
@@ -492,6 +499,7 @@ bool USf_FP_CharacterMovementComponent::TryWallRun()
 	SmoothedWallNormal = FVector2D::Zero();
 	SetMovementMode(MOVE_Custom, CMOVE_WallRun);
 
+	ReportAction(Sf_GameplayTags::Gameplay::ActionLogger::FP::Movement::WallRun::Start);
 	UFXSubsystem::Get()->PlayFXOn(this, Sf_GameplayTags::Effects::Messages::FP::Movement::WallRun::Start, GetOwner()->GetRootComponent());
 
 	return true;
@@ -499,6 +507,7 @@ bool USf_FP_CharacterMovementComponent::TryWallRun()
 
 #define EXIT_WALLRUNPHYS(ReasonString) \
 	SetMovementMode(MOVE_Falling); \
+	ReportAction(Sf_GameplayTags::Gameplay::ActionLogger::FP::Movement::WallRun::End);\
 	StartNewPhysics(RemainingTime, Iterations); \
 	PRINTCOLOR(TEXT(ReasonString), FColor::Red) \
 	return;

@@ -11,13 +11,20 @@ public:
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Gameplay.ActionLogger"))
 	FGameplayTag RelatedTag;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector Location;
+
+	FActionLog(FGameplayTag RelatedTagIn, const FVector& LocationIn);
+	FActionLog(FGameplayTag RelatedTagIn);
+	FActionLog();
 
 	bool operator==(const FActionLog& Other) const
 	{
-		return RelatedTag == Other.RelatedTag;
+		return RelatedTag == Other.RelatedTag
+		&& Location == Other.Location;
 	}
-
-	// Inequality operator
+	
 	bool operator!=(const FActionLog& Other) const
 	{
 		return !(*this == Other);
@@ -33,7 +40,7 @@ public:
 public:
 	FDateTime GetTimeStamp() const;
 	FGuid GetGuid() const;
-
+	
 	FCachedActionLogMessage()
 	{
 		Message = FActionLog();
@@ -59,7 +66,7 @@ private:
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnActionReport, FCachedActionLogMessage, NewMessage, int, MessageCount);
 
 UCLASS()
-class UActionLoggerSubsSystem: public UWorldSubsystem
+class UActionLoggerSubSystem: public UWorldSubsystem
 {
 public:
 	GENERATED_BODY()
@@ -75,6 +82,8 @@ public:
 
 	UFUNCTION(BlueprintCallable,BlueprintAuthorityOnly)
 	int GetMessageCountSince(FActionLog MessageToLookFor, FDateTime Time);
+
+	static UActionLoggerSubSystem* Get(const UWorld* World);
 
 public:
 	UPROPERTY(BlueprintAssignable)

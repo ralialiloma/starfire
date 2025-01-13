@@ -1,4 +1,7 @@
 #include "Sf_BreakerPillar.h"
+
+#include "Starfire/Shared/ActionLogger/ActionLogger.h"
+#include "Starfire/Shared/Sound/FXSubsystem.h"
 #include "Templates/Function.h"
 
 ASf_BreakerPillar::ASf_BreakerPillar()
@@ -58,6 +61,10 @@ bool ASf_BreakerPillar::SetRestore(float RestoreValue, float& OutRemainingValue)
 
 	if (OutRemainingValue > 0.0f)
 		FullRestore();
+
+	const FActionLog Log = FActionLog (Sf_GameplayTags::Gameplay::ActionLogger::PortalSystem::Pillar::RestoreProgress,GetActorLocation());
+	UActionLoggerSubSystem::Get(GetWorld())->ReportAction(Log);
+	UFXSubsystem::Get()->PlayFX(this, Sf_GameplayTags::Effects::Messages::PortalSystem::Pillar::RestoreProgress);
 	
 	return OutRemainingValue > 0.0f;
 }
@@ -70,6 +77,9 @@ void ASf_BreakerPillar::FullRestore()
 	CurrentRestoreValue = 0;
 	DamageController->Reset();
 	DamageController->SetHealth(1);
+	const FActionLog Log = FActionLog (Sf_GameplayTags::Gameplay::ActionLogger::PortalSystem::Pillar::Restore,GetActorLocation());
+	UActionLoggerSubSystem::Get(GetWorld())->ReportAction(Log);
+	UFXSubsystem::Get()->PlayFX(this, Sf_GameplayTags::Effects::Messages::PortalSystem::Pillar::Restore);
 	OnRestore();
 }
 
@@ -78,10 +88,14 @@ void ASf_BreakerPillar::BreakPillar()
 	OnBreak();
 	OnBreak_BP.Broadcast();
 	OnBreak_CPP.Broadcast();
+	const FActionLog Log = FActionLog (Sf_GameplayTags::Gameplay::ActionLogger::PortalSystem::Pillar::Break,GetActorLocation());
+	UActionLoggerSubSystem::Get(GetWorld())->ReportAction(Log);
+	UFXSubsystem::Get()->PlayFX(this, Sf_GameplayTags::Effects::Messages::PortalSystem::Pillar::Break);
 }
 
 void ASf_BreakerPillar::OnBreak_Implementation()
 {
+
 }
 
 void ASf_BreakerPillar::OnRestore_Implementation()

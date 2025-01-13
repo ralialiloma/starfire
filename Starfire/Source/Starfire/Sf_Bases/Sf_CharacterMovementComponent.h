@@ -25,6 +25,7 @@ public:
 protected:
 	virtual float CapRadius() const;
 	virtual float CapHalfHeight() const;
+	virtual void ReportAction(FGameplayTag ActionTag);
 #pragma endregion
 
 #pragma region Properties

@@ -158,7 +158,6 @@ void AWeaponBase::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimiti
                             FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)
 {
 	Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
-	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, "Hit Item");
 	
 	if (bDestroyOnCollision)
 		Destroy();
@@ -193,7 +192,9 @@ bool AWeaponBase::Fire(const EInputSignalType InputSignal, EFireType FireType, F
 			const FString FireBlockString = USf_FunctionLibrary::GetEnumAsString<EFireBlock>(OutFireBlock);
 			GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Green, "Could not fire due to "+FireBlockString);
 		}
-		
+		OnFailFire.Broadcast(OutFireBlock);
+		if (OutFireBlock == EFireBlock::NotEnoughAmmo || OutFireBlock == EFireBlock::EmptyClip && InputSignal == EInputSignalType::InputSignal_Started)
+			UFXSubsystem::Get()->PlayFXOn(this, GetWeaponConfig().FXEmptyTag, GetRootComponent());
 		return false;
 	}
 
@@ -522,11 +523,11 @@ bool AWeaponBase::Reload(float& OutMontageTime)
 {
 	if (!CanReload())
 		return false;
-
+	
 	//Stop Aiming on Reload
 	StopAiming();
 	
-	const float MontageTime = ExecuteAnimationAndReturnAnimLength(EWeaponAnimationEventType::Reload,true);
+	OutMontageTime = ExecuteAnimationAndReturnAnimLength(EWeaponAnimationEventType::Reload,true);
 
 	FTimerDelegate TimerDel;
 	TimerDel.BindLambda([this]() ->void
@@ -536,8 +537,12 @@ bool AWeaponBase::Reload(float& OutMontageTime)
 		OnReloadFinish_CPP.Broadcast();
 	});
 
-	const float EffectiveMontageTime = FMath::Max(MontageTime, 0.001f);
+	const float EffectiveMontageTime = FMath::Max(OutMontageTime, 0.001f);
 	GetWorld()->GetTimerManager().SetTimer(ReloadTimer,TimerDel,EffectiveMontageTime,false);
+	OutMontageTime = EffectiveMontageTime;
+
+	OnReloadStart_BP.Broadcast();
+
 	return true;
 }
 

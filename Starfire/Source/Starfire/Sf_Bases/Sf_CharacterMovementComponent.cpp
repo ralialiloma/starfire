@@ -5,6 +5,7 @@
 #include "GameFramework/Character.h"
 #include "DrawDebugHelpers.h"
 #include "Components/CapsuleComponent.h"
+#include "Starfire/Shared/ActionLogger/ActionLogger.h"
 
 
 void USf_CharacterMovementComponent::SetMovementMode(EMovementMode NewMovementMode, uint8 NewCustomMode)
@@ -32,5 +33,11 @@ float USf_CharacterMovementComponent::CapRadius() const
 float USf_CharacterMovementComponent::CapHalfHeight() const
 {
 	return CharacterOwner->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
+}
+
+void USf_CharacterMovementComponent::ReportAction(const FGameplayTag ActionTag)
+{
+	const FActionLog ActionLog =  FActionLog(ActionTag, GetOwner()->GetRootComponent()->GetComponentLocation());
+	UActionLoggerSubSystem::Get(GetWorld())->ReportAction(ActionLog);
 }
 
