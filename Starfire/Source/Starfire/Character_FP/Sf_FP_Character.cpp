@@ -231,6 +231,18 @@ float ASf_FP_Character::GetJumpMaxHoldTime() const
 	return Super::GetJumpMaxHoldTime();
 }
 
+bool ASf_FP_Character::TeleportTo(const FVector& DestLocation, const FRotator& DestRotation, bool bIsATest, bool bNoCheck)
+{
+	bool bTeleportSucceeded =Super::TeleportTo(DestLocation, DestRotation, bIsATest, bNoCheck);
+
+	if (GetController())
+	{
+		GetController()->SetControlRotation(DestRotation);
+	}
+	
+	return bTeleportSucceeded;
+}
+
 void ASf_FP_Character::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);

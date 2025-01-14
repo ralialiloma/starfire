@@ -54,7 +54,7 @@ public:
 	}
 	
 public:
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	FActionLog Message;
 private:
 	UPROPERTY()

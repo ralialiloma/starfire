@@ -40,6 +40,8 @@ public:
 	virtual void StopJumping() override;
 	virtual void CheckJumpInput(float DeltaTime) override;
 	virtual float GetJumpMaxHoldTime() const override;
+
+	virtual bool TeleportTo(const FVector& DestLocation, const FRotator& DestRotation, bool bIsATest = false, bool bNoCheck = false) override;
 	
 	virtual void PostInitProperties() override;
 	virtual void PostInitializeComponents() override;
