@@ -9,6 +9,15 @@
 
 namespace Sf_GameplayTags
 {
+	namespace Tutorial
+	{
+		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Tutorial", "")
+
+		namespace State
+		{
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Tutorial.State", "")
+		}
+	}
 	namespace Gameplay
 	{
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay", "")

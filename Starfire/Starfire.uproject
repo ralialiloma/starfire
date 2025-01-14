@@ -60,6 +60,10 @@
 		{
 			"Name": "UdpMessaging",
 			"Enabled": false
+		},
+		{
+			"Name": "RegionSystem",
+			"Enabled": true
 		}
 	],
 	"TargetPlatforms": [
