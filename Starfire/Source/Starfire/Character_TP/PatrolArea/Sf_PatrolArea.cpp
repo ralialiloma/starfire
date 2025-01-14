@@ -40,7 +40,7 @@ void ASf_PatrolArea::PostInitializeComponents()
 		return;
 	
 	USf_PatrolAreaManager* PatrolAreaManager = USf_PatrolAreaManager::Get(GetWorld());
-	if (IsValid(PatrolAreaManager) && !IsIndependent())
+	if (IsValid(PatrolAreaManager))
 		PatrolAreaManager->RegisterPatrolArea(this);
 }
 
