@@ -18,7 +18,8 @@ public class Starfire : ModuleRules
 			"AIModule",
 			"NavigationSystem",
 			"PhysicsCore",
-			"GameplayTags"
+			"GameplayTags",
+			"RenderCore",
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[]
@@ -28,14 +29,16 @@ public class Starfire : ModuleRules
 			"SlateCore", 
 			"ApplicationCore", 
 			"DebugSystem", 
-			"ObjectExtensions"
+			"ObjectExtensions", 
+			"RegionSystem",
 		});
 
 		if (Target.bBuildEditor)
 		{
 			PublicDependencyModuleNames.AddRange(new string[]
 			{
-				"UnrealEd"
+				"UnrealEd",
+				"EditorFramework",
 			});
 		}
 

@@ -6,6 +6,15 @@ namespace Sf_GameplayTags
 	STARFIRE_API FGameplayTag FindTagByString(const FString& TagString, bool bMatchPartialString = false);
 	STARFIRE_API TArray<FGameplayTag> GetAllChildTags(const FGameplayTag& ParentTag);
 
+	namespace Tutorial
+	{
+		STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+
+		namespace State
+		{
+			STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+		}
+	}
 	namespace Gameplay
 	{
 		STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
