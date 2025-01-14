@@ -6,6 +6,7 @@
 #include "GameplayTagContainer.h"
 #include "GameFramework/Actor.h"
 #include "Starfire/Sf_Bases/Sf_Delegate.h"
+#include "GameFramework/PlayerStart.h"
 #include "Starfire/Shared/ActionLogger/ActionLogger.h"
 #include "TutorialManager.generated.h"
 
