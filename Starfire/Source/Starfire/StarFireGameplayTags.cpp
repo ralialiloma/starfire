@@ -69,15 +69,17 @@ namespace Sf_GameplayTags
 						{
 							UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay.ActionLogger.FP.Equipment.Rifle.Fire", "")
 							DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ActionLogger.FP.Equipment.Rifle.Fire,Start,"");
-							DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ActionLogger.FP.Equipment.Rifle.Fire,Tick,"");
+							DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ActionLogger.FP.Equipment.Rifle.Fire,Empty,"");
+							DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ActionLogger.FP.Equipment.Rifle.Fire,Damage,"");
 							DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ActionLogger.FP.Equipment.Rifle.Fire,End,"");
 							DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ActionLogger.FP.Equipment.Rifle.Fire,Kill,"");
 						}
 						namespace Reload
 						{
-							UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay.ActionLogger.FP.Equipment.Rifle.Fire.Reload", "")
+							UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay.ActionLogger.FP.Equipment.Rifle.Reload", "")
 							DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ActionLogger.FP.Equipment.Rifle.Reload,Start,"");
 							DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ActionLogger.FP.Equipment.Rifle.Reload,End,"");
+							DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ActionLogger.FP.Equipment.Rifle.Reload,Complete,"");
 						}
 					}
 					namespace Grenade

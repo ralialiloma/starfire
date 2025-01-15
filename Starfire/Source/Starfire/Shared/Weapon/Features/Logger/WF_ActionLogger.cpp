@@ -14,19 +14,17 @@ void UWF_ActionLogger::OnInit_Implementation()
 	GetOwningWeapon()->OnWeaponApplyDamage.AddDynamic(this,&UWF_ActionLogger::OnWeaponApplyDamage);
 	GetOwningWeapon()->OnReloadStopped_BP.AddDynamic(this,&UWF_ActionLogger::OnReloadStopped);
 	GetOwningWeapon()->OnReloadFinish_BP.AddDynamic(this,&UWF_ActionLogger::OnReloadFinished);
-
 	GetOwningWeapon()->OnFailFire.AddDynamic(this, &UWF_ActionLogger::OnFailFire);
 }
 
 void UWF_ActionLogger::OnWeaponApplyDamage(const float Damage, FGameplayTag DamageType, FHitResult HitResult, USf_DamageController* DamageController)
 {
 	ReportAction(Config->FireAndApplyDamage);
-	if (DamageController->GetCurrentHealth()<0)
+	if (DamageController->IsZeroHealth())
 	{
 		ReportAction(Config->FireAndKill);
 	}
 }
-
 
 void UWF_ActionLogger::ReportAction(const FGameplayTag ActionTag)
 {
@@ -34,7 +32,12 @@ void UWF_ActionLogger::ReportAction(const FGameplayTag ActionTag)
 	UActionLoggerSubSystem::Get(GetWorld())->ReportAction(ActionLog);
 }
 
-void UWF_ActionLogger::OnReloadStart()
+void UWF_ActionLogger::OnFire_Implementation()
+{
+	ReportAction(Config->StartFire);
+}
+
+void UWF_ActionLogger::OnReload_Implementation()
 {
 	ReportAction(Config->StartReload);
 }

@@ -29,6 +29,10 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnWeaponHit,
 	FHitResult,HitResult,
 	USf_DamageController*, DamageController);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnWeaponKill,
+	FHitResult,HitResult,
+	USf_DamageController*, KilledDamageController);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWeaponAim,const bool, IsAiming);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnFailFire,const EFireBlock, FireBlock);
@@ -187,6 +191,8 @@ public:
 	
 	UPROPERTY(BlueprintAssignable)
 	FOnWeaponHit OnWeaponApplyDamage;
+	UPROPERTY(BlueprintAssignable)
+	FOnWeaponKill OnWeaponKill;
 
 	UPROPERTY(BlueprintAssignable)
 	FOnFailFire OnFailFire;

@@ -64,8 +64,13 @@ void ATutorialManager::StartTutorial(FTransform InReturnTransform)
 	//Start Tutorial
 	UActionLoggerSubSystem* ActionLogger = UActionLoggerSubSystem::Get(GetWorld());
 	ActionLogger->OnActionReport.AddDynamic(this, &ATutorialManager::OnActionLogged);
+	
+	//Clear data
 	CompletedTutorialActions = FGameplayTagContainer();
 	CurrentRegion = FGameplayTag();
+	ActorsToClean.Empty();
+	
+	//Respawn Objects
 	for (auto Transform : EnemySpawnTransforms)
 	{
 		ActorsToClean.Add(GetWorld()->SpawnActor(EnemyClass, &Transform));
@@ -74,6 +79,7 @@ void ATutorialManager::StartTutorial(FTransform InReturnTransform)
 	{
 		ActorsToClean.Add(GetWorld()->SpawnActor(CrystalClass, &Transform));
 	}
+	
 	SelectNewState();
 
 	OnTutorialStart.Broadcast();
@@ -98,7 +104,11 @@ void ATutorialManager::EndTutorial()
 	{
 		AActor* ActorToClean = ActorsToClean[i];
 		ActorsToClean.RemoveAt(i);
-		ActorToClean->Destroy();
+		
+		if (ActorToClean)
+		{
+			ActorToClean->Destroy();
+		}
 	}
 
 	ReturnTransform = FTransform();

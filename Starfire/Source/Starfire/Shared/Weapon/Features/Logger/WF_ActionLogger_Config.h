@@ -17,12 +17,6 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Fire",meta = (Categories = "Gameplay.ActionLogger"))
 	FGameplayTag StartFire;
 
-	/*UPROPERTY(EditAnywhere,Category = "Fire",meta = (Categories = "Gameplay.ActionLogger"))
-	FGameplayTag TickFire;*/
-	
-	/*UPROPERTY(EditAnywhere,Category = "Fire",meta = (Categories = "Gameplay.ActionLogger"))
-	FGameplayTag StopFire;*/
-
 	UPROPERTY(EditAnywhere,Category = "Fire",meta = (Categories = "Gameplay.ActionLogger"))
 	FGameplayTag FireWithoutAmmo;
 

@@ -284,10 +284,10 @@ void AWeaponBase::ApplyDamage(const FHitResult& InHitResult) const
 		
 	USf_DamageController* DamageReceiver = InHitResult.GetActor()->GetComponentByClass<USf_DamageController>();
 	if (DamageReceiver==nullptr)
-		return;;
+		return;
 
 	if (!InHitResult.Component.IsValid())
-		return;;
+		return;
 
 	const float AppliedDamage =  DamageReceiver->ApplyDamage(
 		WeaponConfig.Damage,
@@ -302,6 +302,13 @@ void AWeaponBase::ApplyDamage(const FHitResult& InHitResult) const
 		InHitResult,
 		DamageReceiver
 		);
+
+	if (DamageReceiver->IsZeroHealth())
+	{
+		OnWeaponKill.Broadcast(
+			InHitResult,
+			DamageReceiver);
+	}
 }
 
 void AWeaponBase::ApplyRecoil(const float Modifier) const
@@ -488,18 +495,17 @@ void AWeaponBase::DoFire(FHitResult& OutHitResult)
 	//Reduce Clip
 	CurrentClip -= WeaponConfig.bInfiniteAmmo?0:1;
 
-	//Shoot Traces
-	FireTraces(OutHitResult);
-
-	//Play Shoot Montage
-	ExecuteAnimation(EWeaponAnimationEventType::Fire);
-
-	
 	for (UWeaponFeature* Feature: Features)
 	{
 		if (IsValid(Feature))
 			Feature->OnFire();
 	}
+
+	//Shoot Traces
+	FireTraces(OutHitResult);
+
+	//Play Shoot Montage
+	ExecuteAnimation(EWeaponAnimationEventType::Fire);
 
 	USceneComponent* FXAttachPoint = GetMuzzleSceneComponent();
 	if (!FXAttachPoint)
