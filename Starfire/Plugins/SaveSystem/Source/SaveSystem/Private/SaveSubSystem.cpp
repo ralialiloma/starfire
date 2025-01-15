@@ -19,15 +19,7 @@ FString USaveSubSystem::SoloSaveName = "Solos";
 
 USaveSubSystem* USaveSubSystem::Get()
 {
-	if (GEngine && GEngine->GameViewport)
-	{
-		if (UWorld* World = GEngine->GameViewport->GetWorld())
-		{
-			UGameInstance* GameInstance = World->GetGameInstance();
-			return GameInstance->GetSubsystem<USaveSubSystem>();
-		}
-	}
-	return nullptr;
+	return GEngine->GetEngineSubsystem<USaveSubSystem>();
 }
 
 UWorld* USaveSubSystem::GetWorld() const
@@ -37,9 +29,13 @@ UWorld* USaveSubSystem::GetWorld() const
 		return nullptr;
 	}
 
-	if (UGameInstance* GameInstance = GetGameInstance())
+	if (GEngine && GEngine->GameViewport)
 	{
-		return GameInstance->GetWorld();
+		if (UWorld* World = GEngine->GameViewport->GetWorld())
+		{
+			UGameInstance* GameInstance = World->GetGameInstance();
+			return GameInstance->GetWorld();
+		}
 	}
 
 	return nullptr;
@@ -63,9 +59,9 @@ void USaveSubSystem::Deinitialize()
 	ReevaluateSolosForSave();
 }
 
-void USaveSubSystem::Save(FGameplayTag SaveTag)
+void USaveSubSystem::Save(UObject* WorldContextObject, FGameplayTag SaveTag)
 {
-	TArray<UObject*> ObjectsToSave = GetAllSaveObjects();
+	TArray<UObject*> ObjectsToSave = GetAllSaveObjects(WorldContextObject);
 	
 	FString DebugString = FString::Printf(TEXT("Requested type save for %s"), *SaveTag.GetTagName().ToString());
 	DEBUG_SIMPLE(LogSaveSystem, Log, FColor::White, *DebugString, SaveTags::Name)
@@ -76,9 +72,9 @@ void USaveSubSystem::Save(FGameplayTag SaveTag)
 	}
 }
 
-void USaveSubSystem::Load(FGameplayTag SaveTag)
+void USaveSubSystem::Load(UObject* WorldContextObject, FGameplayTag SaveTag)
 {
-	TArray<UObject*> ObjectsToSave = GetAllSaveObjects();
+	TArray<UObject*> ObjectsToSave = GetAllSaveObjects(WorldContextObject);
 
 	FString DebugString = FString::Printf(TEXT("Requested type load for %s"), *SaveTag.GetTagName().ToString());
 	DEBUG_SIMPLE(LogSaveSystem, Log, FColor::White, *DebugString, SaveTags::Name)
@@ -288,9 +284,9 @@ FString USaveSubSystem::GetFullSaveName(const FGameplayTag& TypeTag, const FGame
 	return TypeName + "/" + SaveName;
 }
 
-TArray<UObject*> USaveSubSystem::GetAllSaveObjects() const
+TArray<UObject*> USaveSubSystem::GetAllSaveObjects(const UObject* WorldContextObject) const
 {
-	const UWorld* World = GetWorld();
+	const UWorld* World = WorldContextObject->GetWorld();
 	
 	if (!World)
 		return TArray<UObject*>();

@@ -19,7 +19,7 @@ DECLARE_LOG_CATEGORY_EXTERN(LogSaveSystem, Log, All);
  * 
  */
 UCLASS()
-class SAVESYSTEM_API USaveSubSystem : public UGameInstanceSubsystem
+class SAVESYSTEM_API USaveSubSystem : public UEngineSubsystem
 {
 	GENERATED_BODY()
 
@@ -32,10 +32,10 @@ public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
 
-	UFUNCTION(BlueprintCallable)
-	void Save(UPARAM(meta = (Categories = "Save.Type")) FGameplayTag SaveTag);
-	UFUNCTION(BlueprintCallable)
-	void Load(UPARAM(meta = (Categories = "Save.Type")) FGameplayTag SaveTag);
+	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"))
+	void Save(UObject* WorldContextObject, UPARAM(meta = (Categories = "Save.Type")) FGameplayTag SaveTag);
+	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"))
+	void Load(UObject* WorldContextObject, UPARAM(meta = (Categories = "Save.Type")) FGameplayTag SaveTag);
 
 	//Requests
 	UFUNCTION(BlueprintCallable)
@@ -90,7 +90,7 @@ protected:
 	static FString RemoveParentTagsFromTag(FGameplayTag SourceTag, FGameplayTag ParentToRemove);
 
 	FString GetFullSaveName(const FGameplayTag& TypeTag, const FGameplayTag& SaveTag) const;
-	TArray<UObject*> GetAllSaveObjects() const;
+	TArray<UObject*> GetAllSaveObjects(const UObject* WorldContextObject) const;
 
 	bool CanSaveByType(UObject* Object, FGameplayTag SaveType) const;
 	bool GetSaveIDs(UObject* Object, FGameplayTag& SaveTag, TSubclassOf<USaveGame>& SaveClass) const;
