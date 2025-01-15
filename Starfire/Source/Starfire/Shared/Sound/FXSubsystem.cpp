@@ -61,6 +61,7 @@ FFXHandle UFXSubsystem::PlayFXAt(const UObject* WorldContext, FGameplayTag FXTag
 
 	for (auto FXDataAsset : FXDataAssets)
 	{
+		
 		for (auto FX : FXTags)
 		{
 			FXDataAsset->ExecuteFX(World, FFXParams(FX, Transform));
@@ -92,7 +93,7 @@ FFXHandle UFXSubsystem::PlayFXOn(const UObject* WorldContext, FGameplayTag FXTag
 
 	for (auto FXDataAsset : FXDataAssets)
 	{
-		for (auto FX : FXTags)
+		for (FGameplayTag FX : FXTags)
 		{
 			FXDataAsset->ExecuteFX(World, FFXParams(FX, Component, Bone, Offset));
 		}
@@ -179,7 +180,9 @@ void UFXSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 		{			
 			for (auto FXDataAsset : Settings->FXDataAssets)
 			{
-				FXDataAssets.Add(FXDataAsset.LoadSynchronous());
+				UFXDataAssetBase* Asset = FXDataAsset.LoadSynchronous();
+				if (IsValid(Asset))
+					FXDataAssets.Add(Asset);
 			}
 		}
 		else
