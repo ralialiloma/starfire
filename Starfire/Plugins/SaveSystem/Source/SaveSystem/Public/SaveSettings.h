@@ -8,6 +8,7 @@
 #include "Structs/TimeData.h"
 #include "SaveSettings.generated.h"
 
+class UConstantsDataAsset;
 /**
  * 
  */
@@ -29,4 +30,7 @@ public:
 	TMap<FGameplayTag, FString> DefaultStringSolos;
 	UPROPERTY(BlueprintReadOnly, Config, EditAnywhere, Category = "Save", meta = (ForceInlineRow))
 	TMap<FGameplayTag, float> DefaultFloatSolos;
+
+	UPROPERTY(BlueprintReadOnly, Config, EditAnywhere, Category = "Constants")
+	TArray<TSoftObjectPtr<UConstantsDataAsset>> ConstantDefinitions {};
 };

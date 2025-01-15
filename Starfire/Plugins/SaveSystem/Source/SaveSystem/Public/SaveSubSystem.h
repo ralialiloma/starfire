@@ -7,6 +7,8 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "SaveSubSystem.generated.h"
 
+class UConstantConfigs;
+class UConstantsDataAsset;
 class USoloSaveGame;
 class USaveGame;
 class UGeneralSaveGame;
@@ -22,6 +24,8 @@ class SAVESYSTEM_API USaveSubSystem : public UGameInstanceSubsystem
 	GENERATED_BODY()
 
 public:
+
+	static USaveSubSystem* Get();
 
 	//Overrides
 	virtual UWorld* GetWorld() const override;
@@ -66,6 +70,19 @@ public:
 	static USoloSaveGame* LoadSolos();
 	static bool SaveSolos(USoloSaveGame* SoloToSave);
 	static FString GetSoloSaveName();
+#pragma endregion
+	
+#pragma region Constants
+	
+	TArray<UConstantConfigs*> GetAllConfigsOfType(const TSubclassOf<UConstantConfigs>& Class) const;
+
+protected:
+
+	void LoadAllConstants();
+
+	UPROPERTY(Transient)
+	TArray<UConstantsDataAsset*> Constants {};
+	
 #pragma endregion
 	
 protected:

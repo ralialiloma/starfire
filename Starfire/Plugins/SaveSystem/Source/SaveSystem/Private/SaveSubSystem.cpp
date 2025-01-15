@@ -9,12 +9,26 @@
 #include "EngineUtils.h"
 #include "SaveSettings.h"
 #include "Components/GameFrameworkComponent.h"
+#include "Constants/ConstantsDataAsset.h"
 #include "SaveObjects/SoloSaveGame.h"
 
 DEFINE_LOG_CATEGORY(LogSaveSystem)
 
 FString USaveSubSystem::SoloSaveDirectory = "";
 FString USaveSubSystem::SoloSaveName = "Solos";
+
+USaveSubSystem* USaveSubSystem::Get()
+{
+	if (GEngine && GEngine->GameViewport)
+	{
+		if (UWorld* World = GEngine->GameViewport->GetWorld())
+		{
+			UGameInstance* GameInstance = World->GetGameInstance();
+			return GameInstance->GetSubsystem<USaveSubSystem>();
+		}
+	}
+	return nullptr;
+}
 
 UWorld* USaveSubSystem::GetWorld() const
 {
@@ -38,6 +52,7 @@ void USaveSubSystem::Initialize(FSubsystemCollectionBase& Collection)
 	//Maybe Preload some Save Games
 	ReevaluateLoadedSolos();
 	VerifySoloDefaults();
+	LoadAllConstants();
 }
 
 void USaveSubSystem::Deinitialize()
@@ -440,6 +455,33 @@ bool USaveSubSystem::SaveSolos(USoloSaveGame* SoloToSave)
 FString USaveSubSystem::GetSoloSaveName()
 {
 	return SoloSaveDirectory + SoloSaveName;
+}
+
+TArray<UConstantConfigs*> USaveSubSystem::GetAllConfigsOfType(const TSubclassOf<UConstantConfigs>& Class) const
+{
+	TArray<UConstantConfigs*> Configs {};
+	for (auto Constant : Constants)
+	{
+		Configs.Append(Constant->GetAllConfigsOfType(Class));
+	}
+	return Configs;
+}
+
+void USaveSubSystem::LoadAllConstants()
+{
+	USaveSettings* SaveSettings = USaveSettings::Get();
+	if (!SaveSettings)
+		return;
+
+	for (auto ConstantDefinitions : SaveSettings->ConstantDefinitions)
+	{
+		UConstantsDataAsset* Asset = ConstantDefinitions.LoadSynchronous();
+
+		if (!Asset)
+			continue;
+
+		Constants.Add(Asset);
+	}
 }
 
 void USaveSubSystem::ReevaluateSolosForSave() const
