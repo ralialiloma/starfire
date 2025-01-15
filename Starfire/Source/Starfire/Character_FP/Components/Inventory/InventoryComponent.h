@@ -55,6 +55,9 @@ protected:
 	bool CanCraftItem(FCraftingData CraftingData) const;
 	void UpdateAvailableCraftables();
 
+	UFUNCTION(BlueprintNativeEvent)
+	void OnResourceAddedInternal(FGameplayTag Item);
+
 public:
 
 	UPROPERTY(BlueprintAssignable)

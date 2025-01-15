@@ -52,6 +52,7 @@ namespace Sf_GameplayTags
 					{
 						STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
 						STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Start);
+						STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Curved);
 						STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Jump);
 						STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(End);
 					}
@@ -92,6 +93,27 @@ namespace Sf_GameplayTags
 					}
 				}
 			}
+			namespace Resources
+			{
+				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+
+				namespace Crystal
+				{
+					STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+					STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Collect);
+					STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Break);
+				}
+				namespace PowerCore
+				{
+					STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+					STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Collect);
+				}
+			}
+			// namespace TP
+			// {
+			// 	STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+			// 	STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Break);
+			// }
 		}
 		namespace PatrolAreaMarkerTypes
 		{

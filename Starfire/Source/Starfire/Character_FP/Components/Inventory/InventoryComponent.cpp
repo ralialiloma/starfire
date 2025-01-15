@@ -3,6 +3,7 @@
 #include "ResourceCraftingDefinition.h"
 #include "DebugFunctionLibrary.h"
 #include "Starfire/StarFireGameplayTags.h"
+#include "Starfire/Shared/ActionLogger/ActionLogger.h"
 #include "Starfire/Shared/Sound/FXSubsystem.h"
 
 DEFINE_LOG_CATEGORY(LogInventoryComponent);
@@ -27,7 +28,8 @@ int UInventoryComponent::AddResource(FGameplayTag ItemTag, int AddQuantity)
 		ItemQuantity = MaxItemStack;
 		ReturnQuantity = NewItemQuantity - MaxItemStack;
 	}
-	
+
+	OnResourceAddedInternal(ItemTag);
 	OnResourceAdded.Broadcast(ItemTag,ItemQuantity);
 	UpdateAvailableCraftables();
 	
@@ -158,6 +160,23 @@ void UInventoryComponent::UpdateAvailableCraftables()
 				CraftItem(ItemTag);
 			}
 		}
+	}
+}
+
+void UInventoryComponent::OnResourceAddedInternal_Implementation(FGameplayTag Item)
+{
+	UActionLoggerSubSystem* ActionLogger = UActionLoggerSubSystem::Get(GetWorld());
+	if (Item.MatchesTagExact(Sf_GameplayTags::Gameplay::Resource::Enemy))
+	{
+		ActionLogger->ReportAction(Sf_GameplayTags::Gameplay::ActionLogger::Resources::PowerCore::Collect);
+	}
+	else if (Item.MatchesTagExact(Sf_GameplayTags::Gameplay::Resource::Environment))
+	{
+		ActionLogger->ReportAction(Sf_GameplayTags::Gameplay::ActionLogger::Resources::Crystal::Collect);
+	}
+	else if (Item.MatchesTagExact(Sf_GameplayTags::Gameplay::Resource::ObjectiveItem))
+	{
+		ActionLogger->ReportAction(Sf_GameplayTags::Gameplay::ActionLogger::FP::Equipment::Grenade::Craft);
 	}
 }
 

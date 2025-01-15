@@ -117,6 +117,7 @@ bool USf_FP_CharacterMovementComponent::DoJump(bool bReplayingMoves)
 		if (bWasWallRunning || bWasWallRunningBeforeAllowance)
 		{
 			JumpOffWall();
+			ReportAction(Sf_GameplayTags::Gameplay::ActionLogger::FP::Movement::WallRun::End);
 			ReportAction(Sf_GameplayTags::Gameplay::ActionLogger::FP::Movement::WallRun::Jump);
 			UFXSubsystem::Get()->PlayFXOn(this, Sf_GameplayTags::Effects::Messages::FP::Movement::Jump, GetOwner()->GetRootComponent());
 		}
@@ -200,6 +201,9 @@ void USf_FP_CharacterMovementComponent::UpdateCharacterStateBeforeMovement(float
 		ElapsedMantleTime = 0;
 		MantleStartingVelocity = Velocity;
 		StopMovementImmediately();
+
+		ReportAction(Sf_GameplayTags::Gameplay::ActionLogger::FP::Movement::Mantle);
+		UFXSubsystem::Get()->PlayFXOn(this, Sf_GameplayTags::Effects::Messages::FP::Movement::Mantle, GetOwner()->GetRootComponent());
 	}
 	else if (SfCharacterOwner->bCustomJumpPressed)
 	{

@@ -81,9 +81,6 @@ void ATutorialManager::StartTutorial(FTransform InReturnTransform)
 
 void ATutorialManager::EndTutorial()
 {
-	ReturnTransform = FTransform();
-	TutorialActive = false;
-	
 	if (!TutorialStart || !TutorialEnd)
 	{
 		UDebugFunctionLibrary::DebugError(this, "Tutorial Start or End not Declared!");
@@ -97,10 +94,15 @@ void ATutorialManager::EndTutorial()
 	UActionLoggerSubSystem* ActionLogger = UActionLoggerSubSystem::Get(GetWorld());
 	ActionLogger->OnActionReport.RemoveDynamic(this, &ATutorialManager::OnActionLogged);
 
-	for (auto Actor : ActorsToClean)
+	for (int i = ActorsToClean.Num() - 1; i >= 0; --i)
 	{
-		Actor->Destroy();
+		AActor* ActorToClean = ActorsToClean[i];
+		ActorsToClean.RemoveAt(i);
+		ActorToClean->Destroy();
 	}
+
+	ReturnTransform = FTransform();
+	TutorialActive = false;
 	
 	OnTutorialEnd.Broadcast();
 }

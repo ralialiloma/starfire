@@ -5,6 +5,7 @@
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Starfire/Character_FP/Components/Inventory/InventoryComponent.h"
+#include "Starfire/Shared/ActionLogger/ActionLogger.h"
 
 AAutoCollectResource::AAutoCollectResource()
 {
@@ -71,7 +72,9 @@ void AAutoCollectResource::Tick(float DeltaSeconds)
 	
 	bool bHasOverShot = VectorToPlayer.Dot(PreviousVectorToPlayer) < -0.9f;
 	if (VectorToPlayer.Length() < PickupRange || bHasOverShot)
+	{
 		OnCollect(GetActorLocation(), ContainedPawn);
+	}
 
 	PreviousVectorToPlayer = VectorToPlayer;
 }

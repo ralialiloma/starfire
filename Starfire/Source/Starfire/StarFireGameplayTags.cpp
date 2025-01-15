@@ -54,6 +54,7 @@ namespace Sf_GameplayTags
 					{
 						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay.ActionLogger.FP.Movement.Wallrun", "")
 						DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ActionLogger.FP.Movement.Wallrun,Start,"");
+						DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ActionLogger.FP.Movement.Wallrun,Curved,"");
 						DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ActionLogger.FP.Movement.Wallrun,Jump,"");
 						DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ActionLogger.FP.Movement.Wallrun,End,"");
 					}
@@ -92,6 +93,22 @@ namespace Sf_GameplayTags
 							DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ActionLogger.FP.Equipment.Grenade.Throw,End,"");
 						}
 					}
+				}
+			}
+			namespace Resources
+			{
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay.ActionLogger.Resources", "")
+
+				namespace Crystal
+				{
+					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay.ActionLogger.Resources.Crystal", "")
+					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Collect, "Gameplay.ActionLogger.Resources.Crystal.Collect", "")
+					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Break, "Gameplay.ActionLogger.Resources.Crystal.Break", "")
+				}
+				namespace PowerCore
+				{
+					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay.ActionLogger.Resources.PowerCore", "")
+					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Collect, "Gameplay.ActionLogger.Resources.PowerCore.Collect", "")
 				}
 			}
 		}

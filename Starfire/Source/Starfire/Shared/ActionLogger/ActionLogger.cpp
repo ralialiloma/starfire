@@ -1,5 +1,7 @@
 ﻿#include "ActionLogger.h"
 
+#include "NativeGameplayTags.h"
+
 UActionLoggerSubSystem* UActionLoggerSubSystem::Get(const UWorld* World)
 {
 	if (!IsValid(World))
@@ -15,6 +17,12 @@ FActionLog::FActionLog(const FGameplayTag RelatedTagIn, const FVector& LocationI
 }
 
 FActionLog::FActionLog(const FGameplayTag RelatedTagIn)
+{
+	RelatedTag = RelatedTagIn;
+	Location = FVector::ZeroVector;
+}
+
+FActionLog::FActionLog(const FNativeGameplayTag& RelatedTagIn)
 {
 	RelatedTag = RelatedTagIn;
 	Location = FVector::ZeroVector;

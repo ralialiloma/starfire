@@ -17,6 +17,7 @@ public:
 
 	FActionLog(FGameplayTag RelatedTagIn, const FVector& LocationIn);
 	FActionLog(FGameplayTag RelatedTagIn);
+	FActionLog(const FNativeGameplayTag& RelatedTagIn);
 	FActionLog();
 
 	bool operator==(const FActionLog& Other) const
