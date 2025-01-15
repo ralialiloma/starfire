@@ -62,7 +62,7 @@ T UConstantConfigs::GetConstantData(FGameplayTag Tag, TSubclassOf<UConstantConfi
 		return T();
 	
 	USaveSubSystem* System = USaveSubSystem::Get();
-	TArray<UConstantConfigs*> Configs = System->GetAllConfigsOfType(Class->StaticClass());
+	TArray<UConstantConfigs*> Configs = System->GetAllConfigsOfType(Class);
 
 	for (auto Config : Configs)
 	{

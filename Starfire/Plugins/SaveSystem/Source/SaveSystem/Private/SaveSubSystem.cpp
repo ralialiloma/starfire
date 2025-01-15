@@ -456,8 +456,7 @@ FString USaveSubSystem::GetSoloSaveName()
 TArray<UConstantConfigs*> USaveSubSystem::GetAllConfigsOfType(const TSubclassOf<UConstantConfigs>& Class)
 {
 #if WITH_EDITOR
-	if (GEditor && GEditor->PlayWorld == nullptr)
-		VerifyAllConstants();
+	LoadAllConstants();
 #endif
 	
 	TArray<UConstantConfigs*> Configs {};
