@@ -74,11 +74,12 @@ public:
 	
 #pragma region Constants
 	
-	TArray<UConstantConfigs*> GetAllConfigsOfType(const TSubclassOf<UConstantConfigs>& Class) const;
+	TArray<UConstantConfigs*> GetAllConfigsOfType(const TSubclassOf<UConstantConfigs>& Class);
 
 protected:
 
 	void LoadAllConstants();
+	void VerifyAllConstants();
 
 	UPROPERTY(Transient)
 	TArray<UConstantsDataAsset*> Constants {};

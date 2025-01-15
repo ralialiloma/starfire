@@ -453,8 +453,13 @@ FString USaveSubSystem::GetSoloSaveName()
 	return SoloSaveDirectory + SoloSaveName;
 }
 
-TArray<UConstantConfigs*> USaveSubSystem::GetAllConfigsOfType(const TSubclassOf<UConstantConfigs>& Class) const
+TArray<UConstantConfigs*> USaveSubSystem::GetAllConfigsOfType(const TSubclassOf<UConstantConfigs>& Class)
 {
+#if WITH_EDITOR
+	if (GEditor && GEditor->PlayWorld == nullptr)
+		VerifyAllConstants();
+#endif
+	
 	TArray<UConstantConfigs*> Configs {};
 	for (auto Constant : Constants)
 	{
@@ -469,6 +474,7 @@ void USaveSubSystem::LoadAllConstants()
 	if (!SaveSettings)
 		return;
 
+	Constants.Empty();
 	for (auto ConstantDefinitions : SaveSettings->ConstantDefinitions)
 	{
 		UConstantsDataAsset* Asset = ConstantDefinitions.LoadSynchronous();
@@ -477,6 +483,48 @@ void USaveSubSystem::LoadAllConstants()
 			continue;
 
 		Constants.Add(Asset);
+	}
+}
+
+void USaveSubSystem::VerifyAllConstants()
+{
+	USaveSettings* SaveSettings = USaveSettings::Get();
+	if (!SaveSettings)
+	{
+		return;
+	}
+	
+	TArray<UConstantsDataAsset*> DesiredAssets;
+	DesiredAssets.Reserve(SaveSettings->ConstantDefinitions.Num());
+	
+	for (const TSoftObjectPtr<UConstantsDataAsset>& Definition : SaveSettings->ConstantDefinitions)
+	{
+		UConstantsDataAsset* LoadedAsset = nullptr;
+		
+		if (Definition.IsValid())
+			LoadedAsset = Definition.Get();
+		else
+			LoadedAsset = Definition.LoadSynchronous();
+		
+		if (LoadedAsset)
+			DesiredAssets.Add(LoadedAsset);
+	}
+	
+	for (int32 Index = Constants.Num() - 1; Index >= 0; --Index)
+	{
+		UConstantsDataAsset* ExistingAsset = Constants[Index];
+		if (!ExistingAsset || !DesiredAssets.Contains(ExistingAsset))
+		{
+			Constants.RemoveAt(Index);
+		}
+	}
+	
+	for (UConstantsDataAsset* Desired : DesiredAssets)
+	{
+		if (!Constants.Contains(Desired))
+		{
+			Constants.Add(Desired);
+		}
 	}
 }
 
