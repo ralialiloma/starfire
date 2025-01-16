@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
+#include "NiagaraSystem.h"
 #include "Engine/DataAsset.h"
 #include "Starfire/Shared/Sound/FXDataAssetBase.h"
 #include "VisualFXDataAsset.generated.h"
@@ -17,8 +18,8 @@ struct FVisualFXSettings
 	GENERATED_BODY()
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	UParticleSystem* ParticleSystem = nullptr;
-
+	UFXSystemAsset* ParticleSystem = nullptr;
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FTransform AdditiveTransform = FTransform();
 

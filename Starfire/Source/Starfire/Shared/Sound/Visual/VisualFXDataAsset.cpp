@@ -3,6 +3,8 @@
 #include "VisualFXDataAsset.h"
 
 #include "DebugFunctionLibrary.h"
+#include "NiagaraComponent.h"
+#include "NiagaraFunctionLibrary.h"
 #include "VisualFXProcessor.h"
 #include "Kismet/GameplayStatics.h"
 #include "Starfire/StarFireGameplayTags.h"
@@ -32,32 +34,61 @@ void UVisualFXDataAsset::ExecuteFX_Implementation(UObject* WorldContext, FFXPara
         
         DEBUG_SIMPLE(LogVisualFX, Log, FColor::White, FString::Printf(TEXT("Playing %s"), *Params.FXTag.ToString()), Sf_GameplayTags::Effects::FX::VisualFX::Name);
 
-        UParticleSystemComponent* ParticleComp = nullptr;
+        UFXSystemComponent* ParticleComp = nullptr;
         switch (Params.PlayType)
         {
             case EFXPlayType::FX_2D:
                 UDebugFunctionLibrary::DebugError(this, FString::Printf(TEXT("Visual FX cannot be played on a 2D FX Type!")));
                 break;
             case EFXPlayType::FX_Location:
-                ParticleComp = UGameplayStatics::SpawnEmitterAtLocation(
-                    WorldContext->GetWorld(),
-                    FoundEffect->ParticleSystem,
-                    Params.Transform.GetLocation() + FoundEffect->AdditiveTransform.GetLocation(),
-                    (Params.Transform.GetRotation() + FoundEffect->AdditiveTransform.GetRotation()).Rotator(),
-                    Params.Transform.GetScale3D() * FoundEffect->AdditiveTransform.GetScale3D(),
-                    true,
-                    EPSCPoolMethod::AutoRelease);
+                if (UParticleSystem* ParticleSystem = Cast<UParticleSystem>(FoundEffect->ParticleSystem))
+                {
+                    ParticleComp = UGameplayStatics::SpawnEmitterAtLocation(
+                        WorldContext->GetWorld(),
+                        ParticleSystem,
+                        Params.Transform.GetLocation() + FoundEffect->AdditiveTransform.GetLocation(),
+                        (Params.Transform.GetRotation() + FoundEffect->AdditiveTransform.GetRotation()).Rotator(),
+                        Params.Transform.GetScale3D() * FoundEffect->AdditiveTransform.GetScale3D(),
+                        true,
+                        EPSCPoolMethod::AutoRelease);
+                }
+                if (UNiagaraSystem* NiagaraSystem = Cast<UNiagaraSystem>(FoundEffect->ParticleSystem))
+                {
+                    ParticleComp = UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+                        WorldContext->GetWorld(),
+                        NiagaraSystem,
+                        Params.Transform.GetLocation() + FoundEffect->AdditiveTransform.GetLocation(),
+                        (Params.Transform.GetRotation() + FoundEffect->AdditiveTransform.GetRotation()).Rotator(),
+                        Params.Transform.GetScale3D() * FoundEffect->AdditiveTransform.GetScale3D(),
+                        true,
+                        true);
+                }
                 break;
             case EFXPlayType::FX_Attached:
-                ParticleComp = UGameplayStatics::SpawnEmitterAttached(
-                    FoundEffect->ParticleSystem,
-                    Params.AttacheSceneComponent,
-                    Params.Bone,
-                    Params.Transform.GetLocation() + FoundEffect->AdditiveTransform.GetLocation(),
-                    (Params.Transform.GetRotation() + FoundEffect->AdditiveTransform.GetRotation()).Rotator(),
-                    Params.Transform.GetScale3D() * FoundEffect->AdditiveTransform.GetScale3D(),
-                    EAttachLocation::KeepRelativeOffset,
-                    true);
+                if (UParticleSystem* ParticleSystem = Cast<UParticleSystem>(FoundEffect->ParticleSystem))
+                {
+                    ParticleComp = UGameplayStatics::SpawnEmitterAttached(
+                        ParticleSystem,
+                        Params.AttacheSceneComponent,
+                        Params.Bone,
+                        Params.Transform.GetLocation() + FoundEffect->AdditiveTransform.GetLocation(),
+                        (Params.Transform.GetRotation() + FoundEffect->AdditiveTransform.GetRotation()).Rotator(),
+                        Params.Transform.GetScale3D() * FoundEffect->AdditiveTransform.GetScale3D(),
+                        EAttachLocation::KeepRelativeOffset,
+                        true);
+                }
+                if (UNiagaraSystem* NiagaraSystem = Cast<UNiagaraSystem>(FoundEffect->ParticleSystem))
+                {
+                    ParticleComp = UNiagaraFunctionLibrary::SpawnSystemAttached(
+                        NiagaraSystem,
+                        Params.AttacheSceneComponent,
+                        Params.Bone,
+                        Params.Transform.GetLocation() + FoundEffect->AdditiveTransform.GetLocation(),
+                        (Params.Transform.GetRotation() + FoundEffect->AdditiveTransform.GetRotation()).Rotator(),
+                        EAttachLocation::Type::SnapToTarget,
+                        EAttachLocation::KeepRelativeOffset,
+                        true);
+                }
                 break;
         }
 

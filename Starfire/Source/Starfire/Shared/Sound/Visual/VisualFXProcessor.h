@@ -3,6 +3,8 @@
 #include "CoreMinimal.h"
 #include "VisualFXProcessor.generated.h"
 
+class UFXSystemComponent;
+
 UCLASS(BlueprintType ,Blueprintable, DefaultToInstanced, EditInlineNew, Abstract)
 class UVisualFXProcessor : public UObject
 {
@@ -11,6 +13,6 @@ class UVisualFXProcessor : public UObject
 public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void ModifyFX(UParticleSystemComponent* FX) const;
+	void ModifyFX(UFXSystemComponent* FX) const;
 	
 };

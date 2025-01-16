@@ -30,7 +30,8 @@ public class Starfire : ModuleRules
 			"ApplicationCore", 
 			"DebugSystem", 
 			"ObjectExtensions", 
-			"RegionSystem",
+			"RegionSystem", 
+			"Niagara",
 		});
 
 		if (Target.bBuildEditor)
