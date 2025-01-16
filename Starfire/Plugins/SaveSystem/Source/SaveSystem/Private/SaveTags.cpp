@@ -19,4 +19,16 @@ namespace SaveTags
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Save.IDs", "Parent Tag for all unique save identifiers.");
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Debug, "Save.IDs.Debug", "Tag for testing and debugging.");
 	}
+
+	namespace Constants
+	{
+		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Save.Constants", "Parent Tag for all Constants.");
+
+		namespace Worlds
+		{
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Save.Constants.Worlds", "Parent Tag for World Constants.");
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(MainMenu, "Save.Constants.Worlds.MainMenu", "Defined Main Menu Level.");
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Game, "Save.Constants.Worlds.Game", "Defined Game Level.");
+		}
+	}
 }
