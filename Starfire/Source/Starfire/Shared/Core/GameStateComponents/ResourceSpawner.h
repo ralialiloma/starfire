@@ -177,17 +177,17 @@ protected:
 
 protected:
 
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Settings")
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Settings")
 	TSubclassOf<AResource> ResourceClass;
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Settings")
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Settings")
 	float SpawnDelay = 10;
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Settings")
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Settings")
 	int MaxSpawnedVeins = 5;
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Settings")
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Settings")
 	int SpawnedPerVein = 3;
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Settings")
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Settings")
 	bool StartWithMax = true;
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Settings")
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Settings")
 	int NoSpawnCooldown = 2;
 
 

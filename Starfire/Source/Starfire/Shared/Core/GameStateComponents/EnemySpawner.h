@@ -43,22 +43,22 @@ protected:
 
 protected:
 	
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = Settings)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = Settings)
 	TSubclassOf<ASf_TP_Character> SpawnedEnemyClass = nullptr;
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = Settings)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = Settings)
 	int MaxEnemies = 10;
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = Settings)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = Settings)
 	float SpawnDelay = 5.f;
-	// UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = Settings)
+	// UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = Settings)
 	// int EnemiesPerVein = 3;
-	// UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = Settings)
+	// UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = Settings)
 	// bool bWaitForVeins = true;
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (EditCondition = "bWaitForVeins"), Category = Settings)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (EditCondition = "bWaitForVeins"), Category = Settings)
 	bool bStartWithMax = true;
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = Settings)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = Settings)
 	bool bDisableSpawning = true;
 	
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = Settings)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = Settings)
 	TArray<FString> PossibleEnemyNames { 
 		FString("Tony"), 
 		FString("Victor"), 
