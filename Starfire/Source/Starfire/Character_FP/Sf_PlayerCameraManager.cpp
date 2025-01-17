@@ -29,7 +29,6 @@ void ASF_PlayerCameraManager::UpdateViewTarget(FTViewTarget& OutVT, float DeltaT
 	ViewTarget.POV.Rotation = FRotator(ViewTarget.POV.Rotation.Pitch,ViewTarget.POV.Rotation.Yaw,RollOverwrite);
 
 	//Update Aim
-
 	// Get SF_Equipment component.
 	USf_Equipment* SFEquipmentComp = SfCharacter->GetSfEquipmentComponent();
 	if (!IsValid(SFEquipmentComp))
