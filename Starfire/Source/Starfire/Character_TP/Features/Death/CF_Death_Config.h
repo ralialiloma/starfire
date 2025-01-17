@@ -3,6 +3,7 @@
 #include "Starfire/Shared/CharacterFeature/Sf_CharacterFeature_Config.h"
 #include "CF_Death_Config.generated.h"
 
+class UPoseAnimInstance;
 class AResource;
 
 UCLASS(Blueprintable)
@@ -17,6 +18,10 @@ public:
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<AResource> DroppedResourceClass;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bRagdoll = true;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (EditCondition = bRagdoll))
+	TSubclassOf<UPoseAnimInstance> AnimBlueprintClass = nullptr;
 #pragma endregion
 
 
