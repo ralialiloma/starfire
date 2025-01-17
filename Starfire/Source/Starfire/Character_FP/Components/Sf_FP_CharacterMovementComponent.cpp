@@ -417,7 +417,7 @@ FHitResult USf_FP_CharacterMovementComponent::CheckFromPlayer(const FVector& Cas
 	FVector End = Start + CastDelta;
 	auto Params = SfCharacterOwner->GetIgnoreCharacterParams();
 	FHitResult WallHit;
-	GetWorld()->LineTraceSingleByProfile(WallHit, Start, End, "MovementTrace", Params);
+	GetWorld()->LineTraceSingleByProfile(WallHit, Start, End, "WallRun", Params);
 	return WallHit;
 }
 
@@ -763,7 +763,7 @@ bool USf_FP_CharacterMovementComponent::TryMantle()
 	for (int i = 0; i < 6; i++)
 	{
 		// LINE(FrontStart, FrontStart + MantleForward * CheckDistance, FColor::Red)
-		if (GetWorld()->LineTraceSingleByProfile(FrontHit, FrontStart, FrontStart + MantleForward * CheckDistance, "MovementTrace", Params))
+		if (GetWorld()->LineTraceSingleByProfile(FrontHit, FrontStart, FrontStart + MantleForward * CheckDistance, "BlockAll", Params))
 		{
 			break;
 		}
