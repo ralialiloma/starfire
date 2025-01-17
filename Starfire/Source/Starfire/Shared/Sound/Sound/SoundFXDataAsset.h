@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "Engine/DataAsset.h"
-#include "Starfire/Shared/Sound/FXDataAssetBase.h"
+#include "Starfire/Shared/Sound/Bases/FXDataAssetBase.h"
 #include "SoundFXDataAsset.generated.h"
 
 class USoundFXProcessor;
@@ -53,7 +53,9 @@ public:
 	
 	FSoundFXSettings* GetSoundFXSettings(FGameplayTag Tag);
 
-	virtual void ExecuteFX_Implementation(UObject* WorldContext, FFXParams Params) override;
+	virtual USceneComponent* ExecuteFX_Implementation(UObject* WorldContext, FFXParams Params) override;
+	virtual bool CancelFX_Implementation(USceneComponent* FXComponent) override;
+	virtual float GetFXDuration_Implementation(USceneComponent* FXComponent) override;
 
 protected:
 

@@ -5,6 +5,7 @@
 
 #include "DebugFunctionLibrary.h"
 #include "SoundFXProcessor.h"
+#include "Components/AudioComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Starfire/StarFireGameplayTags.h"
 
@@ -15,12 +16,12 @@ FSoundFXSettings* USoundFXDataAsset::GetSoundFXSettings(FGameplayTag Tag)
 	return FXMap.Find(Tag);
 }
 
-void USoundFXDataAsset::ExecuteFX_Implementation(UObject* WorldContext, FFXParams Params)
+USceneComponent* USoundFXDataAsset::ExecuteFX_Implementation(UObject* WorldContext, FFXParams Params)
 {
 	if (!WorldContext || !WorldContext->GetWorld())
 	{
 		UDebugFunctionLibrary::DebugError(this, FString::Printf(TEXT("World Context Invalid!")));
-		return;
+		return nullptr;
 	}
 	
 	if (FSoundFXSettings* FoundSound = GetSoundFXSettings(Params.FXTag))
@@ -28,7 +29,7 @@ void USoundFXDataAsset::ExecuteFX_Implementation(UObject* WorldContext, FFXParam
 		if (!FoundSound->IsValid())
 		{
 			UDebugFunctionLibrary::DebugError(this, FString::Printf(TEXT("Found sound data is invalid for GameplayTag: %s"), *Params.FXTag.ToString()));
-			return;
+			return nullptr;
 		}
 
 		DEBUG_SIMPLE(
@@ -80,7 +81,7 @@ void USoundFXDataAsset::ExecuteFX_Implementation(UObject* WorldContext, FFXParam
 
 		if (!AudioComp)
 		{
-			return;
+			return nullptr;
 		}
 		
 		for (auto Processor : FoundSound->Processors)
@@ -90,5 +91,29 @@ void USoundFXDataAsset::ExecuteFX_Implementation(UObject* WorldContext, FFXParam
 			
 			Processor->ModifyFX(AudioComp);
 		}
+
+		return AudioComp;
 	}
+	return nullptr;
+}
+
+bool USoundFXDataAsset::CancelFX_Implementation(USceneComponent* FXComponent)
+{
+	if (UAudioComponent* AudioComponent = Cast<UAudioComponent>(FXComponent))
+	{
+		AudioComponent->Stop();
+		return true;
+	}
+	return false;
+}
+
+float USoundFXDataAsset::GetFXDuration_Implementation(USceneComponent* FXComponent)
+{
+	if (UAudioComponent* AudioComponent = Cast<UAudioComponent>(FXComponent))
+	{
+		if (AudioComponent->Sound->IsLooping())
+			return -1;
+		return AudioComponent->Sound->Duration;
+	}
+	return 0;
 }

@@ -5,6 +5,7 @@
 
 #include "DebugFunctionLibrary.h"
 #include "Starfire/Shared/Sound/FXSubsystem.h"
+#include "Starfire/Shared/Sound/Bases/FXHandle.h"
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
 
 UAnimNotify_FX::UAnimNotify_FX()

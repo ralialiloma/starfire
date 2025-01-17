@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "Particles/ParticleSystem.h"
-#include "Starfire/Shared/Sound/FXDataAssetBase.h"
+#include "Starfire/Shared/Sound/Bases/FXDataAssetBase.h"
 #include "VisualFXDataAsset.generated.h"
 
 class UVisualFXProcessor;
@@ -42,7 +42,9 @@ public:
 	
 	FVisualFXSettings* GetVisualFXSettings(FGameplayTag Tag);
 
-	virtual void ExecuteFX_Implementation(UObject* WorldContext, FFXParams Params) override;
+	virtual USceneComponent* ExecuteFX_Implementation(UObject* WorldContext, FFXParams Params) override;
+	virtual bool CancelFX_Implementation(USceneComponent* FXComponent) override;
+	virtual float GetFXDuration_Implementation(USceneComponent* FXComponent) override;
 
 protected:
 

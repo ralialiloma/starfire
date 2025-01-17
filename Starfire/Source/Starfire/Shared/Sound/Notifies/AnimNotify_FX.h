@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Animation/AnimNotifies/AnimNotify.h"
 #include "Starfire/StarFireGameplayTags.h"
-#include "Starfire/Shared/Sound/FXDataAssetBase.h"
+#include "Starfire/Shared/Sound/Bases/FXDataAssetBase.h"
 #include "AnimNotify_FX.generated.h"
 
 /**

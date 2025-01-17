@@ -5,8 +5,11 @@
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "GameplayTagContainer.h"
+#include "Bases/FXHandle.h"
+#include "Bases/FXParams.h"
 #include "FXSubsystem.generated.h"
 
+class UFXHandleObject;
 class UFXDataAssetBase;
 class UVisualFXDataAsset;
 class UMessageFXPairingDataAsset;
@@ -14,64 +17,6 @@ class USoundFXDataAsset;
 class USoundBase;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogFXSubsystem, Log, All);
-
-USTRUCT(BlueprintType)
-struct FFXHandle
-{
-	GENERATED_BODY()
-
-public:
-	
-	FFXHandle()
-		: Handle(NAME_None)
-	{
-	}
-	
-	explicit FFXHandle(const FName& InHandle)
-		: Handle(InHandle)
-	{
-	}
-
-	static FFXHandle GenerateNewHandle()
-	{
-		return FFXHandle(FName(*FString::Printf(TEXT("FXHandle_%d"), FMath::Rand())));
-	}
-	
-	FName GetHandle() const
-	{
-		return Handle;
-	}
-	
-	void Invalidate()
-	{
-		Handle = NAME_None;
-	}
-
-	bool IsValid() const
-	{
-		return Handle != NAME_None;
-	}
-
-	bool operator==(const FFXHandle& Other) const
-	{
-		return Handle == Other.Handle;
-	}
-
-	bool operator!=(const FFXHandle& Other) const
-	{
-		return !(*this == Other);
-	}
-
-	friend uint32 GetTypeHash(const FFXHandle& FXHandle)
-	{
-		return GetTypeHash(FXHandle.Handle);
-	}
-
-private:
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	FName Handle;
-};
 
 UCLASS()
 class STARFIRE_API UFXSubsystem : public UEngineSubsystem
@@ -83,23 +28,24 @@ public:
 	static UFXSubsystem* Get();
 	
 	UFUNCTION(BlueprintCallable, Category="FXSystem", meta = (WorldContext = "WorldContext"))
-	FFXHandle PlayFX(const UObject* WorldContext, UPARAM(meta=(Categories="Effects.Messages")) FGameplayTag FXTag);
+	FFXHandle PlayFX(const UObject* WorldContext, UPARAM(meta=(Categories="Effects.Messages")) FGameplayTag FXMessageTag);
 
 	UFUNCTION(BlueprintCallable, Category="FXSystem", meta = (WorldContext = "WorldContext"))
-	FFXHandle PlayFXAt(const UObject* WorldContext, UPARAM(meta = (Categories = "Effects.Messages")) FGameplayTag FXTag, FTransform Transform);
+	FFXHandle PlayFXAt(const UObject* WorldContext, UPARAM(meta = (Categories = "Effects.Messages")) FGameplayTag FXMessageTag, FTransform Transform);
 
 	UFUNCTION(BlueprintCallable, Category="FXSystem", meta = (AdvancedDisplay = "2", WorldContext = "WorldContext"))
-	FFXHandle PlayFXOn(const UObject* WorldContext, UPARAM(meta = (Categories = "Effects.Messages")) FGameplayTag FXTag, USceneComponent* 
+	FFXHandle PlayFXOn(const UObject* WorldContext, UPARAM(meta = (Categories = "Effects.Messages")) FGameplayTag FXMessageTag, USceneComponent* 
 	Component, FName Bone = NAME_None, FTransform Offset = FTransform());
 
 	UFUNCTION(BlueprintCallable, Category="FXSystem")
-	bool CancelFX(FFXHandle Handle);
+	bool CancelFX(UPARAM(ref) FFXHandle& Handle);
 
 protected:
+	FFXHandle PlayFX_Internal(const UObject* WorldContext, FGameplayTag FXMessageTag, FFXParams Params);
 	
 	FGameplayTagContainer GetFXByMessageTag(FGameplayTag MessageTag) const;
 	bool AllReferencesValid() const;
-	virtual class UWorld* GetWorld() const override;
+	virtual UWorld* GetWorld() const override;
 	
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	
@@ -107,4 +53,7 @@ protected:
 	TArray<UFXDataAssetBase*> FXDataAssets;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="FXSystem")
 	TArray<UMessageFXPairingDataAsset*> MessageFXPairings;
+	
+	UPROPERTY(Transient)
+	TMap<FFXHandle, TWeakObjectPtr<UFXHandleObject>> FXDataHandles {};
 };

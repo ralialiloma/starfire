@@ -3,10 +3,13 @@
 
 #include "FXSubsystem.h"
 #include "DebugFunctionLibrary.h"
-#include "FXDataAssetBase.h"
 #include "FXSystemSettings.h"
 #include "MessageFXPairingDataAsset.h"
+#include "Bases/FXDataAssetBase.h"
+#include "Bases/FXHandle.h"
+#include "Bases/FXHandleObject.h"
 #include "Starfire/StarFireGameplayTags.h"
+#include "Bases/FXParams.h"
 
 DEFINE_LOG_CATEGORY(LogFXSubsystem);
 
@@ -15,64 +18,37 @@ UFXSubsystem* UFXSubsystem::Get()
 	return GEngine->GetEngineSubsystem<UFXSubsystem>();
 }
 
-FFXHandle UFXSubsystem::PlayFX(const UObject* WorldContext, FGameplayTag FXTag)
+FFXHandle UFXSubsystem::PlayFX(const UObject* WorldContext, FGameplayTag FXMessageTag)
 {
 	if (!AllReferencesValid())
 		return FFXHandle();
-	
-	UWorld* World = WorldContext != nullptr ? WorldContext->GetWorld() : GetWorld();
 	
 	DEBUG_SIMPLE(
 	LogFXSubsystem, 
 	Log, 
 	FColor::White, 
-	FString::Printf(TEXT("Requested 2D %s"), *FXTag.ToString()), 
+	FString::Printf(TEXT("Requested 2D %s"), *FXMessageTag.ToString()), 
 	Sf_GameplayTags::Effects::Name);
 
-	FGameplayTagContainer FXTags = GetFXByMessageTag(FXTag);
-	
-	for (auto FXDataAsset : FXDataAssets)
-	{
-		for (auto FX : FXTags)
-		{
-			FXDataAsset->ExecuteFX(World, FX);
-		}
-	}
-
-	//TODO
-	return FFXHandle::GenerateNewHandle();
+	return PlayFX_Internal(WorldContext, FXMessageTag, FGameplayTag());
 }
 
-FFXHandle UFXSubsystem::PlayFXAt(const UObject* WorldContext, FGameplayTag FXTag, FTransform Transform)
+FFXHandle UFXSubsystem::PlayFXAt(const UObject* WorldContext, FGameplayTag FXMessageTag, FTransform Transform)
 {
 	if (!AllReferencesValid())
 		return FFXHandle();
-
-	UWorld* World = WorldContext != nullptr ? WorldContext->GetWorld() : GetWorld();
 
 	DEBUG_SIMPLE(
 		LogFXSubsystem, 
 		Log, 
 		FColor::White, 
-		FString::Printf(TEXT("Requested %s at %s"), *FXTag.ToString(), *Transform.ToString()), 
+		FString::Printf(TEXT("Requested %s at %s"), *FXMessageTag.ToString(), *Transform.ToString()), 
 		Sf_GameplayTags::Effects::Name);
 
-	FGameplayTagContainer FXTags = GetFXByMessageTag(FXTag);
-
-	for (auto FXDataAsset : FXDataAssets)
-	{
-		
-		for (auto FX : FXTags)
-		{
-			FXDataAsset->ExecuteFX(World, FFXParams(FX, Transform));
-		}
-	}
-
-	//TODO
-	return FFXHandle::GenerateNewHandle();
+	return PlayFX_Internal(WorldContext, FXMessageTag, FFXParams(FGameplayTag(), Transform));
 }
 
-FFXHandle UFXSubsystem::PlayFXOn(const UObject* WorldContext, FGameplayTag FXTag, USceneComponent* Component, FName Bone, FTransform Offset)
+FFXHandle UFXSubsystem::PlayFXOn(const UObject* WorldContext, FGameplayTag FXMessageTag, USceneComponent* Component, FName Bone, FTransform Offset)
 {
 	if (!AllReferencesValid())
 		return FFXHandle();
@@ -80,37 +56,59 @@ FFXHandle UFXSubsystem::PlayFXOn(const UObject* WorldContext, FGameplayTag FXTag
 	if (!Component)
 		return FFXHandle();
 
-	UWorld* World = WorldContext != nullptr ? WorldContext->GetWorld() : GetWorld();
-
 	DEBUG_SIMPLE(
-	LogFXSubsystem, 
-	Log, 
-	FColor::White, 
-	FString::Printf(TEXT("Requested %s on %s (%s with offset %s)"), *FXTag.ToString(), *Component->GetName(), *Bone.ToString(), *Offset.ToString()), 
-	Sf_GameplayTags::Effects::Name);
+		LogFXSubsystem, 
+		Log, 
+		FColor::White, 
+		FString::Printf(TEXT("Requested %s on %s (%s with offset %s)"), *FXMessageTag.ToString(), *Component->GetName(), *Bone.ToString(), *Offset.ToString()), 
+		Sf_GameplayTags::Effects::Name);
 
-	FGameplayTagContainer FXTags = GetFXByMessageTag(FXTag);
+	return PlayFX_Internal(WorldContext, FXMessageTag, FFXParams(FGameplayTag(), Component, Bone, Offset));
+}
 
+bool UFXSubsystem::CancelFX(FFXHandle& Handle)
+{
+	TWeakObjectPtr<UFXHandleObject>* FoundObject = FXDataHandles.Find(Handle);
+	if (!FoundObject)
+		return true;
+
+	TWeakObjectPtr<UFXHandleObject> WeakObject = FoundObject->Get();
+	if (WeakObject.IsValid())
+	{
+		WeakObject->Cancel();
+	}
+
+	FXDataHandles.Remove(Handle);
+	Handle.Invalidate();
+	return true;
+}
+
+FFXHandle UFXSubsystem::PlayFX_Internal(const UObject* WorldContext, FGameplayTag FXMessageTag, FFXParams Params)
+{
+	UWorld* World = WorldContext != nullptr ? WorldContext->GetWorld() : GetWorld();
+	FGameplayTagContainer FXTags = GetFXByMessageTag(FXMessageTag);
+
+	TObjectPtr<UFXHandleObject> FXHandleObject = NewObject<UFXHandleObject>();
 	for (auto FXDataAsset : FXDataAssets)
 	{
+		auto& WrapperRef = FXHandleObject->FXAssetComponentPairings.Add(FXDataAsset);
 		for (FGameplayTag FX : FXTags)
 		{
-			FXDataAsset->ExecuteFX(World, FFXParams(FX, Component, Bone, Offset));
+			Params.FXTag = FX;
+			if (USceneComponent* FXComponent = FXDataAsset->ExecuteFX(World, Params))
+				WrapperRef.Components.Add(FXComponent);
 		}
 	}
 
-	const FVector Start = Component->GetComponentTransform().GetLocation() + Offset.GetLocation();
-	const FVector End = Component->GetComponentTransform().GetLocation() + Offset.GetLocation() +
-		(Component->GetComponentTransform().GetRotation() * Offset.GetRotation()).GetForwardVector() * 50;
-	UDebugFunctionLibrary::DebugDrawArrow(World, Sf_GameplayTags::Effects::Name, Start, End, 12, FColor::Silver, 1);
-	
-	//TODO
-	return FFXHandle::GenerateNewHandle();
-}
+	FFXHandle Handle {};
+	if (FXHandleObject->CanBeCanceled())
+	{
+		Handle = FFXHandle::GenerateNewHandle();
+		FXHandleObject->OnCompleteData(WorldContext->GetWorld(), Handle);
+		FXDataHandles.Add(Handle, FXHandleObject);
+	}
 
-bool UFXSubsystem::CancelFX(FFXHandle Handle)
-{
-	return false;
+	return Handle;
 }
 
 bool UFXSubsystem::AllReferencesValid() const

@@ -16,12 +16,12 @@ FVisualFXSettings* UVisualFXDataAsset::GetVisualFXSettings(FGameplayTag Tag)
 	return FXMap.Find(Tag);
 }
 
-void UVisualFXDataAsset::ExecuteFX_Implementation(UObject* WorldContext, FFXParams Params)
+USceneComponent* UVisualFXDataAsset::ExecuteFX_Implementation(UObject* WorldContext, FFXParams Params)
 {
 	if (!WorldContext || !WorldContext->GetWorld())
     {
         UDebugFunctionLibrary::DebugError(this, FString::Printf(TEXT("World Context Invalid!")));
-        return;
+        return nullptr;
     }
 
     if (FVisualFXSettings* FoundEffect = GetVisualFXSettings(Params.FXTag))
@@ -29,7 +29,7 @@ void UVisualFXDataAsset::ExecuteFX_Implementation(UObject* WorldContext, FFXPara
         if (!FoundEffect->IsValid())
         {
             UDebugFunctionLibrary::DebugError(this, FString::Printf(TEXT("Found visual effect data is invalid for GameplayTag: %s"), *Params.FXTag.ToString()));
-            return;
+            return nullptr;
         }
         
         DEBUG_SIMPLE(LogVisualFX, Log, FColor::White, FString::Printf(TEXT("Playing %s"), *Params.FXTag.ToString()), Sf_GameplayTags::Effects::FX::VisualFX::Name);
@@ -94,7 +94,7 @@ void UVisualFXDataAsset::ExecuteFX_Implementation(UObject* WorldContext, FFXPara
 
         if (!ParticleComp)
         {
-            return;
+            return nullptr;
         }
 
         for (auto Processor : FoundEffect->Processors)
@@ -104,5 +104,43 @@ void UVisualFXDataAsset::ExecuteFX_Implementation(UObject* WorldContext, FFXPara
 
             Processor->ModifyFX(ParticleComp);
         }
+
+        return ParticleComp;
     }
+
+    return nullptr;
+}
+
+bool UVisualFXDataAsset::CancelFX_Implementation(USceneComponent* FXComponent)
+{
+    if (UParticleSystemComponent* ParticleSystemComp = Cast<UParticleSystemComponent>(FXComponent))
+    {
+        ParticleSystemComp->Deactivate();
+        return true;
+    }
+    if (UNiagaraComponent* NiagaraComp = Cast<UNiagaraComponent>(FXComponent))
+    {
+        NiagaraComp->Deactivate();
+        return true;
+    }
+    return false;
+}
+
+float UVisualFXDataAsset::GetFXDuration_Implementation(USceneComponent* FXComponent)
+{
+    // if (UParticleSystemComponent* ParticleSystemComp = Cast<UParticleSystemComponent>(FXComponent))
+    // {
+    //     if (ParticleSystemComp->Template && ParticleSystemComp->Template->IsLooping())
+    //         return -1.f;
+    //
+    //     return ParticleSystemComp->Template ? ParticleSystemComp->Template.GetMaxDuration() : 0.f;
+    // }
+    // if (UNiagaraComponent* NiagaraComp = Cast<UNiagaraComponent>(FXComponent))
+    // {
+    //     if (NiagaraComp->GetAsset() && NiagaraComp->GetAsset()->IsLooping())
+    //         return -1.f;
+    //
+    //     return NiagaraComp->GetAsset() ? NiagaraComp->GetAsset()->getmax() : 0.f;
+    // }
+    return 0.f;
 }

@@ -1,11 +1,7 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-#pragma once
-
-#include "CoreMinimal.h"
+﻿#pragma once
 #include "GameplayTagContainer.h"
-#include "Engine/DataAsset.h"
-#include "FXDataAssetBase.generated.h"
+
+#include "FXParams.generated.h"
 
 struct FGameplayTag;
 
@@ -22,6 +18,8 @@ struct FFXParams
 {
 	GENERATED_BODY()
 
+public:
+	
 	FFXParams() {  }
 	FFXParams(const FGameplayTag InFXTag)
 	{
@@ -58,17 +56,4 @@ struct FFXParams
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FName Bone = NAME_None;
-};
-/**
- * 
- */
-UCLASS(Abstract)
-class STARFIRE_API UFXDataAssetBase : public UPrimaryDataAsset
-{
-	GENERATED_BODY()
-
-public:
-
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, meta = (WorldContext = "WorldContext"))
-	void ExecuteFX(UObject* WorldContext, FFXParams Params);
 };
