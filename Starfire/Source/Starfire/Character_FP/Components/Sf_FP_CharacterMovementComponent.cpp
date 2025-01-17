@@ -9,6 +9,7 @@
 #include "DrawDebugHelpers.h"
 #include "Kismet/KismetStringLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Perception/AISense_Hearing.h"
 #include "Starfire/Shared/ActionLogger/ActionLogger.h"
 #include "Starfire/Shared/Sound/FXSubsystem.h"
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
@@ -110,6 +111,7 @@ bool USf_FP_CharacterMovementComponent::DoJump(bool bReplayingMoves)
 	{
 		UFXSubsystem::Get()->PlayFXOn(this, Sf_GameplayTags::Effects::Messages::FP::Movement::Jump , GetOwner()->GetRootComponent());
 		ReportAction(Sf_GameplayTags::Gameplay::ActionLogger::FP::Movement::Jump);
+		ReportNoiseEvent(Jump_NoiseEventVolume);
 	}
 
 	if (Super::DoJump(bReplayingMoves))
@@ -120,6 +122,7 @@ bool USf_FP_CharacterMovementComponent::DoJump(bool bReplayingMoves)
 			ReportAction(Sf_GameplayTags::Gameplay::ActionLogger::FP::Movement::WallRun::End);
 			ReportAction(Sf_GameplayTags::Gameplay::ActionLogger::FP::Movement::WallRun::Jump);
 			UFXSubsystem::Get()->PlayFXOn(this, Sf_GameplayTags::Effects::Messages::FP::Movement::Jump, GetOwner()->GetRootComponent());
+			ReportNoiseEvent(Jump_NoiseEventVolume);
 		}
 
 		return true;
@@ -204,6 +207,7 @@ void USf_FP_CharacterMovementComponent::UpdateCharacterStateBeforeMovement(float
 
 		ReportAction(Sf_GameplayTags::Gameplay::ActionLogger::FP::Movement::Mantle);
 		UFXSubsystem::Get()->PlayFXOn(this, Sf_GameplayTags::Effects::Messages::FP::Movement::Mantle, GetOwner()->GetRootComponent());
+		ReportNoiseEvent(Mantle_NoiseEventVolume);
 	}
 	else if (SfCharacterOwner->bCustomJumpPressed)
 	{
@@ -212,6 +216,7 @@ void USf_FP_CharacterMovementComponent::UpdateCharacterStateBeforeMovement(float
 			SetMovementMode(MOVE_Custom, CMOVE_Dash);
 			ReportAction(Sf_GameplayTags::Gameplay::ActionLogger::FP::Movement::Dash);
 			UFXSubsystem::Get()->PlayFXOn(this, Sf_GameplayTags::Effects::Messages::FP::Movement::Dash, GetOwner()->GetRootComponent());
+			ReportNoiseEvent(Dash_NoiseEventVolume);
 			DashDuration = MaxDashDuration;
 			DashCount++;
 			SfCharacterOwner->bCustomJumpPressed = false;
@@ -225,6 +230,7 @@ void USf_FP_CharacterMovementComponent::UpdateCharacterStateBeforeMovement(float
 
 			ReportAction(Sf_GameplayTags::Gameplay::ActionLogger::FP::Movement::Mantle);
 			UFXSubsystem::Get()->PlayFXOn(this, Sf_GameplayTags::Effects::Messages::FP::Movement::Mantle, GetOwner()->GetRootComponent());
+			ReportNoiseEvent(Mantle_NoiseEventVolume);
 		}
 		else
 		{
@@ -367,6 +373,11 @@ void USf_FP_CharacterMovementComponent::SprintReleased()
 ECustomMovementMode USf_FP_CharacterMovementComponent::GetCustomMovementMode() const
 {
 	return static_cast<ECustomMovementMode>(CustomMovementMode);
+}
+
+void USf_FP_CharacterMovementComponent::ReportNoiseEvent(const float Loudness)
+{
+	UAISense_Hearing::ReportNoiseEvent(this, GetActorLocation(), Loudness, GetWorld()->GetFirstPlayerController());
 }
 
 void USf_FP_CharacterMovementComponent::Crouch(bool bClientSimulation)

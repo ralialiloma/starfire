@@ -77,10 +77,14 @@ public:
 	
 	UPROPERTY(BlueprintAssignable)
 	FOnSprintChange OnSprintChange;
+
+protected:
+	void ReportNoiseEvent(float Loudness);
 #pragma endregion
 	
 #pragma region Properties
-	
+
+public:
 	UPROPERTY(Transient)
 	ASf_FP_Character* SfCharacterOwner;
 	
@@ -91,6 +95,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Character Movement: Jumping / Falling", meta =(CustomConfig))
 	float InAirJumpAllowance = 0.2f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Character Movement: Jumping / Falling", meta =(CustomConfig))
+	float Jump_NoiseEventVolume = 0.6f;
 	
 	UPROPERTY(Transient)
 	float ElapsedInAirJumpAllowance = 0.f;
@@ -124,6 +131,9 @@ protected:
 	float Sprint_MaxWalkSpeed = 400.0f;
 	UPROPERTY(EditDefaultsOnly, Category="Character Movement: Walking", meta =(CustomConfig))
 	float Walk_MaxWalkSpeed = 200.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category="Character Movement: Walking", meta =(CustomConfig))
+	float Walk_NoiseEventVolume = 0.4f;
 private:
 	bool Safe_bWantsToSprint;
 #pragma endregion
@@ -186,6 +196,8 @@ protected:
 	float WallJumpForceMultiplier= 0.8f;
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun", meta =(CustomConfig))
 	float WallDistanceToCapsule = 5.0f;
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: WallRun", meta =(CustomConfig))
+	float WallRun_NoiseEventVolume = 0.4f;
 
 private:
 	FVector2D PreviousWallNormal = FVector2D::ZeroVector;
@@ -225,6 +237,8 @@ protected:
 	float MantleMaxDuration = 0.5f;
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: Mantle", meta =(CustomConfig))
 	UAnimMontage* MantleMontage = nullptr;
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: Mantle", meta =(CustomConfig))
+	float Mantle_NoiseEventVolume = 0.8f;
 private:
 	UPROPERTY()
 	FVector MantleTargetLocation;
@@ -255,6 +269,9 @@ protected:
 	float Dash_MaxWalkSpeed = 1200;
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: Dash", meta =(CustomConfig, ClampMin = 0))
 	int MaxDashes = 1;
+
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: Dash", meta =(CustomConfig))
+	float Dash_NoiseEventVolume = 0.5f;
 
 	int DashCount = 0;
 	float DashDuration = 0;

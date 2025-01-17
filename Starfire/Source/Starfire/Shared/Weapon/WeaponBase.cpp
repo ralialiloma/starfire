@@ -13,6 +13,7 @@
 #include "Starfire/Utility/Debug/SF_DebugFunctionLibrary.h"
 #include "WeaponFeature.h"
 #include "WeaponFeatureConfig.h"
+#include "Perception/AISense_Hearing.h"
 
 
 AWeaponBase::AWeaponBase(const FObjectInitializer& ObjectInitializer)
