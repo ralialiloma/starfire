@@ -145,6 +145,7 @@ float USf_DamageController::GetCurrentArmor() const
 void USf_DamageController::SetHealth(const float NewHealth)
 {
 	const float OldHealth = CurrentHealth;
+	LastHealth = OldHealth;
 	CurrentHealth = FMath::Clamp(NewHealth, 0.0f, MaxHealth);
 
 	//Broadcast Health Change
@@ -168,6 +169,12 @@ void USf_DamageController::SetHealth(const float NewHealth)
 		OnZeroHealth_BP.Broadcast();
 	}
 }
+
+float USf_DamageController::GetLastHealth() const
+{
+	return LastHealth;
+}
+
 
 void USf_DamageController::PassiveHeal(const float DeltaSeconds)
 {
