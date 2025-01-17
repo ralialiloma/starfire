@@ -9,6 +9,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Starfire/Shared/ActionLogger/ActionLogger.h"
 #include "Starfire/Shared/BreakerTarget/Sf_BreakerPillar.h"
+#include "Starfire/Shared/Core/Sf_GameState.h"
 #include "TutorialCondition/TutorialConditions.h"
 #include "TutorialCondition/TutorialConditonSettings.h"
 
@@ -56,6 +57,8 @@ void ATutorialManager::StartTutorial(FTransform InReturnTransform)
 		UDebugFunctionLibrary::DebugError(this, "Tutorial Start or End not Declared!");
 		return;
 	}
+
+	GetWorld()->GetGameState<ASf_GameState>()->SetPlayState(Sf_GameplayTags::Gameplay::PlayState::Tutorial);
 	
 	GetPlayerPawn()->TeleportTo(TutorialStart->GetActorLocation(), TutorialStart->GetActorRotation());
 	TutorialEnd->FullRestore();
@@ -92,6 +95,8 @@ void ATutorialManager::EndTutorial()
 		UDebugFunctionLibrary::DebugError(this, "Tutorial Start or End not Declared!");
 		return;
 	}
+
+	GetWorld()->GetGameState<ASf_GameState>()->SetPlayState(Sf_GameplayTags::Gameplay::PlayState::Arena);
 
 	GetPlayerPawn()->TeleportTo(ReturnTransform.GetLocation(), ReturnTransform.Rotator());
 	TutorialEnd->OnBreak_BP.RemoveDynamic(this, &ATutorialManager::EndTutorial);

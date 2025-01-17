@@ -138,6 +138,7 @@ namespace Sf_GameplayTags
 		namespace PlayState
 		{
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay.PlayState", "")
+			DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.PlayState,Start,"");
 			DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.PlayState,Tutorial,"");
 			DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.PlayState,Arena,"");
 			DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.PlayState,End,"");

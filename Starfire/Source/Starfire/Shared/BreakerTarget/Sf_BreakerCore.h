@@ -26,6 +26,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void Stop();
+	UFUNCTION(BlueprintCallable)
+	void Resume();
 
 	UFUNCTION(BlueprintCallable)
 	int GetNumPillars() const;
@@ -79,6 +81,8 @@ public:
 protected:
 
 	//Progress
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	bool bStartWithPillarsCharging = false;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	float ProgressPerSecond = 1.f;
 

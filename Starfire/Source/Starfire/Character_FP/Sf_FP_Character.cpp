@@ -169,6 +169,23 @@ FCollisionQueryParams ASf_FP_Character::GetIgnoreCharacterParams() const
 	return Params;
 }
 
+void ASf_FP_Character::SetIgnoreInput(bool bLook, bool bMove, bool bWeapon)
+{
+	GetController()->SetIgnoreLookInput(bLook);
+	GetController()->SetIgnoreMoveInput(bMove);
+	SetIgnoreWeaponInput(bWeapon);
+}
+
+void ASf_FP_Character::SetIgnoreWeaponInput(bool bIgnored)
+{
+	bIgnoreWeaponInput = bIgnored;
+}
+
+bool ASf_FP_Character::IsWeaponInputIgnored() const
+{
+	return bIgnoreWeaponInput;
+}
+
 void ASf_FP_Character::BeginPlay()
 {
 	Super::BeginPlay();

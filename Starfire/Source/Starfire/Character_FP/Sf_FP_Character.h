@@ -54,6 +54,13 @@ public:
 #pragma region Functions
 public:
 	FCollisionQueryParams GetIgnoreCharacterParams() const;
+
+	UFUNCTION(BlueprintCallable)
+	void SetIgnoreInput(bool bLook, bool bMove, bool bWeapon);
+	UFUNCTION(BlueprintCallable)
+	void SetIgnoreWeaponInput(bool bIgnored);
+	UFUNCTION(BlueprintCallable)
+	bool IsWeaponInputIgnored() const;
 #pragma endregion
 
 #pragma region Properties
@@ -61,6 +68,8 @@ public:
 protected:
 	bool bCustomJumpPressed = false;
 	bool bCustomJumpDown = false;
+
+	bool bIgnoreWeaponInput = false;
 	
 #pragma endregion
 

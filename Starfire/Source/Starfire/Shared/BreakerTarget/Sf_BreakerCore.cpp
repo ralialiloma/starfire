@@ -35,6 +35,8 @@ void ASf_BreakerCore::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
+	
+	
 	UpdateProgress(ProgressPerSecond * DeltaSeconds);
 }
 
@@ -42,12 +44,17 @@ void ASf_BreakerCore::StartGame()
 {
 	ImportPillars();
 	SyncPillars();
-	SetActorTickEnabled(true);
+	SetActorTickEnabled(bStartWithPillarsCharging);
 }
 
 void ASf_BreakerCore::Stop()
 {
 	SetActorTickEnabled(false);
+}
+
+void ASf_BreakerCore::Resume()
+{
+	SetActorTickEnabled(true);
 }
 
 void ASf_BreakerCore::RegisterPillar(ASf_BreakerPillar* PillarToRegister)
