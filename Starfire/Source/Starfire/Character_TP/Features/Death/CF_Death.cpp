@@ -1,4 +1,7 @@
 ﻿#include "CF_Death.h"
+
+#include "Animation/SkeletalMeshActor.h"
+#include "Starfire/Character_TP/PoseAnimInstance.h"
 #include "Starfire/Character_TP/Sf_TP_Character.h"
 #include "Starfire/Character_TP/Features/Combat/CF_Combat.h"
 #include "Starfire/Character_TP/Features/Locomotion/CF_Locomotion.h"
@@ -67,6 +70,35 @@ void UCF_Death::Kill()
 
 	//Collision
 	GetOwningCharacter()->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
+	
+	//Ragdoll
+	if (Death_Config->bRagdoll)
+	{
+		if (ACharacter* Character = GetOwningCharacter())
+		{
+			if (USkeletalMeshComponent* SourceMesh = Character->GetMesh(); IsValid(SourceMesh))
+			{
+				if (ASkeletalMeshActor* RagdollActor = GetWorld()->SpawnActor<ASkeletalMeshActor>(ASkeletalMeshActor::StaticClass(), SourceMesh->GetComponentTransform()); IsValid(RagdollActor))
+				{
+					RagdollActor->GetSkeletalMeshComponent()->SetSkeletalMesh(SourceMesh->GetSkeletalMeshAsset());
+					RagdollActor->GetSkeletalMeshComponent()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
+					
+					if (Death_Config->AnimBlueprintClass)
+					{
+						FPoseSnapshot Snapshot {};
+						SourceMesh->SnapshotPose(Snapshot);
+						RagdollActor->GetSkeletalMeshComponent()->SetAnimClass(Death_Config->AnimBlueprintClass);
+						if (UPoseAnimInstance* Instance = Cast<UPoseAnimInstance>(RagdollActor->GetSkeletalMeshComponent()->GetAnimInstance()))
+							Instance->SetPose(Snapshot);
+					}
+					
+					RagdollActor->GetSkeletalMeshComponent()->SetSimulatePhysics(true);
+					RagdollActor->GetSkeletalMeshComponent()->SetCollisionProfileName(TEXT("Ragdoll"));
+					RagdollActor->GetSkeletalMeshComponent()->SetPhysicsBlendWeight(1.0f);
+				}
+			}
+		}
+	}
 
 	//Destroy Character
 	GetOwningCharacter()->Destroy();
