@@ -29,6 +29,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, meta = (DevelopmentOnly))
 	FDebugConfig GetSuppressedDebugConfig(FGameplayTag DebugTag) const;
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, meta = (DevelopmentOnly))
+	bool SuppressAllDebugs() const;
 	
 	static UDebugSettings* Get();
 

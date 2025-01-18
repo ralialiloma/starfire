@@ -64,6 +64,12 @@ void UDebugFunctionLibrary::DebugString(
 void UDebugFunctionLibrary::DebugError(const UObject* WorldContextObject, const FString& ErrorMessage, const bool bPrintToScreen,
 	const bool bPrintToLog)
 {
+		if (const UDebugSettings* Settings = GetDefault<UDebugSettings>())
+		{
+			if (Settings->SuppressAllDebugs())
+				return;
+		}
+	
 		if (!IsValid(WorldContextObject))
 		{
 			UE_LOG(LogTemp, Error, TEXT("Sf_ThrowError called with invalid WorldContextObject."));
