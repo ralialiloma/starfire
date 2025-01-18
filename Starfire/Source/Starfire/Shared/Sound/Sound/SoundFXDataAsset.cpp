@@ -6,10 +6,21 @@
 #include "DebugFunctionLibrary.h"
 #include "SoundFXProcessor.h"
 #include "Components/AudioComponent.h"
+#include "FileTypes/SingleSound.h"
 #include "Kismet/GameplayStatics.h"
 #include "Starfire/StarFireGameplayTags.h"
 
 DEFINE_LOG_CATEGORY(LogSoundFX);
+
+FSoundFXSettings::FSoundFXSettings()
+{
+	SoundFileType = NewObject<USingleSound>();
+}
+
+bool FSoundFXSettings::IsValid() const
+{
+	return SoundFileType && SoundFileType->GetSoundFile() != nullptr;
+}
 
 FSoundFXSettings* USoundFXDataAsset::GetSoundFXSettings(FGameplayTag Tag)
 {
@@ -44,7 +55,7 @@ USceneComponent* USoundFXDataAsset::ExecuteFX_Implementation(UObject* WorldConte
 			case EFXPlayType::FX_2D:
 				AudioComp = UGameplayStatics::SpawnSound2D(
 					WorldContext->GetWorld(),
-					FoundSound->SoundFile,
+					FoundSound->SoundFileType->GetSoundFile(),
 					FoundSound->Volume,
 					FoundSound->Pitch,
 					FoundSound->StartTime,
@@ -53,7 +64,7 @@ USceneComponent* USoundFXDataAsset::ExecuteFX_Implementation(UObject* WorldConte
 			case EFXPlayType::FX_Location:
 				AudioComp = UGameplayStatics::SpawnSoundAtLocation(
 					WorldContext->GetWorld(),
-					FoundSound->SoundFile,
+					FoundSound->SoundFileType->GetSoundFile(),
 					Params.Transform.GetLocation(),
 					Params.Transform.GetRotation().Rotator(),
 					FoundSound->Volume,
@@ -64,7 +75,7 @@ USceneComponent* USoundFXDataAsset::ExecuteFX_Implementation(UObject* WorldConte
 				break;
 			case EFXPlayType::FX_Attached:
 				AudioComp = UGameplayStatics::SpawnSoundAttached(
-					FoundSound->SoundFile,
+					FoundSound->SoundFileType->GetSoundFile(),
 					Params.AttacheSceneComponent,
 					Params.Bone,
 					Params.Transform.GetLocation(),
