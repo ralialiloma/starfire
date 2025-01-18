@@ -40,6 +40,12 @@ void USF_DebugFunctionLibrary::Sf_ThrowError(
 	const bool bPrintToScreen,
 	const bool bPrintToLog) 
 {
+	if (const USF_DebugSettings* Settings = GetDefault<USF_DebugSettings>())
+	{
+		if (Settings->bHideAllDebugs)
+			return;
+	}
+	
 	if (!IsValid(WorldContextObject))
 	{
 		UE_LOG(LogTemp, Error, TEXT("Sf_ThrowError called with invalid WorldContextObject."));

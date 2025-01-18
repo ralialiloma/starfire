@@ -72,6 +72,11 @@ FDebugConfig UDebugSettings::GetSuppressedDebugConfig(FGameplayTag DebugTag) con
 	return FDebugConfig();
 }
 
+bool UDebugSettings::SuppressAllDebugs() const
+{
+	return bSuppressAllDebugs;
+}
+
 UDebugSettings* UDebugSettings::Get()
 {
 	return StaticClass()->GetDefaultObject<UDebugSettings>();
