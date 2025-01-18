@@ -205,7 +205,38 @@ TSubclassOf<ASf_TP_Character> AEnemySpawner::EvaluateSpawnedEnemyClass() const
 TArray<ASf_PatrolArea*> AEnemySpawner::GetViableSpawns() const
 {
 	if (USf_PatrolAreaManager::Get(GetWorld()))
-		return  USf_PatrolAreaManager::Get(this->GetWorld())->GetFreePatrolAreas();
+	{
+		TArray<ASf_PatrolArea*> FreePatrolAreas = USf_PatrolAreaManager::Get(this->GetWorld())->GetFreePatrolAreas();
+		TArray<ASf_PatrolArea*> ViableSpawns {};
+
+		ACharacter* Character = UGameplayStatics::GetPlayerCharacter(this, 0);
+		if (!Character)
+			return FreePatrolAreas;
+		
+		FVector PlayerLocation = Character->GetActorLocation();
+
+		for (auto FreePatrolArea : FreePatrolAreas)
+		{
+			if (FreePatrolArea)
+			{
+				FVector PatrolAreaLocation = FreePatrolArea->GetActorLocation();
+				
+				FVector ToPatrolArea = PatrolAreaLocation - PlayerLocation;
+				float DistanceToPatrolArea = ToPatrolArea.Size();
+				
+				if (DistanceToPatrolArea >= MinSpawnDistance)
+					ViableSpawns.Add(FreePatrolArea);						
+			}
+		}
+
+		for (auto ViableSpawn : ViableSpawns)
+		{
+			UKismetSystemLibrary::DrawDebugBox(this, ViableSpawn->GetActorLocation(), FVector::One() * 100, FColor::Red);
+		}
+		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, FString::Printf(TEXT("Num Viable Spawns: %i"), ViableSpawns.Num()));
+
+		return ViableSpawns;
+	}
 	return {};
 }
 

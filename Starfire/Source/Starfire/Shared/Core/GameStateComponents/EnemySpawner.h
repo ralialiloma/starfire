@@ -53,8 +53,10 @@ protected:
 	// int EnemiesPerVein = 3;
 	// UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = Settings)
 	// bool bWaitForVeins = true;
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (EditCondition = "bWaitForVeins"), Category = Settings)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = Settings)
 	bool bStartWithMax = true;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = Settings)
+	float MinSpawnDistance = 1000.f;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = Settings)
 	bool bDisableSpawning = true;
 	
