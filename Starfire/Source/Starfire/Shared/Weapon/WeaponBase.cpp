@@ -13,6 +13,7 @@
 #include "Starfire/Utility/Debug/SF_DebugFunctionLibrary.h"
 #include "WeaponFeature.h"
 #include "WeaponFeatureConfig.h"
+#include "Engine/DamageEvents.h"
 #include "Perception/AISense_Hearing.h"
 
 
@@ -282,7 +283,15 @@ void AWeaponBase::ApplyDamage(const FHitResult& InHitResult) const
 {
 	if (!InHitResult.bBlockingHit)
 		return;
-		
+
+	FPointDamageEvent DamageEvent = FPointDamageEvent();
+	DamageEvent.Damage = WeaponConfig.Damage;
+	DamageEvent.HitInfo = InHitResult;
+	DamageEvent.ShotDirection = (InHitResult.TraceEnd - InHitResult.TraceStart).GetSafeNormal();
+	if (InHitResult.GetActor())
+		InHitResult.GetActor()->TakeDamage(WeaponConfig.Damage, DamageEvent, nullptr, GetOwner());
+
+	
 	USf_DamageController* DamageReceiver = InHitResult.GetActor()->GetComponentByClass<USf_DamageController>();
 	if (DamageReceiver==nullptr)
 		return;

@@ -1,9 +1,11 @@
 ﻿#include "CF_Death.h"
 
+#include "MovieSceneTracksComponentTypes.h"
 #include "Animation/SkeletalMeshActor.h"
 #include "Starfire/Character_TP/PoseAnimInstance.h"
 #include "Starfire/Character_TP/Sf_TP_Character.h"
 #include "Starfire/Character_TP/Features/Combat/CF_Combat.h"
+#include "Starfire/Character_TP/Features/HitReact/CF_HitReact.h"
 #include "Starfire/Character_TP/Features/Locomotion/CF_Locomotion.h"
 #include "Starfire/Shared/Resources/Resource.h"
 
@@ -72,29 +74,40 @@ void UCF_Death::Kill()
 	GetOwningCharacter()->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
 	
 	//Ragdoll
-	if (Death_Config->bRagdoll)
+	if (Death_Config->bRagdoll && Death_Config->SpawnedRagdollActor)
 	{
 		if (ACharacter* Character = GetOwningCharacter())
 		{
 			if (USkeletalMeshComponent* SourceMesh = Character->GetMesh(); IsValid(SourceMesh))
 			{
-				if (ASkeletalMeshActor* RagdollActor = GetWorld()->SpawnActor<ASkeletalMeshActor>(ASkeletalMeshActor::StaticClass(), SourceMesh->GetComponentTransform()); IsValid(RagdollActor))
+				if (AActor* Ragdoll = GetWorld()->SpawnActor<AActor>(Death_Config->SpawnedRagdollActor, SourceMesh->GetComponentTransform()); IsValid(Ragdoll))
 				{
-					RagdollActor->GetSkeletalMeshComponent()->SetSkeletalMesh(SourceMesh->GetSkeletalMeshAsset());
-					RagdollActor->GetSkeletalMeshComponent()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
+					USkeletalMeshComponent* Component = Ragdoll->GetComponentByClass<USkeletalMeshComponent>();
+					if (!Component)
+						return;
 					
-					if (Death_Config->AnimBlueprintClass)
+					Component->SetSkeletalMesh(SourceMesh->GetSkeletalMeshAsset());
+					Component->SetAnimationMode(EAnimationMode::AnimationBlueprint);
+					
+					FPoseSnapshot Snapshot {};
+					SourceMesh->SnapshotPose(Snapshot);
+					if (UPoseAnimInstance* Instance = Cast<UPoseAnimInstance>(Component->GetAnimInstance()))
 					{
-						FPoseSnapshot Snapshot {};
-						SourceMesh->SnapshotPose(Snapshot);
-						RagdollActor->GetSkeletalMeshComponent()->SetAnimClass(Death_Config->AnimBlueprintClass);
-						if (UPoseAnimInstance* Instance = Cast<UPoseAnimInstance>(RagdollActor->GetSkeletalMeshComponent()->GetAnimInstance()))
-							Instance->SetPose(Snapshot);
+						Instance->SetPose(Snapshot);
+						
+						Component->RefreshBoneTransforms();
+						Component->UpdateComponentToWorld();
+						Component->FinalizeBoneTransform();   
 					}
 					
-					RagdollActor->GetSkeletalMeshComponent()->SetSimulatePhysics(true);
-					RagdollActor->GetSkeletalMeshComponent()->SetCollisionProfileName(TEXT("Ragdoll"));
-					RagdollActor->GetSkeletalMeshComponent()->SetPhysicsBlendWeight(1.0f);
+					Component->SetSimulatePhysics(true);
+					Component->SetCollisionProfileName(TEXT("Ragdoll"));
+
+					if (UCF_HitReact* HitReact = GetOwningCharacter()->GetFeatureByClass<UCF_HitReact>())
+					{
+						Component->AddImpulseAtLocation((-HitReact->LastHitDirection) * Death_Config->RagdollImpulse, HitReact->LastHitLocation, 
+						HitReact->LastHitBone);
+					}
 				}
 			}
 		}
