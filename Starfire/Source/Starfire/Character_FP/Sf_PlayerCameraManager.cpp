@@ -37,39 +37,42 @@ void ASF_PlayerCameraManager::UpdateViewTarget(FTViewTarget& OutVT, float DeltaT
 		return;
 	}
 
+	const bool IsAiming = SFEquipmentComp->IsAiming();
+
 	// -- FOV interpolation --
 	float CurrentFOV  = GetFOVAngle();
-	float TargetFOV   = SFEquipmentComp->IsAiming() ? ADSFieldOfView : DefaultFieldOfView;
+	float TargetFOV   = IsAiming ? ADSFieldOfView : DefaultFieldOfView;
 	float NewFOV      = FMath::FInterpTo(CurrentFOV, TargetFOV, DeltaTime, 1.0f / ADSBlendDuration);
 	SetFOV(NewFOV);
+	//OutVT.POV.FOV = NewFOV;
 
 	// -- Vignette intensity --
-	FMinimalViewInfo CacheView = GetCameraCacheView();
-	CacheView.PostProcessSettings.bOverride_VignetteIntensity = true;
-	float CurrentVignette  = CacheView.PostProcessSettings.VignetteIntensity;
-	float TargetVignette   = SFEquipmentComp->IsAiming() ? 1.0f : 0.4f;
+	//FMinimalViewInfo CacheView = GetCameraCacheView();
+	OutVT.POV.PostProcessSettings.bOverride_VignetteIntensity = true;
+	float CurrentVignette  = OutVT.POV.PostProcessSettings.VignetteIntensity;
+	float TargetVignette   = IsAiming ? 1.0f : 0.4f;
 	float NewVignette      = FMath::FInterpTo(CurrentVignette, TargetVignette, DeltaTime, 1.0f / ADSBlendDuration);
-	CacheView.PostProcessSettings.VignetteIntensity = NewVignette;
+	OutVT.POV.PostProcessSettings.VignetteIntensity = NewVignette;
 
 	// -- Depth of Field (Blur Effect) --
-	CacheView.PostProcessSettings.bOverride_DepthOfFieldFocalDistance = true;
-	CacheView.PostProcessSettings.bOverride_DepthOfFieldSensorWidth = true;
+	OutVT.POV.PostProcessSettings.bOverride_DepthOfFieldFocalDistance = true;
+	OutVT.POV.PostProcessSettings.bOverride_DepthOfFieldSensorWidth = true;
 	
 	// Set DOF values based on aiming state
-	if (SFEquipmentComp->IsAiming())
+	if (IsAiming)
 	{
 		// Blur for aiming
-		CacheView.PostProcessSettings.DepthOfFieldFocalDistance = 100.0f;
-		CacheView.PostProcessSettings.DepthOfFieldSensorWidth = 300.0f;
+		OutVT.POV.PostProcessSettings.DepthOfFieldFocalDistance  =  500.0f;
+		OutVT.POV.PostProcessSettings.DepthOfFieldSensorWidth = 1.0f;
 	}
 	else
 	{
 		// Default DOF settings (less blur)
-		CacheView.PostProcessSettings.DepthOfFieldFocalDistance = 500.0f;
-		CacheView.PostProcessSettings.DepthOfFieldSensorWidth = 0.01f;
+		OutVT.POV.PostProcessSettings.DepthOfFieldFocalDistance = 500.0f;
+		OutVT.POV.PostProcessSettings.DepthOfFieldSensorWidth = 0.01f;
 	}
-
-	SetCameraCachePOV(CacheView);
+	
+	//SetCameraCachePOV(CacheView);
 }
 
 void ASF_PlayerCameraManager::ProcessViewRotation(float DeltaTime, FRotator& OutViewRotation, FRotator& OutDeltaRot)

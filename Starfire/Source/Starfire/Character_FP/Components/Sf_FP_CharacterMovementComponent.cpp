@@ -890,7 +890,8 @@ bool USf_FP_CharacterMovementComponent::PhysDash(float DeltaTime, int32 Iteratio
 		return false;
 	}
 
-	FVector DashDirection = GetLastInputVector();
+	FVector DashDirection = GetController()->GetControlRotation().Vector();
+	DashDirection.Normalize();
 	if (DashDirection.IsNearlyZero())
 	{
 		DashDirection = UpdatedComponent->GetForwardVector();
