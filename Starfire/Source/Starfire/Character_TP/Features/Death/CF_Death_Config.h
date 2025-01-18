@@ -21,7 +21,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool bRagdoll = true;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (EditCondition = bRagdoll))
-	TSubclassOf<UPoseAnimInstance> AnimBlueprintClass = nullptr;
+	TSubclassOf<AActor> SpawnedRagdollActor;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (EditCondition = bRagdoll))
+	int RagdollImpulse = 1000;
 #pragma endregion
 
 
