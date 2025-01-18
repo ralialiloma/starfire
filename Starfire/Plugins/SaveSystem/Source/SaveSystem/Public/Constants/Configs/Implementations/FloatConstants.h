@@ -14,7 +14,7 @@ class SAVESYSTEM_API UFloatConstants : public UConstantConfigs
 public:
 
 	UFUNCTION(BlueprintCallable)
-	static float GetConstantFloat(FGameplayTag FloatTag);
+	static float GetConstantTagToText(FGameplayTag FloatTag);
 
 protected:
 	virtual TMap<FGameplayTag, void*> GetArray() override;
@@ -22,7 +22,7 @@ protected:
 	TMap<FGameplayTag, float> Floats;
 };
 
-inline float UFloatConstants::GetConstantFloat(FGameplayTag FloatTag)
+inline float UFloatConstants::GetConstantTagToText(FGameplayTag FloatTag)
 {
 	return GetConstantData<float>(FloatTag, StaticClass());
 }
