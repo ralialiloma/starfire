@@ -19,7 +19,6 @@ class STARFIRE_API UCF_Death : public USf_CharacterFeature
 #pragma region Functions
 public:
 	virtual void Initialize(ASf_TP_Character* Holder, const USf_CharacterFeature_Config* InConfig) override;
-	virtual void OnTick_Implementation(float OnTick) override;
 
 	UFUNCTION(BlueprintCallable, Category = "EnemyFeature|Death")
 	void Kill();
