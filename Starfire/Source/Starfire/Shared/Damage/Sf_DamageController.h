@@ -54,12 +54,25 @@ public:
 	float GetCurrentArmor() const;
 
 	UFUNCTION(BlueprintCallable)
-	void SetHealth(float NewHealth);
+	float GetLastHealth() const;
 
 	UFUNCTION(BlueprintCallable)
-	float GetLastHealth() const;
+	float Kill(
+		const FVector& HitLocation,
+		const FVector& HitNormal,
+		UPARAM(meta=(Categories="Gameplay.DamageType"))
+		const FGameplayTag DamageType);
+
+	UFUNCTION(BlueprintCallable)
+	void SetHealth(float NewHealth);
 	
-private:
+protected:
+
+	float ApplyDamage(
+		float TotalDamage,
+		const FVector& HitLocation,
+		const FVector& HitNormal, FGameplayTag DamageType);
+	
 	void PassiveHeal(float DeltaSeconds);
 
 #pragma endregion

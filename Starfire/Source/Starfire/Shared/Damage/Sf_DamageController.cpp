@@ -33,6 +33,7 @@ void USf_DamageController::TickComponent(const float DeltaTime, ELevelTick TickT
 }
 
 
+
 float USf_DamageController::ApplyDamage(
 	const float Damage,
 	const FVector HitLocation,
@@ -40,45 +41,16 @@ float USf_DamageController::ApplyDamage(
 	UPrimitiveComponent* HitComponent,
 	const FGameplayTag DamageType)
 {
-	if (!SupportedDamageTypes.HasTag(DamageType))
-		return 0;
-	
-	if (CurrentHealth<=0)
-	{
-		OnDeathDamage_BP.Broadcast();
-		OnDeathDamage_CPP.Broadcast();
-		return 0;
-	}
-	
 	//Get Hitbox
 	const USf_Hitbox* Hitbox =  Cast<USf_Hitbox>(HitComponent);
 	if (!IsValid(Hitbox) && IsValid(HitComponent))
 		return 0;
-	
+
 	//Total Damage
-	float SafeCurrentArmor = FMath::Max(CurrentArmor,1);
-	float TotalDamage = (Damage/SafeCurrentArmor)*Hitbox->DamageMultiplier;
-
+	const float SafeCurrentArmor = FMath::Max(CurrentArmor,1);
+	const float TotalDamage = (Damage/SafeCurrentArmor)*Hitbox->DamageMultiplier;
 	
-	//Update CurrentHealth
-	SetHealth(CurrentHealth-TotalDamage);
-
-	//Stop Passive Heal
-	bShouldPassiveHeal = false;
-	GetWorld()->GetTimerManager().PauseTimer(PassiveHealCooldown);
-	GetWorld()->GetTimerManager().ClearTimer(PassiveHealCooldown);
-	GetWorld()->GetTimerManager().SetTimer(
-		PassiveHealCooldown,
-		[this]()->void{bShouldPassiveHeal = bEnablePassiveHealing && CurrentHealth>0;},
-		PassiveHealingStartAfterDamageInSeconds,
-		false);
-
-
-	//Broadcast Damage Received
-	OnDamageReceived_CPP.Broadcast(CurrentHealth,TotalDamage,HitLocation,HitNormal,DamageType);
-	OnDamageReceived_BP.Broadcast(CurrentHealth,TotalDamage,HitLocation,HitNormal,DamageType);
-	
-	return TotalDamage;
+	return ApplyDamage(TotalDamage,HitLocation,HitNormal,DamageType);
 }
 
 void USf_DamageController::Reset()
@@ -170,9 +142,51 @@ void USf_DamageController::SetHealth(const float NewHealth)
 	}
 }
 
+float USf_DamageController::ApplyDamage(const float TotalDamage, const FVector& HitLocation, const FVector& HitNormal, const FGameplayTag DamageType)
+{
+	if (!SupportedDamageTypes.HasTag(DamageType))
+		return 0;
+	
+	if (CurrentHealth<=0)
+	{
+		OnDeathDamage_BP.Broadcast();
+		OnDeathDamage_CPP.Broadcast();
+		return 0;
+	}
+	
+	//Update CurrentHealth
+	SetHealth(CurrentHealth-TotalDamage);
+
+	//Stop Passive Heal
+	bShouldPassiveHeal = false;
+	GetWorld()->GetTimerManager().PauseTimer(PassiveHealCooldown);
+	GetWorld()->GetTimerManager().ClearTimer(PassiveHealCooldown);
+	GetWorld()->GetTimerManager().SetTimer(
+		PassiveHealCooldown,
+		[this]()->void{bShouldPassiveHeal = bEnablePassiveHealing && CurrentHealth>0;},
+		PassiveHealingStartAfterDamageInSeconds,
+		false);
+
+
+	//Broadcast Damage Received
+	OnDamageReceived_CPP.Broadcast(CurrentHealth,TotalDamage,HitLocation,HitNormal,DamageType);
+	OnDamageReceived_BP.Broadcast(CurrentHealth,TotalDamage,HitLocation,HitNormal,DamageType);
+	
+	return TotalDamage;
+}
+
 float USf_DamageController::GetLastHealth() const
 {
 	return LastHealth;
+}
+
+float USf_DamageController::Kill(
+	const FVector& HitLocation,
+	const FVector& HitNormal,
+	const FGameplayTag DamageType)
+{
+	const float CachedCurrentHealth = GetCurrentHealth();
+	return ApplyDamage(CachedCurrentHealth,HitLocation,HitNormal,DamageType);;
 }
 
 

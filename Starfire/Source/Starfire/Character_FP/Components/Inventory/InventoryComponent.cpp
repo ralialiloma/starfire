@@ -8,6 +8,26 @@
 
 DEFINE_LOG_CATEGORY(LogInventoryComponent);
 
+
+void UInventoryComponent::ClearResource(const FGameplayTag ItemTag)
+{
+	if (!ItemTag.IsValid())
+		return;
+
+	ConsumeResource(ItemTag, GetQuantity(ItemTag));
+}
+
+void UInventoryComponent::ClearAllResources()
+{
+	TArray<FGameplayTag> AllResources;
+	AllResources.Empty();
+	ResourceMap.GetKeys(AllResources);
+	for (const FGameplayTag& ResourceTag : AllResources)
+	{
+		ClearResource(ResourceTag);
+	}
+}
+
 int UInventoryComponent::AddResource(FGameplayTag ItemTag, int AddQuantity)
 {
 	if (!ItemTag.IsValid())

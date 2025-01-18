@@ -134,6 +134,7 @@ namespace Sf_GameplayTags
 			DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.DamageType,FirePlayer,"");
 			DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.DamageType,FireEnemy,"");
 			DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.DamageType,Explosion,"");
+			DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.DamageType,Environment,"");
 		}
 		namespace PlayState
 		{

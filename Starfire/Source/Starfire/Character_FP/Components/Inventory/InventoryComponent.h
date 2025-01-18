@@ -17,7 +17,12 @@ class STARFIRE_API UInventoryComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:
+	UFUNCTION(BlueprintCallable, meta = (Categories = "Gameplay.Resource"))
+	void ClearResource(FGameplayTag ItemTag);
 
+	UFUNCTION(BlueprintCallable)
+	void ClearAllResources();
+	
 	UFUNCTION(BlueprintCallable, meta = (Categories = "Gameplay.Resource"))
 	int AddResource(FGameplayTag ItemTag, int AddQuantity);
 
