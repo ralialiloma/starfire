@@ -8,6 +8,7 @@
 #include "Starfire/Shared/Sound/Bases/FXDataAssetBase.h"
 #include "SoundFXDataAsset.generated.h"
 
+class USoundFileType;
 class USoundFXProcessor;
 
 USTRUCT(BlueprintType)
@@ -15,8 +16,10 @@ struct FSoundFXSettings
 {
 	GENERATED_BODY()
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	USoundBase* SoundFile = nullptr;
+	FSoundFXSettings();
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Instanced)
+	USoundFileType* SoundFileType = nullptr;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	USoundAttenuation* Attenuation = nullptr;
@@ -36,10 +39,7 @@ struct FSoundFXSettings
 	UPROPERTY(Instanced, EditAnywhere, BlueprintReadWrite)
 	TArray<USoundFXProcessor*> Processors {};
 
-	bool IsValid() const
-	{
-		return SoundFile != nullptr;
-	}
+	bool IsValid() const;
 };
 
 DECLARE_LOG_CATEGORY_EXTERN(LogSoundFX, Log, All);
