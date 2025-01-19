@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "GameplayTagContainer.h"
+#include "NativeGameplayTags.h"
 #include "ActionLogger.generated.h"
 
 USTRUCT(BlueprintType)

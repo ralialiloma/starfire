@@ -12,6 +12,7 @@ class STARFIRE_API UCF_Death_Config : public USf_CharacterFeature_Config
 	GENERATED_BODY()
 
 public:
+	UCF_Death_Config();
 	virtual TSubclassOf<USf_CharacterFeature> GetFeatureType_Implementation() const override;
 	
 #pragma region Properties
@@ -23,7 +24,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (EditCondition = bRagdoll))
 	TSubclassOf<AActor> SpawnedRagdollActor;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (EditCondition = bRagdoll))
-	int RagdollImpulse = 1000;
+	int RagdollImpulse = 10000;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FGameplayTag DeathFXMessage {};
 #pragma endregion
 
 

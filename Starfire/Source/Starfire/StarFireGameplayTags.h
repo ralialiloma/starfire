@@ -575,6 +575,16 @@ namespace Sf_GameplayTags
 					}
 				}
 			}
+			namespace Game
+			{
+				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Win);
+				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Lose);
+				namespace Cutscenes
+				{
+					STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+				}
+			}
 		}
 	}
 }

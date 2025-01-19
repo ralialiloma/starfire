@@ -532,6 +532,18 @@ namespace Sf_GameplayTags
 			namespace FP
 			{
 				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Respawn, "Effects.Messages.FP.Respawn", "");
+				namespace Health
+				{
+					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.Messages.FP.Health", "");
+					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Low, "Effects.Messages.FP.Health.Low", "");
+					
+					namespace Heal
+					{
+						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.Messages.FP.Health.Heal", "");
+						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Start, "Effects.Messages.FP.Health.Heal.Start", "");
+						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Full, "Effects.Messages.FP.Health.Heal.Full", "");
+					}
+				}
 				namespace Movement
 				{
 					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.Messages.FP.Movement", "");
@@ -578,6 +590,17 @@ namespace Sf_GameplayTags
 						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.Messages.FP.Equipment.Grenade", "");
 						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Contact, "Effects.Messages.FP.Equipment.Grenade.Contact", "");
 					}
+				}
+			}
+			namespace Game
+			{
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.Messages.Game", "");
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Win, "Effects.Messages.Game.Win", "");
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Lose, "Effects.Messages.Game.Lose", "");
+
+				namespace Cutscenes
+				{
+					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.Messages.Game.Cutscenes", "");
 				}
 			}
 		}

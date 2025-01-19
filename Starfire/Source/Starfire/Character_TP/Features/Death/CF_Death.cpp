@@ -9,6 +9,7 @@
 #include "Starfire/Character_TP/Features/Locomotion/CF_Locomotion.h"
 #include "Starfire/Shared/ActionLogger/ActionLogger.h"
 #include "Starfire/Shared/Resources/Resource.h"
+#include "Starfire/Shared/Sound/FXSubsystem.h"
 
 
 void UCF_Death::Initialize(ASf_TP_Character* Holder, const USf_CharacterFeature_Config* InConfig)
@@ -114,8 +115,12 @@ void UCF_Death::Kill()
 		}
 	}
 
+	//Report Death
 	if (UActionLoggerSubSystem* SubSystem = UActionLoggerSubSystem::Get(GetWorld()))
 		SubSystem->ReportAction(FActionLog(Sf_GameplayTags::Gameplay::ActionLogger::TP::Kill));
+
+	//FX Call
+	UFXSubsystem::Get()->PlayFXAt(this, Death_Config->DeathFXMessage, GetOwnerTransform());
 
 	//Destroy Character
 	GetOwningCharacter()->Destroy();
