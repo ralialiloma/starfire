@@ -9,18 +9,16 @@ void UPlayProbability::ModifyFX_Implementation(UAudioComponent*& AudioComponent)
 {
 	Super::ModifyFX_Implementation(AudioComponent);
 
-	if (DisallowConsecutiveCalls && HasPlayed)
+	bool ShouldFail = DisallowConsecutiveCalls && HasPlayed;
+	if (Probability.Evaluate() && !ShouldFail)
 	{
-		HasPlayed = false;
+		HasPlayed = true;
+		CountFailedCalls = 0;
 		return;
 	}
 
-	if (Probability.Evaluate())
-	{
-		HasPlayed = true;
-		return;
-	}
-	
+	HasPlayed = false;
+	CountFailedCalls++;
 	AudioComponent->DestroyComponent();
 	AudioComponent = nullptr;
 }

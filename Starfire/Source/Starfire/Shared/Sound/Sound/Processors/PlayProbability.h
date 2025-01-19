@@ -24,7 +24,11 @@ protected:
 	FProbability Probability = 0.5;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool DisallowConsecutiveCalls = false;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 MaxFailedCalls = 5;
 
 	UPROPERTY(Transient)
 	mutable bool HasPlayed = false;
+	UPROPERTY(Transient)
+	mutable int32 CountFailedCalls = false;
 };
