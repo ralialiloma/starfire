@@ -46,7 +46,7 @@ bool FResourceVein::AddResource(AResource* Resource)
 	int RandomSpawnIndex = FMath::RandRange(0, ViableSpawns.Num() - 1);
 	TSharedPtr<FResourceSpawn> Spawn = Spawns[ViableSpawns[RandomSpawnIndex]];
 
-	ensureMsgf(Spawn.IsValid(),TEXT( "Spawn is invalid when adding ressource"));
+	checkf(Spawn.IsValid(),TEXT( "Spawn is invalid when adding ressource"));
 		
 	Spawn->SetItem(Resource);
 	Resource->OnCollectDelegate_CPP.AddLambda([this](AResource* Resource)
@@ -104,7 +104,7 @@ void AResourceSpawner::StartGame()
 {
 	Super::StartGame();
 
-	if (!ResourceClass)
+	if (!IsValid(ResourceClass))
 	{
 		Destroy();
 		DEBUG_SIMPLE(
@@ -135,6 +135,7 @@ void AResourceSpawner::StartGame()
 		else
 		{
 			TSharedPtr<FResourceVein> NewVein = MakeShared<FResourceVein>(FResourceVein(ResourceSpawnLocation->GetVeinGroup(), { MakeShared<FResourceSpawn>(FResourceSpawn(ResourceSpawnLocation)) }));
+			checkf(NewVein, TEXT("Invalid NewVein"));
 			int Index = EmptyResourceVeins.Add(NewVein);
 			EmptyResourceVeins[Index]->OnVeinEmpty.AddUObject(this, &AResourceSpawner::OnVeinEmpty);
 		}
@@ -199,9 +200,9 @@ void AResourceSpawner::OnVeinEmpty(uint8 VeinID)
 	{
 		return VeinID == Spawn->GetVeinID();
 	});
-	check(Spawn);
-
+	checkf(Spawn!=nullptr,TEXT("Invalid Spawn in OnVeinEmpty"));
 	TSharedPtr<FResourceVein> ResourceVein = *Spawn;
+	checkf(ResourceVein.IsValid(),TEXT("Invalid Spawn OnVeinEmpty"));
 	OccupiedVeins.Remove(ResourceVein);
 	EmptyResourceVeins.Add(ResourceVein);
 	QueueSpawnCooldowns(ResourceVein);
