@@ -43,7 +43,6 @@ void AEnemySpawner::DelayedStartGame()
 	//     return;
 
 	TArray<ASf_TP_Character*> Enemies = GetAllEnemies();
-	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, FString::FromInt(Enemies.Num()));
 	if (Enemies.Num() < MaxEnemies)
 	{
 		if (bStartWithMax)
@@ -233,7 +232,6 @@ TArray<ASf_PatrolArea*> AEnemySpawner::GetViableSpawns() const
 		{
 			UKismetSystemLibrary::DrawDebugBox(this, ViableSpawn->GetActorLocation(), FVector::One() * 100, FColor::Red);
 		}
-		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, FString::Printf(TEXT("Num Viable Spawns: %i"), ViableSpawns.Num()));
 
 		return ViableSpawns;
 	}
