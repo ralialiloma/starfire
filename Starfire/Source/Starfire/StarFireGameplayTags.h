@@ -573,6 +573,10 @@ namespace Sf_GameplayTags
 						STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
 						STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Contact);
 					}
+					namespace Scan
+					{
+						STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+					}
 				}
 			}
 			namespace Game

@@ -590,6 +590,11 @@ namespace Sf_GameplayTags
 						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.Messages.FP.Equipment.Grenade", "");
 						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Contact, "Effects.Messages.FP.Equipment.Grenade.Contact", "");
 					}
+
+					namespace Scan
+					{
+						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.Messages.FP.Equipment.Scan", "");
+					}
 				}
 			}
 			namespace Game
