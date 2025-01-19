@@ -527,6 +527,8 @@ namespace Sf_GameplayTags
 				{
 					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.Messages.Resources.Grenade", "");
 					DEFINE_GAMEPLAY_TAG_AUTO(Effects.Messages.Resources.Grenade,Craft,"");
+					DEFINE_GAMEPLAY_TAG_AUTO(Effects.Messages.Resources.Grenade,MissPillar,"");
+					DEFINE_GAMEPLAY_TAG_AUTO(Effects.Messages.Resources.Grenade,HitPillar,"");
 				}
 			}
 			namespace FP
@@ -536,6 +538,7 @@ namespace Sf_GameplayTags
 				{
 					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.Messages.FP.Health", "");
 					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Low, "Effects.Messages.FP.Health.Low", "");
+					UE_DEFINE_GAMEPLAY_TAG_COMMENT(TakeDamage, "Effects.Messages.FP.Health.TakeDamage", "");
 					
 					namespace Heal
 					{
