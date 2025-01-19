@@ -113,16 +113,26 @@ float ASf_BreakerCore::GetPillarProgress() const
 	return Progress - GetNumActivePillars() * GetDividedPillarProgress();
 }
 
+void ASf_BreakerCore::OnNumPillarsChanged_Implementation()
+{
+}
+
 void ASf_BreakerCore::OnProgressChanged_Implementation()
 {
 }
 
 void ASf_BreakerCore::OnProgressFull_Implementation()
 {
+	OnNumPillarsChanged();
+	OnNumPillarsChanged_BP.Broadcast();
+	OnNumPillarsChanged_CPP.Broadcast();
 }
 
 void ASf_BreakerCore::OnProgressEmpty_Implementation()
 {
+	OnNumPillarsChanged();
+	OnNumPillarsChanged_BP.Broadcast();
+	OnNumPillarsChanged_CPP.Broadcast();
 }
 
 void ASf_BreakerCore::UpdateProgress(float Value)
@@ -141,9 +151,12 @@ void ASf_BreakerCore::UpdateProgress(float Value)
 			USf_DamageController* DamageController = ChargingPillar->GetDamageController();
 			if (!IsValid(DamageController))
 				break;
+
+			OnNumPillarsChanged();
+			OnNumPillarsChanged_BP.Broadcast();
+			OnNumPillarsChanged_CPP.Broadcast();
 			
 			DamageController->OnDeathDamage_BP.AddDynamic(this,&ASf_BreakerCore::OnDeathDamage);
-			
 			/*ChargingDamageHandle = DamageController->OnDeathDamage_CPP.AddLambda([this]()
 			{
 				float RemainingProgress = 0;

@@ -42,6 +42,8 @@ public:
 protected:
 
 	UFUNCTION(BlueprintNativeEvent)
+	void OnNumPillarsChanged();
+	UFUNCTION(BlueprintNativeEvent)
 	void OnProgressChanged();
 	UFUNCTION(BlueprintNativeEvent)
 	void OnProgressFull();
@@ -66,6 +68,10 @@ protected:
 	
 #pragma region Properties
 public:
+	UPROPERTY(BlueprintAssignable)
+	FSf_VoidDelegate_BP OnNumPillarsChanged_BP;
+	FSf_VoidDelegate_CPP OnNumPillarsChanged_CPP;
+	
 	UPROPERTY(BlueprintAssignable)
 	FSf_VoidDelegate_BP OnProgressChanged_BP;
 	FSf_VoidDelegate_CPP OnProgressChanged_CPP;

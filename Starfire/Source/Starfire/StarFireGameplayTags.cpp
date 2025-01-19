@@ -596,7 +596,9 @@ namespace Sf_GameplayTags
 			{
 				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Effects.Messages.Game", "");
 				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Win, "Effects.Messages.Game.Win", "");
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(CloseToWin, "Effects.Messages.Game.CloseToWin", "");
 				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Lose, "Effects.Messages.Game.Lose", "");
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(CloseToLose, "Effects.Messages.Game.CloseToLose", "");
 
 				namespace Cutscenes
 				{
