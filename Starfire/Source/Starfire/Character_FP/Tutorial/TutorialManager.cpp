@@ -199,12 +199,6 @@ void ATutorialManager::OnActionLogged(FCachedActionLogMessage NewMessage, int Me
 {
 	FGameplayTag CurrentLoggedAction = NewMessage.Message.RelatedTag;
 
-	if (CurrentLoggedAction.MatchesTagExact(Sf_GameplayTags::Tutorial::State::End))
-	{
-		EndTutorial();
-		return;
-	}
-
 	if (!GetAllTutorialActionsRaw().HasTagExact(CurrentLoggedAction))
 		return;
 	
@@ -245,13 +239,17 @@ void ATutorialManager::SelectNewState()
 		TutorialState++;
 
 		OnStartState();
-
 		if (TutorialStateActionsPairings.IsValidIndex(TutorialState) &&
 			(GetCurrentTutorialActions().Num() <= 0 || AreTutorialActionsComplete(GetCurrentTutorialActions())))
 		{
 			OnEndState();
 			bStateComplete = true;
-		}		
+		}
+
+		if (bool bFinished = TutorialState >= TutorialStateActionsPairings.Num())
+		{
+			EndTutorial();
+		}
 	}
 }
 
