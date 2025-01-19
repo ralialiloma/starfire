@@ -94,7 +94,8 @@ USceneComponent* USoundFXDataAsset::ExecuteFX_Implementation(UObject* WorldConte
 		{
 			return nullptr;
 		}
-		
+
+		AudioComp->bStopWhenOwnerDestroyed = true;
 		for (auto Processor : FoundSound->Processors)
 		{
 			if (!Processor)
