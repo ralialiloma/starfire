@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "SoundFileType.h"
+#include "DSP/Encoders/OpusEncoder.h"
 #include "RandomSound.generated.h"
 
 /**
@@ -14,19 +15,24 @@ class STARFIRE_API URandomSound : public USoundFileType
 {
 	GENERATED_BODY()
 
+	virtual bool IsValid_Implementation() override
+	{
+		return SoundFiles.Num() > 0;
+	}
+
 	virtual USoundBase* GetSoundFile_Implementation() override
 	{
 		if (SoundFiles.Num() <= 0)
 			return nullptr;
-
+		
 		int RandomNumber = FMath::RandRange(0, SoundFiles.Num() - 1);
-
 		if (RandomNumber == PreviousSoundIndex)
 		{
-			RandomNumber++;
+			RandomNumber += 1;
 			RandomNumber %= SoundFiles.Num();
-		}
 
+		}
+		
 		PreviousSoundIndex = RandomNumber;
 		return SoundFiles[RandomNumber];
 	}

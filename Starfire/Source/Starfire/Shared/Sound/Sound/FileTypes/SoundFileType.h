@@ -17,5 +17,8 @@ class STARFIRE_API USoundFileType : public UObject
 public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	bool IsValid();
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	USoundBase* GetSoundFile();
 };

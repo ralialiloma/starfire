@@ -14,6 +14,11 @@ class STARFIRE_API USingleSound : public USoundFileType
 {
 	GENERATED_BODY()
 
+	virtual bool IsValid_Implementation() override
+	{
+		return SoundFile != nullptr;
+	}
+
 	virtual USoundBase* GetSoundFile_Implementation() override
 	{
 		return SoundFile;

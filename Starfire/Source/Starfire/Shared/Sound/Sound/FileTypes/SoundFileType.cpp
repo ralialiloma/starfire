@@ -7,3 +7,8 @@ USoundBase* USoundFileType::GetSoundFile_Implementation()
 {
 	return nullptr;
 }
+
+bool USoundFileType::IsValid_Implementation()
+{
+	return false;
+}

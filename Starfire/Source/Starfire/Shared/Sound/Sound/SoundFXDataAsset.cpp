@@ -19,7 +19,7 @@ FSoundFXSettings::FSoundFXSettings()
 
 bool FSoundFXSettings::IsValid() const
 {
-	return SoundFileType && SoundFileType->GetSoundFile() != nullptr;
+	return SoundFileType && SoundFileType->IsValid();
 }
 
 FSoundFXSettings* USoundFXDataAsset::GetSoundFXSettings(FGameplayTag Tag)
@@ -37,7 +37,7 @@ USceneComponent* USoundFXDataAsset::ExecuteFX_Implementation(UObject* WorldConte
 	
 	if (FSoundFXSettings* FoundSound = GetSoundFXSettings(Params.FXTag))
 	{
-		if (!FoundSound->IsValid())
+		if (!FoundSound || !FoundSound->IsValid())
 		{
 			UDebugFunctionLibrary::DebugError(this, FString::Printf(TEXT("Found sound data is invalid for GameplayTag: %s"), *Params.FXTag.ToString()));
 			return nullptr;
