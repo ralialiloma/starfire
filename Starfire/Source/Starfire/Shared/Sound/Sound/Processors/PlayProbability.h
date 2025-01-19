@@ -24,7 +24,9 @@ protected:
 	FProbability Probability = 0.5;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool DisallowConsecutiveCalls = false;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (InlineEditConditionToggle))
+	bool bMaxFailedCalls = false;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (EditCondition = bMaxFailedCalls))
 	int32 MaxFailedCalls = 5;
 
 	UPROPERTY(Transient)

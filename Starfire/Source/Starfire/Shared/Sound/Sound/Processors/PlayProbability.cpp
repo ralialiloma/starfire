@@ -10,7 +10,8 @@ void UPlayProbability::ModifyFX_Implementation(UAudioComponent*& AudioComponent)
 	Super::ModifyFX_Implementation(AudioComponent);
 
 	bool ShouldFail = DisallowConsecutiveCalls && HasPlayed;
-	if (Probability.Evaluate() && !ShouldFail)
+	bool ShouldSucceed = bMaxFailedCalls ? CountFailedCalls >= MaxFailedCalls : false;
+	if (ShouldSucceed || Probability.Evaluate() && !ShouldFail)
 	{
 		HasPlayed = true;
 		CountFailedCalls = 0;
