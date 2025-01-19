@@ -26,7 +26,8 @@ class STARFIRE_API URandomSound : public USoundFileType
 			RandomNumber++;
 			RandomNumber %= SoundFiles.Num();
 		}
-		
+
+		PreviousSoundIndex = RandomNumber;
 		return SoundFiles[RandomNumber];
 	}
 

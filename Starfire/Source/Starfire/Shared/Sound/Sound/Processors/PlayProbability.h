@@ -23,7 +23,7 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FProbability Probability = 0.5;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	FProbability DisallowConsecutiveCalls = false;
+	bool DisallowConsecutiveCalls = false;
 
 	UPROPERTY(Transient)
 	mutable bool HasPlayed = false;
