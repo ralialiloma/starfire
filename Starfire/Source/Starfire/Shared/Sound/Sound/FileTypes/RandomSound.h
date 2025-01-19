@@ -19,12 +19,24 @@ class STARFIRE_API URandomSound : public USoundFileType
 		if (SoundFiles.Num() <= 0)
 			return nullptr;
 
-		const int RandomNumber = FMath::RandRange(0, SoundFiles.Num() - 1);
+		int RandomNumber = FMath::RandRange(0, SoundFiles.Num() - 1);
+
+		if (RandomNumber == PreviousSoundIndex)
+		{
+			RandomNumber++;
+			RandomNumber %= SoundFiles.Num();
+		}
+		
 		return SoundFiles[RandomNumber];
 	}
 
 protected:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	bool DisallowSameConsecutiveSounds = true;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TArray<USoundBase*> SoundFiles {};
+
+	UPROPERTY(Transient)
+	int32 PreviousSoundIndex = -1;
 };

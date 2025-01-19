@@ -11,6 +11,6 @@ class USoundFXProcessor : public UObject
 public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void ModifyFX(UAudioComponent* AudioComponent) const;
+	void ModifyFX(UPARAM(ref) UAudioComponent*& AudioComponent) const;
 	
 };

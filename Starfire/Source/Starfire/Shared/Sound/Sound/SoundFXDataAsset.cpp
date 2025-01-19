@@ -101,6 +101,9 @@ USceneComponent* USoundFXDataAsset::ExecuteFX_Implementation(UObject* WorldConte
 				continue;
 			
 			Processor->ModifyFX(AudioComp);
+
+			if (!AudioComp)
+				return nullptr;
 		}
 
 		return AudioComp;

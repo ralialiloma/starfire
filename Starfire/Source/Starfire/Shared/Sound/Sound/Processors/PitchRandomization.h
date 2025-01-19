@@ -15,7 +15,7 @@ class STARFIRE_API UPitchRandomization : public USoundFXProcessor
 	GENERATED_BODY()
 
 public:
-	virtual void ModifyFX_Implementation(UAudioComponent* AudioComponent) const override;
+	virtual void ModifyFX_Implementation(UAudioComponent*& AudioComponent) const override;
 
 protected:
 
@@ -23,4 +23,11 @@ protected:
 	float MinPitch = 0.5;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	float MaxPitch = 1.5;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (InlineEditConditionToggle))
+	bool DisallowSimilarPitchConsecutively = true;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (EditCondition = "DisallowSimilarPitchConsecutively"))
+	float ConsecutivePitchTolerance = 0.1f;
+
+	UPROPERTY(Transient)
+	mutable float PreviousPitch = -1;
 };
