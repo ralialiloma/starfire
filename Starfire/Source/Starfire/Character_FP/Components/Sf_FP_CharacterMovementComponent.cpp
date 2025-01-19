@@ -418,6 +418,7 @@ FHitResult USf_FP_CharacterMovementComponent::CheckFromPlayer(const FVector& Cas
 	auto Params = SfCharacterOwner->GetIgnoreCharacterParams();
 	FHitResult WallHit;
 	GetWorld()->LineTraceSingleByProfile(WallHit, Start, End, "WallRun", Params);
+	LINE(WallHit.TraceStart, WallHit.TraceEnd, FColor::Blue);
 	return WallHit;
 }
 
@@ -460,7 +461,7 @@ bool USf_FP_CharacterMovementComponent::TryWallRun()
 	};
 
 	// Forward check
-	FHitResult ForwardHit = CheckFromPlayer(PlayerForward * TraceDist);
+	FHitResult ForwardHit = CheckFromPlayer(PlayerForward * (TraceDist / 2));
 	if (IsWallRunnable(ForwardHit))
 	{
 		WallHit = ForwardHit;
@@ -468,6 +469,32 @@ bool USf_FP_CharacterMovementComponent::TryWallRun()
 
 		float DotRight = FVector::DotProduct(WallHit.Normal.GetSafeNormal2D(), PlayerRight);
 		bIsRightSide = DotRight < 0.0f;
+	}
+
+	// Left-forward check
+	if (!bFoundWall)
+	{
+		FVector LeftForward = (PlayerForward - PlayerRight).GetSafeNormal();
+		FHitResult LeftForwardHit = CheckFromPlayer(LeftForward * TraceDist / 1.5);
+		if (IsWallRunnable(LeftForwardHit))
+		{
+			WallHit = LeftForwardHit;
+			bFoundWall = true;
+			bIsRightSide = false;
+		}
+	}
+
+	// Right-forward check
+	if (!bFoundWall)
+	{
+		FVector RightForward = (PlayerForward + PlayerRight).GetSafeNormal();
+		FHitResult RightForwardHit = CheckFromPlayer(RightForward * TraceDist / 1.5);
+		if (IsWallRunnable(RightForwardHit))
+		{
+			WallHit = RightForwardHit;
+			bFoundWall = true;
+			bIsRightSide = true;
+		}
 	}
 
 	// Left check
