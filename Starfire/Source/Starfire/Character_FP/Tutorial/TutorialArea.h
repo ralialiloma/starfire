@@ -23,4 +23,9 @@ private:
 
 	UPROPERTY(Transient)
 	mutable ATutorialManager* TutorialManager = nullptr;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess, Categories = "Gameplay.ActionLogger"))
+	FGameplayTagContainer TagsToLogOnEnter {};
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess, Categories = "Gameplay.ActionLogger"))
+	FGameplayTagContainer TagsToLogOnExit {};
 };

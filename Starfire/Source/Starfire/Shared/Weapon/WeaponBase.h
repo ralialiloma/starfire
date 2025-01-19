@@ -223,6 +223,7 @@ public:
 	bool InstantReload();
 
 	bool Reload();
+	void SetClip(int NewClip);
 
 	UFUNCTION(BlueprintCallable, Category="WeaponBase")
 	virtual bool CanReload();

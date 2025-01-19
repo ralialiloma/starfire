@@ -41,6 +41,15 @@ protected:
 	bool bRetriggerableCheckpoint = false;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	TSubclassOf<APawn> CheckTriggerPawnClass;
+#if WITH_EDITOR
+	UFUNCTION(CallInEditor)
+	void SetPlayerHeight();
+#endif
+	
+#if WITH_EDITORONLY_DATA
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, CallInEditor)
+	TSubclassOf<ACharacter> CheckPlayerPawnClass;
+#endif
 #pragma endregion
 
 };

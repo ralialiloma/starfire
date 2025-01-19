@@ -10,6 +10,11 @@ void ATutorialArea::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* 
 {
 	Super::OnOverlapBegin(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
 
+	for (auto GameplayTag : TagsToLogOnEnter)
+	{
+		UActionLoggerSubSystem::Get(GetWorld())->ReportAction(FActionLog(GameplayTag));
+	}
+
 	if (!TutorialManager)
 	{
 		TutorialManager = Cast<ATutorialManager>(UGameplayStatics::GetActorOfClass(this, ATutorialManager::StaticClass()));
@@ -25,5 +30,8 @@ void ATutorialArea::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* Ot
 {
 	Super::OnOverlapEnd(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex);
 
-	
+	for (auto GameplayTag : TagsToLogOnExit)
+	{
+		UActionLoggerSubSystem::Get(GetWorld())->ReportAction(FActionLog(GameplayTag));
+	}
 }

@@ -7,6 +7,7 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/PlayerStart.h"
 #include "Kismet/GameplayStatics.h"
+#include "Starfire/Sf_Bases/Components/Sf_Equipment.h"
 #include "Starfire/Shared/ActionLogger/ActionLogger.h"
 #include "Starfire/Shared/BreakerTarget/Sf_BreakerPillar.h"
 #include "Starfire/Shared/Core/Sf_GameState.h"
@@ -59,10 +60,18 @@ void ATutorialManager::StartTutorial(FTransform InReturnTransform)
 	}
 
 	GetWorld()->GetGameState<ASf_GameState>()->SetPlayState(Sf_GameplayTags::Gameplay::PlayState::Tutorial);
+
+	//Teleport player
+	ACharacter* Character = GetPlayerPawn();
+	Character->TeleportTo(TutorialStart->GetActorLocation(), TutorialStart->GetActorRotation());
+
+	//Remove Player Clip
+	if (USf_Equipment* Equipment = Character->GetComponentByClass<USf_Equipment>())
+		if (Equipment->GetActiveWeapon())
+			Equipment->GetActiveWeapon()->SetClip(0);
 	
-	GetPlayerPawn()->TeleportTo(TutorialStart->GetActorLocation(), TutorialStart->GetActorRotation());
 	TutorialEnd->FullRestore();
-	TutorialEnd->OnBreak_BP.AddDynamic(this, &ATutorialManager::EndTutorial);
+	// TutorialEnd->OnBreak_BP.AddDynamic(this, &ATutorialManager::EndTutorial);
 
 	//Start Tutorial
 	UActionLoggerSubSystem* ActionLogger = UActionLoggerSubSystem::Get(GetWorld());
@@ -189,6 +198,12 @@ bool ATutorialManager::EvaluateTutorialConditions(FTutorialConditionSettings Con
 void ATutorialManager::OnActionLogged(FCachedActionLogMessage NewMessage, int MessageCount)
 {
 	FGameplayTag CurrentLoggedAction = NewMessage.Message.RelatedTag;
+
+	if (CurrentLoggedAction.MatchesTagExact(Sf_GameplayTags::Tutorial::State::End))
+	{
+		EndTutorial();
+		return;
+	}
 
 	if (!GetAllTutorialActionsRaw().HasTagExact(CurrentLoggedAction))
 		return;

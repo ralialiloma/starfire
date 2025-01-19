@@ -40,7 +40,7 @@ AWeaponBase::AWeaponBase(const FObjectInitializer& ObjectInitializer)
 void AWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
-	CurrentClip = WeaponConfig.MaxClipSize;
+	SetClip(WeaponConfig.MaxClipSize);
 
 	for (UWeaponFeature* Feature: Features)
 	{
@@ -62,7 +62,7 @@ void AWeaponBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 void AWeaponBase::PostInitProperties()
 {
 	Super::PostInitProperties();
-	CurrentClip = WeaponConfig.MaxClipSize; 
+	SetClip(WeaponConfig.MaxClipSize);
 }
 
 void AWeaponBase::PostInitializeComponents()
@@ -503,7 +503,7 @@ void AWeaponBase::DoFire(FHitResult& OutHitResult)
 	}
 
 	//Reduce Clip
-	CurrentClip -= WeaponConfig.bInfiniteAmmo?0:1;
+	SetClip(CurrentClip - (WeaponConfig.bInfiniteAmmo ? 0 : 1));
 
 	for (UWeaponFeature* Feature: Features)
 	{
@@ -530,6 +530,11 @@ bool AWeaponBase::Reload()
 	return Reload(MontageTime);
 }
 
+void AWeaponBase::SetClip(int NewClip)
+{
+	CurrentClip = NewClip;
+}
+
 bool AWeaponBase::CanReload()
 {
 	return !IsReloading() && CurrentClip<GetWeaponConfig().MaxClipSize;
@@ -548,7 +553,7 @@ bool AWeaponBase::Reload(float& OutMontageTime)
 	FTimerDelegate TimerDel;
 	TimerDel.BindLambda([this]() ->void
 	{
-		CurrentClip = WeaponConfig.MaxClipSize;
+		SetClip(WeaponConfig.MaxClipSize);
 		OnReloadFinish_BP.Broadcast();
 		OnReloadFinish_CPP.Broadcast();
 	});
@@ -564,7 +569,7 @@ bool AWeaponBase::Reload(float& OutMontageTime)
 
 bool AWeaponBase::InstantReload()
 {
-	CurrentClip = WeaponConfig.MaxClipSize;
+	SetClip(WeaponConfig.MaxClipSize);
 	OnReloadFinish_BP.Broadcast();
 	OnReloadFinish_CPP.Broadcast();
 	return true;

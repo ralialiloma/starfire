@@ -16,6 +16,7 @@ namespace Sf_GameplayTags
 		namespace State
 		{
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Tutorial.State", "")
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(End, "Tutorial.State.End", "")
 		}
 	}
 	namespace Gameplay
@@ -54,7 +55,6 @@ namespace Sf_GameplayTags
 					{
 						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay.ActionLogger.FP.Movement.Wallrun", "")
 						DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ActionLogger.FP.Movement.Wallrun,Start,"");
-						DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ActionLogger.FP.Movement.Wallrun,Curved,"");
 						DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ActionLogger.FP.Movement.Wallrun,Jump,"");
 						DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ActionLogger.FP.Movement.Wallrun,End,"");
 					}
@@ -95,6 +95,10 @@ namespace Sf_GameplayTags
 							DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.ActionLogger.FP.Equipment.Grenade.Throw,End,"");
 						}
 					}
+					namespace Scan
+					{
+						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay.ActionLogger.FP.Equipment.Scan", "")
+					}
 				}
 			}
 			namespace Resources
@@ -112,6 +116,18 @@ namespace Sf_GameplayTags
 					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay.ActionLogger.Resources.PowerCore", "")
 					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Collect, "Gameplay.ActionLogger.Resources.PowerCore.Collect", "")
 				}
+			}
+			namespace Tutorial
+			{
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay.ActionLogger.Tutorial", "")
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(GrenadeUI, "Gameplay.ActionLogger.Tutorial.GrenadeUI", "")
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(PillarRun, "Gameplay.ActionLogger.Tutorial.PillarRun", "")
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(PillarUI, "Gameplay.ActionLogger.Tutorial.PillarUI", "")
+			}
+			namespace TP
+			{
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay.ActionLogger.TP", "")
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Kill, "Gameplay.ActionLogger.TP.Kill", "")
 			}
 		}
 		namespace PatrolAreaMarkerTypes

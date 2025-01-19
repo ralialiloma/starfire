@@ -7,6 +7,7 @@
 #include "Starfire/Character_TP/Features/Combat/CF_Combat.h"
 #include "Starfire/Character_TP/Features/HitReact/CF_HitReact.h"
 #include "Starfire/Character_TP/Features/Locomotion/CF_Locomotion.h"
+#include "Starfire/Shared/ActionLogger/ActionLogger.h"
 #include "Starfire/Shared/Resources/Resource.h"
 
 
@@ -113,9 +114,9 @@ void UCF_Death::Kill()
 		}
 	}
 
+	if (UActionLoggerSubSystem* SubSystem = UActionLoggerSubSystem::Get(GetWorld()))
+		SubSystem->ReportAction(FActionLog(Sf_GameplayTags::Gameplay::ActionLogger::TP::Kill));
+
 	//Destroy Character
 	GetOwningCharacter()->Destroy();
 }
-
-
-    

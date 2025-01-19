@@ -13,6 +13,7 @@ namespace Sf_GameplayTags
 		namespace State
 		{
 			STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+			STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(End);
 		}
 	}
 	namespace Gameplay
@@ -52,7 +53,6 @@ namespace Sf_GameplayTags
 					{
 						STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
 						STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Start);
-						STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Curved);
 						STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Jump);
 						STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(End);
 					}
@@ -93,6 +93,10 @@ namespace Sf_GameplayTags
 							STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(End);
 						}
 					}
+					namespace Scan
+					{
+						STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+					}
 				}
 			}
 			namespace Resources
@@ -111,11 +115,18 @@ namespace Sf_GameplayTags
 					STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Collect);
 				}
 			}
-			// namespace TP
-			// {
-			// 	STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
-			// 	STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Break);
-			// }
+			namespace Tutorial
+			{
+				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GrenadeUI);
+				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(PillarRun);
+				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(PillarUI);
+			}
+			namespace TP
+			{
+				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Name);
+				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Kill);
+			}
 		}
 		namespace PatrolAreaMarkerTypes
 		{

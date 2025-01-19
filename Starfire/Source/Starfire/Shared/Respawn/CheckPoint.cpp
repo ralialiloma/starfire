@@ -3,6 +3,7 @@
 
 #include "CheckPoint.h"
 
+#include "Camera/CameraComponent.h"
 #include "Components/TextRenderComponent.h"
 #include "Starfire/Shared/Core/Sf_GameState.h"
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
@@ -70,6 +71,49 @@ void ACheckPoint::OnCheckPointChange(FTransform NewCheckpoint, FTransform OldChe
 		OnUnsetCheckPoint_Internal();
 	}
 }
+
+#if WITH_EDITOR
+void ACheckPoint::SetPlayerHeight()
+{
+	if (!CheckPlayerPawnClass)
+		return;
+	
+	if (const ACharacter* Pawn = GetDefault<ACharacter>(CheckPlayerPawnClass))
+	{
+		UCameraComponent* PlayerCamera = Pawn->FindComponentByClass<UCameraComponent>();
+		UCapsuleComponent* PlayerCapsule = Pawn->GetCapsuleComponent();
+		UCameraComponent* ActorCamera = FindComponentByClass<UCameraComponent>();
+
+		if (!PlayerCamera || !ActorCamera)
+			return;
+		
+		FVector PlayerCameraLocation = PlayerCamera->GetComponentLocation();
+		float PlayerCapsuleBottomZ = PlayerCapsule->GetComponentLocation().Z - PlayerCapsule->GetScaledCapsuleHalfHeight();
+		float PlayerCameraHeightAboveGround = PlayerCameraLocation.Z - PlayerCapsuleBottomZ;
+		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, FString::SanitizeFloat(PlayerCameraHeightAboveGround));
+		
+		FVector ActorCameraLocation = ActorCamera->GetComponentLocation();
+		FVector TraceStart = ActorCameraLocation;
+		FVector TraceEnd = TraceStart - FVector(0.0f, 0.0f, 10000.0f); // Trace far downward
+
+		FHitResult HitResult;
+		FCollisionQueryParams QueryParams;
+		QueryParams.AddIgnoredActor(this);
+
+		if (GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, ECC_Visibility, QueryParams))
+		{
+			float ActorCameraHeightAboveGround = ActorCameraLocation.Z - HitResult.ImpactPoint.Z;
+			float HeightDifference = PlayerCameraHeightAboveGround - ActorCameraHeightAboveGround;
+
+			// Adjust the actor's position
+			FVector ActorLocation = GetActorLocation();
+			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, FString::SanitizeFloat(HeightDifference));
+			ActorLocation.Z += HeightDifference;
+			SetActorLocation(ActorLocation);
+		}
+	}
+}
+#endif
 
 void ACheckPoint::OnUnsetCheckPoint_Internal_Implementation()
 {
