@@ -415,7 +415,7 @@ FHitResult USf_FP_CharacterMovementComponent::CheckFromPlayer(const FVector& Cas
 {
 	FVector Start = UpdatedComponent->GetComponentLocation() + Offset;
 	FVector End = Start + CastDelta;
-	auto Params = SfCharacterOwner->GetIgnoreCharacterParams();
+	FCollisionQueryParams Params = SfCharacterOwner->GetIgnoreCharacterParams();
 	FHitResult WallHit;
 	GetWorld()->LineTraceSingleByProfile(WallHit, Start, End, "WallRun", Params);
 	LINE(WallHit.TraceStart, WallHit.TraceEnd, FColor::Blue);
