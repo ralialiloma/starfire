@@ -49,4 +49,31 @@ void FSf_GameplayTagUtil::ValidateAndUpdateGameplayTagMap(TMap<FGameplayTag, Val
 	{
 		Map.Remove(Key);
 	}
+
+	KeysToRemove.Empty();
+	// Iterate over all keys in the map
+	for (const auto& OuterKvp : Map)
+	{
+		const FGameplayTag& OuterTag = OuterKvp.Key;
+
+		// Check if this tag is a parent of any other tag in the map
+		for (const auto& InnerKvp : Map)
+		{
+			const FGameplayTag& InnerTag = InnerKvp.Key;
+			if (OuterTag != InnerTag && OuterTag.MatchesTag(InnerTag))
+			{
+				// If OuterTag is a parent of InnerTag, mark it for removal
+				KeysToRemove.AddUnique(InnerTag);
+				break; // No need to check further for this tag
+			}
+		}
+	}
+
+	// Remove parent tags that were marked
+	for (const FGameplayTag& Key : KeysToRemove)
+	{
+		Map.Remove(Key);
+	}
+
+	
 }

@@ -45,7 +45,9 @@ bool FResourceVein::AddResource(AResource* Resource)
 
 	int RandomSpawnIndex = FMath::RandRange(0, ViableSpawns.Num() - 1);
 	TSharedPtr<FResourceSpawn> Spawn = Spawns[ViableSpawns[RandomSpawnIndex]];
-	
+
+	ensureMsgf(Spawn.IsValid(),TEXT( "Spawn is invalid when adding ressource"));
+		
 	Spawn->SetItem(Resource);
 	Resource->OnCollectDelegate_CPP.AddLambda([this](AResource* Resource)
 	{

@@ -359,6 +359,13 @@ namespace Sf_GameplayTags
 				namespace AnimSequence
 				{
 					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Animation.Character.FP.AnimSequence", "");
+					namespace Sprint
+					{
+						UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Animation.Character.FP.AnimSequence.Sprint", "");
+						DEFINE_GAMEPLAY_TAG_AUTO(Animation.Character.FP.AnimSequence.Sprint,Start,"");
+						DEFINE_GAMEPLAY_TAG_AUTO(Animation.Character.FP.AnimSequence.Sprint,Loop,"");
+						DEFINE_GAMEPLAY_TAG_AUTO(Animation.Character.FP.AnimSequence.Sprint,End,"");
+					}
 					DEFINE_GAMEPLAY_TAG_AUTO(Animation.Character.FP.AnimSequence,Idle,"");
 					DEFINE_GAMEPLAY_TAG_AUTO(Animation.Character.FP.AnimSequence,Jump,"");
 					DEFINE_GAMEPLAY_TAG_AUTO(Animation.Character.FP.AnimSequence,Falling,"");
