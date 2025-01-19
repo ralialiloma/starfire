@@ -17,6 +17,10 @@ FScheduledEnvRequest::FScheduledEnvRequest(UObject* InQuerier, UEnvQuery* InQuer
 FScheduledEnvRequest::FScheduledEnvRequest(): RunMode()
 {
 	UniqueIdentifier = FGuid::NewGuid();
+	Querier = nullptr;
+	QueryTemplate = nullptr;
+	RunMode = EEnvQueryRunMode::SingleResult;
+	UniqueIdentifier = FGuid::NewGuid();
 }
 
 void USf_EQS_Scheduler::Initialize(FSubsystemCollectionBase& Collection)

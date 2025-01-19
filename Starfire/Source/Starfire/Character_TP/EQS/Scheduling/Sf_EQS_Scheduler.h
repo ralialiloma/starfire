@@ -30,7 +30,7 @@ public:
 	UEnvQuery* QueryTemplate = nullptr;
 
 	UPROPERTY(BlueprintReadWrite)
-	TEnumAsByte<EEnvQueryRunMode::Type>  RunMode;
+	TEnumAsByte<EEnvQueryRunMode::Type>  RunMode = EEnvQueryRunMode::SingleResult;
 
 	UPROPERTY()
 	FGuid UniqueIdentifier = FGuid::NewGuid();
