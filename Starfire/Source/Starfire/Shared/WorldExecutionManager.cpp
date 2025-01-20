@@ -5,6 +5,8 @@
 #include "TimerManager.h"
 #include "LevelInstance/LevelInstanceActor.h"
 
+DEFINE_LOG_CATEGORY(LogWorldExecutionManager)
+
 void UWorldExecutionManager::Initialize(FSubsystemCollectionBase& Collection)
 {
     Super::Initialize(Collection);
@@ -52,7 +54,7 @@ void UWorldExecutionManager::OnLevelAddedToWorld(ULevel* Level, UWorld* World)
     if (World == GetWorld() && Level)
     {
         FString LevelName = Level->GetOuter()->GetName();
-        UE_LOG(LogTemp, Log, TEXT("Level added to world: %s"), *LevelName);
+        UE_LOG(LogWorldExecutionManager, Log, TEXT("Level added to world: %s"), *LevelName);
         NumLevelsFound--;
         
         TrackNestedLevels(World);
@@ -81,14 +83,14 @@ void UWorldExecutionManager::TrackNestedLevels(UWorld* World)
                 NumLevelsLoading++;
                 StreamingLevel->OnLevelShown.AddDynamic(this, &UWorldExecutionManager::OnLevelShown);
 
-                UE_LOG(LogTemp, Log, TEXT("Tracking nested level: %s"), *StreamingLevelName);
+                UE_LOG(LogWorldExecutionManager, Log, TEXT("Tracking nested level: %s"), *StreamingLevelName);
             }
         }
     }
 
     if (!FoundStreamingLevels && NumLevelsLoading == 0)
     {
-        UE_LOG(LogTemp, Log, TEXT("No streaming levels found. Treating as fully loaded."));
+        UE_LOG(LogWorldExecutionManager, Log, TEXT("No streaming levels found. Treating as fully loaded."));
     }
 }
 
@@ -96,7 +98,7 @@ void UWorldExecutionManager::OnLevelShown()
 {
     NumLevelsLoading--;
 
-    UE_LOG(LogTemp, Log, TEXT("A level finished loading. Remaining: %d"), NumLevelsLoading);
+    UE_LOG(LogWorldExecutionManager, Log, TEXT("A level finished loading. Remaining: %d"), NumLevelsLoading);
 
     CheckAllLevelsLoaded();
 }
@@ -116,5 +118,5 @@ void UWorldExecutionManager::AllLevelsLoaded()
     OnAllLevelsLoaded_BP.Broadcast();
     OnAllLevelsLoaded_CPP.Broadcast();
 
-    UE_LOG(LogTemp, Log, TEXT("All levels and nested levels are fully loaded."));
+    UE_LOG(LogWorldExecutionManager, Log, TEXT("All levels and nested levels are fully loaded."));
 }

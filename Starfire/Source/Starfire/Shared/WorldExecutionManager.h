@@ -4,6 +4,8 @@
 #include "Subsystems/WorldSubsystem.h"
 #include "WorldExecutionManager.generated.h"
 
+DECLARE_LOG_CATEGORY_EXTERN(LogWorldExecutionManager, Log, All);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAllLevelsLoaded_BP);
 DECLARE_MULTICAST_DELEGATE(FOnAllLevelsLoaded_CPP);
 
