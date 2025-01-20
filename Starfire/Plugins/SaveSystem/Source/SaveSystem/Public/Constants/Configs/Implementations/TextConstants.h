@@ -18,7 +18,7 @@ public:
 
 protected:
 	virtual TMap<FGameplayTag, void*> GetArray() override;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ForceInlineRow))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ForceInlineRow, MultiLine))
 	TMap<FGameplayTag, FText> FTexts;
 };
 
