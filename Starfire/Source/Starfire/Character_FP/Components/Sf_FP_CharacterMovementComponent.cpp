@@ -723,7 +723,7 @@ void USf_FP_CharacterMovementComponent::JumpOffWall()
 	{
 		Velocity = Velocity.RotateAngleAxis(GetVectorAngleOn(InputDir, Velocity) * (Saved_bWallRunIsRight ? -1 : 1), FVector::UpVector) *
 			WallJumpForceMultiplier;
-		if (SHOULD_DEBUG(Sf_GameplayTags::Debug::FP::Movement::Wallrun, EDebugDisplayType::Visual) || true)
+		if (SHOULD_DEBUG(Sf_GameplayTags::Debug::FP::Movement::Wallrun, EDebugDisplayType::Visual))
 		{
 			UKismetSystemLibrary::DrawDebugArrow(
 				this,
@@ -742,7 +742,7 @@ void USf_FP_CharacterMovementComponent::JumpOffWall()
 
 		FVector WallJumpOffVector = FMath::Lerp(InputDir, WallHit.Normal, WallNormalJumpOffInfluence).GetSafeNormal();
 		Velocity += WallJumpOffVector * WallJumpOffForce;
-		if (SHOULD_DEBUG(Sf_GameplayTags::Debug::FP::Movement::Wallrun, EDebugDisplayType::Visual) || true)
+		if (SHOULD_DEBUG(Sf_GameplayTags::Debug::FP::Movement::Wallrun, EDebugDisplayType::Visual))
 		{
 			UKismetSystemLibrary::DrawDebugArrow(
 				this,
