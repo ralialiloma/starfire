@@ -92,10 +92,12 @@ void UAISense_Alert::RegisterEvent(const FAlertEvent& Event)
 	RequestImmediateUpdate();
 }
 
+#if WITH_GAMEPLAY_DEBUGGER_MENU
 void UAISense_Alert::DescribeSelfToGameplayDebugger(const UAIPerceptionSystem& PerceptionSystem, FGameplayDebuggerCategory& DebuggerCategory) const
 {
 	Super::DescribeSelfToGameplayDebugger(PerceptionSystem, DebuggerCategory);
 }
+#endif 
 
 void UAISense_Alert::OnNewListenerImpl(const FPerceptionListener& NewListener)
 {
