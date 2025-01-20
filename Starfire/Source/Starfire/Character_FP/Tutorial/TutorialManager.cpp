@@ -7,6 +7,7 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/PlayerStart.h"
 #include "Kismet/GameplayStatics.h"
+#include "Starfire/Character_FP/Components/Inventory/InventoryComponent.h"
 #include "Starfire/Sf_Bases/Components/Sf_Equipment.h"
 #include "Starfire/Shared/ActionLogger/ActionLogger.h"
 #include "Starfire/Shared/BreakerTarget/Sf_BreakerPillar.h"
@@ -109,6 +110,10 @@ void ATutorialManager::EndTutorial()
 
 	GetPlayerPawn()->TeleportTo(ReturnTransform.GetLocation(), ReturnTransform.Rotator());
 	TutorialEnd->OnBreak_BP.RemoveDynamic(this, &ATutorialManager::EndTutorial);
+
+	//Remove Player Inventory
+	if (UInventoryComponent* Inventory = GetPlayerPawn()->GetComponentByClass<UInventoryComponent>())
+		Inventory->ClearAllResources();
 	
 	//End Tutorial
 	UActionLoggerSubSystem* ActionLogger = UActionLoggerSubSystem::Get(GetWorld());
