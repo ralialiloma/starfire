@@ -49,7 +49,7 @@ public:
 		Timestamp = FDateTime::Now();
 	}
 
-	FCachedActionLogMessage(FActionLog MessageIn)
+	FCachedActionLogMessage(const FActionLog& MessageIn)
 	{
 		Message =  MessageIn;
 		Timestamp = FDateTime::Now();
@@ -81,6 +81,9 @@ public:
 
 	UFUNCTION(BlueprintCallable,BlueprintAuthorityOnly)
 	int GetMessageCount(FActionLog MessageToLookFor);
+
+	UFUNCTION(BlueprintCallable,BlueprintAuthorityOnly)
+	int GetMessageCountForTag(UPARAM(meta = (Categories = "Gameplay.ActionLogger"))const FGameplayTag TagToLookFor);
 
 	UFUNCTION(BlueprintCallable,BlueprintAuthorityOnly)
 	int GetMessageCountSince(FActionLog MessageToLookFor, FDateTime Time);

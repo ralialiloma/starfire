@@ -67,6 +67,17 @@ int UActionLoggerSubSystem::GetMessageCount(const FActionLog MessageToLookFor)
 	return Counter;
 }
 
+int UActionLoggerSubSystem::GetMessageCountForTag(const FGameplayTag TagToLookFor)
+{
+	int Counter = 0;
+	for (int i = 0; i < SavedMessages.Num(); i++)
+	{
+		if (SavedMessages[i].Message.RelatedTag == TagToLookFor)
+			Counter++;
+	}
+	return Counter;
+}
+
 int UActionLoggerSubSystem::GetMessageCountSince(const FActionLog MessageToLookFor, const FDateTime Time)
 {
 	int Counter = 0;
