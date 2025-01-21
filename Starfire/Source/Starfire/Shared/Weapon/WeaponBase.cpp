@@ -843,7 +843,13 @@ bool AWeaponBase::CanFire(const EInputSignalType InputSignal, EFireType FireType
 		return false;
 	}
 
-	if (IsReloading() && GetAmmoCount()<=0)
+	if (IsReloading())
+	{
+		OutBlock = EFireBlock::Reload;
+		return false;
+	}
+
+	if (GetAmmoCount()<=0)
 	{
 		OutBlock = EFireBlock::Reload;
 		return false;
