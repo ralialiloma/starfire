@@ -6,6 +6,7 @@
 #include "GameplayTagContainer.h"
 #include "GameFramework/GameStateBase.h"
 #include "Starfire/StarFireGameplayTags.h"
+#include "Structs/TimeData.h"
 #include "Sf_GameState.generated.h"
 
 class ACheckPoint;
@@ -60,14 +61,22 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "PlayState", meta = (Categories = "Gameplay.PlayState"))
 	bool IsInPlayState(FGameplayTag NewPlayState) const;
 
+	UFUNCTION(BlueprintCallable, Category = "PlayState", meta = (Categories = "Gameplay.PlayState"))
+	FTimeData GetElapsedTimeInState(FGameplayTag PlayState) const;
+
 protected:
 
 	UFUNCTION(BlueprintNativeEvent)
 	void OnChangeState(FGameplayTag NewState, FGameplayTag OldState);
 
 	UPROPERTY(EditDefaultsOnly, Category = "PlayState", meta = (Categories = "Gameplay.PlayState"))
-	FGameplayTag CurrentPlayState = Sf_GameplayTags::Gameplay::PlayState::Tutorial;
-
+	FGameplayTag CurrentPlayState = Sf_GameplayTags::Gameplay::PlayState::Start;
+	
+	UPROPERTY()
+	TMap<FGameplayTag, float> ElapsedTimeInPhases {};
+	UPROPERTY()
+	float PhaseStartTimeStamp = 0;
+	
 	UPROPERTY()
 	bool bHasWon = false;
 

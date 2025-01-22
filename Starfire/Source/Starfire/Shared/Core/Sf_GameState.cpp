@@ -50,6 +50,13 @@ bool ASf_GameState::SetPlayState(FGameplayTag NewPlayState)
 	FGameplayTag OldPlayState = CurrentPlayState;
 	CurrentPlayState = NewPlayState;
 
+	float ElapsedTimeInPhase = GetGameTimeSinceCreation() - PhaseStartTimeStamp;
+	PhaseStartTimeStamp = GetGameTimeSinceCreation();
+	if (ElapsedTimeInPhases.Contains(OldPlayState))
+		ElapsedTimeInPhases[OldPlayState] += ElapsedTimeInPhase;
+	else
+		ElapsedTimeInPhases.Add(OldPlayState, ElapsedTimeInPhase);
+
 	OnChangeState(NewPlayState, OldPlayState);
 	OnPlayStateChange.Broadcast(NewPlayState, OldPlayState);
 	return true;
@@ -68,6 +75,13 @@ bool ASf_GameState::HasWonGame() const
 bool ASf_GameState::IsInPlayState(FGameplayTag NewPlayState) const
 {
 	return CurrentPlayState.MatchesTag(NewPlayState);
+}
+
+FTimeData ASf_GameState::GetElapsedTimeInState(FGameplayTag PlayState) const
+{
+	if (const float* ElapsedTime = ElapsedTimeInPhases.Find(PlayState))
+		return *ElapsedTime;
+	return 0;
 }
 
 void ASf_GameState::OnChangeState_Implementation(FGameplayTag NewState, FGameplayTag OldState)

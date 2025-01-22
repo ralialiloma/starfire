@@ -362,7 +362,14 @@ void ASf_FP_Character::Respawn()
 			UFXSubsystem::Get()->PlayFX(this, Sf_GameplayTags::Effects::Messages::FP::Respawn);
 		}
 		SetActorTransform(SpawnTransform);
-		GetSfEquipmentComponent()->InstantReload();
+
+		if (GetWorld() && GetWorld()->GetGameState())
+		{
+			if (GetWorld()->GetGameState<ASf_GameState>()->IsInPlayState(Sf_GameplayTags::Gameplay::PlayState::Arena))
+			{
+				GetSfEquipmentComponent()->InstantReload();
+			}
+		}
 		GetSfDamageController()->Reset();
 		
 	}

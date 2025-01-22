@@ -34,10 +34,8 @@ void ASf_BreakerCore::BeginPlay()
 void ASf_BreakerCore::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-
 	
-	
-	UpdateProgress(ProgressPerSecond * DeltaSeconds);
+	UpdateProgress(ProgressPerSecond * MultiplierPerMinute * DeltaSeconds);
 }
 
 void ASf_BreakerCore::StartGame()
@@ -133,6 +131,17 @@ void ASf_BreakerCore::OnProgressEmpty_Implementation()
 	OnNumPillarsChanged();
 	OnNumPillarsChanged_BP.Broadcast();
 	OnNumPillarsChanged_CPP.Broadcast();
+}
+
+float ASf_BreakerCore::GetMultiplierPerMinute() const
+{
+	ASf_GameState* GameState = GetWorld()->GetGameState<ASf_GameState>();
+	if (!GameState)
+		return 1;
+
+	float ElapsedGameTimeMinutes = GameState->GetElapsedTimeInState(Sf_GameplayTags::Gameplay::PlayState::Arena).GetAsTime(ETimeMode::Minutes);
+	float Multiplier = FMath::Pow(ElapsedGameTimeMinutes * MultiplierPerMinute, PowerPerMinute);
+	return FMath::Max(Multiplier, 1.f);
 }
 
 void ASf_BreakerCore::UpdateProgress(float Value)

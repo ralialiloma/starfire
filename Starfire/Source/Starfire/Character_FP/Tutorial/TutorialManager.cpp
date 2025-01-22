@@ -114,6 +114,9 @@ void ATutorialManager::EndTutorial()
 	//Remove Player Inventory
 	if (UInventoryComponent* Inventory = GetPlayerPawn()->GetComponentByClass<UInventoryComponent>())
 		Inventory->ClearAllResources();
+
+	if (USf_Equipment* Equipment = GetPlayerPawn()->GetComponentByClass<USf_Equipment>())
+		Equipment->InstantReload();
 	
 	//End Tutorial
 	UActionLoggerSubSystem* ActionLogger = UActionLoggerSubSystem::Get(GetWorld());

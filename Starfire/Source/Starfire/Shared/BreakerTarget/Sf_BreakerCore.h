@@ -49,7 +49,8 @@ protected:
 	void OnProgressFull();
 	UFUNCTION(BlueprintNativeEvent)
 	void OnProgressEmpty();
-	
+
+	float GetMultiplierPerMinute() const;
 	void UpdateProgress(float Value);
 
 	UFUNCTION()
@@ -91,6 +92,10 @@ protected:
 	bool bStartWithPillarsCharging = false;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	float ProgressPerSecond = 1.f;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, AdvancedDisplay)
+	float MultiplierPerMinute = 1.f;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, AdvancedDisplay)
+	float PowerPerMinute = 1.f;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	float MaxProgress = 100.f;
