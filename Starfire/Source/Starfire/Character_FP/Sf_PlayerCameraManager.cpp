@@ -27,52 +27,52 @@ void ASF_PlayerCameraManager::UpdateViewTarget(FTViewTarget& OutVT, float DeltaT
 	//Update View Target Rotation
 	float RollOverwrite =ProcessWallRunRollOverwrite(SfCharacterMovementComponent,SfCharacter,DeltaTime);
 	ViewTarget.POV.Rotation = FRotator(ViewTarget.POV.Rotation.Pitch,ViewTarget.POV.Rotation.Yaw,RollOverwrite);
-
-	//Update Aim
-	// Get SF_Equipment component.
-	USf_Equipment* SFEquipmentComp = SfCharacter->GetSfEquipmentComponent();
-	if (!IsValid(SFEquipmentComp))
-	{
-		UE_LOG(SF_PlayerCameraManager, Warning, TEXT("Invalid SF_EquipmentComponent"));
-		return;
-	}
-
-	const bool IsAiming = SFEquipmentComp->IsAiming();
-
-	// -- FOV interpolation --
-	float CurrentFOV  = GetFOVAngle();
-	float TargetFOV   = IsAiming ? ADSFieldOfView : DefaultFieldOfView;
-	float NewFOV      = FMath::FInterpTo(CurrentFOV, TargetFOV, DeltaTime, 1.0f / ADSBlendDuration);
-	SetFOV(NewFOV);
-	//OutVT.POV.FOV = NewFOV;
-
-	// -- Vignette intensity --
-	//FMinimalViewInfo CacheView = GetCameraCacheView();
-	OutVT.POV.PostProcessSettings.bOverride_VignetteIntensity = true;
-	float CurrentVignette  = OutVT.POV.PostProcessSettings.VignetteIntensity;
-	float TargetVignette   = IsAiming ? 1.0f : 0.4f;
-	float NewVignette      = FMath::FInterpTo(CurrentVignette, TargetVignette, DeltaTime, 1.0f / ADSBlendDuration);
-	OutVT.POV.PostProcessSettings.VignetteIntensity = NewVignette;
-
-	// -- Depth of Field (Blur Effect) --
-	OutVT.POV.PostProcessSettings.bOverride_DepthOfFieldFocalDistance = true;
-	OutVT.POV.PostProcessSettings.bOverride_DepthOfFieldSensorWidth = true;
-	
-	// Set DOF values based on aiming state
-	if (IsAiming)
-	{
-		// Blur for aiming
-		OutVT.POV.PostProcessSettings.DepthOfFieldFocalDistance  =  500.0f;
-		OutVT.POV.PostProcessSettings.DepthOfFieldSensorWidth = 1.0f;
-	}
-	else
-	{
-		// Default DOF settings (less blur)
-		OutVT.POV.PostProcessSettings.DepthOfFieldFocalDistance = 500.0f;
-		OutVT.POV.PostProcessSettings.DepthOfFieldSensorWidth = 0.01f;
-	}
-	
-	//SetCameraCachePOV(CacheView);
+	//
+	// //Update Aim
+	// // Get SF_Equipment component.
+	// USf_Equipment* SFEquipmentComp = SfCharacter->GetSfEquipmentComponent();
+	// if (!IsValid(SFEquipmentComp))
+	// {
+	// 	UE_LOG(SF_PlayerCameraManager, Warning, TEXT("Invalid SF_EquipmentComponent"));
+	// 	return;
+	// }
+	//
+	// const bool IsAiming = SFEquipmentComp->IsAiming();
+	//
+	// // -- FOV interpolation --
+	// float CurrentFOV  = GetFOVAngle();
+	// float TargetFOV   = IsAiming ? ADSFieldOfView : DefaultFieldOfView;
+	// float NewFOV      = FMath::FInterpTo(CurrentFOV, TargetFOV, DeltaTime, 1.0f / ADSBlendDuration);
+	// SetFOV(NewFOV);
+	// //OutVT.POV.FOV = NewFOV;
+	//
+	// // -- Vignette intensity --
+	// //FMinimalViewInfo CacheView = GetCameraCacheView();
+	// OutVT.POV.PostProcessSettings.bOverride_VignetteIntensity = true;
+	// float CurrentVignette  = OutVT.POV.PostProcessSettings.VignetteIntensity;
+	// float TargetVignette   = IsAiming ? 1.0f : 0.4f;
+	// float NewVignette      = FMath::FInterpTo(CurrentVignette, TargetVignette, DeltaTime, 1.0f / ADSBlendDuration);
+	// OutVT.POV.PostProcessSettings.VignetteIntensity = NewVignette;
+	//
+	// // -- Depth of Field (Blur Effect) --
+	// OutVT.POV.PostProcessSettings.bOverride_DepthOfFieldFocalDistance = true;
+	// OutVT.POV.PostProcessSettings.bOverride_DepthOfFieldSensorWidth = true;
+	//
+	// // Set DOF values based on aiming state
+	// if (IsAiming)
+	// {
+	// 	// Blur for aiming
+	// 	OutVT.POV.PostProcessSettings.DepthOfFieldFocalDistance  =  500.0f;
+	// 	OutVT.POV.PostProcessSettings.DepthOfFieldSensorWidth = 1.0f;
+	// }
+	// else
+	// {
+	// 	// Default DOF settings (less blur)
+	// 	OutVT.POV.PostProcessSettings.DepthOfFieldFocalDistance = 500.0f;
+	// 	OutVT.POV.PostProcessSettings.DepthOfFieldSensorWidth = 0.01f;
+	// }
+	//
+	// //SetCameraCachePOV(CacheView);
 }
 
 void ASF_PlayerCameraManager::ProcessViewRotation(float DeltaTime, FRotator& OutViewRotation, FRotator& OutDeltaRot)
