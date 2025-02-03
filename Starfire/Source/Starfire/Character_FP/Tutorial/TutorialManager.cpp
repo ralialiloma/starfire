@@ -12,7 +12,6 @@
 #include "Starfire/Shared/ActionLogger/ActionLogger.h"
 #include "Starfire/Shared/BreakerTarget/Sf_BreakerPillar.h"
 #include "Starfire/Shared/Core/Sf_GameState.h"
-#include "TutorialCondition/TutorialConditions.h"
 #include "TutorialCondition/TutorialConditonSettings.h"
 
 void ATutorialManager::BeginPlay()

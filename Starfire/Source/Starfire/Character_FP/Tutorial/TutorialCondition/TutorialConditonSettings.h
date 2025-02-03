@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "TutorialConditions.h"
 #include "Enums/ConditionMatchType.h"
 
 #include "TutorialConditonSettings.generated.h"
