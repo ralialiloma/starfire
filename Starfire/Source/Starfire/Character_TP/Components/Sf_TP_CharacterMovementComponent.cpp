@@ -52,8 +52,6 @@ void USf_TP_CharacterMovementComponent::InitializeComponent()
 
 void USf_TP_CharacterMovementComponent::OnMovementUpdated(float DeltaSeconds, const FVector& OldLocation,const FVector& OldVelocity)
 {
-	Super::OnMovementUpdated(DeltaSeconds, OldLocation, OldVelocity);
-
 	if (MovementMode == MOVE_Walking)
 	{
 		if (Safe_bWantsToSprint)
@@ -65,6 +63,8 @@ void USf_TP_CharacterMovementComponent::OnMovementUpdated(float DeltaSeconds, co
 			MaxWalkSpeed = Walk_MaxWalkSpeed;
 		}
 	}
+
+	Super::OnMovementUpdated(DeltaSeconds, OldLocation, OldVelocity);
 }
 
 bool USf_TP_CharacterMovementComponent::CanSprint()
