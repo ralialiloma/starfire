@@ -63,7 +63,7 @@ bool UCF_Locomotion::MoveToLocation(const F_SF_MoveRequest MoveRequest)
 		true,
 		true,
 		true,
-		false,
+		true,
 		MoveRequest.FilterClass,
 		true
 		);
