@@ -15,10 +15,8 @@ void UWF_PhysicsHits::OnHitObject_Implementation(FHitResult HitResult)
 {
 	Super::OnHitObject_Implementation(HitResult);
 
-	UStaticMeshComponent* StaticMeshComponent = Cast<UStaticMeshComponent>(HitResult.GetComponent());
-	if (StaticMeshComponent && StaticMeshComponent->Mobility == EComponentMobility::Movable)
+	if (HitResult.IsValidBlockingHit() && HitResult.GetComponent()->IsSimulatingPhysics())
 	{
-		StaticMeshComponent->SetSimulatePhysics(true);
-		StaticMeshComponent->AddImpulse((HitResult.TraceEnd - HitResult.TraceStart).GetSafeNormal() * 1000.f * Config->ForceModifier);
+		HitResult.GetComponent()->AddImpulse((HitResult.TraceEnd - HitResult.TraceStart).GetSafeNormal() * 1000.f * Config->ForceModifier, HitResult.BoneName, Config->bVelocityChange);
 	}
 }

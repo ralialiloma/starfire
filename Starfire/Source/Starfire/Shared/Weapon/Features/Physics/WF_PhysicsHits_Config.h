@@ -15,4 +15,6 @@ public:
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float ForceModifier = 1;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bVelocityChange = false;
 };

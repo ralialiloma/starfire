@@ -13,6 +13,9 @@ public:
 	virtual TSubclassOf<UWeaponFeature> GetFeatureType_Implementation() const override;
 	
 public:
+
 	UPROPERTY(EditAnywhere, meta = (Categories = "Effects.Messages"))
-	FGameplayTag HitVFXMessage;
+	TMap<UPhysicalMaterial*, FGameplayTag> MaterialEffectPairings {};
+	UPROPERTY(EditAnywhere, meta = (Categories = "Effects.Messages"))
+	FGameplayTag DefaultVFXMessage;
 };

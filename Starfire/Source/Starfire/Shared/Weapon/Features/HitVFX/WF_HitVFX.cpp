@@ -25,6 +25,11 @@ void UWF_HitVFX::PlayHitVFX(const UPhysicalMaterial* PhysicalMaterial, const FVe
 	if (!IsValid(Config))
 		return;
 
-	//const FGameplayTag Tag = Config->PhysicsMaterialMappings.FindRef(PhysicalMaterial);
-	UFXSubsystem::Get()->PlayFXAt(this, Config->HitVFXMessage, FTransform(HitLocation));
+	if (FGameplayTag* FoundMessage = Config->MaterialEffectPairings.Find(PhysicalMaterial))
+	{
+		UFXSubsystem::Get()->PlayFXAt(this, *FoundMessage, FTransform(HitLocation));
+		return;
+	}
+
+	UFXSubsystem::Get()->PlayFXAt(this, Config->DefaultVFXMessage, FTransform(HitLocation));
 }
