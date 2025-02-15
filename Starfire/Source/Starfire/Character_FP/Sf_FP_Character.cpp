@@ -250,11 +250,16 @@ float ASf_FP_Character::GetJumpMaxHoldTime() const
 
 bool ASf_FP_Character::TeleportTo(const FVector& DestLocation, const FRotator& DestRotation, bool bIsATest, bool bNoCheck)
 {
-	bool bTeleportSucceeded =Super::TeleportTo(DestLocation, DestRotation, bIsATest, bNoCheck);
+	bool bTeleportSucceeded = Super::TeleportTo(DestLocation, DestRotation, bIsATest, bNoCheck);
 
-	if (GetController())
-	{
-		GetController()->SetControlRotation(DestRotation);
+	if (bTeleportSucceeded)
+	{		
+		if (GetController())
+		{
+			GetController()->SetControlRotation(DestRotation);
+		}
+
+		OnTeleport.Broadcast();
 	}
 	
 	return bTeleportSucceeded;

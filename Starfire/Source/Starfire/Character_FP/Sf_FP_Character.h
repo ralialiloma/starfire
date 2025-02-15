@@ -20,6 +20,8 @@ class USf_Equipment;
 class USf_FP_CharacterMovementComponent;
 class UBoxComponent;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTeleport);
+
 UCLASS(Config = Game,BlueprintType)
 class STARFIRE_API ASf_FP_Character : public ASf_Character, public IKnockbackReceiver
 {
@@ -28,6 +30,10 @@ class STARFIRE_API ASf_FP_Character : public ASf_Character, public IKnockbackRec
 	friend USf_FP_CharacterMovementComponent;
 
 public:
+
+	UPROPERTY(BlueprintAssignable)
+	FOnTeleport OnTeleport;
+	
 	ASf_FP_Character(const FObjectInitializer& ObjectInitializer);
 
 	virtual void BeginPlay() override;
