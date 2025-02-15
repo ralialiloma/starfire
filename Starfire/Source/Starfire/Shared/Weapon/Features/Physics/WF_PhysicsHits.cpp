@@ -15,7 +15,7 @@ void UWF_PhysicsHits::OnHitObject_Implementation(FHitResult HitResult)
 {
 	Super::OnHitObject_Implementation(HitResult);
 
-	if (HitResult.IsValidBlockingHit() && HitResult.GetComponent()->IsSimulatingPhysics())
+	if (HitResult.GetComponent() && HitResult.GetComponent()->IsSimulatingPhysics())
 	{
 		HitResult.GetComponent()->AddImpulse((HitResult.TraceEnd - HitResult.TraceStart).GetSafeNormal() * 1000.f * Config->ForceModifier, HitResult.BoneName, Config->bVelocityChange);
 	}
