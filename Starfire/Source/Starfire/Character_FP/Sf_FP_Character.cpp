@@ -360,13 +360,9 @@ void ASf_FP_Character::Respawn()
 				}
 			}
 		}
-
-		if (GetController<APlayerController>())
-		{
-			GetController<APlayerController>()->SetControlRotation(SpawnTransform.Rotator());
-			UFXSubsystem::Get()->PlayFX(this, Sf_GameplayTags::Effects::Messages::FP::Respawn);
-		}
-		SetActorTransform(SpawnTransform);
+		
+		UFXSubsystem::Get()->PlayFX(this, Sf_GameplayTags::Effects::Messages::FP::Respawn);
+		TeleportTo(SpawnTransform.GetLocation(), SpawnTransform.Rotator());
 
 		if (GetWorld() && GetWorld()->GetGameState())
 		{
