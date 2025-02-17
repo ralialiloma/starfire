@@ -15,7 +15,7 @@ FTransform UWF_GripSocket::GetGripTransform()
 	if (!IsValid(Config))
 		return FTransform::Identity;
 
-	return  GetOwningWeapon()->GetSkeletalMesh()->GetSocketTransform(Config->SocketName);
+	return  GetOwningWeapon()->GetSkeletalMesh()->GetSocketTransform(Config->SocketName,ERelativeTransformSpace::RTS_World);
 }
 
 
