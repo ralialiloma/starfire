@@ -16,4 +16,15 @@ class STARFIRE_API UCF_HitReact_Config : public USf_CharacterFeature_Config
 
 	virtual TSubclassOf<USf_CharacterFeature> GetFeatureType_Implementation() const override;
 
+public:
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TArray<TObjectPtr<UAnimMontage>> FrontHits;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TArray<TObjectPtr<UAnimMontage>> BackHits;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TArray<TObjectPtr<UAnimMontage>> RightHits;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TArray<TObjectPtr<UAnimMontage>> LeftHits;
+
 };

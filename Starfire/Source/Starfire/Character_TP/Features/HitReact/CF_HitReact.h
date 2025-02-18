@@ -6,6 +6,7 @@
 #include "Starfire/Shared/CharacterFeature/Sf_CharacterFeature.h"
 #include "CF_HitReact.generated.h"
 
+class UCF_HitReact_Config;
 /**
  * 
  */
@@ -20,11 +21,24 @@ public:
 	
 	UFUNCTION()
 	void OnDamage(float RemainingHealth, float DamageReceived, FVector HitLocation, FVector HitNormal, FGameplayTag DamageType);
+	
 	UPROPERTY()
 	FName LastHitBone = NAME_None;
 	UPROPERTY()
 	FVector LastHitDirection = FVector::ZeroVector;
 	UPROPERTY()
 	FVector LastHitLocation = FVector::ZeroVector;
+
+protected:
+
+	UFUNCTION()
+	void PlayMontage(UAnimMontage* Montage);
+	UFUNCTION()
+	void OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted);
+	
+	UPROPERTY()
+	const UCF_HitReact_Config* HitReactConfig;
+	UPROPERTY()
+	bool bMontageCooldown = false;
 
 };
