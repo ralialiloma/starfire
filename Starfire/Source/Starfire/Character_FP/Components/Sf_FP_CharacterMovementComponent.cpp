@@ -220,6 +220,24 @@ void USf_FP_CharacterMovementComponent::UpdateCharacterStateBeforeMovement(float
 			DashDuration = MaxDashDuration;
 			DashCount++;
 			SfCharacterOwner->bCustomJumpPressed = false;
+
+			FVector InputVector = GetLastInputVector().GetSafeNormal();
+			FVector LocalInputVector = GetLastUpdateRotation().UnrotateVector(GetLastInputVector());
+
+			AController* Controller = GetController();
+			if (Controller && !InputVector.IsNearlyZero())
+			{
+				FRotator ControlRot = Controller->GetControlRotation();
+
+				// Convert rotator to a quaternion for proper transformation
+				DashDirection = FRotationMatrix(ControlRot).GetScaledAxis(EAxis::X) * LocalInputVector.X +
+								FRotationMatrix(ControlRot).GetScaledAxis(EAxis::Y) * LocalInputVector.Y;
+			}
+			else
+			{
+				// If no controller is found or no input, use the actor's forward vector.
+				DashDirection = UpdatedComponent->GetForwardVector();
+			}
 		}
 		else if (bRequireInputForMantle && TryMantle())
 		{
@@ -916,15 +934,6 @@ bool USf_FP_CharacterMovementComponent::PhysDash(float DeltaTime, int32 Iteratio
 		Velocity = Velocity.GetSafeNormal() * GetMaxSpeed();
 		return false;
 	}
-
-	FVector DashDirection = GetController()->GetControlRotation().Vector();
-	DashDirection.Normalize();
-	if (DashDirection.IsNearlyZero())
-	{
-		DashDirection = UpdatedComponent->GetForwardVector();
-	}
-
-	DashDirection.Normalize();
 
 	float DashAlpha = DashDuration / MaxDashDuration;
 	float CurrentDashSpeed = FMath::Lerp(Sprint_MaxWalkSpeed, Dash_MaxWalkSpeed, DashAlpha);

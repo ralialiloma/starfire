@@ -273,8 +273,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovement: Dash", meta =(CustomConfig))
 	float Dash_NoiseEventVolume = 0.5f;
 
+	UPROPERTY()
 	int DashCount = 0;
+	UPROPERTY()
 	float DashDuration = 0;
+	UPROPERTY()
+	FVector DashDirection = FVector::ZeroVector;
 
 #pragma endregion
 };
