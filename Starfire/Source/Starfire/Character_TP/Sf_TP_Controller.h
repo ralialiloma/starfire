@@ -1,6 +1,5 @@
 #pragma once
 #include "AIController.h"
-#include "DetourCrowdAIController.h"
 #include "Sf_TP_Character.h"
 #include "Perception/AIPerceptionTypes.h"
 #include "Sf_TP_Controller.generated.h"

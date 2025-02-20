@@ -1,5 +1,6 @@
 #include "Sf_TP_Controller.h"
 
+#include "Sf_PathFollowingComponent.h"
 #include "Behaviour/BlackboardKeyHelperLibrary.h"
 #include "Behaviour/AlertSense/AISense_Alert.h"
 #include "Navigation/CrowdFollowingComponent.h"
@@ -9,7 +10,6 @@
 #include "Perception/AISense_Prediction.h"
 #include "Perception/AISense_Sight.h"
 #include "Perception/AISense_Touch.h"
-#include "Starfire/Sf_Bases/Components/Sf_PathFollowingComponent.h"
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
 #include "Starfire/Utility/Debug/SF_DebugFunctionLibrary.h"
 

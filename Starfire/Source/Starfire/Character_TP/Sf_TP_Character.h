@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "NavModifierComponent.h"
 #include "Components/WeaponAnimMontageController_TP.h"
 #include "Starfire/Sf_Bases/Sf_Character.h"
 #include "Starfire/Shared/CharacterFeature/Sf_CharacterFeature.h"
