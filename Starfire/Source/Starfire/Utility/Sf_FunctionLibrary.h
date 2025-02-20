@@ -95,8 +95,12 @@ class STARFIRE_API USf_FunctionLibrary : public UBlueprintFunctionLibrary
 
 	UFUNCTION(BlueprintCallable, Category="Collision", meta=(WorldContext="WorldContextObject", AutoCreateRefTerm="ActorsToIgnore", DisplayName="Box Overlap Components"))
 	static bool BetterBoxOverlapComponents(const UObject* WorldContextObject, const FVector BoxPos, const FRotator BoxRot, FVector Extent, const TArray<TEnumAsByte<EObjectTypeQuery> > & ObjectTypes, UClass* ComponentClassFilter, const TArray<AActor*>& ActorsToIgnore, TArray<class UPrimitiveComponent*>& OutComponents);
-	
 
+	//Gamma
+	UFUNCTION(BlueprintCallable)
+	static float GetCurrentGamma();
+	UFUNCTION(BlueprintCallable)
+	static void SetGamma(float Gamma);
 };
 
 template <typename EnumType>

@@ -210,3 +210,17 @@ bool USf_FunctionLibrary::BetterBoxOverlapComponents(const UObject* WorldContext
 	return (OutComponents.Num() > 0);
 }
 
+float USf_FunctionLibrary::GetCurrentGamma()
+{
+	IConsoleVariable* GammaVar = IConsoleManager::Get().FindConsoleVariable(TEXT("r.TonemapperGamma"));
+	return GammaVar ? GammaVar->GetFloat() <= 0 ? 2.2f : GammaVar->GetFloat() : 2.2f;
+}
+
+void USf_FunctionLibrary::SetGamma(float Gamma)
+{
+	if (IConsoleVariable* GammaVar = IConsoleManager::Get().FindConsoleVariable(TEXT("r.TonemapperGamma")))
+	{
+		GammaVar->Set(Gamma, ECVF_SetByGameOverride);
+	}
+}
+
