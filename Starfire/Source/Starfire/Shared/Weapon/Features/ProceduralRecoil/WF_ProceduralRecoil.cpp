@@ -36,8 +36,8 @@ void UWF_ProceduralRecoil::ActivateRecoil()
 	float Yaw =  UKismetMathLibrary::RandomFloatInRange(Config->RecoilRotationStrengthMin.Yaw, Config->RecoilRotationStrengthMax.Yaw);
 	float Roll =  UKismetMathLibrary::RandomFloatInRange(Config->RecoilRotationStrengthMin.Roll, Config->RecoilRotationStrengthMax.Roll);
 
-	ActiveRecoilLocation = FVector(X,Y,Z);
-	ActiveRecoilRotation = FRotator(Pitch,Yaw,Roll);
+	ActiveRecoilLocation = FVector(X,Y,Z)*Config->Multiplier;
+	ActiveRecoilRotation = FRotator(Pitch,Yaw,Roll)*Config->Multiplier;
 
 	RecoilTarget = FTransform(ActiveRecoilRotation, ActiveRecoilLocation);
 }
