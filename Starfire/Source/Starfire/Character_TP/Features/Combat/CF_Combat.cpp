@@ -119,7 +119,7 @@ bool UCF_Combat::StartFire(const int MaxMissedBulletsBeforeStop, const bool bInC
 			FString::Printf( TEXT("%s started firing"),
 				*GetOwningActor()->GetName()));
 	bIsFiring = true;
-	GetOwningCharacter()->UnCrouch();
+	//GetOwningCharacter()->UnCrouch();
 	GetOwningAIController()->SetFocus(USf_FunctionLibrary::GetSfPlayerpawn(this));
 	DoFire(EInputSignalType::InputSignal_Started,MaxMissedBulletsBeforeStop);
 	const float FireDelay = GetOwningSfEquipment()->GetWeaponConfig().FireDelay+0.01f;
