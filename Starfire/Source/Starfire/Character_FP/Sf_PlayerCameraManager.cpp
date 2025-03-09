@@ -37,12 +37,14 @@ void ASF_PlayerCameraManager::UpdateViewTarget(FTViewTarget& OutVT, float DeltaT
 		return;
 	}
 	const bool bIsAiming = SFEquipmentComp->IsAiming();
+
 	// -- FOV interpolation --
 	float CurrentFOV  = GetFOVAngle();
 	float TargetFOV   = bIsAiming ? ADSFieldOfView : DefaultFieldOfView;
 	float NewFOV      = FMath::FInterpTo(CurrentFOV, TargetFOV, DeltaTime, 1.0f / ADSBlendDuration);
+	//if (FMath::Abs(CurrentFOV-NewFOV)>0.01f)
+		//OutVT.POV.FOV = NewFOV;
 	SetFOV(NewFOV);
-	OutVT.POV.FOV = NewFOV;
 	
 	// -- Vignette intensity --
 	 OutVT.POV.PostProcessSettings.bOverride_VignetteIntensity = true;
