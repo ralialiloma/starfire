@@ -25,8 +25,6 @@ void ASF_PlayerCameraManager::UpdateViewTarget(FTViewTarget& OutVT, float DeltaT
 	//Update View Target Rotation
 	float RollOverwrite =ProcessWallRunRollOverwrite(SfCharacterMovementComponent,SfCharacter,DeltaTime);
 	ViewTarget.POV.Rotation = FRotator(ViewTarget.POV.Rotation.Pitch,ViewTarget.POV.Rotation.Yaw,RollOverwrite);
-
-	
 	
 	//Update Aim
 	// Get SF_Equipment component.
