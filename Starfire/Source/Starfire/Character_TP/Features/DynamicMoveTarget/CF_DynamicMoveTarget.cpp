@@ -4,6 +4,7 @@
 #include "CF_DynamicMoveTarget_Config.h"
 #include "DebugFunctionLibrary.h"
 #include "NavigationSystem.h"
+#include "Kismet/KismetStringLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Starfire/Character_TP/Sf_TP_Character.h"
 #include "Starfire/Character_TP/EQS/TetherPointSystem/Sf_TetherPointSubsystem.h"
@@ -85,9 +86,6 @@ bool UCF_DynamicMoveTarget::TrySetTarget(float DeltaTime)
 	{
 		return false;
 	}
-
-	if (bTooFar)
-		return false;
 	
 	FVector Direction = (MovingActorLocation-PlayerLocation);
 	Direction.Normalize();

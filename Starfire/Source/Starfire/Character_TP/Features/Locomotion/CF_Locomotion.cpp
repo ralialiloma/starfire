@@ -33,7 +33,7 @@ bool UCF_Locomotion::MoveToLocation(const F_SF_MoveRequest MoveRequest)
 			MoveRequest.AcceptanceRadius,
 			true,
 			true,
-			true,
+			MoveRequest.bCanStrafe,
 			MoveRequest.FilterClass,
 			true
 		);

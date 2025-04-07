@@ -25,7 +25,6 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
-	
 #pragma region Functions
 public:
 	//Components
@@ -59,7 +58,6 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly,Instanced)
 	TArray<USf_CharacterFeature_Config*> FeatureConfigs = TArray<USf_CharacterFeature_Config*>{};
-
 #pragma endregion
 
 #pragma region Functions
@@ -73,7 +71,6 @@ public:
 	bool TryAddFeature(const USf_CharacterFeature_Config* FeatureConfig);
 	UFUNCTION(BlueprintCallable, Category = "Character FeaturesNew")
 	bool TryAddFeatureByConfigClass(const TSubclassOf<USf_CharacterFeature_Config> FeatureConfigType);
-
 private:
 	static TSet<TSubclassOf<USf_CharacterFeature_Config>> GetAllStartConfigs();
 

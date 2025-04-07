@@ -40,6 +40,8 @@ struct F_SF_MoveRequest
 	AActor* TargetActor;
 	UPROPERTY(BlueprintReadWrite)
 	bool bMoveToActor;
+	UPROPERTY(BlueprintReadWrite)
+	bool bCanStrafe;
 
 	F_SF_MoveRequest()
 		: Destination(FVector::ZeroVector)

@@ -18,11 +18,16 @@ protected:
 
 #pragma region Functions
 public:
+	UFUNCTION(BlueprintCallable,BlueprintPure,Category = "AI")
+	bool IsAlarmed();
 protected:
 	UFUNCTION(BlueprintCallable,BlueprintPure,Category = "AI")
 	ASf_TP_Character* GetTP_Character();
 
 	static ETeamAttitude::Type GetAttitude(FGenericTeamId Of, FGenericTeamId Towards);
+
+	void OnPlayerDetected();
+	void OnPlayerForgotten();
 
 private:
 	UFUNCTION()
@@ -52,6 +57,9 @@ public:
 protected:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "AI")
 	UAIPerceptionComponent* AIPerceptionComponent;
+
+	UPROPERTY(BlueprintReadOnly, Category = "AI")
+	bool bAlarmed;
 private:
 	UPROPERTY()
 	ASf_TP_Character* TP_Character;

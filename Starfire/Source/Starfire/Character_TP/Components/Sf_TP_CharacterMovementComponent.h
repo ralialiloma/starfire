@@ -24,6 +24,7 @@ public:
 	
 	
 #pragma region Properties
+protected:
 	UPROPERTY(Transient)
 	ASf_TP_Character* SfCharacterOwner;
 #pragma endregion
@@ -76,6 +77,24 @@ private:
 	UPROPERTY()
 	bool Safe_bWantsToSprint;
 #pragma endregion
-	
+
+#pragma region Strafe
+	#pragma region Functions
+	public:
+		UFUNCTION(BlueprintCallable)
+		void SetStrafe(const bool bWantsToStrafe);
+		UFUNCTION(BlueprintCallable)
+		bool IsStrafing();
+	#pragma endregion
+	#pragma region Properties
+	UPROPERTY(EditDefaultsOnly, Category="Character Movement: Rotation Settings", meta =(CustomConfig))
+	FRotator DefaultRotationRate = FRotator(0,0,200);
+
+	UPROPERTY(EditDefaultsOnly, Category="Character Movement: Rotation Settings", meta =(CustomConfig))
+	FRotator FallRotationRate = FRotator(0,0,-1);
+	protected:
+		UPROPERTY(Transient)
+		bool Safe_bWantsToStrafe = false;
+#pragma endregion
 #pragma endregion
 };

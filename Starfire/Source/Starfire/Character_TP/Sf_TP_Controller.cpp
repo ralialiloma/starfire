@@ -66,6 +66,10 @@ void ASf_TP_Controller::SetPawn(APawn* InPawn)
 	TP_Character->GetSfDamageController()->OnDamageReceived_BP.AddDynamic(this, &ASf_TP_Controller::OnReceiveDamage);
 }
 
+bool ASf_TP_Controller::IsAlarmed()
+{
+	return bAlarmed;
+}
 
 
 ASf_TP_Character* ASf_TP_Controller::GetTP_Character()
@@ -81,6 +85,20 @@ ETeamAttitude::Type ASf_TP_Controller::GetAttitude(const FGenericTeamId Of, cons
 	}
 	
 	return ETeamAttitude::Hostile;
+}
+
+void ASf_TP_Controller::OnPlayerDetected()
+{
+	bAlarmed = true;
+	OnPlayerDetected_CPP.Broadcast();
+	OnPlayerDetected_BP.Broadcast();
+}
+
+void ASf_TP_Controller::OnPlayerForgotten()
+{
+	bAlarmed = false;
+	OnPlayerForgotten_CPP.Broadcast();
+	OnPlayerForgotten_BP.Broadcast();
 }
 
 void ASf_TP_Controller::HandlePerception(AActor* Actor, FAIStimulus Stimulus)
@@ -115,8 +133,7 @@ void ASf_TP_Controller::HandlePerception(AActor* Actor, FAIStimulus Stimulus)
 		if (!bHasSensedAlready)
 		{
 			SF_PRINT_TO_SCREEN(-1,2,FColor::Red,TEXT("Successfully Sensed Player"),TP::Controller)
-			OnPlayerDetected_CPP.Broadcast();
-			OnPlayerDetected_BP.Broadcast();
+			OnPlayerDetected();
 		}
 	}
 
@@ -195,8 +212,7 @@ void ASf_TP_Controller::HandlePerceptionForgotten(AActor* Actor)
 	UBlackboardComponent* BlackboardComponent = GetBlackboardComponent();
 	UBlackboardKeyHelperLibrary::SetBoolValue(BlackboardComponent,EBoolBlackboardKey::SensedPlayer,false);
 	UBlackboardKeyHelperLibrary::ClearVectorValue(BlackboardComponent,ELocationBlackboardKey::LastPlayerLocation);
-	OnPlayerForgotten_CPP.Broadcast();
-	OnPlayerForgotten_BP.Broadcast();
+	OnPlayerForgotten();
 }
 
 

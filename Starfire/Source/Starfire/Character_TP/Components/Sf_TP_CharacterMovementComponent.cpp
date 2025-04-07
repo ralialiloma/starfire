@@ -48,6 +48,7 @@ void USf_TP_CharacterMovementComponent::InitializeComponent()
 {
 	Super::InitializeComponent();
 	SfCharacterOwner = Cast<ASf_TP_Character>(CharacterOwner);
+	RotationRate = DefaultRotationRate;
 }
 
 void USf_TP_CharacterMovementComponent::OnMovementUpdated(float DeltaSeconds, const FVector& OldLocation,const FVector& OldVelocity)
@@ -91,4 +92,20 @@ void USf_TP_CharacterMovementComponent::SprintReleased()
 		return;
 	
 	Safe_bWantsToSprint = false;
+}
+
+void USf_TP_CharacterMovementComponent::SetStrafe(const bool bWantsToStrafe)
+{
+	Safe_bWantsToStrafe = bWantsToStrafe;
+
+	bUseControllerDesiredRotation = Safe_bWantsToStrafe;
+	bOrientRotationToMovement = !Safe_bWantsToStrafe;
+	
+	RotationRate = IsFalling()? DefaultRotationRate:FallRotationRate;
+	
+}
+
+bool USf_TP_CharacterMovementComponent::IsStrafing()
+{
+	return Safe_bWantsToStrafe;
 }
