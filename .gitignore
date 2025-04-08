@@ -58,6 +58,8 @@ Starfire/Plugins/*/Binaries/*
 # Builds
 Build/*
 Builds/*
+Starfire/Build/*
+Starfire/Builds/*
 
 # Whitelist PakBlacklist-<BuildConfiguration>.txt files
 !Build/*/
