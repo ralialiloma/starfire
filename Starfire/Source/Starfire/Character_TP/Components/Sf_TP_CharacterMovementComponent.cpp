@@ -97,12 +97,9 @@ void USf_TP_CharacterMovementComponent::SprintReleased()
 void USf_TP_CharacterMovementComponent::SetStrafe(const bool bWantsToStrafe)
 {
 	Safe_bWantsToStrafe = bWantsToStrafe;
-
 	bUseControllerDesiredRotation = Safe_bWantsToStrafe;
 	bOrientRotationToMovement = !Safe_bWantsToStrafe;
-	
 	RotationRate = IsFalling()? DefaultRotationRate:FallRotationRate;
-	
 }
 
 bool USf_TP_CharacterMovementComponent::IsStrafing()

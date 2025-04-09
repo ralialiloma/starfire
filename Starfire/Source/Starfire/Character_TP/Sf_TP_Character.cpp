@@ -28,6 +28,7 @@ ASf_TP_Character::ASf_TP_Character(const FObjectInitializer& ObjectInitializer):
 	
 	//Movement Component
 	SFCharacterMovementComponent = Cast<USf_TP_CharacterMovementComponent>(GetCharacterMovement());;
+	bUseControllerRotationYaw = true;
 	
 }
 

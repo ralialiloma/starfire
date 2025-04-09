@@ -83,7 +83,7 @@ private:
 	public:
 		UFUNCTION(BlueprintCallable)
 		void SetStrafe(const bool bWantsToStrafe);
-		UFUNCTION(BlueprintCallable)
+		UFUNCTION(BlueprintCallable,BlueprintPure)
 		bool IsStrafing();
 	#pragma endregion
 	#pragma region Properties
