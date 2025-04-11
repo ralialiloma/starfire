@@ -19,7 +19,7 @@ public class Starfire : ModuleRules
 			"NavigationSystem",
 			"PhysicsCore",
 			"GameplayTags",
-			"RenderCore",
+			"RenderCore"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[]
@@ -31,7 +31,9 @@ public class Starfire : ModuleRules
 			"DebugSystem", 
 			"ObjectExtensions", 
 			"RegionSystem", 
-			"Niagara",
+			"Niagara", 
+			"AnimationModifiers", 
+			"AnimationBlueprintLibrary",
 		});
 
 		if (Target.bBuildEditor)
