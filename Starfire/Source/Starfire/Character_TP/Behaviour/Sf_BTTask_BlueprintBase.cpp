@@ -3,6 +3,7 @@
 #include "AIController.h"
 #include "BlackboardKeyHelperLibrary.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
+#include "Starfire/Character_TP/Sf_TP_Controller.h"
 
 
 USf_BTTask_BlueprintBase::USf_BTTask_BlueprintBase(const FObjectInitializer& ObjectInitializer)
@@ -29,7 +30,7 @@ UAnimInstance* USf_BTTask_BlueprintBase::GetOwningAnimInstance() const
 	return  OwningNPCharacter->GetCharacterAnimInstance();
 }
 
-AAIController* USf_BTTask_BlueprintBase::GetOwningAIController() const
+ASf_TP_Controller* USf_BTTask_BlueprintBase::GetOwningAIController() const
 {
 	if (!OwningNPCharacter) // Check if OwningNPCharacter is valid
 	{
@@ -37,7 +38,7 @@ AAIController* USf_BTTask_BlueprintBase::GetOwningAIController() const
 		return nullptr;
 	}
 
-	return Cast<AAIController>(OwningNPCharacter->GetController());
+	return Cast<ASf_TP_Controller>(OwningNPCharacter->GetController());
 }
 
 UBlackboardComponent* USf_BTTask_BlueprintBase::GetOwningBlackboard() const

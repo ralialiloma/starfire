@@ -142,7 +142,6 @@ namespace Sf_GameplayTags
 				DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.PatrolAreaMarkerTypes.Cover,High,"");
 			}
 		}
-		
 		namespace DamageType
 		{
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Name, "Gameplay.DamageType", "")
@@ -180,6 +179,13 @@ namespace Sf_GameplayTags
 				DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.Weapon.Action, RemoveWeapon, "");
 				DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.Weapon.Action, EquipWeapon, "");
 				DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.Weapon.Action, UnequipWeapon, "");
+			}
+		}
+		namespace Actor
+		{
+			namespace AI
+			{
+				DEFINE_GAMEPLAY_TAG_AUTO(Gameplay.Actor.AI, PlayerTarget, "");
 			}
 		}
 	}

@@ -24,7 +24,7 @@ public:
 	UAnimInstance* GetOwningAnimInstance() const;
 
 	UFUNCTION(BlueprintCallable,BlueprintPure, Category =  "Sf_BTTask_BlueprintBase")
-	AAIController* GetOwningAIController() const;
+	ASf_TP_Controller* GetOwningAIController() const;
 
 	UFUNCTION(BlueprintCallable,BlueprintPure, Category =  "Sf_BTTask_BlueprintBase")
 	UBlackboardComponent* GetOwningBlackboard() const;

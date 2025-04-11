@@ -72,6 +72,9 @@ public:
 #pragma region Properties
 
 protected:
+	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly,meta=(Categories="Gameplay.Actor"),Category = "Character")
+	FGameplayTag PlayerTrackerTag;
+	
 	bool bCustomJumpPressed = false;
 	bool bCustomJumpDown = false;
 

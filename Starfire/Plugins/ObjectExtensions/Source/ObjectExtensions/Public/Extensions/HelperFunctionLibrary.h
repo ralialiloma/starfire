@@ -58,6 +58,9 @@ public:
 	TSubclassOf<AActor> ActorClass,
 	TArray<AActor *> & OutActors);
 
+	template<typename TComponent>
+	static void GetAllActorsWithComponent(UWorld* World, TArray<AActor*>& OutActors);
+
 	template <typename ComponentType>
 	static void GetAllComponentsOfType(UWorld* World, TArray<ComponentType*>& OutComponents);
 
@@ -101,6 +104,21 @@ public:
 		TArray<AActor*>& OutActors);
 	
 };
+
+template <typename TComponent>
+void UHelperFunctionLibrary::GetAllActorsWithComponent(UWorld* World, TArray<AActor*>& OutActors)
+{
+	OutActors.Empty();
+
+	for (TActorIterator<AActor> It(World); It; ++It)
+	{
+		AActor* Actor = *It;
+		if (Actor && Actor->FindComponentByClass<TComponent>())
+		{
+			OutActors.Add(Actor);
+		}
+	}
+}
 
 template <typename ComponentType>
 void UHelperFunctionLibrary::GetAllComponentsOfType(UWorld* World, TArray<ComponentType*>& OutComponents)

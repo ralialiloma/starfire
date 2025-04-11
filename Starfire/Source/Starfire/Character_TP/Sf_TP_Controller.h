@@ -2,6 +2,7 @@
 #include "AIController.h"
 #include "Sf_TP_Character.h"
 #include "Perception/AIPerceptionTypes.h"
+#include "Starfire/Shared/TaggedActors/GameplayTagSourceMode.h"
 #include "Sf_TP_Controller.generated.h"
 
 UCLASS()
@@ -20,6 +21,10 @@ protected:
 public:
 	UFUNCTION(BlueprintCallable,BlueprintPure,Category = "AI")
 	bool IsAlarmed();
+
+	UFUNCTION(BlueprintCallable,Category = "AI")
+	bool SetFocusTaggedActor(UPARAM(meta=(Categories="Gameplay.Actor")) const FGameplayTag Tag, const EGameplayTagSourceMode SourceMode);
+
 protected:
 	UFUNCTION(BlueprintCallable,BlueprintPure,Category = "AI")
 	ASf_TP_Character* GetTP_Character();

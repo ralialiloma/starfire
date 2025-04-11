@@ -11,6 +11,7 @@
 #include "Starfire/Shared/Core/Sf_GameState.h"
 #include "Starfire/Shared/Interact/InteractComponent.h"
 #include "Starfire/Shared/Sound/FXSubsystem.h"
+#include "Starfire/Shared/TaggedActors/TaggedActor.h"
 #include "Starfire/Utility/ConfigLoader.h"
 
 DEFINE_LOG_CATEGORY_STATIC(SF_Character_Log, Display, Display);
@@ -189,6 +190,17 @@ bool ASf_FP_Character::IsWeaponInputIgnored() const
 void ASf_FP_Character::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//Spawn Player Tracker
+	FVector Location = GetActorLocation();
+	FRotator Rotation = GetActorRotation();
+	FActorSpawnParameters SpawnParameters = FActorSpawnParameters();
+	SpawnParameters.Name = "PlayerTracker";
+	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	AActor* PlayerTracker =  GetWorld()->SpawnActor(ATaggedActor::StaticClass(), &Location,& Rotation,SpawnParameters);
+	ATaggedActor* TaggedActor = Cast<ATaggedActor>(PlayerTracker);
+	TaggedActor->AddTag(PlayerTrackerTag);
+	PlayerTracker->AttachToComponent(FirstPersonCamera,FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 }
 
 void ASf_FP_Character::Jump()

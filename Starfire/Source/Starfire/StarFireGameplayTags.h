@@ -177,6 +177,13 @@ namespace Sf_GameplayTags
 				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UnequipWeapon);
 			}
 		}
+		namespace Actor
+		{
+			namespace AI
+			{
+				STARFIRE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(PlayerTarget);
+			}
+		}
 	}
 	namespace Debug
 	{

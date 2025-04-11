@@ -10,6 +10,7 @@
 #include "Perception/AISense_Prediction.h"
 #include "Perception/AISense_Sight.h"
 #include "Perception/AISense_Touch.h"
+#include "Starfire/Shared/TaggedActors/BFL_TaggedComponent.h"
 #include "Starfire/Utility/Sf_FunctionLibrary.h"
 #include "Starfire/Utility/Debug/SF_DebugFunctionLibrary.h"
 
@@ -69,6 +70,18 @@ void ASf_TP_Controller::SetPawn(APawn* InPawn)
 bool ASf_TP_Controller::IsAlarmed()
 {
 	return bAlarmed;
+}
+
+bool ASf_TP_Controller::SetFocusTaggedActor(const FGameplayTag Tag, const EGameplayTagSourceMode SourceMode)
+{
+	TArray<AActor*> FoundActors{};
+	UBFl_TaggedComponent::GetAllActorsWithTag(this,FoundActors,Tag,SourceMode);
+	if (FoundActors.Num() > 0)
+	{
+		SetFocus(FoundActors[0]);
+		return true;
+	}
+	return false;
 }
 
 
