@@ -12,7 +12,7 @@ public:
 	virtual void OnInit_Implementation() override;
 
 	UFUNCTION(BlueprintCallable)
-	FTransform GetGripTransform();
+	FTransform GetLeftHandGripTransform();
 
 protected:
 	UPROPERTY()

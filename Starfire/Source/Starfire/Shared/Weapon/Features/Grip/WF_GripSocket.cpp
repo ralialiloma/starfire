@@ -10,12 +10,13 @@ void UWF_GripSocket::OnInit_Implementation()
 	VALIDATE_WF_CONFIG(UWF_GripSocket_Config,Config);
 }
 
-FTransform UWF_GripSocket::GetGripTransform()
+FTransform UWF_GripSocket::GetLeftHandGripTransform()
 {
 	if (!IsValid(Config))
 		return FTransform::Identity;
 
-	return  GetOwningWeapon()->GetSkeletalMesh()->GetSocketTransform(Config->SocketName,ERelativeTransformSpace::RTS_World);
+	return  GetOwningWeapon()->GetSkeletalMesh() ->GetSocketTransform(Config->SocketName,ERelativeTransformSpace::RTS_World);
 }
+
 
 
