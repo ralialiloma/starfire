@@ -92,6 +92,13 @@ void USf_FP_CharacterMovementComponent::FSavedMove_Sf::PrepMoveFor(ACharacter* C
 	CharacterMovementComponent->SfCharacterOwner->bCustomJumpPressed = Saved_bCustomJump;
 }
 
+uint8 USf_FP_CharacterMovementComponent::FSavedMove_Sf::GetCompressedFlags() const
+{
+	
+	
+	return FSavedMove_Character::GetCompressedFlags();
+}
+
 bool USf_FP_CharacterMovementComponent::CanAttemptJump() const
 {
 	return Super::CanAttemptJump() || IsWallRunning();

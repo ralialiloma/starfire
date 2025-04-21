@@ -52,6 +52,7 @@ class STARFIRE_API USf_FP_CharacterMovementComponent : public USf_CharacterMovem
 		virtual void Clear() override;
 		virtual void SetMoveFor(ACharacter* C, float InDeltaTime, FVector const& NewAccel, FNetworkPredictionData_Client_Character& ClientData) override;
 		virtual void PrepMoveFor(ACharacter* C) override;
+		virtual uint8 GetCompressedFlags() const override;
 	};
 #pragma endregion
 
@@ -107,7 +108,6 @@ public:
 #pragma endregion
 	
 #pragma region Sprint
-	
 #pragma region Functions
 public:
 	UFUNCTION(BlueprintCallable, BlueprintPure)
